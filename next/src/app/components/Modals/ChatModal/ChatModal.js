@@ -186,7 +186,7 @@ function ChatModal({}) {
       socket.emit("chat/read", chatModal.chatroom);
     }
 
-    const onChatMessage = (message) => {
+    const onChatMessage = ({ message }) => {
       console.log(message);
       scrollToBottom("smooth");
       setChatRooms((prev) => {

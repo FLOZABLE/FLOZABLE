@@ -28,13 +28,13 @@ function MemberEl({ memberInfo, device, recvTransport }) {
       setTotal(parseInt(study_time));
     }
 
-    const onStudying = (userId, subject) => {
+    const onStudying = ({ userId, subject }) => {
       if (userId === memberInfo.user_id && subject.subject_id !== "0") {
         setRun(true);
       }
     };
 
-    const onStopStudying = (userId) => {
+    const onStopStudying = ({ userId }) => {
       if (userId === memberInfo.user_id) {
         setRun(false);
       }

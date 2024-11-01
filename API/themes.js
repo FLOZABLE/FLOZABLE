@@ -208,14 +208,14 @@ Router.post("/theme/like", async (req, res) => {
 
         await connection.query(`INSERT INTO theme_likes SET ?`, newLike);
 
-        mainIo.emit(`like:theme:${themeId}`, userId);
+        mainIo.emit(`like:theme:${themeId}`, { userId });
       } else {
         await connection.query(
           `DELETE FROM theme_likes WHERE user_id = ? AND theme_id = ?`,
           [userId, themeId]
         );
 
-        mainIo.emit(`unlike:theme:${themeId}`, userId);
+        mainIo.emit(`unlike:theme:${themeId}`, { userId });
       }
 
       res.send({ success: true, status: "success" });

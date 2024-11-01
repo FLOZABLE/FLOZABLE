@@ -23,7 +23,7 @@ export default function MembersStatus({ groupId, members }) {
     setStudyingMembers(studyingMembers);
     setRestingMembers(restMembers);
 
-    const onStudying = (userId, subject) => {
+    const onStudying = ({ userId, subject }) => {
       if (!members.find((member) => member.user_id === userId)) return;
 
       if (subject.subject_id === "0") {
@@ -36,7 +36,7 @@ export default function MembersStatus({ groupId, members }) {
       }
     };
 
-    const onStopStudying = (userId, status) => {
+    const onStopStudying = ({ userId, status }) => {
       console.log(status, "status");
       setStudyingMembers((prev) =>
         prev.filter((memberId) => memberId !== userId)

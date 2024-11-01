@@ -15,15 +15,17 @@ function UserGroupViewer({ userInfo }) {
       setActiveGroup(activeGroup);
     }
 
-    const onDeActiveGroup = () => {
+    const onDeActiveGroup = ({ userId }) => {
+      if (userId !== userInfo.usre_id) return;
+
       setActiveGroup(null);
     };
 
-    const onActiveGroup = (userId, groupInfo) => {
+    const onActiveGroup = ({ userId, group }) => {
       if (userId !== userInfo.user_id) return;
 
-      console.log(groupInfo);
-      setActiveGroup(groupInfo);
+      console.log(group);
+      setActiveGroup(group);
     };
 
     socket.on(`deActiveGroup`, onDeActiveGroup);

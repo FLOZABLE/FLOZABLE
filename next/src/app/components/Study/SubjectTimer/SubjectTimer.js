@@ -10,6 +10,7 @@ import {
   ModalsContext,
   SubjectsContext,
   TutorialsContext,
+  UserInfoContext,
   WorkersContext,
 } from "@/app/utils/Contexts";
 import { socket } from "@/app/utils/socket";
@@ -29,6 +30,7 @@ function SubjecTimer({
   const { subjects, setSubjects } = useContext(SubjectsContext);
   const { subjectsTimerWorkerRef } = useContext(WorkersContext);
   const { setIsAddSubjectModal } = useContext(ModalsContext);
+  const { userInfo } = useContext(UserInfoContext);
 
   const [subjectOptions, setSubjectOptions] = useState([]);
   const [selectNewSubject, setSelectNewSubject] = useState(false);
@@ -47,63 +49,90 @@ function SubjecTimer({
 
     setSelectedSubject(subjectOptions[0]);
     setSubjectOptions(subjectOptions);
-  }, [subjects]);
+  }, [subjects, userInfo]);
 
-  const toggleTimer = useCallback(() => {
-    if (pomodoro.mode === 1 || pomodoro.mode === 2) {
-      setPomodoro((prev) => ({ ...prev, active: !prev.active }));
-      return;
-    }
+  useEffect(() => {
+    const onStudying = ({ userId, subject }) => {
+      if (!userInfo.user_id === userId) return;
 
-    if (!selectedSubject) return;
-
-    const active = !selectedSubject.active;
-    setSelectedSubject({
-      ...selectedSubject,
-      active,
-    });
-
-    if (active) {
-      socket.emit("start", selectedSubject.subject_id);
-      subjectsTimerWorkerRef?.current?.postMessage({
-        command: "startSubjectTimer",
-      });
-    } else {
-      socket.emit("stop", selectedSubject.subject_id);
-      const selectedSubjectIndex = subjects.findIndex(
-        (subject) => subject.subject_id === selectedSubject.subject_id
+      const selectedSubject = subjectOptions.find(
+        (subjectOption) => subjectOption.subject_id === subject.subject_id
       );
+      if (!selectedSubject) return;
 
-      subjectsTimerWorkerRef?.current?.postMessage({
-        command: "stopSubjectTimer",
-      });
+      toggleTimer({ ...selectedSubject, active: false });
+    };
 
-      if (!selectedSubjectIndex !== -1) {
-        const day = subjects[selectedSubjectIndex].day;
-        day.total[day.total.length - 1].data = selectedSubject.value;
-        subjects[selectedSubjectIndex] = {
-          ...subjects[selectedSubjectIndex],
-          day,
-        };
-        setSubjects(subjects);
-      }
-    }
+    const onStopStudying = ({ userId, status }) => {
+      if (userId !== userInfo?.user_id) return;
+
+      toggleTimer({ ...selectedSubject, active: true });
+    };
+
+    socket.on("studying", onStudying);
+    socket.on("stopStudying", onStopStudying);
 
     return () => {
-      subjectsTimerWorkerRef?.current?.postMessage({
-        command: "stopSubjectTimer",
-      });
+      socket.off("studying", onStudying);
+      socket.off("stopStudying", onStopStudying);
     };
-  }, [subjects, pomodoro, selectedSubject]);
+  }, [userInfo, subjectOptions, selectedSubject]);
+
+  const toggleTimer = useCallback(
+    (selectedSubject) => {
+      if (pomodoro.mode === 1 || pomodoro.mode === 2) {
+        setPomodoro((prev) => ({ ...prev, active: !prev.active }));
+        return;
+      }
+
+      if (!selectedSubject) return;
+
+      const active = !selectedSubject.active;
+      setSelectedSubject({
+        ...selectedSubject,
+        active,
+      });
+
+      if (active) {
+        //socket.emit("start", selectedSubject.subject_id);
+        subjectsTimerWorkerRef?.current?.postMessage({
+          command: "startSubjectTimer",
+        });
+      } else {
+        //socket.emit("stop", selectedSubject.subject_id);
+        const selectedSubjectIndex = subjects.findIndex(
+          (subject) => subject.subject_id === selectedSubject.subject_id
+        );
+
+        subjectsTimerWorkerRef?.current?.postMessage({
+          command: "stopSubjectTimer",
+        });
+
+        if (!selectedSubjectIndex !== -1) {
+          const day = subjects[selectedSubjectIndex].day;
+          day.total[day.total.length - 1].data = selectedSubject.value;
+          subjects[selectedSubjectIndex] = {
+            ...subjects[selectedSubjectIndex],
+            day,
+          };
+          setSubjects(subjects);
+        }
+      }
+
+      return () => {
+        subjectsTimerWorkerRef?.current?.postMessage({
+          command: "stopSubjectTimer",
+        });
+      };
+    },
+    [subjects, pomodoro]
+  );
 
   useEffect(() => {
     const messageHandler = (e) => {
       if (e.data.command === "updateSubjectTimer") {
         if (!selectedSubject) return;
-        setSelectedSubject({
-          ...selectedSubject,
-          value: selectedSubject.value + 1,
-        });
+
         const subjectIndex = subjectOptions.findIndex(
           (subject) => subject.subject_id === selectedSubject.subject_id
         );
@@ -121,6 +150,10 @@ function SubjecTimer({
 
         document.title = `${timer} ${slicedName}`;
 
+        setSelectedSubject({
+          ...selectedSubject,
+          value: selectedSubject.value + 1,
+        });
         setSubjectOptions(subjectOptions);
       }
     };
@@ -199,7 +232,14 @@ function SubjecTimer({
             className={styles.button}
             id={styles.start}
             onClick={() => {
-              toggleTimer();
+              if (!selectedSubject) return;
+
+              if (selectedSubject.active) {
+                socket.emit("stop");
+              } else {
+                socket.emit("start", selectedSubject.subject_id);
+              }
+
               if (tutorial === 7) {
                 setTimeout(() => {
                   setTutorial(8);
@@ -231,7 +271,8 @@ function SubjecTimer({
               onClick={() => {
                 setSelectNewSubject(false);
                 if (selectedSubject?.active) {
-                  toggleTimer();
+                  //toggleTimer();
+                  socket.emit("stop");
                   setTimeout(() => {
                     setSelectedSubject(subject);
                   }, 300);

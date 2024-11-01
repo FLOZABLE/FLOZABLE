@@ -5,11 +5,11 @@ export default function SocketCounter({ id, events, members, setMembers }) {
   useEffect(() => {
     if (!id || !events) return;
 
-    const onAdd = (userId) => {
+    const onAdd = ({ userId }) => {
       setMembers((prev) => [...prev, userId]);
     };
 
-    const onRemove = (userId) => {
+    const onRemove = ({ userId }) => {
       setMembers((prev) => {
         return prev.filter((memberId) => {
           return memberId !== userId;
