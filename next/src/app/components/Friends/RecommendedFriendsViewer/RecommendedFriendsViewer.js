@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useContext } from "react";
 import styles from "./RecommendedFriendsViewer.module.css";
 import RefreshBtn from "../../Buttons/RefreshBtn/RefreshBtn";
 import FriendRequestBtn from "../../Buttons/FriendRequestBtn/FriendRequestBtn";
@@ -8,8 +8,11 @@ import CircularLoading from "../../LoadingScreen/CircularLoading/CircularLoading
 import UserContainer from "../../Users/UserContainer/UserContainer";
 import { useRouter } from "next/navigation";
 import { useFriendsRecommended } from "@/Hooks/friendsHooks";
+import { ModalsContext } from "@/app/utils/Contexts";
 
 function RecommendedFriendsViewer({}) {
+  const { setSearchUsersModal } = useContext(ModalsContext);
+
   const {
     friendsRecommendedData,
     friendsRecommendedIsLoading,
@@ -23,6 +26,19 @@ function RecommendedFriendsViewer({}) {
       <div className={styles.header}>
         <h3>Recommended Friends</h3>
         <RefreshBtn onClick={friendsRecommendedRefetch} />
+        <div
+          id={styles.searchFriendBtn}
+          onClick={() => {
+            setSearchUsersModal((prev) => ({
+              onClick: (userInfo) => {
+                router.push(`/dashboard/user/${userInfo.user_id}`);
+              },
+              opened: !prev.opened,
+            }));
+          }}
+        >
+          +<div className={`HoverText ${styles.hoverText}`}>Add friend!</div>
+        </div>
       </div>
       <div className={`contents customScroll`}>
         {friendsRecommendedIsLoading ? (

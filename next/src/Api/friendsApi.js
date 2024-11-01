@@ -7,7 +7,7 @@ async function getFriendsRecommended() {
 }
 
 async function getFriendsSearch(searchQuery) {
-  const response = await AxiosInstance.get(`/extension/settings`, {
+  const response = await AxiosInstance.get(`/friends/search`, {
     params: {
       query: searchQuery,
     },

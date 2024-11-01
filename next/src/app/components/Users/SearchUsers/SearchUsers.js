@@ -11,40 +11,40 @@ function SearchUsers({ searchQuery, onClick }) {
   const [debouncedQuery] = useDebounce(searchQuery, 500);
 
   const { friendsSearchData, isLoading } = useFriendsSearch(debouncedQuery);
+  
+  if (isLoading) {
+    return <CircularLoading />;
+  }
+
+  if (!friendsSearchData?.success) {
+    return null;
+  }
 
   return (
     <div className={`customScroll ${styles.SearchUsers}`}>
-      {friendsSearchData?.success &&
-      !isLoading &&
-      debouncedQuery === searchQuery ? (
-        friendsSearchData?.data?.users?.map((userInfo, i) => {
-          return (
-            <UserContainer
-              key={i}
-              onClick={() => {
-                if (onClick) {
-                  onClick(userInfo);
-                }
-              }}
-              userInfo={userInfo}
-            >
-              <div>
-                <ChatBtn targetInfo={userInfo} padding={"0.3125rem 0.625rem"} />
-              </div>
-              <div>
-                <FriendRequestBtn
-                  userInfo={userInfo}
-                  padding={"0.3125rem 0.625rem"}
-                />
-              </div>
-            </UserContainer>
-          );
-        })
-      ) : (
-        <div className={styles.loading}>
-          <CircularLoading />
-        </div>
-      )}
+      {friendsSearchData?.data?.users?.map((userInfo, i) => {
+        return (
+          <UserContainer
+            key={i}
+            onClick={() => {
+              if (onClick) {
+                onClick(userInfo);
+              }
+            }}
+            userInfo={userInfo}
+          >
+            <div>
+              <ChatBtn targetInfo={userInfo} padding={"0.3125rem 0.625rem"} />
+            </div>
+            <div>
+              <FriendRequestBtn
+                userInfo={userInfo}
+                padding={"0.3125rem 0.625rem"}
+              />
+            </div>
+          </UserContainer>
+        );
+      })}
     </div>
   );
 }
