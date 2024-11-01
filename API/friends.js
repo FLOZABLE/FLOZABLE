@@ -308,8 +308,7 @@ async function replyFriendRequest(
         [newMember]
       );
 
-      mainIo.to(userId).emit("joinChatRoom", roomInfo.id, true);
-      mainIo.to(targetId).emit("joinChatRoom", roomInfo.id, true);
+      mainIo.to([userId, targetId]).emit("joinChatRoom");
     }
 
     return {

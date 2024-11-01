@@ -11,7 +11,7 @@ function DateSelectorBtn({ viewDate, setViewDate, viewer }) {
     const dateDisp = getDatesDisplay(viewDate, viewer, {
       day: "LLL d",
       week: "LLL d",
-      month: "kkkk LLLL",
+      month: "kkkk LLL",
     });
     setDateDisp(dateDisp);
   }, [viewDate, viewer]);

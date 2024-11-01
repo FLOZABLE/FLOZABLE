@@ -24,7 +24,7 @@
 }
 
 .Main .box#planTimeline {
-  min-width: 22rem;
+  min-width: 23.5rem;
   height: min-content;
   overflow: hidden;
   flex: 0;
@@ -46,7 +46,7 @@
   }
 
   .Main .box#planTimeline {
-    min-width: 21rem;
+    min-width: 22.5rem;
   }
 
   .Main .layer .box {
