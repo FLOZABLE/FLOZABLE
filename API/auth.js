@@ -20,7 +20,7 @@ const {
 const { sendEmail } = require("../email");
 const {
   USER_ID_COOKIE_OPTIONS,
-  RESPONSE_CODES,
+  RESPONSE_MESSAGES,
   REDIS_EXP,
 } = require("../Constant");
 const { google } = require("googleapis");
@@ -30,7 +30,7 @@ async function autoSignin(
   res,
   success = () => {},
   fail = () => {
-    res.send(RESPONSE_CODES["no-session"]);
+    res.send(RESPONSE_MESSAGES.noSession);
   }
 ) {
   try {
@@ -191,7 +191,7 @@ Router.post("/signin", async (req, res) => {
     );
 
     if (!userInfo) {
-      return res.send(RESPONSE_CODES["no-user"]);
+      return res.send(RESPONSE_MESSAGES.noUser);
     }
 
     const hashedPassword = crypto
@@ -199,14 +199,14 @@ Router.post("/signin", async (req, res) => {
       .toString("hex");
 
     if (hashedPassword !== userInfo.hashed_password) {
-      return res.send(RESPONSE_CODES.wrongPassword);
+      return res.send(RESPONSE_MESSAGES.wrongPassword);
     }
 
     // Generate a new session ID
     req.session.regenerate((err) => {
       if (err) {
         console.log("Error regenerating session ID:", err);
-        res.send(RESPONSE_CODES.error);
+        res.send(RESPONSE_MESSAGES.error);
         return;
       }
 
@@ -218,7 +218,7 @@ Router.post("/signin", async (req, res) => {
     });
   } catch (err) {
     console.log(err);
-    res.send(RESPONSE_CODES.error);
+    res.send(RESPONSE_MESSAGES.error);
   }
 });
 
@@ -232,7 +232,7 @@ Router.get("/signin/google", async (req, res) => {
     const response = await auth.getToken(code);
     if (response.res.status !== 200) {
       console.log("err");
-      return res.send(RESPONSE_CODES.error);
+      return res.send(RESPONSE_MESSAGES.error);
     }
     const connection = pool.promise();
     const { refresh_token, access_token, expiry_date } = response.tokens;
@@ -297,7 +297,7 @@ Router.get("/signin/google", async (req, res) => {
           req.session.regenerate((err) => {
             if (err) {
               console.log("Error regenerating session ID:", err);
-              return res.send(RESPONSE_CODES.error);
+              return res.send(RESPONSE_MESSAGES.error);
             }
 
             req.session.user_id = user_id;
@@ -322,7 +322,7 @@ Router.get("/signin/google", async (req, res) => {
         req.session.regenerate((err) => {
           if (err) {
             console.log("Error regenerating session ID:", err);
-            res.send(RESPONSE_CODES.error);
+            res.send(RESPONSE_MESSAGES.error);
             return;
           }
 
@@ -343,7 +343,7 @@ Router.get("/signin/google", async (req, res) => {
     );
   } catch (err) {
     console.log(err);
-    res.send(RESPONSE_CODES.error);
+    res.send(RESPONSE_MESSAGES.error);
   }
 });
 
@@ -371,7 +371,7 @@ Router.get("/signin/spotify", async (req, res) => {
       );
     } catch (err) {
       console.log(err);
-      res.send(RESPONSE_CODES.error);
+      res.send(RESPONSE_MESSAGES.error);
     }
   });
 });
@@ -462,7 +462,7 @@ Router.get("/signin/spotify/callback", async (req, res) => {
     );
   } catch (err) {
     console.log(err);
-    res.send(RESPONSE_CODES.error);
+    res.send(RESPONSE_MESSAGES.error);
   }
 });
 
@@ -497,7 +497,7 @@ Router.post("/app/signin", async (req, res) => {
     );
 
     if (!userInfo) {
-      return res.send(RESPONSE_CODES["no-user"]);
+      return res.send(RESPONSE_MESSAGES.noUser);
     }
 
     const hashedPassword = crypto
@@ -505,7 +505,7 @@ Router.post("/app/signin", async (req, res) => {
       .toString("hex");
 
     if (hashedPassword !== userInfo.hashed_password) {
-      return res.send(RESPONSE_CODES.wrongPassword);
+      return res.send(RESPONSE_MESSAGES.wrongPassword);
     }
 
     const token = await appTokenCache(userInfo.user_id, true);
@@ -523,7 +523,7 @@ Router.post("/app/signin", async (req, res) => {
     });
   } catch (err) {
     console.log(err);
-    res.send(RESPONSE_CODES.error);
+    res.send(RESPONSE_MESSAGES.error);
   }
 });
 
@@ -556,7 +556,7 @@ Router.post("/app/validate-tokens", async (req, res) => {
     const savedToken = await appTokenCache(userId, false);
     console.log("token", savedToken, token, userId);
     if (savedToken !== token) {
-      return res.send(RESPONSE_CODES["not-authenticated"]);
+      return res.send(RESPONSE_MESSAGES.notAuthed);
     }
 
     req.session.user_id = userId;
@@ -578,7 +578,7 @@ Router.post("/verify", async (req, res) => {
       );
 
       if (!userInfo) {
-        return res.send(RESPONSE_CODES["no-user"]);
+        return res.send(RESPONSE_MESSAGES.noUser);
       }
 
       const { email } = userInfo;
@@ -597,7 +597,7 @@ Router.post("/verify", async (req, res) => {
 
       if (!response.success) {
         console.log(response);
-        return res.send(RESPONSE_CODES.error);
+        return res.send(RESPONSE_MESSAGES.error);
       }
 
       res.send({
@@ -607,7 +607,7 @@ Router.post("/verify", async (req, res) => {
       });
     } catch (err) {
       console.log(err);
-      res.send(RESPONSE_CODES.error);
+      res.send(RESPONSE_MESSAGES.error);
     }
   });
 });
@@ -620,7 +620,7 @@ Router.get("/verify", async (req, res) => {
       return res.redirect(
         process.env.NEXT_SERVER +
           "/dashboard?" +
-          querystring.stringify(RESPONSE_CODES["expired-request"])
+          querystring.stringify(RESPONSE_MESSAGES.expiredRequest)
       );
     }
 
@@ -630,7 +630,7 @@ Router.get("/verify", async (req, res) => {
       return res.redirect(
         process.env.NEXT_SERVER +
           "/dashboard?" +
-          querystring.stringify(RESPONSE_CODES["expired-request"])
+          querystring.stringify(RESPONSE_MESSAGES.expiredRequest)
       );
     }
     const [storedVerifyId, email] = verifyInfo.split(":");
@@ -639,7 +639,7 @@ Router.get("/verify", async (req, res) => {
       return res.redirect(
         process.env.NEXT_SERVER +
           "/dashboard?" +
-          querystring.stringify(RESPONSE_CODES["expired-request"])
+          querystring.stringify(RESPONSE_MESSAGES.expiredRequest)
       );
     }
 
@@ -667,7 +667,7 @@ Router.get("/verify", async (req, res) => {
     return res.redirect(
       process.env.NEXT_SERVER +
         "/dashboard?" +
-        querystring.stringify(RESPONSE_CODES["expired-request"])
+        querystring.stringify(RESPONSE_MESSAGES.expiredRequest)
     );
   }
 });
@@ -705,7 +705,7 @@ Router.post("/signup", async (req, res) => {
     req.session.regenerate((err) => {
       if (err) {
         console.log("Error regenerating session ID:", err);
-        res.send(RESPONSE_CODES.error);
+        res.send(RESPONSE_MESSAGES.error);
         return;
       }
       req.session.user_id = user_id;

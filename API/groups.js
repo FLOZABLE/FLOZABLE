@@ -22,7 +22,7 @@ const {
   validateString,
 } = require("../Utils/validate");
 const { DateTime } = require("luxon");
-const { RESPONSE_CODES } = require("../Constant");
+const { RESPONSE_MESSAGES } = require("../Constant");
 const { mainIo } = require("../sockets/io");
 const { autoSignin } = require("./auth");
 
@@ -60,7 +60,7 @@ Router.get("/", async (req, res) => {
     res.send({ success: true, data: { groups: formattedGroups } });
   } catch (err) {
     console.log(err);
-    res.send(RESPONSE_CODES.error);
+    res.send(RESPONSE_MESSAGES.error);
   }
 });
 
@@ -236,7 +236,7 @@ Router.put("/group", async (req, res) => {
       });
     } catch (err) {
       console.log(err);
-      res.send(RESPONSE_CODES.error);
+      res.send(RESPONSE_MESSAGES.error);
     }
   });
 });
@@ -264,7 +264,7 @@ Router.delete("/group", async (req, res) => {
       );
 
       if (!groupInfo) {
-        return res.send(RESPONSE_CODES["no-group"]);
+        return res.send(RESPONSE_MESSAGES.noGroup);
       }
 
       await connection.query(`DELETE FROM group_members WHERE group_id = ?`, [
@@ -283,7 +283,7 @@ Router.delete("/group", async (req, res) => {
       });
     } catch (err) {
       console.log(err);
-      res.send(RESPONSE_CODES.error);
+      res.send(RESPONSE_MESSAGES.error);
     }
   });
 });
@@ -403,11 +403,11 @@ Router.patch("/group", async (req, res) => {
         [group_id]
       );
       if (!groupInfo) {
-        return res.send(RESPONSE_CODES["no-group"]);
+        return res.send(RESPONSE_MESSAGES.noGroup);
       }
 
       if (groupInfo.leader !== userId) {
-        return res.send(RESPONSE_CODES.forbidden);
+        return res.send(RESPONSE_MESSAGES.forbidden);
       }
 
       const stringlifiedTags = JSON.stringify(tags);
@@ -449,7 +449,7 @@ Router.patch("/group", async (req, res) => {
       });
     } catch (err) {
       console.log(err);
-      res.send(RESPONSE_CODES.error);
+      res.send(RESPONSE_MESSAGES.error);
     }
   });
 });
@@ -492,10 +492,10 @@ Router.post("/group/join", async (req, res) => {
         ),
       ]);
 
-      if (!userInfo) return res.send(RESPONSE_CODES["no-user"]);
+      if (!userInfo) return res.send(RESPONSE_MESSAGES.noUser);
 
       if (!groupInfo) {
-        return res.send(RESPONSE_CODES["no-group"]);
+        return res.send(RESPONSE_MESSAGES.noGroup);
       }
 
       if (groupInfo.members.includes(userId)) {
@@ -575,7 +575,7 @@ Router.post("/group/join", async (req, res) => {
       });
     } catch (err) {
       console.log(err);
-      res.send(RESPONSE_CODES.error);
+      res.send(RESPONSE_MESSAGES.error);
     }
   });
 });
@@ -591,14 +591,14 @@ Router.post("/group/leave", async (req, res) => {
 
       const userInfo = await userCache(connection, userId);
 
-      if (!userInfo) return res.send(RESPONSE_CODES["no-user"]);
+      if (!userInfo) return res.send(RESPONSE_MESSAGES.noUser);
 
       const [{ affectedRows }] = await connection.query(
         `DELETE FROM group_members WHERE user_id = ? AND group_id = ?`,
         [userId, groupId]
       );
 
-      if (!affectedRows) return res.send(RESPONSE_CODES["no-group"]);
+      if (!affectedRows) return res.send(RESPONSE_MESSAGES.noGroup);
 
       redisClient.srem(`user:${userId}:groups`, groupId);
 
@@ -613,7 +613,7 @@ Router.post("/group/leave", async (req, res) => {
       });
     } catch (err) {
       console.log(err);
-      res.send(RESPONSE_CODES.error);
+      res.send(RESPONSE_MESSAGES.error);
     }
   });
 });
@@ -631,12 +631,12 @@ Router.delete("/member", async (req, res) => {
         ]),
       ]);
 
-      if (!merberInfo) return res.send(RESPONSE_CODES["no-user"]);
+      if (!merberInfo) return res.send(RESPONSE_MESSAGES.noUser);
 
-      if (!groupInfo) return res.send(RESPONSE_CODES["no-group"]);
+      if (!groupInfo) return res.send(RESPONSE_MESSAGES.noGroup);
 
       if (groupInfo.leader !== userId) {
-        return res.send(RESPONSE_CODES.forbidden);
+        return res.send(RESPONSE_MESSAGES.forbidden);
       }
 
       await connection.query(
@@ -652,7 +652,7 @@ Router.delete("/member", async (req, res) => {
       return res.send({ success: true, status: "success" });
     } catch (err) {
       console.log(err);
-      res.send(RESPONSE_CODES.error);
+      res.send(RESPONSE_MESSAGES.error);
     }
   });
 });
@@ -668,7 +668,7 @@ Router.post("/transfer-ownership", async (req, res) => {
       );
 
       if (group.leader != userId) {
-        return res.send(RESPONSE_CODES.forbidden);
+        return res.send(RESPONSE_MESSAGES.forbidden);
       }
 
       await connection.query(
@@ -679,7 +679,7 @@ Router.post("/transfer-ownership", async (req, res) => {
       return res.send({ success: true, status: "success" });
     } catch (err) {
       console.log(err);
-      res.send(RESPONSE_CODES.error);
+      res.send(RESPONSE_MESSAGES.error);
     }
   });
 });
@@ -734,7 +734,7 @@ Router.post("/group/like", async (req, res) => {
       return res.send({ success: true, status: "success" });
     } catch (err) {
       console.log(err);
-      res.send(RESPONSE_CODES.error);
+      res.send(RESPONSE_MESSAGES.error);
     }
   });
 });
@@ -774,7 +774,7 @@ Router.get("/group/members", async (req, res) => {
       );
 
       if (!groupInfo) {
-        return res.send(RESPONSE_CODES["no-group"]);
+        return res.send(RESPONSE_MESSAGES.noGroup);
       }
 
       groupInfo.members = JSON.parse(`[${groupInfo.members}]`);
@@ -783,7 +783,7 @@ Router.get("/group/members", async (req, res) => {
         !groupInfo.visibility &&
         !groupInfo.members.find((member) => member.user_id === userId)
       ) {
-        return res.send(RESPONSE_CODES["non-memeber"]);
+        return res.send(RESPONSE_MESSAGES["non-memeber"]);
       }
 
       const members = await Promise.all(
@@ -801,7 +801,7 @@ Router.get("/group/members", async (req, res) => {
       return res.send({ success: true, status: "success", data: { members } });
     } catch (err) {
       console.log(err);
-      res.send(RESPONSE_CODES.error);
+      res.send(RESPONSE_MESSAGES.error);
     }
   });
 });

@@ -1,5 +1,5 @@
 const sendInBlue = require("sib-api-v3-sdk");
-const { RESPONSE_CODES } = require("./Constant");
+const { RESPONSE_MESSAGES } = require("./Constant");
 
 const SENDINBLUE_API = process.env.SENDINBLUE_API;
 const sendinBlueClient = sendInBlue.ApiClient.instance;
@@ -20,7 +20,7 @@ async function sendEmail(to, params, id) {
     console.log(err);
     const response = err?.response?.text
       ? JSON.parse(err.response.text)
-      : RESPONSE_CODES.error;
+      : RESPONSE_MESSAGES.error;
     return response;
   }
 }

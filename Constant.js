@@ -1,121 +1,108 @@
-const RESPONSE_CODES = {
-  "no-user": {
+const RESPONSE_MESSAGES = {
+  noUser: {
     success: false,
-    status: "error",
     message: "Invalid User",
+    status: 400,
     error: {
       reason: "Invalid User",
-      code: 400,
     },
     action: "signin",
   },
-  "no-session": {
+  noSession: {
     success: false,
-    status: "error",
     message: "Sign In",
+    status: 400,
     error: {
       reason: "Invalid User",
-      code: 400,
     },
     action: "signin",
   },
-  "no-target-user": {
+  noTargetUser: {
     success: false,
-    status: "error",
     message: "Invalid User",
+    status: 400,
     error: {
       reason: "Invalid User",
-      code: 400,
     },
   },
-  "no-group": {
+  noGroup: {
     success: false,
-    status: "error",
     message: "Invalid Group",
+    status: 404,
     error: {
       reason: "Invalid Group",
-      code: 404,
     },
   },
-  "no-subject": {
+  noSubject: {
     success: false,
-    status: "error",
     message: "Invalid Subject",
+    status: 400,
     error: {
       reason: "Invalid Subject",
-      code: 400,
     },
   },
-  "no-plan": {
+  noPlan: {
     success: false,
-    status: "error",
     message: "Invalid Plan",
+    status: 400,
     error: {
       reason: "Invalid Plan",
-      code: 400,
     },
   },
-  "non-member": {
+  nonMember: {
     success: false,
-    status: "error",
     message: "Not a member of this group",
+    status: 403,
     error: {
       reason: "Not a member of this group",
-      code: 403,
     },
   },
-  "friends-limit-reached": {
+  friendsLimitReached: {
     success: false,
-    status: "error",
     message: "Friends limit reached",
+    status: 409,
     error: {
       reason: "Friends limit reached",
-      code: 409,
     },
   },
-  "expired-request": {
+  expiredRequest: {
     success: false,
-    status: "error",
     message: "Expired Request",
+    status: 410,
     error: {
       reason: "Expired Request",
-      code: 410,
     },
   },
   error: {
     success: false,
-    status: "error",
     message: "Unexpected Error",
+    status: 500,
     error: {
       reason: "Unexpected Error",
-      code: 500,
     },
   },
-  "not-authenticated": {
+  notAuthed: {
     success: false,
-    status: "error",
     message: "Not Authenticated",
+    status: 401,
     error: {
       reason: "Not Authenticated",
-      code: 401,
     },
   },
   wrongPassword: {
     success: false,
-    status: "error",
     message: "Wrong Password",
+    status: 403,
     error: {
       reason: "Wrong Password",
-      code: 403,
     },
   },
   forbidden: {
     success: false,
-    status: "error",
     message: "You do not have permission to perform this action",
+    status: 403,
     error: {
       reason: "Insufficient Privileges",
-      code: 403,
     },
   },
 };
@@ -259,7 +246,7 @@ const subjectColors = [
 ];
 
 module.exports = {
-  RESPONSE_CODES,
+  RESPONSE_MESSAGES,
   MAX_STUDY_TIME,
   USER_ID_COOKIE_OPTIONS,
   FRIENDS_LIMIT,

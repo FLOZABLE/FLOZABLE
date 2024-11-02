@@ -3,10 +3,51 @@ const Router = express.Router();
 const { deriveKey } = require("../Utils/tool");
 const { validateStrictString, validateURL } = require("../Utils/validate");
 const redisClient = require("../model/redis");
-const { RESPONSE_CODES } = require("../Constant");
+const { RESPONSE_MESSAGES } = require("../Constant");
 const crypto = require("crypto");
 const pool = require("../model/pool");
 const { autoSignin } = require("./auth");
+
+Router.get("/", async (req, res) => {
+  autoSignin(req, res, async (userId) => {
+    try {
+      const connection = pool.promise();
+
+      const [notifications] = await connection.query(
+        `
+        SELECT 
+          n.notification_id,
+          n.user_id,
+          n.from_user_id,
+          n.sent_at,
+          n.message,
+          n.type,
+          n.related_id,
+          CASE 
+            WHEN type LIKE '%subject%' THEN 'Subject Related'
+            WHEN type LIKE '%plan%' THEN 'Plan Related'
+            WHEN type LIKE '%group%' THEN 'Group Related'
+            ELSE 'Other'
+          END AS category
+        FROM 
+          notifications n
+        LEFT JOIN 
+          subjects s ON n.type = 'subject' AND n.related_id = s.subject_id
+        LEFT JOIN 
+          plans p ON n.type = 'plan' AND n.related_id = p.plan_id
+        WHERE 
+          n.user_id = ?;
+      `,
+        [userId]
+      );
+      console.log(notifications);
+      res.send({ success: true, status: "success", data: notifications });
+    } catch (err) {
+      console.log(err);
+      res.send(RESPONSE_MESSAGES.error);
+    }
+  });
+});
 
 Router.get("/vapidkeys", async (req, res) => {
   try {
@@ -15,7 +56,7 @@ Router.get("/vapidkeys", async (req, res) => {
     res.send({ success: true, status: "success", publicKey });
   } catch (err) {
     console.log(err);
-    res.send(RESPONSE_CODES.error);
+    res.send(RESPONSE_MESSAGES.error);
   }
 });
 
@@ -42,7 +83,7 @@ Router.post("/subscribe", async (req, res) => {
       );
 
       if (!userInfo) {
-        return res.send(RESPONSE_CODES["no-user"]);
+        return res.send(RESPONSE_MESSAGES.noUser);
       }
 
       const encryptKey = await deriveKey(userId, userInfo.key_salt);
@@ -68,7 +109,7 @@ Router.post("/subscribe", async (req, res) => {
       return res.send({ success: true, status: "success" });
     } catch (err) {
       console.log(err);
-      res.send(RESPONSE_CODES.error);
+      res.send(RESPONSE_MESSAGES.error);
     }
   });
 });
@@ -97,7 +138,7 @@ Router.post("/read", async (req, res) => {
       res.send({ success: true, status: "success" });
     } catch (err) {
       console.log(err);
-      res.send(RESPONSE_CODES.error);
+      res.send(RESPONSE_MESSAGES.error);
     }
   });
 });

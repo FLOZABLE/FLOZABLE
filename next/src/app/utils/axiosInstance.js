@@ -18,9 +18,14 @@ AxiosInstance.interceptors.response.use(
     }
     return response;
   },
-  (error) => {
-    toast.error("Unexpected Error Occurred");
-    return Promise.reject(error);
+  (err) => {
+    if (err?.response?.data?.message) {
+      toast.error(err?.response?.data?.message);
+    } else {
+      toast.error("Unexpected Error Occurred");
+    }
+    console.log(err);
+    return Promise.reject(err);
   }
 );
 

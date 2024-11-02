@@ -13,7 +13,7 @@ const {
 } = require("../Utils/validate");
 const { mainIo } = require("../sockets/io");
 const { autoSignin } = require("./auth");
-const { RESPONSE_CODES } = require("../Constant");
+const { RESPONSE_MESSAGES } = require("../Constant");
 
 Router.get("/", async (req, res) => {
   try {
@@ -55,7 +55,7 @@ Router.get("/", async (req, res) => {
     return res.send({ success: true, status: "success", data: { themes } });
   } catch (err) {
     console.log(err);
-    res.send(RESPONSE_CODES.error);
+    res.send(RESPONSE_MESSAGES.error);
   }
 });
 
@@ -75,7 +75,7 @@ Router.get("/user", async (req, res) => {
       return res.send({ success: true, status: "success", data: { themes } });
     } catch (err) {
       console.log(err);
-      res.send(RESPONSE_CODES.error);
+      res.send(RESPONSE_MESSAGES.error);
     }
   });
 });
@@ -166,7 +166,7 @@ Router.put("/theme", async (req, res) => {
       });
     } catch (err) {
       console.log(err);
-      res.send(RESPONSE_CODES.error);
+      res.send(RESPONSE_MESSAGES.error);
     }
   });
 });
@@ -221,7 +221,7 @@ Router.post("/theme/like", async (req, res) => {
       res.send({ success: true, status: "success" });
     } catch (err) {
       console.log(err);
-      res.send(RESPONSE_CODES.error);
+      res.send(RESPONSE_MESSAGES.error);
     }
   });
 });
@@ -286,7 +286,7 @@ Router.post("/theme/save", async (req, res) => {
       });
     } catch (err) {
       console.log(err);
-      res.send(RESPONSE_CODES.error);
+      res.send(RESPONSE_MESSAGES.error);
     }
   });
 });

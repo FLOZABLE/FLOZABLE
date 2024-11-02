@@ -14,7 +14,7 @@ const {
   validateHEX,
   validateStrictString,
 } = require("../Utils/validate");
-const { RESPONSE_CODES } = require("../Constant");
+const { RESPONSE_MESSAGES } = require("../Constant");
 const { mainIo } = require("../sockets/io");
 const { autoSignin } = require("./auth");
 
@@ -27,7 +27,7 @@ Router.get("/", async (req, res) => {
       res.send({ success: true, status: "success", data: { subjects } });
     } catch (err) {
       console.log(err);
-      RESPONSE_CODES.error;
+      RESPONSE_MESSAGES.error;
     }
   });
 });
@@ -80,7 +80,7 @@ Router.put("/subject", async (req, res) => {
       if (err.errno === 1062) {
         return res.send({ success: false, reason: "Name already in use" });
       }
-      res.send(RESPONSE_CODES.error);
+      res.send(RESPONSE_MESSAGES.error);
     }
   });
 });
@@ -126,7 +126,7 @@ Router.patch("/subject", async (req, res) => {
       );
 
       if (!affectedRows) {
-        return res.send(RESPONSE_CODES["no-subject"]);
+        return res.send(RESPONSE_MESSAGES.noSubject);
       }
 
       res.send({
@@ -137,7 +137,7 @@ Router.patch("/subject", async (req, res) => {
       });
     } catch (err) {
       console.log(err);
-      res.send(RESPONSE_CODES.error);
+      res.send(RESPONSE_MESSAGES.error);
     }
   });
 });
@@ -178,7 +178,7 @@ Router.delete("/subject", async (req, res) => {
       );
 
       if (!subject || subject.name === "others") {
-        return res.send(RESPONSE_CODES["no-subject"]);
+        return res.send(RESPONSE_MESSAGES.noSubject);
       }
 
       if (otherSubject) {
@@ -231,7 +231,7 @@ Router.delete("/subject", async (req, res) => {
       });
     } catch (err) {
       console.log(err);
-      res.send(RESPONSE_CODES.error);
+      res.send(RESPONSE_MESSAGES.error);
     }
   });
 });
@@ -259,11 +259,11 @@ Router.post("/subject/share", async (req, res) => {
         ),
       ]);
       if (!userInfo) {
-        return res.send(RESPONSE_CODES["no-user"]);
+        return res.send(RESPONSE_MESSAGES.noUser);
       }
 
       if (!subject) {
-        return res.send(RESPONSE_CODES["no-subject"]);
+        return res.send(RESPONSE_MESSAGES.noSubject);
       }
 
       subject.share = subject.share ? subject.share.split(",") : [];
@@ -339,7 +339,7 @@ Router.post("/subject/share", async (req, res) => {
       });
     } catch (err) {
       console.log(err);
-      res.send(RESPONSE_CODES.error);
+      res.send(RESPONSE_MESSAGES.error);
     }
   });
 });
@@ -349,7 +349,7 @@ Router.post("/subject/share/respond", async (req, res) => {
     try {
     } catch (err) {
       console.log(err);
-      res.send(RESPONSE_CODES.error);
+      res.send(RESPONSE_MESSAGES.error);
     }
   });
 });
@@ -378,7 +378,7 @@ Router.delete("/subject/share", async (req, res) => {
       );
 
       if (!subject) {
-        return res.send(RESPONSE_CODES["no-subject"]);
+        return res.send(RESPONSE_MESSAGES.noSubject);
       }
 
       subject.share = JSON.parse(subject.share).filter((user) => user.user_id);
@@ -392,7 +392,7 @@ Router.delete("/subject/share", async (req, res) => {
         { user_id: subject.user_id },
       ];
       if (!allowedUsers.find((user) => user.user_id === userId)) {
-        return res.send(RESPONSE_CODES["non-memeber"]);
+        return res.send(RESPONSE_MESSAGES["non-memeber"]);
       }
 
       await connection.query(
@@ -415,7 +415,7 @@ Router.delete("/subject/share", async (req, res) => {
       res.send({ success: true, status: "success", message: `Removed user!` });
     } catch (err) {
       console.log(err);
-      res.send(RESPONSE_CODES.error);
+      res.send(RESPONSE_MESSAGES.error);
     }
   });
 });
@@ -444,7 +444,7 @@ Router.get("/subject/users", async (req, res) => {
       );
 
       if (!subject) {
-        return res.send(RESPONSE_CODES["no-subject"]);
+        return res.send(RESPONSE_MESSAGES.noSubject);
       }
 
       subject.share = JSON.parse(subject.share).filter((user) => user.user_id);
@@ -458,13 +458,13 @@ Router.get("/subject/users", async (req, res) => {
         { user_id: subject.user_id },
       ];
       if (!allowedUsers.find((user) => user.user_id === userId)) {
-        return res.send(RESPONSE_CODES["non-memeber"]);
+        return res.send(RESPONSE_MESSAGES["non-memeber"]);
       }
 
       res.send({ success: true, status: "success", data: { subject } });
     } catch (err) {
       console.log(err);
-      res.send(RESPONSE_CODES.error);
+      res.send(RESPONSE_MESSAGES.error);
     }
   });
 });

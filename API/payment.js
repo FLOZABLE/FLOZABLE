@@ -1,7 +1,7 @@
 const stripe = require("stripe")(process.env.STRIPE_SECRET);
 const express = require("express");
 const Router = express.Router();
-const { RESPONSE_CODES } = require("../Constant");
+const { RESPONSE_MESSAGES } = require("../Constant");
 const pool = require("../model/pool");
 const { autoSignin } = require("./auth");
 
@@ -17,7 +17,7 @@ Router.post("/subscription/initialize", async (req, res) => {
       );
 
       if (!userInfo) {
-        return res.send(RESPONSE_CODES["no-user"]);
+        return res.send(RESPONSE_MESSAGES.noUser);
       }
 
       if (!userInfo.stripe_id) {
@@ -33,7 +33,7 @@ Router.post("/subscription/initialize", async (req, res) => {
       }
 
       if (!userInfo.stripe_id) {
-        return res.send(RESPONSE_CODES.error);
+        return res.send(RESPONSE_MESSAGES.error);
       }
 
       const subscription = await stripe.subscriptions.create({
@@ -47,7 +47,7 @@ Router.post("/subscription/initialize", async (req, res) => {
       res.send({ success: true, clientSecret });
     } catch (err) {
       console.log(err);
-      res.send(RESPONSE_CODES.error);
+      res.send(RESPONSE_MESSAGES.error);
     }
   });
 });
@@ -62,7 +62,7 @@ Router.get("/product", async (req, res) => {
     res.send({ success: true, price, product });
   } catch (err) {
     console.log(err);
-    res.send(RESPONSE_CODES.error);
+    res.send(RESPONSE_MESSAGES.error);
   }
 });
 

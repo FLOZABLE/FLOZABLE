@@ -21,7 +21,7 @@ const {
   usersCache,
   clearGoogleAccessToken,
 } = require("../services/redisLoader");
-const { RESPONSE_CODES } = require("../Constant");
+const { RESPONSE_MESSAGES } = require("../Constant");
 const { googleOauth2client, autoSignin } = require("./auth");
 const { google } = require("googleapis");
 const upload = multer();
@@ -53,7 +53,9 @@ Router.get("/", async (req, res) => {
         );
       });
       if (!userInfo) {
-        return res.send(RESPONSE_CODES["no-user"]);
+        return res
+          .status(RESPONSE_MESSAGES.noUser.status)
+          .send(RESPONSE_MESSAGES.noUser);
       }
       userInfo.groups = groups;
       userInfo.friends = friends;
@@ -68,7 +70,9 @@ Router.get("/", async (req, res) => {
       addActiveUserCache(userId);
     } catch (err) {
       console.log(err);
-      res.send(RESPONSE_CODES.error);
+      return res
+        .status(RESPONSE_MESSAGES.error.status)
+        .send(RESPONSE_MESSAGES.error);
     }
   });
 });
@@ -84,7 +88,9 @@ Router.get("/google", async (req, res) => {
       );
 
       if (!googleAccessToken) {
-        return res.send(RESPONSE_CODES["not-authed"]);
+        return res
+          .status(RESPONSE_MESSAGES.notAuthed.status)
+          .send(RESPONSE_MESSAGES.notAuthed);
       }
 
       const auth = googleOauth2client({ access_token: googleAccessToken });
@@ -98,7 +104,9 @@ Router.get("/google", async (req, res) => {
       ]);
 
       if (!accessTokenInfo) {
-        return res.send(RESPONSE_CODES["not-authed"]);
+        return res
+          .status(RESPONSE_MESSAGES.notAuthed.status)
+          .send(RESPONSE_MESSAGES.notAuthed);
       }
 
       const data = response.data;
@@ -112,18 +120,22 @@ Router.get("/google", async (req, res) => {
     } catch (err) {
       console.log(err);
       if (!err?.response?.data?.error) {
-        return res.send(RESPONSE_CODES.error);
+        return res
+          .status(RESPONSE_MESSAGES.error.status)
+          .send(RESPONSE_MESSAGES.error);
       }
 
       if (err.response.data.error === "invalid_token") {
         clearGoogleAccessToken(connection, userId);
       }
 
-      return res.send({
+      const code = err.response.data.error.status;
+
+      return res.status(code).send({
         success: false,
         status: "error",
         error: {
-          code: err.response.data.error.code,
+          code,
           reason: err.response.data.error.message,
         },
       });
@@ -139,20 +151,26 @@ Router.patch("/password", async (req, res) => {
 
       const isValidPassword = validatePassword(password);
       if (!isValidPassword.isValid) {
-        return res.send({
+        return res.status(400).send({
           success: false,
           status: "error",
           message: isValidPassword.reason,
-          error: { reason: isValidPassword.reason },
+          error: {
+            reason: isValidPassword.reason,
+            code: 400,
+          },
         });
       }
 
       if (password !== confirmPassword) {
-        return res.send({
+        return res.status(400).send({
           success: false,
           status: "error",
           message: "Password Does Not Match",
-          error: { reason: "Password Does Not Match" },
+          error: {
+            reason: "Password Does Not Match",
+            code: 400,
+          },
         });
       }
 
@@ -169,7 +187,9 @@ Router.patch("/password", async (req, res) => {
       });
     } catch (err) {
       console.log(err);
-      res.send(RESPONSE_CODES.error);
+      return res
+        .status(RESPONSE_MESSAGES.error.status)
+        .send(RESPONSE_MESSAGES.error);
     }
   });
 });
@@ -178,7 +198,7 @@ Router.patch("/image", upload.single("image"), async (req, res) => {
   autoSignin(req, res, async (userId) => {
     try {
       if (!req.file) {
-        return res.send({
+        return res.status(400).send({
           success: false,
           status: "error",
           message: "No image file found",
@@ -198,7 +218,9 @@ Router.patch("/image", upload.single("image"), async (req, res) => {
       });
     } catch (err) {
       console.log(err);
-      res.send(RESPONSE_CODES.error);
+      return res
+        .status(RESPONSE_MESSAGES.error.status)
+        .send(RESPONSE_MESSAGES.error);
     }
   });
 });
@@ -210,7 +232,7 @@ Router.patch("/info", async (req, res) => {
       //const supportedLanguages = ['English', 'Spanish', 'French'];
       const isValidEmail = validateEmail(email);
       if (!isValidEmail.isValid) {
-        return res.send({
+        return res.status(400).send({
           success: false,
           status: "error",
           message: isValidEmail.reason,
@@ -220,7 +242,7 @@ Router.patch("/info", async (req, res) => {
 
       const isValidName = validateStrictString(name, "Name", 25, 1);
       if (!isValidName.isValid) {
-        return res.send({
+        return res.status(400).send({
           success: false,
           status: "error",
           message: isValidName.reason,
@@ -229,7 +251,7 @@ Router.patch("/info", async (req, res) => {
       }
 
       if (email !== confirmEmail) {
-        return res.send({
+        return res.status(400).send({
           success: false,
           status: "error",
           message: "Email Confirmation Failed",
@@ -245,7 +267,9 @@ Router.patch("/info", async (req, res) => {
       );
 
       if (!userInfo) {
-        return res.send(RESPONSE_CODES["no-user"]);
+        return res
+          .status(RESPONSE_MESSAGES.noUser.status)
+          .send(RESPONSE_MESSAGES.noUser);
       }
 
       const verified = userInfo.email === email ? userInfo.verified : 0;
@@ -264,7 +288,9 @@ Router.patch("/info", async (req, res) => {
       });
     } catch (err) {
       console.log(err);
-      res.send(RESPONSE_CODES.error);
+      return res
+        .status(RESPONSE_MESSAGES.error.status)
+        .send(RESPONSE_MESSAGES.error);
     }
   });
 });
@@ -281,7 +307,9 @@ Router.get("/profile", async (req, res) => {
       subjectsTimelineCache(connection, user_id),
     ]);
     if (!userInfo) {
-      return res.send(RESPONSE_CODES["no-user"]);
+      return res
+        .status(RESPONSE_MESSAGES.noUser.status)
+        .send(RESPONSE_MESSAGES.noUser);
     }
 
     userInfo.groups = groups;
@@ -293,7 +321,9 @@ Router.get("/profile", async (req, res) => {
     });
   } catch (err) {
     console.log(err);
-    return res.send(RESPONSE_CODES.error);
+    return res
+      .status(RESPONSE_MESSAGES.error.status)
+      .send(RESPONSE_MESSAGES.error);
   }
 });
 

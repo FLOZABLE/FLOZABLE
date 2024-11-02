@@ -7,7 +7,7 @@ const {
   clearGoogleAccessToken,
 } = require("../services/redisLoader");
 const querystring = require("querystring");
-const { RESPONSE_CODES } = require("../Constant");
+const { RESPONSE_MESSAGES } = require("../Constant");
 const { googleOauth2client, autoSignin } = require("./auth");
 const { google } = require("googleapis");
 const { validateStrictString } = require("../Utils/validate");
@@ -59,7 +59,7 @@ Router.get("/spotify/info", async (req, res) => {
       });
     } catch (err) {
       console.log(err);
-      res.send(RESPONSE_CODES.error);
+      res.send(RESPONSE_MESSAGES.error);
     }
   });
 });
@@ -71,7 +71,7 @@ Router.get("/spotify", async (req, res) => {
       const accessToken = await spotifyAccessTokenCache(connection, userId);
 
       if (!accessToken) {
-        return res.send(RESPONSE_CODES["not-authed"]);
+        return res.send(RESPONSE_MESSAGES.notAuthed);
       }
 
       const response = await fetch("https://api.spotify.com/v1/me/playlists", {
@@ -99,7 +99,7 @@ Router.get("/spotify", async (req, res) => {
       });
     } catch (err) {
       console.log(err);
-      res.send(RESPONSE_CODES.error);
+      res.send(RESPONSE_MESSAGES.error);
     }
   });
 });
@@ -114,12 +114,12 @@ Router.get("/youtube", async (req, res) => {
       );
 
       if (!googleAccessToken) {
-        return res.send(RESPONSE_CODES["no-user"]);
+        return res.send(RESPONSE_MESSAGES.noUser);
       }
 
       const auth = googleOauth2client({ access_token: googleAccessToken });
       if (!auth) {
-        return res.send(RESPONSE_CODES.error);
+        return res.send(RESPONSE_MESSAGES.error);
       }
 
       const youtube = google.youtube({ version: "v3", auth });
@@ -140,7 +140,7 @@ Router.get("/youtube", async (req, res) => {
     } catch (err) {
       console.log(err);
       if (!err?.response?.data?.error) {
-        return res.send(RESPONSE_CODES.error);
+        return res.send(RESPONSE_MESSAGES.error);
       }
 
       if (err.response.data.error === "invalid_token") {
@@ -188,12 +188,12 @@ Router.get("/youtube/items", async (req, res) => {
       );
 
       if (!googleAccessToken) {
-        return res.send(RESPONSE_CODES["no-user"]);
+        return res.send(RESPONSE_MESSAGES.noUser);
       }
 
       const auth = googleOauth2client({ access_token: googleAccessToken });
       if (!auth) {
-        return res.send(RESPONSE_CODES.error);
+        return res.send(RESPONSE_MESSAGES.error);
       }
 
       const youtube = google.youtube({ version: "v3", auth });
@@ -217,7 +217,7 @@ Router.get("/youtube/items", async (req, res) => {
     } catch (err) {
       console.log(err);
       if (!err?.response?.data?.error) {
-        return res.send(RESPONSE_CODES.error);
+        return res.send(RESPONSE_MESSAGES.error);
       }
 
       if (err.response.data.error === "invalid_token") {

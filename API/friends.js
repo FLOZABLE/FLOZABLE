@@ -23,7 +23,7 @@ const {
 } = require("../Utils/validate");
 const { DateTime } = require("luxon");
 const { mainIo } = require("../sockets/io");
-const { RESPONSE_CODES, FRIENDS_LIMIT } = require("../Constant");
+const { RESPONSE_MESSAGES, FRIENDS_LIMIT } = require("../Constant");
 const Router = express.Router();
 const { autoSignin } = require("./auth");
 
@@ -61,10 +61,10 @@ async function sendFriendRequest(userId, targetId) {
     const targetInfo = usersInfo.find((user) => user.user_id === targetId);
 
     if (!userInfo) {
-      return RESPONSE_CODES["no-user"];
+      return RESPONSE_MESSAGES.noUser;
     }
     if (!targetInfo) {
-      return RESPONSE_CODES["no-target-user"];
+      return RESPONSE_MESSAGES.noTargetUser;
     }
 
     if (friends.includes(userId)) {
@@ -75,7 +75,7 @@ async function sendFriendRequest(userId, targetId) {
     }
 
     if (friends.length > FRIENDS_LIMIT) {
-      return RESPONSE_CODES["friends-limit-reached"];
+      return RESPONSE_MESSAGES.friendsLimitReached;
     }
 
     const friendRequests = await notificationCache(targetId, 0);
@@ -122,7 +122,7 @@ async function sendFriendRequest(userId, targetId) {
     };
   } catch (err) {
     console.log(err);
-    return RESPONSE_CODES.error;
+    return RESPONSE_MESSAGES.error;
   }
 }
 
@@ -179,13 +179,13 @@ async function replyFriendRequest(
         return friendReq.f === targetId;
       });
 
-      if (!friendReq) return RESPONSE_CODES["expired-request"];
+      if (!friendReq) return RESPONSE_MESSAGES.expiredRequest;
     } else {
       friendReq = await redisClient.hget(
         `user:${userId}:notifications`,
         notificationId
       );
-      if (!friendReq) return RESPONSE_CODES["expired-request"];
+      if (!friendReq) return RESPONSE_MESSAGES.expiredRequest;
 
       friendReq = { i: notificationId, ...JSON.parse(friendReq) };
     }
@@ -212,10 +212,10 @@ async function replyFriendRequest(
 
     const targetInfo = usersInfo.find((user) => user.user_id === targetId);
     if (!userInfo) {
-      return RESPONSE_CODES["no-user"];
+      return RESPONSE_MESSAGES.noUser;
     }
     if (!targetInfo) {
-      return RESPONSE_CODES["no-target-user"];
+      return RESPONSE_MESSAGES.noTargetUser;
     }
 
     if (userFriends.includes(targetId))
@@ -229,7 +229,7 @@ async function replyFriendRequest(
       userFriends.length >= FRIENDS_LIMIT ||
       targetUserFriends.length >= FRIENDS_LIMIT
     ) {
-      return RESPONSE_CODES["friends-limit-reached"];
+      return RESPONSE_MESSAGES.friendsLimitReached;
     }
 
     const date = Math.floor(new Date().getTime() / 1000);
@@ -318,7 +318,7 @@ async function replyFriendRequest(
     };
   } catch (err) {
     console.log(err);
-    return RESPONSE_CODES.error;
+    return RESPONSE_MESSAGES.error;
   }
 }
 
@@ -332,7 +332,7 @@ Router.post("/request", async (req, res) => {
       return res.send(response);
     } catch (err) {
       console.log(err);
-      res.send(RESPONSE_CODES.error);
+      res.send(RESPONSE_MESSAGES.error);
     }
   });
 });
@@ -357,14 +357,14 @@ Router.delete("/request", async (req, res) => {
       const friendReq = friendRequests.find((friendReq) => {
         return friendReq.f === userId;
       });
-      if (!friendReq) return res.send(RESPONSE_CODES["expired-request"]);
+      if (!friendReq) return res.send(RESPONSE_MESSAGES.expiredRequest);
       redisClient.hdel(`user:${targetId}:notifications`, friendReq.i);
       //remove it from ongoing friend req list
       redisClient.hdel(`user:${userId}:notifications`, friendReq.i);
       res.send({ success: true, status: "success" });
     } catch (err) {
       console.log(err);
-      res.send(RESPONSE_CODES.error);
+      res.send(RESPONSE_MESSAGES.error);
     }
   });
 });
@@ -390,7 +390,7 @@ Router.post("/request/reply", async (req, res) => {
       return res.send(response);
     } catch (err) {
       console.log(err);
-      res.send(RESPONSE_CODES.error);
+      res.send(RESPONSE_MESSAGES.error);
     }
   });
 });
@@ -434,7 +434,7 @@ Router.get("/recommended", async (req, res) => {
         return res.send({ success: true, status: "success", data: { users } });
       } catch (err) {
         console.log(err);
-        res.send(RESPONSE_CODES.error);
+        res.send(RESPONSE_MESSAGES.error);
       }
     },
     async () => {
@@ -444,7 +444,7 @@ Router.get("/recommended", async (req, res) => {
         return res.send({ success: true, data: { users } });
       } catch (err) {
         console.log(err);
-        res.send(RESPONSE_CODES.error);
+        res.send(RESPONSE_MESSAGES.error);
       }
     }
   );
@@ -460,7 +460,7 @@ Router.get("/status", async (req, res) => {
         userFriendsCache(connection, userId),
       ]);
 
-      if (!userInfo) return res.send(RESPONSE_CODES["no-user"]);
+      if (!userInfo) return res.send(RESPONSE_MESSAGES.noUser);
 
       const { timezone } = req.query;
 
@@ -547,7 +547,7 @@ Router.get("/status", async (req, res) => {
       return res.send({ success: true, status: "success", data: { friends } });
     } catch (err) {
       console.log(err);
-      res.send(RESPONSE_CODES.error);
+      res.send(RESPONSE_MESSAGES.error);
     }
   });
 });
@@ -575,7 +575,7 @@ Router.get("/search", async (req, res) => {
     res.send({ success: true, status: "success", data: { users } });
   } catch (err) {
     console.log(err);
-    res.send(RESPONSE_CODES.error);
+    res.send(RESPONSE_MESSAGES.error);
   }
 });
 
@@ -601,7 +601,7 @@ Router.post("/link/create", async (req, res) => {
     if (linkId) {
       return res.send({ success: true, status: "success", data: { linkId } });
     } else {
-      return res.send(RESPONSE_CODES.error);
+      return res.send(RESPONSE_MESSAGES.error);
     }
   });
 });
@@ -709,7 +709,7 @@ Router.get("/trends", async (req, res) => {
         userFriendsCache(connection, userId),
       ]);
 
-      if (!userInfo) return res.send(RESPONSE_CODES["no-user"]);
+      if (!userInfo) return res.send(RESPONSE_MESSAGES.noUser);
 
       const now = DateTime.now().setZone(timezone).startOf("day");
       const dates = getDates(now.toISO(), timezone, "day", 7);
@@ -790,7 +790,7 @@ Router.get("/trends", async (req, res) => {
       return res.send({ success: true, status: "success", data: { trends } });
     } catch (err) {
       console.log(err);
-      res.send(RESPONSE_CODES.error);
+      res.send(RESPONSE_MESSAGES.error);
     }
   });
 });
