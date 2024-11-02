@@ -4,7 +4,7 @@ const pool = require("../model/pool");
 const redisClient = require("../model/redis");
 const { cacheExtensionToken } = require("../services/redisLoader");
 const { validateURL, validateOption } = require("../Utils/validate");
-const { RESPONSE_CODES } = require("../Constant");
+const { RESPONSE_MESSAGES } = require("../Constant");
 const { extensionIo } = require("../sockets/io");
 const { autoSignin } = require("./auth");
 
@@ -13,12 +13,12 @@ Router.post("/auth", async (req, res) => {
     try {
       const token = await cacheExtensionToken(userId);
       if (!token) {
-        return res.send(RESPONSE_CODES.error);
+        return res.send(RESPONSE_MESSAGES.error);
       }
       res.send({ success: true, status: "success", data: { userId, token } });
     } catch (err) {
       console.log(err);
-      res.send(RESPONSE_CODES.error);
+      res.send(RESPONSE_MESSAGES.error);
     }
   });
 });
@@ -39,7 +39,7 @@ Router.get("/settings", async (req, res) => {
       });
     } catch (err) {
       console.log(err);
-      res.send(RESPONSE_CODES.error);
+      res.send(RESPONSE_MESSAGES.error);
     }
   });
 });
@@ -112,7 +112,7 @@ Router.put("/setting", async (req, res) => {
       });
     } catch (err) {
       console.log(err);
-      res.send(RESPONSE_CODES.error);
+      res.send(RESPONSE_MESSAGES.error);
     }
   });
 });
@@ -159,7 +159,7 @@ Router.patch("/setting", async (req, res) => {
       extensionIo.to(userId).emit("setting-updated", { ...setting, website });
     } catch (err) {
       console.log(err);
-      res.send(RESPONSE_CODES.error);
+      res.send(RESPONSE_MESSAGES.error);
     }
   });
 });
@@ -203,7 +203,7 @@ Router.get("/usage", async (req, res) => {
       res.send({ success: true, status: "success", data: { usage } });
     } catch (err) {
       console.log(err);
-      res.send(RESPONSE_CODES.error);
+      res.send(RESPONSE_MESSAGES.error);
     }
   });
 });

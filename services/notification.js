@@ -2,7 +2,7 @@ const crypto = require("crypto");
 const { DateTime } = require("luxon");
 const {} = require("../services/redisLoader");
 const webpush = require("web-push");
-const { RESPONSE_CODES } = require("../Constant");
+const { RESPONSE_MESSAGES } = require("../Constant");
 const schedule = require("node-schedule");
 const redisClient = require("../model/redis");
 
@@ -66,7 +66,7 @@ async function planPushNotification(
     );
 
     if (!userInfo) {
-      return RESPONSE_CODES["no-user"];
+      return RESPONSE_MESSAGES.noUser;
     }
 
     const { notification_endpoint, notification_keys, iv, key_salt } = userInfo;

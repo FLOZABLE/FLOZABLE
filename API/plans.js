@@ -24,7 +24,7 @@ const {
   clearGoogleAccessToken,
 } = require("../services/redisLoader");
 const schedule = require("node-schedule");
-const { RESPONSE_CODES } = require("../Constant");
+const { RESPONSE_MESSAGES } = require("../Constant");
 const { mainIo } = require("../sockets/io");
 const { googleOauth2client, autoSignin } = require("./auth");
 
@@ -67,7 +67,7 @@ Router.get("/", async (req, res) => {
       });
     } catch (err) {
       console.log(err);
-      res.send(RESPONSE_CODES.error);
+      res.send(RESPONSE_MESSAGES.error);
     }
   });
 });
@@ -94,7 +94,7 @@ Router.get("/google", async (req, res) => {
       });
       const calendars = await googleCalendar.calendarList.list();
       if (!calendars?.data) {
-        return res.send(RESPONSE_CODES.error);
+        return res.send(RESPONSE_MESSAGES.error);
       }
 
       await Promise.all(
@@ -157,7 +157,7 @@ Router.get("/google", async (req, res) => {
     } catch (err) {
       console.log(err);
       if (!err?.response?.data?.error) {
-        return res.send(RESPONSE_CODES.error);
+        return res.send(RESPONSE_MESSAGES.error);
       }
 
       if (err.response.data.error === "invalid_token") {
@@ -365,7 +365,7 @@ Router.patch("/plan", async (req, res) => {
       });
     } catch (err) {
       console.log(err);
-      res.send(RESPONSE_CODES.error);
+      res.send(RESPONSE_MESSAGES.error);
     }
   });
 });
@@ -381,7 +381,7 @@ Router.patch("/plan/google", async (req, res) => {
       const access_token = await googleAccessTokenCache(connection, userId);
 
       if (!access_token) {
-        return res.send(RESPONSE_CODES["not-authenticated"]);
+        return res.send(RESPONSE_MESSAGES.notAuthed);
       }
 
       const auth = googleOauth2client({ access_token });
@@ -413,11 +413,11 @@ Router.patch("/plan/google", async (req, res) => {
         });
       }
 
-      return res.send(RESPONSE_CODES.error);
+      return res.send(RESPONSE_MESSAGES.error);
     } catch (err) {
       console.log(err);
       if (!err?.response?.data?.error) {
-        return res.send(RESPONSE_CODES.error);
+        return res.send(RESPONSE_MESSAGES.error);
       }
 
       if (err.response.data.error === "invalid_token") {
@@ -471,7 +471,7 @@ Router.patch("/plan/status", async (req, res) => {
       res.send({ success: true, status: "success", message: "Plan Updated" });
     } catch (err) {
       console.log(err);
-      res.send(RESPONSE_CODES.error);
+      res.send(RESPONSE_MESSAGES.error);
     }
   });
 });
@@ -500,7 +500,7 @@ Router.delete("/plan", async (req, res) => {
       );
 
       if (!planInfo) {
-        return res.send(RESPONSE_CODES["no-plan"]);
+        return res.send(RESPONSE_MESSAGES.noPlan);
       }
 
       await connection.query(
@@ -518,7 +518,7 @@ Router.delete("/plan", async (req, res) => {
       });
     } catch (err) {
       console.log(err);
-      res.send(RESPONSE_CODES.error);
+      res.send(RESPONSE_MESSAGES.error);
     }
   });
 });
@@ -560,7 +560,7 @@ Router.get("/plan/users", async (req, res) => {
       );
 
       if (!planInfo) {
-        return res.send(RESPONSE_CODES["no-plan"]);
+        return res.send(RESPONSE_MESSAGES.noPlan);
       }
 
       planInfo.share = JSON.parse(planInfo.share).filter(
@@ -576,13 +576,13 @@ Router.get("/plan/users", async (req, res) => {
         { user_id: planInfo.user_id },
       ];
       if (!allowedUsers.find((user) => user.user_id === userId)) {
-        return res.send(RESPONSE_CODES["non-memeber"]);
+        return res.send(RESPONSE_MESSAGES["non-memeber"]);
       }
 
       res.send({ success: true, status: "success", data: { planInfo } });
     } catch (err) {
       console.log(err);
-      res.send(RESPONSE_CODES.error);
+      res.send(RESPONSE_MESSAGES.error);
     }
   });
 });
@@ -624,10 +624,10 @@ Router.post("/plan/share", async (req, res) => {
       ]);
 
       if (!userInfo)
-        return res.send({ success: false, reason: RESPONSE_CODES["no-user"] });
+        return res.send({ success: false, reason: RESPONSE_MESSAGES.noUser });
 
       if (!plan) {
-        return res.send(RESPONSE_CODES["no-plan"]);
+        return res.send(RESPONSE_MESSAGES.noPlan);
       }
 
       plan.share = plan.share ? plan.share.split(",") : [];
@@ -702,7 +702,7 @@ Router.post("/plan/share", async (req, res) => {
       });
     } catch (err) {
       console.log(err);
-      res.send(RESPONSE_CODES.error);
+      res.send(RESPONSE_MESSAGES.error);
     }
   });
 });
@@ -757,7 +757,7 @@ Router.delete("/plan/share", async (req, res) => {
         { user_id: planInfo.user_id },
       ];
       if (!allowedUsers.find((user) => user.user_id === userId)) {
-        return res.send(RESPONSE_CODES["non-memeber"]);
+        return res.send(RESPONSE_MESSAGES["non-memeber"]);
       }
 
       await connection.query(
@@ -778,7 +778,7 @@ Router.delete("/plan/share", async (req, res) => {
       res.send({ success: true, status: "success", message: `Removed user!` });
     } catch (err) {
       console.log(err);
-      res.send(RESPONSE_CODES.error);
+      res.send(RESPONSE_MESSAGES.error);
     }
   });
 });
@@ -804,7 +804,7 @@ Router.post("/plan/share/respond", async (req, res) => {
         notificationId
       );
 
-      if (!notification) return res.send(RESPONSE_CODES["expired-request"]);
+      if (!notification) return res.send(RESPONSE_MESSAGES.expiredRequest);
 
       const plan_id = JSON.parse(notification).pi;
 
@@ -833,7 +833,7 @@ Router.post("/plan/share/respond", async (req, res) => {
       });
     } catch (err) {
       console.log(err);
-      res.send(RESPONSE_CODES.error);
+      res.send(RESPONSE_MESSAGES.error);
     }
   });
 });

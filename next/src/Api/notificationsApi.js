@@ -1,5 +1,10 @@
 import AxiosInstance from "@/app/utils/axiosInstance";
 
+async function getNotifications() {
+  const response = await AxiosInstance.get(`/notifications`);
+  return response.data;
+}
+
 async function getVapidKeys() {
   const response = await AxiosInstance.get(`/notifications/vapidkeys`);
   return response.data;
@@ -19,4 +24,9 @@ async function postNotificationsRead(notificationId) {
   return response.data;
 }
 
-export { getVapidKeys, postNotificationsSubscribe, postNotificationsRead };
+export {
+  getNotifications,
+  getVapidKeys,
+  postNotificationsSubscribe,
+  postNotificationsRead,
+};
