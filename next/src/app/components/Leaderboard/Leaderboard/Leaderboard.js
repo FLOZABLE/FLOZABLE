@@ -40,8 +40,10 @@ export default function Leaderboard({ viewer, viewDate, isOnlyFriends }) {
       setRankings(rankingsData.data.rankings);
     } else {
       setRankings(
-        rankingsData.data.rankings.filter((ranking) =>
-          userInfo.friends.includes(ranking.user_id)
+        rankingsData.data.rankings.filter(
+          (ranking) =>
+            userInfo.friends.includes(ranking.user_id) ||
+            ranking.user_id === userInfo.user_id
         )
       );
     }

@@ -23,7 +23,11 @@ function RankingContainer({ title, viewDate, viewer, isOnlyFriends }) {
 
   if (userInfo && isOnlyFriends) {
     slicedRanking = rankingsData.data.rankings
-      .filter((ranking) => userInfo.friends.includes(ranking.user_id))
+      .filter(
+        (ranking) =>
+          userInfo.friends.includes(ranking.user_id) ||
+          ranking.user_id === userInfo.user_id
+      )
       .slice(0, 3);
   } else {
     slicedRanking = rankingsData.data.rankings.slice(0, 3);
