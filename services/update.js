@@ -38,6 +38,8 @@ const {
   createWebsiteUsageTable,
   createProductsTable,
   createPurchasesTable,
+  createNotificationsTable,
+  createNotificationTypesTable,
 } = require("../Utils/query");
 const pool = require("../model/pool");
 const {
@@ -58,6 +60,7 @@ readline.question(
   4) createGroups:NUMBERS
   5) createFriends:MIN:MAX
   6) updateBotSubjectColor
+  7) insertNotificationTypes
   `,
   async (command) => {
     if (command === "maria:0") {
@@ -75,6 +78,8 @@ readline.question(
       await createFriends(parseInt(min), parseInt(max));
     } else if (command === "updateBotSubjectColor") {
       await updateBotSubjectsColor();
+    } else if (command === "insertNotificationTypes") {
+      await insertNotificationTypes();
     }
     readline.close();
   }
@@ -107,6 +112,9 @@ async function initializeMariadb() {
     await createWebsiteUsageTable();
     await createProductsTable();
     await createPurchasesTable();
+    await createNotificationTypesTable();
+    await createNotificationsTable();
+    await insertNotificationTypes();
 
     console.log("Initialized mariadb");
   } catch (err) {
@@ -173,6 +181,37 @@ async function syncStripeProducts() {
     }
 
     console.log(products);
+  } catch (err) {
+    console.log(err);
+  }
+}
+
+async function insertNotificationTypes() {
+  try {
+    const connection = pool.promise();
+
+    const types = [
+      ["subject_share"],
+      ["subject_shared"],
+      ["plan_share"],
+      ["plan_shared"],
+      ["group_invitation"],
+      ["group_kicked"],
+      ["friend_request"],
+      ["friend_accept"],
+      ["chat_request"],
+      ["admin_message"],
+      ["other"],
+    ];
+
+    await connection.query(
+      `
+      INSERT IGNORE INTO notification_types 
+      (type_name) 
+      VALUES ?
+      `,
+      [types]
+    );
   } catch (err) {
     console.log(err);
   }

@@ -365,6 +365,7 @@ async function createProductsTable() {
   );
   `);
 }
+
 async function createPurchasesTable() {
   const connection = pool.promise();
   await connection.query(`
@@ -376,6 +377,34 @@ async function createPurchasesTable() {
     purchased_at INT(10),
     FOREIGN KEY (user_id) REFERENCES users(user_id),
     FOREIGN KEY (product_id, price_id) REFERENCES products(product_id, price_id)
+  );
+  `);
+}
+
+async function createNotificationTypesTable() {
+  const connection = pool.promise();
+  await connection.query(`
+    CREATE TABLE IF NOT EXISTS notification_types (
+      type_id INT PRIMARY KEY AUTO_INCREMENT,
+      type_name VARCHAR(50) NOT NULL UNIQUE
+    );
+  `);
+}
+
+async function createNotificationsTable() {
+  const connection = pool.promise();
+  await connection.query(`
+  CREATE TABLE IF NOT EXISTS notifications (
+    notification_id VARCHAR(10) PRIMARY KEY,
+    user_id VARCHAR(10),
+    from_user_id VARCHAR(10),
+    sent_at VARCHAR(10),
+    message VARCHAR(300),
+    type_id INT,
+    related_id VARCHAR(10),
+    FOREIGN KEY (user_id) REFERENCES users(user_id),
+    FOREIGN KEY (from_user_id) REFERENCES users(user_id),
+    FOREIGN KEY (type_id) REFERENCES notification_types(type_id)
   );
   `);
 }
@@ -406,4 +435,6 @@ module.exports = {
   createWebsiteUsageTable,
   createProductsTable,
   createPurchasesTable,
+  createNotificationTypesTable,
+  createNotificationsTable,
 };
