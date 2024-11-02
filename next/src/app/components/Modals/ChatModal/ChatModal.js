@@ -209,7 +209,7 @@ function ChatModal({}) {
           newChatrooms[chatroomIndex].lastMsg = message;
           toast.info(
             <div>
-              {chatrooms[chatroomIndex].name}
+              {newChatrooms[chatroomIndex].name}
               <br />"{message.message}"
             </div>
           );

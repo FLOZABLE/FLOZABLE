@@ -12,7 +12,7 @@ const {
 } = require("../services/redisLoader");
 const { validateStrictString, validateBoolean } = require("../Utils/validate");
 const { mainIo } = require("../sockets/io");
-const { RESPONSE_CODES } = require("../Constant");
+const { RESPONSE_MESSAGES } = require("../Constant");
 const { autoSignin } = require("./auth");
 
 Router.get("/rooms", async (req, res) => {
@@ -79,7 +79,7 @@ Router.get("/rooms", async (req, res) => {
       res.send({ success: true, status: "success", data: { chatrooms } });
     } catch (err) {
       console.log(err);
-      res.send(RESPONSE_CODES.error);
+      res.send(RESPONSE_MESSAGES.error);
     }
   });
 });
@@ -93,7 +93,7 @@ Router.get("/messages", async (req, res) => {
       const members = await chatroomMembersCache(null, chatroom_id);
 
       if (!members.includes(userId)) {
-        return res.send(RESPONSE_CODES["non-member"]);
+        return res.send(RESPONSE_MESSAGES.nonMember);
       }
 
       const messages = await chatroomMessagesCache(
@@ -142,13 +142,13 @@ Router.get("/members", async (req, res) => {
       );
 
       if (!members.find((member) => member.user_id === userId)) {
-        return res.send(RESPONSE_CODES["non-member"]);
+        return res.send(RESPONSE_MESSAGES.nonMember);
       }
 
       res.send({ success: true, status: "success", data: { members } });
     } catch (err) {
       console.log(err);
-      res.send(RESPONSE_CODES.error);
+      res.send(RESPONSE_MESSAGES.error);
     }
   });
 });
@@ -210,10 +210,10 @@ Router.post("/request", async (req, res) => {
       const targetUser = usersInfo.find((user) => user.user_id === targetId);
 
       if (!userInfo) {
-        return RESPONSE_CODES["no-user"];
+        return RESPONSE_MESSAGES.noUser;
       }
       if (!targetUser) {
-        return RESPONSE_CODES["no-target-user"];
+        return RESPONSE_MESSAGES.noTargetUser;
       }
 
       const targetDmRequests = await notificationCache(targetId, 4);
@@ -253,7 +253,7 @@ Router.post("/request", async (req, res) => {
       });
     } catch (err) {
       console.log(err);
-      res.send(RESPONSE_CODES.error);
+      res.send(RESPONSE_MESSAGES.error);
     }
   });
 });
@@ -294,12 +294,12 @@ Router.post("/request/reply", async (req, res) => {
         notificationId
       );
       if (!chatReq) {
-        return res.send(RESPONSE_CODES["expired-request"]);
+        return res.send(RESPONSE_MESSAGES.expiredRequest);
       }
 
       const parsedChatReq = JSON.parse(chatReq);
       if (!parsedChatReq.f === targetId) {
-        return res.send(RESPONSE_CODES["expired-request"]);
+        return res.send(RESPONSE_MESSAGES.expiredRequest);
       }
 
       redisClient.hdel(`user:${userId}:notifications`, notificationId);
@@ -319,10 +319,10 @@ Router.post("/request/reply", async (req, res) => {
 
       const targetUser = usersInfo.find((user) => user.user_id === targetId);
       if (!userInfo) {
-        return RESPONSE_CODES["no-user"];
+        return RESPONSE_MESSAGES.noUser;
       }
       if (!targetUser) {
-        return RESPONSE_CODES["no-target-user"];
+        return RESPONSE_MESSAGES.noTargetUser;
       }
 
       const chatroom_id = generateRandomId(10);
@@ -361,7 +361,7 @@ Router.post("/request/reply", async (req, res) => {
       });
     } catch (err) {
       console.log(err);
-      res.send(RESPONSE_CODES.error);
+      res.send(RESPONSE_MESSAGES.error);
     }
   });
 });

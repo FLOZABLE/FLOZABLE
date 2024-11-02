@@ -8,7 +8,7 @@ const {
   userCache,
   userFriendsCache,
 } = require("../services/redisLoader");
-const { RESPONSE_CODES } = require("../Constant");
+const { RESPONSE_MESSAGES } = require("../Constant");
 const { getDates } = require("../Utils/tool");
 const { autoSignin } = require("./auth");
 
@@ -85,7 +85,7 @@ Router.get("/", async (req, res) => {
     });
   } catch (err) {
     console.log(err);
-    res.send(RESPONSE_CODES.error);
+    res.send(RESPONSE_MESSAGES.error);
   }
 });
 
@@ -141,7 +141,7 @@ Router.get("/user", async (req, res) => {
     });
   } catch (err) {
     console.log(err);
-    res.send(RESPONSE_CODES.error);
+    res.send(RESPONSE_MESSAGES.error);
   }
 });
 
@@ -155,7 +155,7 @@ Router.get("/friends", async (req, res) => {
         userFriendsCache(connection, userId),
       ]);
 
-      if (!userInfo) return res.send(RESPONSE_CODES["no-user"]);
+      if (!userInfo) return res.send(RESPONSE_MESSAGES.noUser);
 
       const { mode, timezone, date } = req.query;
 
@@ -217,7 +217,7 @@ Router.get("/friends", async (req, res) => {
       });
     } catch (err) {
       console.log(err);
-      res.send(RESPONSE_CODES.error);
+      res.send(RESPONSE_MESSAGES.error);
     }
   });
 });
