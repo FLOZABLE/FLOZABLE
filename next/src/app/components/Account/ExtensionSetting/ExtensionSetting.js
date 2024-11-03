@@ -26,7 +26,8 @@ function ExtensionSetting() {
     (async () => {
       const response = await putExtensionSetting(url);
       if (response.success) {
-        setSettings((prev) => [...prev, data.setting]);
+        const { setting, domain } = response.data;
+        setSettings((prev) => [...prev, setting]);
         setUrl("");
 
         setTimeout(() => {
@@ -41,19 +42,21 @@ function ExtensionSetting() {
   }, [url]);
 
   const settingUpdate = useCallback(
-    (website, mode, value) => {
-      (async () => {
+    async (website, mode, value) => {
+      try {
         const response = await patchExtensionSetting({ website, mode, value });
-        if (response.success) {
-          const settingIndex = settings.findIndex(
-            (setting) => setting.website === website
-          );
-          if (settingIndex === -1) return;
-          const newSettings = [...settings];
-          newSettings[settingIndex][mode] = value;
-          setSettings(newSettings);
-        };
-      })();
+        if (!response.success) return;
+
+        const settingIndex = settings.findIndex(
+          (setting) => setting.website === website
+        );
+        if (settingIndex === -1) return;
+        const newSettings = [...settings];
+        newSettings[settingIndex][mode] = value;
+        setSettings(newSettings);
+      } catch (err) {
+        console.log(err);
+      }
     },
     [settings]
   );

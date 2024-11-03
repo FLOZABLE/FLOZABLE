@@ -12,14 +12,18 @@ export default function AccountBtn() {
     <div
       className={styles.AccountBtn}
       onClick={async () => {
-        if (userInfo) {
-          const response = await getAuthLogout();
-          if (response.success) {
-            clearAccountData();
-            window.location.reload();
+        try {
+          if (userInfo) {
+            const response = await getAuthLogout();
+            if (response.success) {
+              clearAccountData();
+              window.location.reload();
+            }
+          } else {
+            setIsAccountModal(true);
           }
-        } else {
-          setIsAccountModal(true);
+        } catch (err) {
+          console.log(err);
         }
       }}
     >

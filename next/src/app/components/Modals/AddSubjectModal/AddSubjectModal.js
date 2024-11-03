@@ -71,8 +71,8 @@ function AddSubjectModal({}) {
   }, [tutorial]);
 
   const onSubmit = useCallback(
-    (subject) => {
-      (async () => {
+    async (subject) => {
+      try {
         const response = await putSubjectsSubject(subject);
         if (!response.success) return;
 
@@ -87,7 +87,9 @@ function AddSubjectModal({}) {
         if (tutorial === 4) {
           setTutorial(5);
         }
-      })();
+      } catch (err) {
+        console.log(err);
+      }
     },
     [tutorial, subjects]
   );

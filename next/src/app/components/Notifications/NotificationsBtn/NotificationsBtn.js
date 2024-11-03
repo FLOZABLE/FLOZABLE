@@ -61,11 +61,14 @@ export default function NotificationsBtn() {
   }, [notifications]);
 
   const friendRequestReply = useCallback(
-    (notification, accepted) => {
-      const targetId = notification?.f?.user_id;
-      const notificationId = notification?.i;
+    async (notification, accepted) => {
+      try {
+        const targetId = notification?.f?.user_id;
+        const notificationId = notification?.i;
+        setNotifications(
+          notifications.filter((notif) => notif.i !== notificationId)
+        );
 
-      (async () => {
         const response = await postFriendsRequestReply({
           targetId,
           accepted,
@@ -77,58 +80,63 @@ export default function NotificationsBtn() {
           friendsStatusRefetch();
           friendsTrendRefetch();
         }, 500);
-      })();
-
-      setNotifications(
-        notifications.filter((notif) => notif.i !== notificationId)
-      );
+      } catch (err) {
+        console.log(err);
+      }
     },
     [notifications]
   );
 
   const deleteNotification = useCallback(
     (notification) => {
-      const notificationId = notification?.i;
+      try {
+        const notificationId = notification?.i;
+        setNotifications(
+          notifications.filter((notif) => notif.i !== notificationId)
+        );
 
-      postNotificationsRead(notificationId);
-
-      setNotifications(
-        notifications.filter((notif) => notif.i !== notificationId)
-      );
+        postNotificationsRead(notificationId);
+      } catch (err) {
+        console.log(err);
+      }
     },
     [notifications]
   );
 
   const chatRequestReply = useCallback(
-    (notification, accepted) => {
-      const targetId = notification?.f?.user_id;
-      const notificationId = notification?.i;
-
-      (async () => {
-        const response = await postChatRequestReply({
-          targetId,
-          accepted,
-          notificationId,
-        });
-
-        if (!response.success) return;
+    async (notification, accepted) => {
+      try {
+        const targetId = notification?.f?.user_id;
+        const notificationId = notification?.i;
 
         setNotifications(
           notifications.filter((notif) => notif.i !== notificationId)
         );
-      })();
+
+        postChatRequestReply({
+          targetId,
+          accepted,
+          notificationId,
+        });
+      } catch (err) {
+        console.log(err);
+      }
     },
     [notifications]
   );
 
   const planShareRespond = useCallback(
     (notification, accepted) => {
-      const notificationId = notification?.i;
+      try {
+        const notificationId = notification?.i;
+        setNotifications(
+          notifications.filter((notif) => notif.i !== notificationId)
+        );
 
-      postPlanShareRespond(notificationId, accepted);
-      setNotifications(
-        notifications.filter((notif) => notif.i !== notificationId)
-      );
+        postPlanShareRespond(notificationId, accepted);
+      } catch (err) {
+        console.log(err);
+      }
     },
     [notifications]
   );

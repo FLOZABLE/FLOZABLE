@@ -32,8 +32,8 @@ function CreateGroupModal({ isOpen, setIsOpen }) {
 
   const [isSelectColor, setIsSelectColor] = useState(false);
 
-  const submit = useCallback(() => {
-    (async () => {
+  const submit = useCallback(async () => {
+    try {
       const response = await putGroup(newGroup);
       if (!response.success) return;
 
@@ -46,7 +46,9 @@ function CreateGroupModal({ isOpen, setIsOpen }) {
       setTimeout(() => {
         MittInstance.emit("moveMyGroupsViewer");
       }, 100);
-    })();
+    } catch (err) {
+      console.log(err);
+    }
   }, [newGroup]);
 
   return (

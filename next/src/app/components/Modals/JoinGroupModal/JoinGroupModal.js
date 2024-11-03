@@ -21,16 +21,11 @@ function JoinGroupModal() {
 
   const [password, setPassword] = useState("");
 
-  const handlePwInput = (e) => {
-    setPassword(e.target.value);
-  };
+  const submit = useCallback(async () => {
+    try {
+      if (!joinGroupModal.group) return;
+      const groupId = joinGroupModal.group.group_id;
 
-  const submit = useCallback(() => {
-    if (!joinGroupModal.group) return;
-
-    const groupId = joinGroupModal.group.group_id;
-
-    (async () => {
       const response = await postGroupJoin(groupId, password);
       if (!response.success) return;
 
@@ -52,7 +47,9 @@ function JoinGroupModal() {
       router.push(window.location.pathname, { scroll: false });
 
       document.body.scrollIntoView({ behavior: "smooth", block: "start" });
-    })();
+    } catch (err) {
+      console.log(err);
+    }
   }, [password, joinGroupModal]);
 
   useEffect(() => {
@@ -99,7 +96,7 @@ function JoinGroupModal() {
                 <div>
                   <CustomInput
                     input={password}
-                    handleInput={handlePwInput}
+                    handleInput={(e) => setPassword(e.target.value)}
                     handleEnter={submit}
                     icon={faKey}
                     placeHolder={"Enter the group password to join"}

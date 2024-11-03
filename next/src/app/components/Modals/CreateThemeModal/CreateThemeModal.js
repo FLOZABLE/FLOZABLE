@@ -19,10 +19,9 @@ function CreateThemeModal({ isOpen, setIsOpen }) {
     url: "",
   });
 
-  const submit = useCallback(() => {
-    (async () => {
+  const submit = useCallback(async () => {
+    try {
       const response = await putThemesTheme(newTheme);
-
       if (!response.success) return;
 
       const { data } = response;
@@ -35,7 +34,9 @@ function CreateThemeModal({ isOpen, setIsOpen }) {
         url: "",
       });
       setThemes((prev) => [...prev, data.theme]);
-    })();
+    } catch (err) {
+      console.log(err);
+    }
   }, [newTheme]);
 
   const setValue = (value) => {

@@ -35,13 +35,15 @@ function MyGroupsViewer({}) {
 
   const groupId = searchParams.get("group");
 
-  const leaveGroup = useCallback((groupId) => {
-    (async () => {
+  const leaveGroup = useCallback(async (groupId) => {
+    try {
       const response = await postGroupLeave(groupId);
       if (!response.success) return;
 
       setMyGroups((prev) => prev.filter((group) => group.group_id !== groupId));
-    })();
+    } catch (err) {
+      console.log(err);
+    }
   }, []);
 
   useEffect(() => {

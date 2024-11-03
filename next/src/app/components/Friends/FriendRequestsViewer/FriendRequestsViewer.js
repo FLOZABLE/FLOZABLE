@@ -57,23 +57,25 @@ function FriendRequestsViewer() {
   }, [notifications]);
 
   const friendRequestReply = useCallback(
-    (targetId, accepted, notificationId) => {
-      (async () => {
+    async (targetId, accepted, notificationId) => {
+      try {
         const response = await postFriendsRequestReply({
           targetId,
           accepted,
           notificationId,
         });
 
-        if (response.success) {
-          friendsStatusRefetch();
-          friendsTrendRefetch();
-        }
-      })();
+        setNotifications(
+          notifications.filter((notif) => notif.i !== notificationId)
+        );
 
-      setNotifications(
-        notifications.filter((notif) => notif.i !== notificationId)
-      );
+        if (!response.success) return;
+        
+        friendsStatusRefetch();
+        friendsTrendRefetch();
+      } catch (err) {
+        console.log(err);
+      }
     },
     [notifications]
   );

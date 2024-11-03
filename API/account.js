@@ -85,14 +85,11 @@ Router.get("/google", async (req, res) => {
         userId
       );
 
+      console.log(googleAccessToken, "gd");
+
       if (!googleAccessToken) {
-        return res.status(401).send({
-          success: false,
-          status: 401,
-          error: {
-            reason: "Not Authenticated",
-          },
-        });
+        const response = RESPONSE_MESSAGES.notAuthed(null);
+        return res.status(response.status).send(response);
       }
 
       const auth = googleOauth2client({ access_token: googleAccessToken });

@@ -14,8 +14,8 @@ function ThemeCategoryBtn({ theme, bgColor = "#ffffffC0", color = "#000" }) {
   const [isOpen, setIsOpen] = useState(false);
 
   const save = useCallback(
-    (category) => {
-      (async () => {
+    async (category) => {
+      try {
         const categoryId = category.id;
         const categoryName = category.name;
         const response = await postThemesThemeSave({
@@ -37,7 +37,9 @@ function ThemeCategoryBtn({ theme, bgColor = "#ffffffC0", color = "#000" }) {
         setUserThemes(newUserThemes);
 
         router.push(window.location.pathname, { scroll: false });
-      })();
+      } catch (err) {
+        console.log(err);
+      }
     },
     [theme, userThemes]
   );

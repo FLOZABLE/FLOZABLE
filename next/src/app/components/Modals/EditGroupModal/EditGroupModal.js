@@ -33,10 +33,9 @@ function EditGroupModal() {
 
   const [isSelectColor, setIsSelectColor] = useState(false);
 
-  const onSubmit = useCallback(() => {
-    (async () => {
+  const onSubmit = useCallback(async () => {
+    try {
       const response = await patchGroup(newGroup);
-
       if (!response.success) return;
 
       setEditGroupModal({ group_id: null, opened: false });
@@ -47,20 +46,23 @@ function EditGroupModal() {
       if (groupIndex === -1) return;
       newGroups[groupIndex] = newGroup;
       setGroups(newGroups);
-    })();
+    } catch (err) {
+      console.log(err);
+    }
   }, [newGroup, groups]);
 
-  const onDelete = useCallback(() => {
-    (async () => {
+  const onDelete = useCallback(async () => {
+    try {
       const groupId = newGroup.group_id;
       const response = await deleteGroup(groupId);
-
       if (!response.success) return;
 
       setEditGroupModal({ group_id: null, opened: false });
       const newGroups = groups.filter((group) => group.group_id !== groupId);
       setGroups(newGroups);
-    })();
+    } catch (err) {
+      console.log(err);
+    }
   }, [newGroup, groups]);
 
   useEffect(() => {

@@ -32,16 +32,21 @@ function GroupContainer({
   const [totalTime, setTotalTime] = useState("0 h");
 
   const onLike = useCallback(async () => {
-    if (!userInfo?.user_id) return;
+    try {
+      if (!userInfo?.user_id) return;
 
-    const like = !likes.includes(userInfo?.user_id);
-    const groupId = groupInfo.group_id;
-    const data = await postGroupLike({ groupId, like });
-    if (!data.success) return;
-    if (like) {
-      setLikes([...new Set([...likes, userInfo.user_id])]);
-    } else {
-      setLikes(likes.filter((like) => like !== userInfo.user_id));
+      const like = !likes.includes(userInfo?.user_id);
+      const groupId = groupInfo.group_id;
+      const response = await postGroupLike({ groupId, like });
+      if (!response.success) return;
+
+      if (like) {
+        setLikes([...new Set([...likes, userInfo.user_id])]);
+      } else {
+        setLikes(likes.filter((like) => like !== userInfo.user_id));
+      }
+    } catch (err) {
+      console.log(err);
     }
   }, [likes, groupInfo, userInfo]);
 
