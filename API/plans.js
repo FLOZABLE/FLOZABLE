@@ -2,7 +2,7 @@ const express = require("express");
 const Router = express.Router();
 const pool = require("../model/pool");
 const redisClient = require("../model/redis");
-const { generateRandomId } = require("../Utils/tool");
+const { generateRandomId } = require("../utils/tool");
 const {
   planPushNotification,
   NOTIFICATION_PAYLOADS,
@@ -15,7 +15,7 @@ const {
   validateLength,
   validateString,
   validateBoolean,
-} = require("../Utils/validate");
+} = require("../utils/validate");
 const {
   googleAccessTokenCache,
   userCache,
@@ -24,7 +24,7 @@ const {
   clearGoogleAccessToken,
 } = require("../services/redisLoader");
 const schedule = require("node-schedule");
-const { RESPONSE_MESSAGES } = require("../Constant");
+const RESPONSE_MESSAGES = require("../utils/responses");
 const { mainIo } = require("../sockets/io");
 const { googleOauth2client, autoSignin } = require("./auth");
 
@@ -60,14 +60,15 @@ Router.get("/", async (req, res) => {
         plan.isEditable = true;
       });
 
-      return res.send({
+      return res.status(200).send({
         success: true,
-        status: "success",
+        status: 200,
         data: { plans: plans },
       });
     } catch (err) {
       console.log(err);
-      res.send(RESPONSE_MESSAGES.error);
+      const response = RESPONSE_MESSAGES.error();
+      return res.status(response.status).send(response);
     }
   });
 });
@@ -80,9 +81,9 @@ Router.get("/google", async (req, res) => {
       const access_token = await googleAccessTokenCache(connection, userId);
 
       if (!access_token) {
-        return res.send({
+        return res.status(200).send({
           success: true,
-          status: "success",
+          status: 200,
           data: { plans: plans },
         });
       }
@@ -94,7 +95,8 @@ Router.get("/google", async (req, res) => {
       });
       const calendars = await googleCalendar.calendarList.list();
       if (!calendars?.data) {
-        return res.send(RESPONSE_MESSAGES.error);
+        const response = RESPONSE_MESSAGES.error();
+        return res.status(response.status).send(response);
       }
 
       await Promise.all(
@@ -149,24 +151,25 @@ Router.get("/google", async (req, res) => {
         })
       );
 
-      return res.send({
+      return res.status(200).send({
         success: true,
-        status: "success",
+        status: 200,
         data: { plans: plans },
       });
     } catch (err) {
       console.log(err);
       if (!err?.response?.data?.error) {
-        return res.send(RESPONSE_MESSAGES.error);
+        const response = RESPONSE_MESSAGES.error();
+        return res.status(response.status).send(response);
       }
 
       if (err.response.data.error === "invalid_token") {
         clearGoogleAccessToken(connection, userId);
       }
-      
-      return res.send({
+
+      return res.status(400).send({
         success: false,
-        status: "error",
+        status: 400,
         error: {
           code: err.response.data.error.code,
           reason: err.response.data.error.message,
@@ -197,9 +200,9 @@ Router.patch("/plan", async (req, res) => {
 
       const isValidTitle = validateString(title, "Title", 100);
       if (!isValidTitle.isValid) {
-        return res.send({
+        return res.status(400).send({
           success: false,
-          status: "error",
+          status: 400,
           message: isValidTitle.reason,
           error: { reason: isValidTitle.reason },
         });
@@ -207,9 +210,9 @@ Router.patch("/plan", async (req, res) => {
 
       const isValidPlanId = validateStrictString(plan_id, "Id", 10, 10);
       if (!isValidPlanId.isValid) {
-        return res.send({
+        return res.status(400).send({
           success: false,
-          status: "error",
+          status: 400,
           message: isValidPlanId.reason,
           error: { reason: isValidPlanId.reason },
         });
@@ -222,9 +225,9 @@ Router.patch("/plan", async (req, res) => {
         minPlanTime
       );
       if (!isValidStart.isValid) {
-        return res.send({
+        return res.status(400).send({
           success: false,
-          status: "error",
+          status: 400,
           message: isValidStart.reason,
           error: { reason: isValidStart.reason },
         });
@@ -232,9 +235,9 @@ Router.patch("/plan", async (req, res) => {
 
       const isValidEnd = validateInteger(end, "End time", maxPlanTime, start);
       if (!isValidEnd.isValid) {
-        return res.send({
+        return res.status(400).send({
           success: false,
-          status: "error",
+          status: 400,
           message: isValidEnd.reason,
           error: { reason: isValidEnd.reason },
         });
@@ -242,9 +245,9 @@ Router.patch("/plan", async (req, res) => {
 
       const isValidRepeat = validateInteger(repeat, "Repeat", 3, 0);
       if (!isValidRepeat.isValid) {
-        return res.send({
+        return res.status(400).send({
           success: false,
-          status: "error",
+          status: 400,
           message: isValidRepeat.reason,
           error: { reason: isValidRepeat.reason },
         });
@@ -256,9 +259,9 @@ Router.patch("/plan", async (req, res) => {
         300
       );
       if (!isValidDescription.isValid) {
-        return res.send({
+        return res.status(400).send({
           success: false,
-          status: "error",
+          status: 400,
           message: isValidDescription.reason,
           error: { reason: isValidDescription.reason },
         });
@@ -271,9 +274,9 @@ Router.patch("/plan", async (req, res) => {
         10
       );
       if (!isValidSubjectId.isValid) {
-        return res.send({
+        return res.status(400).send({
           success: false,
-          status: "error",
+          status: 400,
           message: isValidSubjectId.reason,
           error: { reason: isValidSubjectId.reason },
         });
@@ -286,9 +289,9 @@ Router.patch("/plan", async (req, res) => {
         1800
       );
       if (!isValidNotification.isValid) {
-        return res.send({
+        return res.status(400).send({
           success: false,
-          status: "error",
+          status: 400,
           message: isValidNotification.reason,
           error: { reason: isValidNotification.reason },
         });
@@ -296,9 +299,9 @@ Router.patch("/plan", async (req, res) => {
 
       const isValidPriority = validateStrictString(priority, "Subject", 10, 10);
       if (!isValidPriority.isValid) {
-        return res.send({
+        return res.status(400).send({
           success: false,
-          status: "error",
+          status: 400,
           message: isValidPriority.reason,
           error: { reason: isValidPriority.reason },
         });
@@ -306,9 +309,9 @@ Router.patch("/plan", async (req, res) => {
 
       const isValidCompleted = validateInteger(completed, "Completed", 0, 1);
       if (!isValidCompleted.isValid) {
-        return res.send({
+        return res.status(400).send({
           success: false,
-          status: "error",
+          status: 400,
           message: isValidCompleted.reason,
           error: { reason: isValidCompleted.reason },
         });
@@ -357,15 +360,16 @@ Router.patch("/plan", async (req, res) => {
       }
       //planNotification(insertInfo, userInfo[0], startTime)
       const is_new = plan_id === "0000000000";
-      res.send({
+      res.status(200).send({
         success: true,
-        status: "success",
+        status: 200,
         message: "Plan Saved!",
         data: { plan: newPlan, is_new },
       });
     } catch (err) {
       console.log(err);
-      res.send(RESPONSE_MESSAGES.error);
+      const response = RESPONSE_MESSAGES.error();
+      return res.status(response.status).send(response);
     }
   });
 });
@@ -381,7 +385,7 @@ Router.patch("/plan/google", async (req, res) => {
       const access_token = await googleAccessTokenCache(connection, userId);
 
       if (!access_token) {
-        return res.send(RESPONSE_MESSAGES.notAuthed);
+        return res.status(400).send(RESPONSE_MESSAGES.notAuthed);
       }
 
       const auth = googleOauth2client({ access_token });
@@ -406,27 +410,29 @@ Router.patch("/plan/google", async (req, res) => {
       });
 
       if (updateResults.status === 200) {
-        return res.send({
+        return res.status(200).send({
           success: true,
-          status: "success",
+          status: 200,
           message: "Plan updated!",
         });
       }
 
-      return res.send(RESPONSE_MESSAGES.error);
+      const response = RESPONSE_MESSAGES.error();
+      return res.status(response.status).send(response);
     } catch (err) {
       console.log(err);
       if (!err?.response?.data?.error) {
-        return res.send(RESPONSE_MESSAGES.error);
+        const response = RESPONSE_MESSAGES.error();
+        return res.status(response.status).send(response);
       }
 
       if (err.response.data.error === "invalid_token") {
         clearGoogleAccessToken(connection, userId);
       }
 
-      return res.send({
+      return res.status(400).send({
         success: false,
-        status: "error",
+        status: 400,
         error: {
           code: err.response.data.error.code,
           reason: err.response.data.error.message,
@@ -444,9 +450,9 @@ Router.patch("/plan/status", async (req, res) => {
       const isValidPlanId = validateStrictString(plan_id, "plan id", 10, 8);
 
       if (!isValidPlanId.isValid) {
-        return res.send({
+        return res.status(400).send({
           success: false,
-          status: "error",
+          status: 400,
           message: isValidPlanId.reason,
           error: { reason: isValidPlanId.reason },
         });
@@ -455,9 +461,9 @@ Router.patch("/plan/status", async (req, res) => {
       const isValidCompleted = validateInteger(completed, "completed", 1, 0);
 
       if (!isValidCompleted) {
-        return res.send({
+        return res.status(400).send({
           success: false,
-          status: "error",
+          status: 400,
           message: isValidCompleted.reason,
           error: { reason: isValidCompleted.reason },
         });
@@ -468,10 +474,13 @@ Router.patch("/plan/status", async (req, res) => {
         `UPDATE plans SET completed = ? WHERE plan_id = ? AND user_id = ?`,
         [completed, plan_id, userId]
       );
-      res.send({ success: true, status: "success", message: "Plan Updated" });
+      res
+        .status(200)
+        .send({ success: true, status: 200, message: "Plan Updated" });
     } catch (err) {
       console.log(err);
-      res.send(RESPONSE_MESSAGES.error);
+      const response = RESPONSE_MESSAGES.error();
+      return res.status(response.status).send(response);
     }
   });
 });
@@ -486,9 +495,9 @@ Router.delete("/plan", async (req, res) => {
       const isValidPlanId = validateStrictString(planId, "plan id", 10, 8);
 
       if (!isValidPlanId.isValid) {
-        return res.send({
+        return res.status(400).send({
           success: false,
-          status: "error",
+          status: 400,
           message: isValidPlanId.reason,
           error: { reason: isValidPlanId.reason },
         });
@@ -500,7 +509,8 @@ Router.delete("/plan", async (req, res) => {
       );
 
       if (!planInfo) {
-        return res.send(RESPONSE_MESSAGES.noPlan);
+        const response = RESPONSE_MESSAGES.noPlan();
+        return res.status(response.status).send(response);
       }
 
       await connection.query(
@@ -511,14 +521,15 @@ Router.delete("/plan", async (req, res) => {
         [planId, planId, userId, planId]
       );
 
-      res.send({
+      res.status(200).send({
         success: true,
-        status: "success",
+        status: 200,
         message: `Deleted plan ${planInfo.title}`,
       });
     } catch (err) {
       console.log(err);
-      res.send(RESPONSE_MESSAGES.error);
+      const response = RESPONSE_MESSAGES.error();
+      return res.status(response.status).send(response);
     }
   });
 });
@@ -531,9 +542,9 @@ Router.get("/plan/users", async (req, res) => {
       const isValidPlanId = validateStrictString(planId, "plan id", 10, 8);
 
       if (!isValidPlanId.isValid) {
-        return res.send({
+        return res.status(400).send({
           success: false,
-          status: "error",
+          status: 400,
           message: isValidPlanId.reason,
           error: { reason: isValidPlanId.reason },
         });
@@ -560,7 +571,8 @@ Router.get("/plan/users", async (req, res) => {
       );
 
       if (!planInfo) {
-        return res.send(RESPONSE_MESSAGES.noPlan);
+        const response = RESPONSE_MESSAGES.noPlan();
+        return res.status(response.status).send(response);
       }
 
       planInfo.share = JSON.parse(planInfo.share).filter(
@@ -576,13 +588,14 @@ Router.get("/plan/users", async (req, res) => {
         { user_id: planInfo.user_id },
       ];
       if (!allowedUsers.find((user) => user.user_id === userId)) {
-        return res.send(RESPONSE_MESSAGES["non-memeber"]);
+        return res.status(400).send(RESPONSE_MESSAGES["non-memeber"]);
       }
 
-      res.send({ success: true, status: "success", data: { planInfo } });
+      res.status(200).send({ success: true, status: 200, data: { planInfo } });
     } catch (err) {
       console.log(err);
-      res.send(RESPONSE_MESSAGES.error);
+      const response = RESPONSE_MESSAGES.error();
+      return res.status(response.status).send(response);
     }
   });
 });
@@ -593,9 +606,9 @@ Router.post("/plan/share", async (req, res) => {
       const { users, plan_id: planId } = req.body;
 
       if (!users.length) {
-        return res.send({
+        return res.status(400).send({
           success: "false",
-          status: "error",
+          status: 400,
           message: "No users selected",
           error: { reason: "No users selected" },
         });
@@ -623,11 +636,14 @@ Router.post("/plan/share", async (req, res) => {
         ),
       ]);
 
-      if (!userInfo)
-        return res.send({ success: false, reason: RESPONSE_MESSAGES.noUser });
+      if (!userInfo) {
+        const response = RESPONSE_MESSAGES.noUser();
+        return res.status(response.status).send(response);
+      }
 
       if (!plan) {
-        return res.send(RESPONSE_MESSAGES.noPlan);
+        const response = RESPONSE_MESSAGES.noPlan();
+        return res.status(response.status).send(response);
       }
 
       plan.share = plan.share ? plan.share.split(",") : [];
@@ -694,15 +710,16 @@ Router.post("/plan/share", async (req, res) => {
         );
       });
       console.log("shared", friends, nonFriends);
-      res.send({
+      res.status(200).send({
         success: true,
         message: "Plan shared!",
-        status: "success",
+        status: 200,
         data: { share: nonFriends, shared: friends },
       });
     } catch (err) {
       console.log(err);
-      res.send(RESPONSE_MESSAGES.error);
+      const response = RESPONSE_MESSAGES.error();
+      return res.status(response.status).send(response);
     }
   });
 });
@@ -715,9 +732,9 @@ Router.delete("/plan/share", async (req, res) => {
       const isValidTargetId = validateStrictString(targetId, "user id", 10);
 
       if (!isValidTargetId.isValid) {
-        return res.send({
+        return res.status(400).send({
           success: false,
-          status: "error",
+          status: 400,
           message: isValidTargetId.reason,
           error: { reason: isValidTargetId.reason },
         });
@@ -757,7 +774,7 @@ Router.delete("/plan/share", async (req, res) => {
         { user_id: planInfo.user_id },
       ];
       if (!allowedUsers.find((user) => user.user_id === userId)) {
-        return res.send(RESPONSE_MESSAGES["non-memeber"]);
+        return res.status(400).send(RESPONSE_MESSAGES["non-memeber"]);
       }
 
       await connection.query(
@@ -775,10 +792,13 @@ Router.delete("/plan/share", async (req, res) => {
         redisClient.hdel(`user:${targetId}:notifications`, planRequest.i);
       }
 
-      res.send({ success: true, status: "success", message: `Removed user!` });
+      res
+        .status(200)
+        .send({ success: true, status: 200, message: `Removed user!` });
     } catch (err) {
       console.log(err);
-      res.send(RESPONSE_MESSAGES.error);
+      const response = RESPONSE_MESSAGES.error();
+      return res.status(response.status).send(response);
     }
   });
 });
@@ -791,9 +811,9 @@ Router.post("/plan/share/respond", async (req, res) => {
       const isValidAcceped = validateBoolean(accepted, "accept", true);
 
       if (!isValidAcceped.isValid) {
-        return res.send({
+        return res.status(400).send({
           success: false,
-          status: "error",
+          status: 400,
           message: isValidAcceped.reason,
           error: { reason: isValidAcceped.reason },
         });
@@ -804,7 +824,10 @@ Router.post("/plan/share/respond", async (req, res) => {
         notificationId
       );
 
-      if (!notification) return res.send(RESPONSE_MESSAGES.expiredRequest);
+      if (!notification) {
+        const response = RESPONSE_MESSAGES.expiredRequest();
+        return res.status(response.status).send(response);
+      }
 
       const plan_id = JSON.parse(notification).pi;
 
@@ -819,21 +842,22 @@ Router.post("/plan/share/respond", async (req, res) => {
         };
 
         await connection.query(`INSERT INTO plan_shared SET ?`, [shared]);
-        return res.send({
+        return res.status(200).send({
           success: true,
-          status: "success",
+          status: 200,
           message: `Accepted share request!`,
         });
       }
 
-      res.send({
+      res.status(200).send({
         success: true,
-        status: "success",
+        status: 200,
         message: `Declined share request!`,
       });
     } catch (err) {
       console.log(err);
-      res.send(RESPONSE_MESSAGES.error);
+      const response = RESPONSE_MESSAGES.error();
+      return res.status(response.status).send(response);
     }
   });
 });

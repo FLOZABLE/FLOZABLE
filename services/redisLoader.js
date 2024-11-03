@@ -3,7 +3,7 @@ const { UserRefreshClient } = require("google-auth-library");
 const { DateTime } = require("luxon");
 const { REDIS_EXP } = require("../Constant");
 const querystring = require("node:querystring");
-const { generateRandomId } = require("../Utils/tool");
+const { generateRandomId } = require("../utils/tool");
 const pool = require("../model/pool");
 
 function cacheManager() {

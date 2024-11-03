@@ -10,7 +10,7 @@ const {
   userGroupsCache,
   chatroomMembersCache,
 } = require("../services/redisLoader");
-const { generateRandomId } = require("../Utils/tool");
+const { generateRandomId } = require("../utils/tool");
 const { extensionIo, mainIo } = require("../sockets/io");
 const pool = require("../model/pool");
 const { MAX_STUDY_TIME, REDIS_EXP } = require("../Constant");
