@@ -1,54 +1,59 @@
 import AxiosInstance from "@/app/utils/axiosInstance";
-
+import { requestHandler } from "@/app/utils/Tool";
 async function getSubjects() {
-  const response = await AxiosInstance.get(`/subjects`);
-  return response.data;
+  return requestHandler(AxiosInstance.get(`/subjects`));
 }
 
 async function putSubjectsSubject({ name, color }) {
-  const response = await AxiosInstance.put(`/subjects/subject`, {
-    name,
-    color,
-  });
-  return response.data;
+  return requestHandler(
+    AxiosInstance.put(`/subjects/subject`, {
+      name,
+      color,
+    })
+  );
 }
 
 async function patchSubjectsSubject({ subjectId, name, color }) {
-  const response = await AxiosInstance.patch(`/subjects`, {
-    subject_id: subjectId,
-    name,
-    color,
-  });
-  return response.data;
+  return requestHandler(
+    AxiosInstance.patch(`/subjects`, {
+      subject_id: subjectId,
+      name,
+      color,
+    })
+  );
 }
 
 async function deleteSubjectsSubject(subjectId) {
-  const response = await AxiosInstance.delete(`/subjects/subject`, {
-    data: { subject_id: subjectId },
-  });
-  return response.data;
+  return requestHandler(
+    AxiosInstance.delete(`/subjects/subject`, {
+      data: { subject_id: subjectId },
+    })
+  );
 }
 
 async function getSubjectUsers(subjectId) {
-  const response = await AxiosInstance.get(`/subjects/subject/users`, {
-    params: { subject_id: subjectId },
-  });
-  return response.data;
+  return requestHandler(
+    AxiosInstance.get(`/subjects/subject/users`, {
+      params: { subject_id: subjectId },
+    })
+  );
 }
 
 async function postSubjectShare({ subjectId, users }) {
-  const response = await AxiosInstance.post(`/subjects/subject/share`, {
-    subject_id: subjectId,
-    users,
-  });
-  return response.data;
+  return requestHandler(
+    AxiosInstance.post(`/subjects/subject/share`, {
+      subject_id: subjectId,
+      users,
+    })
+  );
 }
 
 async function deleteSubjectShare({ subjectId, targetId }) {
-  const response = await AxiosInstance.delete(`/subjects/subject/share`, {
-    data: { subject_id: subjectId, target_id: targetId },
-  });
-  return response.data;
+  return requestHandler(
+    AxiosInstance.delete(`/subjects/subject/share`, {
+      data: { subject_id: subjectId, target_id: targetId },
+    })
+  );
 }
 
 export {

@@ -1,40 +1,42 @@
 import AxiosInstance from "@/app/utils/axiosInstance";
+import { requestHandler } from "@/app/utils/Tool";
 
 async function getThemes() {
-  const response = await AxiosInstance.get(`/themes`);
-  return response.data;
+  return requestHandler(AxiosInstance.get(`/themes`));
 }
 
 async function getThemesUser() {
-  const response = await AxiosInstance.get(`/themes/user`);
-  return response.data;
+  return requestHandler(AxiosInstance.get(`/themes/user`));
 }
 
 async function putThemesTheme({ name, tags, description, url }) {
-  const response = await AxiosInstance.put(`/themes/theme`, {
-    name,
-    tags,
-    description,
-    url,
-  });
-  return response.data;
+  return requestHandler(
+    AxiosInstance.put(`/themes/theme`, {
+      name,
+      tags,
+      description,
+      url,
+    })
+  );
 }
 
 async function postThemesThemeSave({ themeId, categoryId, categoryName }) {
-  const response = await AxiosInstance.post(`/themes/theme/save`, {
-    theme_id: themeId,
-    category_id: categoryId,
-    category_name: categoryName,
-  });
-  return response.data;
+  return requestHandler(
+    AxiosInstance.post(`/themes/theme/save`, {
+      theme_id: themeId,
+      category_id: categoryId,
+      category_name: categoryName,
+    })
+  );
 }
 
 async function postThemeLike({ themeId, like }) {
-  const response = await AxiosInstance.post(`/themes/theme/like`, {
-    theme_id: themeId,
-    like,
-  });
-  return response.data;
+  return requestHandler(
+    AxiosInstance.post(`/themes/theme/like`, {
+      theme_id: themeId,
+      like,
+    })
+  );
 }
 
 export {
