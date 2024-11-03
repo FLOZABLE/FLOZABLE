@@ -1,27 +1,28 @@
 import AxiosInstance from "@/app/utils/axiosInstance";
+import { requestHandler } from "@/app/utils/Tool";
 
 async function getNotifications() {
-  const response = await AxiosInstance.get(`/notifications`);
-  return response.data;
+  return requestHandler(AxiosInstance.get(`/notifications`));
 }
 
 async function getVapidKeys() {
-  const response = await AxiosInstance.get(`/notifications/vapidkeys`);
-  return response.data;
+  return requestHandler(AxiosInstance.get(`/notifications/vapidkeys`));
 }
 
 async function postNotificationsSubscribe({ endpoint, keys }) {
-  const response = await AxiosInstance.get(`/notifications/subscribe`, {
-    params: { endpoint, keys },
-  });
-  return response.data;
+  return requestHandler(
+    AxiosInstance.get(`/notifications/subscribe`, {
+      params: { endpoint, keys },
+    })
+  );
 }
 
 async function postNotificationsRead(notificationId) {
-  const response = await AxiosInstance.get(`/notifications/read`, {
-    notification_id: notificationId,
-  });
-  return response.data;
+  return requestHandler(
+    AxiosInstance.get(`/notifications/read`, {
+      notification_id: notificationId,
+    })
+  );
 }
 
 export {

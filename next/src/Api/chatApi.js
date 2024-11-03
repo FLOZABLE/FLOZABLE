@@ -1,44 +1,48 @@
 import AxiosInstance from "@/app/utils/axiosInstance";
+import { requestHandler } from "@/app/utils/Tool";
 
 async function getChatRooms() {
-  const response = await AxiosInstance.get(`/chat/rooms`);
-  return response.data;
+  return requestHandler(AxiosInstance.get(`/chat/rooms`));
 }
 
 async function getChatMessages({ chatroomId, pageParam, length }) {
-  const response = await AxiosInstance.get(`/chat/messages`, {
-    params: {
-      chatroom_id: chatroomId,
-      offset: pageParam,
-      length,
-    },
-  });
-  return response.data;
+  return requestHandler(
+    AxiosInstance.get(`/chat/messages`, {
+      params: {
+        chatroom_id: chatroomId,
+        offset: pageParam,
+        length,
+      },
+    })
+  );
 }
 
 async function getChatMembers(chatroomId) {
-  const response = await AxiosInstance.get(`/chat/members`, {
-    params: {
-      chatroom_id: chatroomId,
-    },
-  });
-  return response.data;
+  return requestHandler(
+    AxiosInstance.get(`/chat/members`, {
+      params: {
+        chatroom_id: chatroomId,
+      },
+    })
+  );
 }
 
 async function postChatRequest(targetId) {
-  const response = await AxiosInstance.post(`/chat/request`, {
-    target_id: targetId,
-  });
-  return response.data;
+  return requestHandler(
+    AxiosInstance.post(`/chat/request`, {
+      target_id: targetId,
+    })
+  );
 }
 
 async function postChatRequestReply({ targetId, accepted, notificationId }) {
-  const response = await AxiosInstance.post(`/chat/request/reply`, {
-    target_id: targetId,
-    notification_id: notificationId,
-    accepted,
-  });
-  return response.data;
+  return requestHandler(
+    AxiosInstance.post(`/chat/request/reply`, {
+      target_id: targetId,
+      notification_id: notificationId,
+      accepted,
+    })
+  );
 }
 
 export {

@@ -1,34 +1,18 @@
-import config from "@/app/utils/config";
+import AxiosInstance from "@/app/utils/axiosInstance";
+import { requestHandler } from "@/app/utils/Tool";
 
 async function postSubscriptionInitialize(priceId) {
-  const response = await fetch(
-    `${config.server}/payment/subscription/initialize`,
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      credentials: "include",
-      body: JSON.stringify({ priceId }),
-    }
+  return requestHandler(
+    AxiosInstance.post(`/payment/subscription/initialize`, { priceId })
   );
-  const data = await response.json();
-  return data;
 }
 
 async function getProduct(priceId) {
-  const response = await fetch(
-    `${config.server}/payment/product?priceId=${priceId}`,
-    {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      credentials: "include",
-    }
+  return requestHandler(
+    AxiosInstance.get(`/payment/product`, {
+      params: { priceId },
+    })
   );
-  const data = await response.json();
-  return data;
 }
 
 export { postSubscriptionInitialize, getProduct };

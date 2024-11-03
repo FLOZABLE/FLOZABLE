@@ -609,17 +609,8 @@ Router.post("/verify", async (req, res) => {
       const to = [{ email }];
       const response = await sendEmail(to, params, 5);
 
-      if (!response.success) {
-        console.log(response);
-        const response = RESPONSE_MESSAGES.error();
-        return res.status(response.status).send(response);
-      }
-
-      res.status(200).send({
-        success: true,
-        status: 200,
-        message: "Check your email!",
-      });
+      console.log(response);
+      return res.status(response.status).send(response);
     } catch (err) {
       console.log(err);
       const response = RESPONSE_MESSAGES.error();

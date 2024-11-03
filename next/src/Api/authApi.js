@@ -1,31 +1,32 @@
 import AxiosInstance from "@/app/utils/axiosInstance";
+import { requestHandler } from "@/app/utils/Tool";
 
 async function getAuthLogout() {
-  const response = await AxiosInstance.get(`/auth/logout`);
-  return response.data;
+  return requestHandler(AxiosInstance.get(`/auth/logout`));
 }
 
 async function postAuthVerify() {
-  const response = await AxiosInstance.post(`/auth/verify`);
-  return response.data;
+  return requestHandler(AxiosInstance.post(`/auth/verify`));
 }
 
 async function postAuthSignin({ email, password }) {
-  const response = await AxiosInstance.post(`/auth/signin`, {
-    email,
-    password,
-  });
-  return response.data;
+  return requestHandler(
+    AxiosInstance.post(`/auth/signin`, {
+      email,
+      password,
+    })
+  );
 }
 
 async function postAuthSignup({ name, email, password, timezone }) {
-  const response = await AxiosInstance.post(`/auth/signup`, {
-    name,
-    email,
-    password,
-    timezone,
-  });
-  return response.data;
+  return requestHandler(
+    AxiosInstance.post(`/auth/signup`, {
+      name,
+      email,
+      password,
+      timezone,
+    })
+  );
 }
 
 export { getAuthLogout, postAuthVerify, postAuthSignin, postAuthSignup };

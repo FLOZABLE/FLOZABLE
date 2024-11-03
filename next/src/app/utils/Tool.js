@@ -304,6 +304,18 @@ function exitFullscreen() {
   }
 }
 
+async function requestHandler(request) {
+  try {
+    const response = await request;
+    return response.data;
+  } catch (error) {
+    if (error.response) {
+      return error.response.data;
+    }
+    return { success: false };
+  }
+}
+
 export {
   cyrb128,
   getCountryCode,
@@ -322,4 +334,5 @@ export {
   getDates,
   getDatesDisplay,
   exitFullscreen,
+  requestHandler,
 };

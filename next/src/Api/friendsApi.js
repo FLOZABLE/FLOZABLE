@@ -1,53 +1,56 @@
 import AxiosInstance from "@/app/utils/axiosInstance";
-import { getTimezone } from "@/app/utils/Tool";
+import { getTimezone, requestHandler } from "@/app/utils/Tool";
 
 async function getFriendsRecommended() {
-  const response = await AxiosInstance.get(`/friends/recommended`);
-  return response.data;
+  return requestHandler(AxiosInstance.get(`/friends/recommended`));
 }
 
 async function getFriendsSearch(searchQuery) {
-  const response = await AxiosInstance.get(`/friends/search`, {
-    params: {
-      query: searchQuery,
-    },
-  });
-  return response.data;
+  return requestHandler(
+    AxiosInstance.get(`/friends/search`, {
+      params: {
+        query: searchQuery,
+      },
+    })
+  );
 }
 
 async function getFriendsTrends() {
   const timezone = getTimezone();
-  const response = await AxiosInstance.get(`/friends/trends`, {
-    params: {
-      timezone,
-    },
-  });
-  return response.data;
+  return requestHandler(
+    AxiosInstance.get(`/friends/trends`, {
+      params: {
+        timezone,
+      },
+    })
+  );
 }
 
 async function getFriendsStatus() {
   const timezone = getTimezone();
-
-  const response = await AxiosInstance.get(`/friends/status`, {
-    params: { timezone },
-  });
-  return response.data;
+  return requestHandler(
+    AxiosInstance.get(`/friends/status`, {
+      params: { timezone },
+    })
+  );
 }
 
 async function postFriendsRequest({ targetId }) {
-  const response = await AxiosInstance.post(`/friends/request`, {
-    target_id: targetId,
-  });
-  return response.data;
+  return requestHandler(
+    AxiosInstance.post(`/friends/request`, {
+      target_id: targetId,
+    })
+  );
 }
 
 async function postFriendsRequestReply({ targetId, notificationId, accepted }) {
-  const response = await AxiosInstance.post(`/friends/request/reply`, {
-    target_id: targetId,
-    notification_id: notificationId,
-    accepted,
-  });
-  return response.data;
+  return requestHandler(
+    AxiosInstance.post(`/friends/request/reply`, {
+      target_id: targetId,
+      notification_id: notificationId,
+      accepted,
+    })
+  );
 }
 
 export {
