@@ -9,8 +9,8 @@ import BounceCheckBox from "../../Buttons/BounceCheckBox/BounceCheckBox";
 export default function Plan({ plan }) {
   const { plans, setPlanModal, setPlans } = useContext(PlansContext);
 
-  const togglePlan = useCallback(() => {
-    (async () => {
+  const togglePlan = useCallback(async () => {
+    try {
       const planIndex = plans.findIndex(
         (planInfo) => planInfo.plan_id === plan.plan_id
       );
@@ -27,7 +27,9 @@ export default function Plan({ plan }) {
       if (response.success) {
         setPlans(updatedEvents);
       }
-    })();
+    } catch (err) {
+      console.log(err);
+    }
   }, [plans, plan]);
 
   return (

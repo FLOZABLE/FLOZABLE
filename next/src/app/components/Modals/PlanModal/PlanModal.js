@@ -210,31 +210,15 @@ export default function PlanModal() {
     [plans, planModal, planModalss, subjects]
   );
 
-  const submit = useCallback(() => {
-    (async () => {
+  const submit = useCallback(async () => {
+    try {
+      let response;
+
       if (planModal.type === "google") {
-        const response = await patchPlanGoogle(planModal);
-        if (!response.success) return;
-
-        /* const planIndex = plans.findIndex(
-          (event) => event.plan_id === planModal.plan_id
-        );
-        if (planIndex !== -1) {
-          const updatedEvents = [...plans];
-          //updatedEvents[planIndex].saved = true;
-          updatedEvents[planIndex].plan_id = data.plan.plan_id;
-          setPlans(updatedEvents);
-        }
-        setPlanModalss(null);
-        setPlanModal((prev) => ({ ...prev, opened: false, plan_id: null }));
-
-        if (tutorial === 5) {
-          router.push("/dashboard/study");
-          setTutorial(6);
-        } */
-        return;
+        response = await patchPlanGoogle(planModal);
+      } else {
+        response = await patchPlan(planModal);
       }
-      const response = await patchPlan(planModal);
       if (!response.success) return;
 
       const data = response.data;
@@ -261,10 +245,12 @@ export default function PlanModal() {
         router.push("/dashboard/study");
         setTutorial(6);
       }
-    })();
+    } catch (err) {
+      console.log(err);
+    }
   }, [planModal, tutorial]);
 
-  const onDeletePlan = useCallback(() => {
+  const onDeletePlan = useCallback(async () => {
     if (planModal.plan_id === "0000000000") {
       setPlans((prev) =>
         prev.filter((plan) => plan.plan_id !== planModal.plan_id)
@@ -272,7 +258,7 @@ export default function PlanModal() {
       setPlanModal((prev) => ({ ...prev, opened: false, plan_id: null }));
       return null;
     }
-    (async () => {
+    try {
       const response = await deletePlan(planModal.plan_id);
       if (!response.success) return;
 
@@ -280,33 +266,41 @@ export default function PlanModal() {
       setPlans((prev) =>
         prev.filter((plan) => plan.plan_id !== planModal.plan_id)
       );
-    })();
+    } catch (err) {
+      console.log(err);
+    }
   }, [planModal]);
 
   const onUnshare = useCallback(
-    (userInfo) => {
-      (async () => {
+    async (userInfo) => {
+      try {
         const response = await deletePlanShare(
           userInfo.user_id,
           planModal.plan_id
         );
         if (!response.success) return;
+
         clearPlanUsers();
-      })();
+      } catch (err) {
+        console.log(err);
+      }
     },
     [planModal]
   );
 
   const onUnshared = useCallback(
-    (userInfo) => {
-      (async () => {
+    async (userInfo) => {
+      try {
         const response = await deletePlanShare(
           userInfo.user_id,
           planModal.plan_id
         );
         if (!response.success) return;
+
         clearPlanUsers();
-      })();
+      } catch (err) {
+        console.log(err);
+      }
     },
     [planModal]
   );
@@ -500,13 +494,17 @@ export default function PlanModal() {
                   setSearchUsersModal((prev) => ({
                     opened: !prev.opened,
                     onClick: async (userInfo) => {
-                      if (planModal.opened) {
-                        await postPlanShare(
-                          [userInfo.user_id],
-                          planModal.plan_id
-                        );
+                      try {
+                        if (planModal.opened) {
+                          await postPlanShare(
+                            [userInfo.user_id],
+                            planModal.plan_id
+                          );
 
-                        clearPlanUsers();
+                          clearPlanUsers();
+                        }
+                      } catch (err) {
+                        console.log(err);
                       }
                     },
                   }));

@@ -171,29 +171,33 @@ export default function Planner() {
 
   const onEventDrop = useCallback(
     (dropInfo) => {
-      const { start } = dropInfo.event;
-      const { plan_id } = dropInfo.event._def.extendedProps;
-      const end = dropInfo.event.end ? dropInfo.event.end : start;
+      try {
+        const { start } = dropInfo.event;
+        const { plan_id } = dropInfo.event._def.extendedProps;
+        const end = dropInfo.event.end ? dropInfo.event.end : start;
 
-      const planIndex = plans.findIndex((plan) => plan.plan_id === plan_id);
-      if (planIndex === -1) return;
+        const planIndex = plans.findIndex((plan) => plan.plan_id === plan_id);
+        if (planIndex === -1) return;
 
-      const updatedEvents = [...plans];
-      updatedEvents[planIndex] = { ...updatedEvents[planIndex], start, end };
-      setPlans(updatedEvents);
+        const updatedEvents = [...plans];
+        updatedEvents[planIndex] = { ...updatedEvents[planIndex], start, end };
+        setPlans(updatedEvents);
 
-      if (plan_id === planModal.plan_id) {
-        setPlanModal((prev) => ({ ...prev, start, end }));
-      }
+        if (plan_id === planModal.plan_id) {
+          setPlanModal((prev) => ({ ...prev, start, end }));
+        }
 
-      if (plan_id === "0000000000") return;
+        if (plan_id === "0000000000") return;
 
-      console.log(updatedEvents[planIndex].type)
+        console.log(updatedEvents[planIndex].type);
 
-      if (updatedEvents[planIndex].type === "google") {
-        patchPlanGoogle(updatedEvents[planIndex]);
-      } else {
-        patchPlan(updatedEvents[planIndex]);
+        if (updatedEvents[planIndex].type === "google") {
+          patchPlanGoogle(updatedEvents[planIndex]);
+        } else {
+          patchPlan(updatedEvents[planIndex]);
+        }
+      } catch (err) {
+        console.log(err);
       }
     },
     [planModal, plans]
@@ -215,27 +219,31 @@ export default function Planner() {
 
   const onEventResize = useCallback(
     (resizeInfo) => {
-      const { start } = resizeInfo.event;
-      const { plan_id } = resizeInfo.event._def.extendedProps;
-      const end = resizeInfo.event.end ? resizeInfo.event.end : start;
+      try {
+        const { start } = resizeInfo.event;
+        const { plan_id } = resizeInfo.event._def.extendedProps;
+        const end = resizeInfo.event.end ? resizeInfo.event.end : start;
 
-      const planIndex = plans.findIndex((plan) => plan.plan_id === plan_id);
-      if (planIndex === -1) return;
+        const planIndex = plans.findIndex((plan) => plan.plan_id === plan_id);
+        if (planIndex === -1) return;
 
-      const updatedEvents = [...plans];
-      updatedEvents[planIndex] = { ...updatedEvents[planIndex], start, end };
-      setPlans(updatedEvents);
+        const updatedEvents = [...plans];
+        updatedEvents[planIndex] = { ...updatedEvents[planIndex], start, end };
+        setPlans(updatedEvents);
 
-      if (plan_id === planModal.plan_id) {
-        setPlanModal((prev) => ({ ...prev, start, end }));
-      }
+        if (plan_id === planModal.plan_id) {
+          setPlanModal((prev) => ({ ...prev, start, end }));
+        }
 
-      if (plan_id === "0000000000") return;
+        if (plan_id === "0000000000") return;
 
-      if (updatedEvents[planIndex].type === "google") {
-        patchPlanGoogle(updatedEvents[planIndex]);
-      } else {
-        patchPlan(updatedEvents[planIndex]);
+        if (updatedEvents[planIndex].type === "google") {
+          patchPlanGoogle(updatedEvents[planIndex]);
+        } else {
+          patchPlan(updatedEvents[planIndex]);
+        }
+      } catch (err) {
+        console.log(err);
       }
     },
     [planModal]

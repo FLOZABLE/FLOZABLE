@@ -6,11 +6,13 @@ import BlobBtn from "../BlobBtn/BlobBtn";
 import { postFriendsRequest } from "@/Api/friendsApi";
 
 function FriendRequestBtn({ userInfo, padding }) {
-  const requestFriend = useCallback(() => {
-    (async () => {
+  const requestFriend = useCallback(async () => {
+    try {
       const targetId = userInfo.user_id;
       await postFriendsRequest({ targetId });
-    })();
+    } catch (err) {
+      console.log(err);
+    }
   }, [userInfo]);
 
   return (
