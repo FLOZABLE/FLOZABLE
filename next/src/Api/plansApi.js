@@ -1,15 +1,13 @@
 import AxiosInstance from "@/app/utils/axiosInstance";
-import { getTimezone } from "@/app/utils/Tool";
+import { getTimezone, requestHandler } from "@/app/utils/Tool";
 import { DateTime } from "luxon";
 
 async function getPlans() {
-  const response = await AxiosInstance.get(`/plans`);
-  return response.data;
+  return requestHandler(AxiosInstance.get(`/plans`));
 }
 
 async function getPlansGoogle() {
-  const response = await AxiosInstance.get(`/plans/google`);
-  return response.data;
+  return requestHandler(AxiosInstance.get(`/plans/google`));
 }
 
 async function patchPlan(planModal) {
@@ -18,14 +16,15 @@ async function patchPlan(planModal) {
   const completed = planModal.completed ? 1 : 0;
   const timezone = getTimezone();
 
-  const response = await AxiosInstance.patch(`/plans/plan`, {
-    ...planModal,
-    start,
-    end,
-    completed,
-    timezone,
-  });
-  return response.data;
+  return requestHandler(
+    AxiosInstance.patch(`/plans/plan`, {
+      ...planModal,
+      start,
+      end,
+      completed,
+      timezone,
+    })
+  );
 }
 
 async function patchPlanGoogle(planModal) {
@@ -34,61 +33,68 @@ async function patchPlanGoogle(planModal) {
   const completed = planModal.completed ? 1 : 0;
   const timezone = getTimezone();
 
-  const response = await AxiosInstance.patch(`/plans/plan/google`, {
-    ...planModal,
-    start,
-    end,
-    completed,
-    timezone,
-  });
-  return response.data;
+  return requestHandler(
+    AxiosInstance.patch(`/plans/plan/google`, {
+      ...planModal,
+      start,
+      end,
+      completed,
+      timezone,
+    })
+  );
 }
 
 async function deletePlan(planId) {
-  const response = await AxiosInstance.delete(`/plans/plan`, {
-    data: {
-      plan_id: planId,
-    },
-  });
-  return response.data;
+  return requestHandler(
+    AxiosInstance.delete(`/plans/plan`, {
+      data: {
+        plan_id: planId,
+      },
+    })
+  );
 }
 
 async function patchPlanStatus(planId, completed) {
-  const response = await AxiosInstance.patch(`/plans/plan/status`, {
-    plan_id: planId,
-    completed: completed ? 0 : 1,
-  });
-  return response.data;
+  return requestHandler(
+    AxiosInstance.patch(`/plans/plan/status`, {
+      plan_id: planId,
+      completed: completed ? 0 : 1,
+    })
+  );
 }
 
 async function postPlanShare(users, planId) {
-  const response = await AxiosInstance.post(`/plans/plan/share`, {
-    users,
-    planId,
-  });
-  return response.data;
+  return requestHandler(
+    AxiosInstance.post(`/plans/plan/share`, {
+      users,
+      planId,
+    })
+  );
 }
 
 async function postPlanShareRespond(notificationId, accepted) {
-  const response = await AxiosInstance.post(`/plans/plan/share/respond`, {
-    notification_id: notificationId,
-    accepted,
-  });
-  return response.data;
+  return requestHandler(
+    AxiosInstance.post(`/plans/plan/share/respond`, {
+      notification_id: notificationId,
+      accepted,
+    })
+  );
 }
 
 async function deletePlanShare(targetId, planId) {
-  const response = await AxiosInstance.delete(`/plans/plan/share`, {
-    data: { target_id: targetId, plan_id: planId },
-  });
-  return response.data;
+  return requestHandler(
+    AxiosInstance.delete(`/plans/plan/share`, {
+      data: { target_id: targetId, plan_id: planId },
+    })
+  );
 }
 
 async function getPlansPlanUsers(planId) {
-  const response = await AxiosInstance.get(`/plans/plan/users`, {
-    params: { plan_id: planId },
-  });
-  return response.data;
+  return requestHandler(
+    AxiosInstance.get(`/plans/plan/users`, {
+      params: { plan_id: planId },
+    })
+  );
 }
 
 export {

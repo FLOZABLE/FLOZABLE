@@ -385,7 +385,8 @@ Router.patch("/plan/google", async (req, res) => {
       const access_token = await googleAccessTokenCache(connection, userId);
 
       if (!access_token) {
-        return res.status(400).send(RESPONSE_MESSAGES.notAuthed);
+        const response = RESPONSE_MESSAGES.notAuthed();
+        return res.status(response.status).send(response);
       }
 
       const auth = googleOauth2client({ access_token });
@@ -432,7 +433,8 @@ Router.patch("/plan/google", async (req, res) => {
 
       return res.status(400).send({
         success: false,
-        status: 400,
+        status: err.response.data.error.code,
+        message: err.response.data.error.message,
         error: {
           code: err.response.data.error.code,
           reason: err.response.data.error.message,

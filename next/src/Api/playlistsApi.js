@@ -1,25 +1,24 @@
 import AxiosInstance from "@/app/utils/axiosInstance";
+import { requestHandler } from "@/app/utils/Tool";
 
 async function getPlaylistsSpotify() {
-  const response = await AxiosInstance.get(`/playlists/spotify`);
-  return response.data;
+  return requestHandler(AxiosInstance.get(`/playlists/spotify`));
 }
 
 async function getSpotifyInfo() {
-  const response = await AxiosInstance.get(`/playlists/spotify/info`);
-  return response.data;
+  return requestHandler(AxiosInstance.get(`/playlists/spotify/info`));
 }
 
 async function getPlaylistsYoutube() {
-  const response = await AxiosInstance.get(`/playlists/youtube`);
-  return response.data;
+  return requestHandler(AxiosInstance.get(`/playlists/youtube`));
 }
 
 async function getPlaylistsYoutubeItems(playlistId) {
-  const response = await AxiosInstance.get(`/playlists`, {
-    params: { playlist_id: playlistId },
-  });
-  return response.data;
+  return requestHandler(
+    AxiosInstance.get(`/playlists`, {
+      params: { playlist_id: playlistId },
+    })
+  );
 }
 
 export {

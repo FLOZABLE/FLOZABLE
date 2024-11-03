@@ -1,5 +1,5 @@
 const sendInBlue = require("sib-api-v3-sdk");
-const { RESPONSE_MESSAGES } = require("./Constant");
+const RESPONSE_MESSAGES = require("./utils/responses");
 
 const SENDINBLUE_API = process.env.SENDINBLUE_API;
 const sendinBlueClient = sendInBlue.ApiClient.instance;
@@ -15,13 +15,18 @@ async function sendEmail(to, params, id) {
 
     const data = await emailInstance.sendTransacEmail(sendSmtpEmail);
     console.log("Email sent successfully:", data);
-    return { success: true, data };
+    return { success: true, status: 200, message: "Email Sent!" };
   } catch (err) {
-    console.log(err);
-    const response = err?.response?.text
-      ? JSON.parse(err.response.text)
-      : RESPONSE_MESSAGES.error;
-    return response;
+    if (err?.response?.error?.text?.includes("email is not valid")) {
+      return {
+        success: false,
+        message: "Invalid Email",
+        status: err.response.error.status,
+        error: err.response.error,
+      };
+    }
+
+    return RESPONSE_MESSAGES.error();
   }
 }
 

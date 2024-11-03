@@ -12,12 +12,12 @@ const AxiosInstance = axios.create({
 axiosRetry(AxiosInstance, {
   retries: 2,
   retryCondition: (error) => {
-    console.log(
+    /* console.log(
       "Retry condition triggered. Error code:",
       error.code,
       "Message:",
       error.message
-    );
+    ); */
     // Retry for network errors and specific HTTP status codes
     if (error.code === "ECONNABORTED" || error.message === "Network Error") {
       return true;
