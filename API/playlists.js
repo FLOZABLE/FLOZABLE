@@ -7,10 +7,10 @@ const {
   clearGoogleAccessToken,
 } = require("../services/redisLoader");
 const querystring = require("querystring");
-const { RESPONSE_MESSAGES } = require("../Constant");
+const RESPONSE_MESSAGES = require("../utils/responses");
 const { googleOauth2client, autoSignin } = require("./auth");
 const { google } = require("googleapis");
-const { validateStrictString } = require("../Utils/validate");
+const { validateStrictString } = require("../utils/validate");
 
 const YOUTUBE_API_KEY = process.env.GOOGLE_API_KEY;
 
@@ -20,9 +20,9 @@ Router.get("/spotify/info", async (req, res) => {
       const connection = pool.promise();
       const accessToken = await spotifyAccessTokenCache(connection, userId);
       if (!accessToken) {
-        return res.send({
+        return res.status(400).send({
           success: false,
-          status: "error",
+          status: 400,
           error: { reason: "Auth Required" },
         });
       }
@@ -34,9 +34,9 @@ Router.get("/spotify/info", async (req, res) => {
       });
 
       if (!response.ok) {
-        return res.send({
+        return res.status(400).send({
           success: false,
-          status: "error",
+          status: 400,
           message: response.statusText || "Failed to fetch user info",
         });
       }
@@ -44,22 +44,23 @@ Router.get("/spotify/info", async (req, res) => {
       const data = await response.json();
 
       if (data.error) {
-        return res.send({
+        return res.status(400).send({
           success: false,
-          status: "error",
+          status: 400,
           message: data.error.message,
           error: { reason: data.error.message },
         });
       }
 
-      res.send({
+      res.status(200).send({
         success: true,
-        status: "success",
+        status: 200,
         data: { spotifyInfo: data },
       });
     } catch (err) {
       console.log(err);
-      res.send(RESPONSE_MESSAGES.error);
+      const response = RESPONSE_MESSAGES.error();
+      return res.status(response.status).send(response);
     }
   });
 });
@@ -71,7 +72,8 @@ Router.get("/spotify", async (req, res) => {
       const accessToken = await spotifyAccessTokenCache(connection, userId);
 
       if (!accessToken) {
-        return res.send(RESPONSE_MESSAGES.notAuthed);
+        const response = RESPONSE_MESSAGES.notAuthed();
+        return res.status(response.status).send(response);
       }
 
       const response = await fetch("https://api.spotify.com/v1/me/playlists", {
@@ -84,22 +86,23 @@ Router.get("/spotify", async (req, res) => {
       const data = await response.json();
 
       if (data.error) {
-        return res.send({
+        return res.status(400).send({
           success: false,
-          status: "error",
+          status: 400,
           message: data.error.message,
           error: { reason: data.error.message },
         });
       }
 
-      res.send({
+      res.status(200).send({
         success: true,
-        status: "success",
+        status: 200,
         data: { playlists: data.items },
       });
     } catch (err) {
       console.log(err);
-      res.send(RESPONSE_MESSAGES.error);
+      const response = RESPONSE_MESSAGES.error();
+      return res.status(response.status).send(response);
     }
   });
 });
@@ -114,12 +117,14 @@ Router.get("/youtube", async (req, res) => {
       );
 
       if (!googleAccessToken) {
-        return res.send(RESPONSE_MESSAGES.noUser);
+        const response = RESPONSE_MESSAGES.noUser();
+        return res.status(response.status).send(response);
       }
 
       const auth = googleOauth2client({ access_token: googleAccessToken });
       if (!auth) {
-        return res.send(RESPONSE_MESSAGES.error);
+        const response = RESPONSE_MESSAGES.error();
+        return res.status(response.status).send(response);
       }
 
       const youtube = google.youtube({ version: "v3", auth });
@@ -132,24 +137,25 @@ Router.get("/youtube", async (req, res) => {
 
       const playlists = response.data.items;
 
-      return res.send({
+      return res.status(200).send({
         success: true,
-        status: "success",
+        status: 200,
         data: { playlists },
       });
     } catch (err) {
       console.log(err);
       if (!err?.response?.data?.error) {
-        return res.send(RESPONSE_MESSAGES.error);
+        const response = RESPONSE_MESSAGES.error();
+        return res.status(response.status).send(response);
       }
 
       if (err.response.data.error === "invalid_token") {
         clearGoogleAccessToken(connection, userId);
       }
 
-      return res.send({
+      return res.status(400).send({
         success: false,
-        status: "error",
+        status: 400,
         error: {
           code: err.response.data.error.code,
           reason: err.response.data.error.message,
@@ -173,9 +179,9 @@ Router.get("/youtube/items", async (req, res) => {
       );
 
       if (!isValidPlaylistId) {
-        return res.send({
+        return res.status(400).send({
           success: false,
-          status: "error",
+          status: 400,
           message: isValidPlaylistId.reason,
           error: { reason: isValidPlaylistId.reason },
         });
@@ -188,12 +194,14 @@ Router.get("/youtube/items", async (req, res) => {
       );
 
       if (!googleAccessToken) {
-        return res.send(RESPONSE_MESSAGES.noUser);
+        const response = RESPONSE_MESSAGES.noUser();
+        return res.status(response.status).send(response);
       }
 
       const auth = googleOauth2client({ access_token: googleAccessToken });
       if (!auth) {
-        return res.send(RESPONSE_MESSAGES.error);
+        const response = RESPONSE_MESSAGES.error();
+        return res.status(response.status).send(response);
       }
 
       const youtube = google.youtube({ version: "v3", auth });
@@ -213,20 +221,23 @@ Router.get("/youtube/items", async (req, res) => {
         nextPageToken = response.data.nextPageToken;
       } while (nextPageToken && items.length < MAX_LENGTH);
 
-      return res.send({ success: true, status: "success", data: { items } });
+      return res
+        .status(200)
+        .send({ success: true, status: 200, data: { items } });
     } catch (err) {
       console.log(err);
       if (!err?.response?.data?.error) {
-        return res.send(RESPONSE_MESSAGES.error);
+        const response = RESPONSE_MESSAGES.error();
+        return res.status(response.status).send(response);
       }
 
       if (err.response.data.error === "invalid_token") {
         clearGoogleAccessToken(connection, userId);
       }
 
-      return res.send({
+      return res.status(400).send({
         success: false,
-        status: "error",
+        status: 400,
         error: {
           code: err.response.data.error.code,
           reason: err.response.data.error.message,

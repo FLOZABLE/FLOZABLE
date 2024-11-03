@@ -4,7 +4,7 @@ const fs = require("fs");
 const pool = require("../model/pool");
 const redisClient = require("../model/redis");
 const crypto = require("crypto");
-const { hashing, generateRandomId } = require("../Utils/tool");
+const { hashing, generateRandomId } = require("../utils/tool");
 const {
   activeSubjectCache,
   userCache,
@@ -20,11 +20,11 @@ const {
   validatePassword,
   validateBoolean,
   validateString,
-} = require("../Utils/validate");
+} = require("../utils/validate");
 const { DateTime } = require("luxon");
-const { RESPONSE_MESSAGES } = require("../Constant");
 const { mainIo } = require("../sockets/io");
 const { autoSignin } = require("./auth");
+const RESPONSE_MESSAGES = require("../utils/responses");
 
 Router.get("/", async (req, res) => {
   try {
@@ -57,10 +57,13 @@ Router.get("/", async (req, res) => {
       likes: group.likes ? group.likes.split(",") : [],
       tags: group.tags ? JSON.parse(group.tags) : [],
     }));
-    res.send({ success: true, data: { groups: formattedGroups } });
+    res
+      .status(200)
+      .send({ success: true, status: 200, data: { groups: formattedGroups } });
   } catch (err) {
     console.log(err);
-    res.send(RESPONSE_MESSAGES.error);
+    const response = RESPONSE_MESSAGES.error();
+    return res.status(response.status).send(response);
   }
 });
 
@@ -80,9 +83,9 @@ Router.put("/group", async (req, res) => {
 
       const isValidName = validateString(name, "Name");
       if (!isValidName.isValid) {
-        return res.send({
+        return res.status(400).send({
           success: false,
-          status: "error",
+          status: 400,
           message: isValidName.reason,
           error: { reason: isValidName.reason },
         });
@@ -95,9 +98,9 @@ Router.put("/group", async (req, res) => {
         1
       );
       if (!isValidExplanation.isValid) {
-        return res.send({
+        return res.status(400).send({
           success: false,
-          status: "error",
+          status: 400,
           message: isValidExplanation.reason,
           error: { reason: isValidExplanation.reason },
         });
@@ -105,9 +108,9 @@ Router.put("/group", async (req, res) => {
 
       const isValidTags = validateArray(tags, "tags", 10);
       if (!isValidTags.isValid) {
-        return res.send({
+        return res.status(400).send({
           success: false,
-          status: "error",
+          status: 400,
           message: isValidTags.reason,
           error: { reason: isValidTags.reason },
         });
@@ -120,9 +123,9 @@ Router.put("/group", async (req, res) => {
         1
       );
       if (!isValidMembers.isValid) {
-        return res.send({
+        return res.status(400).send({
           success: false,
-          status: "error",
+          status: 400,
           message: isValidMembers.reason,
           error: { reason: isValidMembers.reason },
         });
@@ -130,9 +133,9 @@ Router.put("/group", async (req, res) => {
 
       const isValidVisibility = validateInteger(visibility, "visibility", 1, 0);
       if (!isValidVisibility.isValid) {
-        return res.send({
+        return res.status(400).send({
           success: false,
-          status: "error",
+          status: 400,
           message: isValidVisibility.reason,
           error: { reason: isValidVisibility.reason },
         });
@@ -141,9 +144,9 @@ Router.put("/group", async (req, res) => {
       if (!visibility) {
         const isValidPassword = validatePassword(password, 20, 4, false);
         if (!isValidPassword.isValid) {
-          return res.send({
+          return res.status(400).send({
             success: false,
-            status: "error",
+            status: 400,
             message: isValidPassword.reason,
             error: { reason: isValidPassword.reason },
           });
@@ -153,9 +156,9 @@ Router.put("/group", async (req, res) => {
       const isValidColor = validateHEX(color, "Color");
 
       if (!isValidColor.isValid) {
-        return res.send({
+        return res.status(400).send({
           success: false,
-          status: "error",
+          status: 400,
           message: isValidColor.reason,
           error: { reason: isValidColor.reason },
         });
@@ -163,9 +166,9 @@ Router.put("/group", async (req, res) => {
 
       const isValidGodalHr = validateInteger(goal_hr, "goal time", 10);
       if (!isValidGodalHr.isValid) {
-        return res.send({
+        return res.status(400).send({
           success: false,
-          status: "error",
+          status: 400,
           message: isValidGodalHr.reason,
           error: { reason: isValidGodalHr.reason },
         });
@@ -227,16 +230,17 @@ Router.put("/group", async (req, res) => {
       delete groupInfo.password;
       delete groupInfo.salt;
 
-      res.send({
+      res.status(200).send({
         success: true,
-        status: "success",
+        status: 200,
         message: `Group ${group.name} created!`,
         action: { code: 1, group_id },
         data: { group: groupInfo },
       });
     } catch (err) {
       console.log(err);
-      res.send(RESPONSE_MESSAGES.error);
+      const response = RESPONSE_MESSAGES.error();
+      return res.status(response.status).send(response);
     }
   });
 });
@@ -248,9 +252,9 @@ Router.delete("/group", async (req, res) => {
 
       const isValidGroupId = validateStrictString(groupId, "group id");
       if (!isValidGroupId.isValid) {
-        return res.send({
+        return res.status(400).send({
           success: false,
-          status: "error",
+          status: 400,
           message: isValidGroupId.reason,
           error: { reason: isValidGroupId.reason },
         });
@@ -264,7 +268,8 @@ Router.delete("/group", async (req, res) => {
       );
 
       if (!groupInfo) {
-        return res.send(RESPONSE_MESSAGES.noGroup);
+        const response = RESPONSE_MESSAGES.noGroup();
+        return res.status(response.status).send(response);
       }
 
       await connection.query(`DELETE FROM group_members WHERE group_id = ?`, [
@@ -276,14 +281,15 @@ Router.delete("/group", async (req, res) => {
       ]);
       redisClient.srem(`user:${userId}:groups`, groupId);
 
-      res.send({
+      res.status(200).send({
         success: true,
-        status: "success",
+        status: 200,
         message: `Deleted ${groupInfo.name}`,
       });
     } catch (err) {
       console.log(err);
-      res.send(RESPONSE_MESSAGES.error);
+      const response = RESPONSE_MESSAGES.error();
+      return res.status(response.status).send(response);
     }
   });
 });
@@ -308,9 +314,9 @@ Router.patch("/group", async (req, res) => {
 
       const isValidGroupId = validateStrictString(group_id, "group id");
       if (!isValidGroupId.isValid) {
-        return res.send({
+        return res.status(400).send({
           success: false,
-          status: "error",
+          status: 400,
           message: isValidGroupId.reason,
           error: { reason: isValidGroupId.reason },
         });
@@ -318,9 +324,9 @@ Router.patch("/group", async (req, res) => {
 
       const isValidName = validateString(name, "Name");
       if (!isValidName.isValid) {
-        return res.send({
+        return res.status(400).send({
           success: false,
-          status: "error",
+          status: 400,
           message: isValidName.reason,
           error: { reason: isValidName.reason },
         });
@@ -333,9 +339,9 @@ Router.patch("/group", async (req, res) => {
         1
       );
       if (!isValidExplanation.isValid) {
-        return res.send({
+        return res.status(400).send({
           success: false,
-          status: "error",
+          status: 400,
           message: isValidExplanation.reason,
           error: { reason: isValidExplanation.reason },
         });
@@ -343,9 +349,9 @@ Router.patch("/group", async (req, res) => {
 
       const isValidTags = validateArray(tags, "tags", 10);
       if (!isValidTags.isValid) {
-        return res.send({
+        return res.status(400).send({
           success: false,
-          status: "error",
+          status: 400,
           message: isValidTags.reason,
           error: { reason: isValidTags.reason },
         });
@@ -358,9 +364,9 @@ Router.patch("/group", async (req, res) => {
         0
       );
       if (!isValidMembers.isValid) {
-        return res.send({
+        return res.status(400).send({
           success: false,
-          status: "error",
+          status: 400,
           message: isValidMembers.reason,
           error: { reason: isValidMembers.reason },
         });
@@ -368,9 +374,9 @@ Router.patch("/group", async (req, res) => {
 
       const isValidVisibility = validateInteger(visibility, "visibility", 1, 0);
       if (!isValidVisibility.isValid) {
-        return res.send({
+        return res.status(400).send({
           success: false,
-          status: "error",
+          status: 400,
           message: isValidVisibility.reason,
           error: { reason: isValidVisibility.reason },
         });
@@ -378,9 +384,9 @@ Router.patch("/group", async (req, res) => {
 
       const isValidColor = validateHEX(color, "Color");
       if (!isValidColor.isValid) {
-        return res.send({
+        return res.status(400).send({
           success: false,
-          status: "error",
+          status: 400,
           message: isValidColor.reason,
           error: { reason: isValidColor.reason },
         });
@@ -388,9 +394,9 @@ Router.patch("/group", async (req, res) => {
 
       const isValidGodalHr = validateInteger(goal_hr, "goal time", 10);
       if (!isValidGodalHr.isValid) {
-        return res.send({
+        return res.status(400).send({
           success: false,
-          status: "error",
+          status: 400,
           message: isValidGodalHr.reason,
           error: { reason: isValidGodalHr.reason },
         });
@@ -403,11 +409,13 @@ Router.patch("/group", async (req, res) => {
         [group_id]
       );
       if (!groupInfo) {
-        return res.send(RESPONSE_MESSAGES.noGroup);
+        const response = RESPONSE_MESSAGES.noGroup();
+        return res.status(response.status).send(response);
       }
 
       if (groupInfo.leader !== userId) {
-        return res.send(RESPONSE_MESSAGES.forbidden);
+        const response = RESPONSE_MESSAGES.forbidden();
+        return res.status(response.status).send(response);
       }
 
       const stringlifiedTags = JSON.stringify(tags);
@@ -425,9 +433,9 @@ Router.patch("/group", async (req, res) => {
       if (!visibility && password !== "") {
         const isValidPassword = validatePassword(password, 30, 4, false);
         if (!isValidPassword.isValid) {
-          return res.send({
+          return res.status(400).send({
             success: false,
-            status: "error",
+            status: 400,
             message: isValidPassword.reason,
             error: { reason: isValidPassword.reason },
           });
@@ -441,15 +449,16 @@ Router.patch("/group", async (req, res) => {
         group,
         group_id,
       ]);
-      res.send({
+      res.status(200).send({
         success: true,
-        status: "success",
+        status: 200,
         message: `Group ${group.name} updated!`,
         data: { group_id },
       });
     } catch (err) {
       console.log(err);
-      res.send(RESPONSE_MESSAGES.error);
+      const response = RESPONSE_MESSAGES.error();
+      return res.status(response.status).send(response);
     }
   });
 });
@@ -464,9 +473,9 @@ Router.post("/group/join", async (req, res) => {
 
       const isValidGroupId = validateStrictString(groupId, "group id", 10, 10);
       if (!isValidGroupId.isValid) {
-        return res.send({
+        return res.status(400).send({
           success: false,
-          status: "error",
+          status: 400,
           message: isValidGroupId.reason,
           error: { reason: isValidGroupId.reason },
         });
@@ -492,16 +501,20 @@ Router.post("/group/join", async (req, res) => {
         ),
       ]);
 
-      if (!userInfo) return res.send(RESPONSE_MESSAGES.noUser);
+      if (!userInfo) {
+        const response = RESPONSE_MESSAGES.noUser();
+        return res.status(response.status).send(response);
+      }
 
       if (!groupInfo) {
-        return res.send(RESPONSE_MESSAGES.noGroup);
+        const response = RESPONSE_MESSAGES.noGroup();
+        return res.status(response.status).send(response);
       }
 
       if (groupInfo.members.includes(userId)) {
-        return res.send({
+        return res.status(400).send({
           success: false,
-          status: "error",
+          status: 400,
           message: "Already Joined",
           error: {
             reason: "Already Joined",
@@ -514,9 +527,9 @@ Router.post("/group/join", async (req, res) => {
         const isValidPassword = validateLength(password, "password", 100);
 
         if (!isValidPassword.isValid) {
-          return res.send({
+          return res.status(400).send({
             success: false,
-            status: "error",
+            status: 400,
             message: isValidPassword.reason,
             error: { reason: isValidPassword.reason },
           });
@@ -526,9 +539,9 @@ Router.post("/group/join", async (req, res) => {
           .pbkdf2Sync(password, groupInfo.salt, 99097, 32, "sha512")
           .toString("hex");
         if (hashedPassword !== groupInfo.password) {
-          return res.send({
+          return res.status(400).send({
             success: false,
-            status: "error",
+            status: 400,
             message: "Wrong Password",
             error: { reason: "Wrong Password" },
           });
@@ -567,15 +580,16 @@ Router.post("/group/join", async (req, res) => {
 
       mainIo.to(userId).emit("joinChatRoom", groupId);
 
-      res.send({
+      res.status(200).send({
         success: true,
-        status: "success",
+        status: 200,
         message: `Joined group "${groupInfo.name}"`,
         action: { code: 1, group_id: groupId },
       });
     } catch (err) {
       console.log(err);
-      res.send(RESPONSE_MESSAGES.error);
+      const response = RESPONSE_MESSAGES.error();
+      return res.status(response.status).send(response);
     }
   });
 });
@@ -591,14 +605,20 @@ Router.post("/group/leave", async (req, res) => {
 
       const userInfo = await userCache(connection, userId);
 
-      if (!userInfo) return res.send(RESPONSE_MESSAGES.noUser);
+      if (!userInfo) {
+        const response = RESPONSE_MESSAGES.noUser();
+        return res.status(response.status).send(response);
+      }
 
       const [{ affectedRows }] = await connection.query(
         `DELETE FROM group_members WHERE user_id = ? AND group_id = ?`,
         [userId, groupId]
       );
 
-      if (!affectedRows) return res.send(RESPONSE_MESSAGES.noGroup);
+      if (!affectedRows) {
+        const response = RESPONSE_MESSAGES.noGroup();
+        return res.status(response.status).send(response);
+      }
 
       redisClient.srem(`user:${userId}:groups`, groupId);
 
@@ -606,14 +626,15 @@ Router.post("/group/leave", async (req, res) => {
 
       mainIo.emit(`removeMember`, { groupId, userId });
 
-      return res.send({
+      return res.status(200).send({
         success: true,
-        status: "success",
+        status: 200,
         message: `Left group`,
       });
     } catch (err) {
       console.log(err);
-      res.send(RESPONSE_MESSAGES.error);
+      const response = RESPONSE_MESSAGES.error();
+      return res.status(response.status).send(response);
     }
   });
 });
@@ -631,12 +652,19 @@ Router.delete("/member", async (req, res) => {
         ]),
       ]);
 
-      if (!merberInfo) return res.send(RESPONSE_MESSAGES.noUser);
+      if (!merberInfo) {
+        const response = RESPONSE_MESSAGES.noTargetUser();
+        return res.status(response.status).send(response);
+      }
 
-      if (!groupInfo) return res.send(RESPONSE_MESSAGES.noGroup);
+      if (!groupInfo) {
+        const response = RESPONSE_MESSAGES.noGroup();
+        return res.status(response.status).send(response);
+      }
 
       if (groupInfo.leader !== userId) {
-        return res.send(RESPONSE_MESSAGES.forbidden);
+        const response = RESPONSE_MESSAGES.forbidden();
+        return res.status(response.status).send(response);
       }
 
       await connection.query(
@@ -649,10 +677,11 @@ Router.delete("/member", async (req, res) => {
       redisClient.srem(`chatroom:${groupId}`, memberId);
       mainIo.emit(`removeMember`, { groupId, memberId });
 
-      return res.send({ success: true, status: "success" });
+      return res.status(200).send({ success: true, status: 200 });
     } catch (err) {
       console.log(err);
-      res.send(RESPONSE_MESSAGES.error);
+      const response = RESPONSE_MESSAGES.error();
+      return res.status(response.status).send(response);
     }
   });
 });
@@ -668,7 +697,8 @@ Router.post("/transfer-ownership", async (req, res) => {
       );
 
       if (group.leader != userId) {
-        return res.send(RESPONSE_MESSAGES.forbidden);
+        const response = RESPONSE_MESSAGES.forbidden();
+        return res.status(response.status).send(response);
       }
 
       await connection.query(
@@ -676,10 +706,11 @@ Router.post("/transfer-ownership", async (req, res) => {
         [memberId, groupId]
       );
       mainIo.to(`chat:${groupId}`).emit("leaderChange", groupId, memberId);
-      return res.send({ success: true, status: "success" });
+      return res.status(200).send({ success: true, status: 200 });
     } catch (err) {
       console.log(err);
-      res.send(RESPONSE_MESSAGES.error);
+      const response = RESPONSE_MESSAGES.error();
+      return res.status(response.status).send(response);
     }
   });
 });
@@ -692,9 +723,9 @@ Router.post("/group/like", async (req, res) => {
       const isValidGroupId = validateStrictString(groupId, "group id");
 
       if (!isValidGroupId.isValid) {
-        return res.send({
+        return res.status(400).send({
           success: false,
-          status: "error",
+          status: 400,
           message: isValidGroupId.reason,
           error: { reason: isValidGroupId.reason },
         });
@@ -703,9 +734,9 @@ Router.post("/group/like", async (req, res) => {
       const isValidlike = validateBoolean(like, "like", true);
 
       if (!isValidlike.isValid) {
-        return res.send({
+        return res.status(400).send({
           success: false,
-          status: "error",
+          status: 400,
           message: isValidlike.reason,
           error: { reason: isValidlike.reason },
         });
@@ -731,10 +762,11 @@ Router.post("/group/like", async (req, res) => {
         mainIo.emit(`unlike:group:${groupId}`, { userId });
       }
 
-      return res.send({ success: true, status: "success" });
+      return res.status(200).send({ success: true, status: 200 });
     } catch (err) {
       console.log(err);
-      res.send(RESPONSE_MESSAGES.error);
+      const response = RESPONSE_MESSAGES.error();
+      return res.status(response.status).send(response);
     }
   });
 });
@@ -747,9 +779,9 @@ Router.get("/group/members", async (req, res) => {
       const isValidGroupId = validateStrictString(groupId, "group id");
 
       if (!isValidGroupId.isValid) {
-        return res.send({
+        return res.status(400).send({
           success: false,
-          status: "error",
+          status: 400,
           message: isValidGroupId.reason,
           error: { reason: isValidGroupId.reason },
         });
@@ -774,7 +806,8 @@ Router.get("/group/members", async (req, res) => {
       );
 
       if (!groupInfo) {
-        return res.send(RESPONSE_MESSAGES.noGroup);
+        const response = RESPONSE_MESSAGES.noGroup();
+        return res.status(response.status).send(response);
       }
 
       groupInfo.members = JSON.parse(`[${groupInfo.members}]`);
@@ -783,7 +816,7 @@ Router.get("/group/members", async (req, res) => {
         !groupInfo.visibility &&
         !groupInfo.members.find((member) => member.user_id === userId)
       ) {
-        return res.send(RESPONSE_MESSAGES["non-memeber"]);
+        return res.status(400).send(RESPONSE_MESSAGES["non-memeber"]);
       }
 
       const members = await Promise.all(
@@ -798,10 +831,13 @@ Router.get("/group/members", async (req, res) => {
         })
       );
 
-      return res.send({ success: true, status: "success", data: { members } });
+      return res
+        .status(200)
+        .send({ success: true, status: 200, data: { members } });
     } catch (err) {
       console.log(err);
-      res.send(RESPONSE_MESSAGES.error);
+      const response = RESPONSE_MESSAGES.error();
+      return res.status(response.status).send(response);
     }
   });
 });

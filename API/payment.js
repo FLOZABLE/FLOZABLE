@@ -1,9 +1,9 @@
 const stripe = require("stripe")(process.env.STRIPE_SECRET);
 const express = require("express");
 const Router = express.Router();
-const { RESPONSE_MESSAGES } = require("../Constant");
 const pool = require("../model/pool");
 const { autoSignin } = require("./auth");
+const RESPONSE_MESSAGES = require("../utils/responses");
 
 Router.post("/subscription/initialize", async (req, res) => {
   autoSignin(req, res, async (userId) => {
@@ -17,7 +17,8 @@ Router.post("/subscription/initialize", async (req, res) => {
       );
 
       if (!userInfo) {
-        return res.send(RESPONSE_MESSAGES.noUser);
+        const response = RESPONSE_MESSAGES.noUser();
+        return res.status(response.status).send(response);
       }
 
       if (!userInfo.stripe_id) {
@@ -33,7 +34,8 @@ Router.post("/subscription/initialize", async (req, res) => {
       }
 
       if (!userInfo.stripe_id) {
-        return res.send(RESPONSE_MESSAGES.error);
+        const response = RESPONSE_MESSAGES.error();
+        return res.status(response.status).send(response);
       }
 
       const subscription = await stripe.subscriptions.create({
@@ -44,10 +46,11 @@ Router.post("/subscription/initialize", async (req, res) => {
       });
       const clientSecret =
         subscription.latest_invoice.payment_intent.client_secret;
-      res.send({ success: true, clientSecret });
+      res.status(400).send({ success: true, clientSecret });
     } catch (err) {
       console.log(err);
-      res.send(RESPONSE_MESSAGES.error);
+      const response = RESPONSE_MESSAGES.error();
+      return res.status(response.status).send(response);
     }
   });
 });
@@ -59,10 +62,11 @@ Router.get("/product", async (req, res) => {
     const price = await stripe.prices.retrieve(priceId);
     const product = await stripe.products.retrieve(price.product);
 
-    res.send({ success: true, price, product });
+    res.status(400).send({ success: true, price, product });
   } catch (err) {
     console.log(err);
-    res.send(RESPONSE_MESSAGES.error);
+    const response = RESPONSE_MESSAGES.error();
+    return res.status(response.status).send(response);
   }
 });
 

@@ -1,7 +1,7 @@
 const { DateTime } = require("luxon");
 const pool = require("../model/pool");
 const redisClient = require("../model/redis");
-const { generateRandomId } = require("../Utils/tool");
+const { generateRandomId } = require("../utils/tool");
 
 async function updateRanking() {
   let now = DateTime.now();

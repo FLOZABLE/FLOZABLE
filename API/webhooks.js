@@ -75,7 +75,7 @@ Router.post("/stripe", async (req, res) => {
   }
 
   // Return a 200 res to acknowledge receipt of the event
-  res.send();
+  res.status(400).send();
 });
 
 module.exports = Router;
