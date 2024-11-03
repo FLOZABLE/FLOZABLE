@@ -6,31 +6,29 @@ const fetch = require("node-fetch");
 const querystring = require("node:querystring");
 const pool = require("../model/pool");
 const redisClient = require("../model/redis");
-const { hashing, generateRandomId, isValidTimeZone } = require("../Utils/tool");
+const { hashing, generateRandomId, isValidTimeZone } = require("../utils/tool");
 const {
   validateEmail,
   validateStrictString,
   validatePassword,
-} = require("../Utils/validate");
+} = require("../utils/validate");
 const {
   cacheUserInfo,
   setGoogleAccessToken,
   appTokenCache,
 } = require("../services/redisLoader");
 const { sendEmail } = require("../email");
-const {
-  USER_ID_COOKIE_OPTIONS,
-  RESPONSE_MESSAGES,
-  REDIS_EXP,
-} = require("../Constant");
+const { USER_ID_COOKIE_OPTIONS, REDIS_EXP } = require("../Constant");
 const { google } = require("googleapis");
+const RESPONSE_MESSAGES = require("../utils/responses");
 
 async function autoSignin(
   req,
   res,
   success = () => {},
   fail = () => {
-    res.send(RESPONSE_MESSAGES.noSession);
+    const response = RESPONSE_MESSAGES.noSession();
+    return res.status(response.status).send(response);
   }
 ) {
   try {
@@ -81,22 +79,22 @@ async function createAccount(name, email, timezone, userInfo) {
     //check email
     const isValidEmail = validateEmail(email);
     if (!isValidEmail.isValid) {
-      return res.send({
+      return {
         success: false,
-        status: "error",
+        status: 400,
         message: isValidEmail.reason,
         error: { reason: isValidEmail.reason },
-      });
+      };
     }
 
     const isValidName = validateStrictString(name, "Name", 25, 1);
     if (!isValidName.isValid) {
-      return res.send({
+      return {
         success: false,
-        status: "error",
+        status: 400,
         message: isValidName.reason,
         error: { reason: isValidName.reason },
-      });
+      };
     }
     const connection = pool.promise();
 
@@ -106,12 +104,12 @@ async function createAccount(name, email, timezone, userInfo) {
     );
 
     if (checkEmail) {
-      return res.send({
+      return {
         success: false,
-        status: "error",
+        status: 400,
         message: "Email already in use",
         error: { reason: "Email already in use" },
-      });
+      };
     }
 
     const user_id = generateRandomId(10);
@@ -146,7 +144,12 @@ async function createAccount(name, email, timezone, userInfo) {
     };
     connection.query(`INSERT INTO subjects SET ?`, subject);
 
-    return { success: true, message: "Account Created!", data: { user_id } };
+    return {
+      success: true,
+      status: 200,
+      message: "Account Created!",
+      data: { user_id },
+    };
   } catch (err) {
     console.log(err);
   }
@@ -175,9 +178,9 @@ Router.post("/signin", async (req, res) => {
 
     const isValidEmail = validateEmail(email);
     if (!isValidEmail.isValid) {
-      return res.send({
+      return res.status(400).send({
         success: false,
-        status: "error",
+        status: 400,
         message: isValidEmail.reason,
         error: { reason: isValidEmail.reason },
       });
@@ -191,7 +194,8 @@ Router.post("/signin", async (req, res) => {
     );
 
     if (!userInfo) {
-      return res.send(RESPONSE_MESSAGES.noUser);
+      const response = RESPONSE_MESSAGES.noUser();
+      return res.status(response.status).send(response);
     }
 
     const hashedPassword = crypto
@@ -199,26 +203,28 @@ Router.post("/signin", async (req, res) => {
       .toString("hex");
 
     if (hashedPassword !== userInfo.hashed_password) {
-      return res.send(RESPONSE_MESSAGES.wrongPassword);
+      const response = RESPONSE_MESSAGES.wrongPassword();
+      return res.status(response.status).send(response);
     }
 
     // Generate a new session ID
     req.session.regenerate((err) => {
       if (err) {
         console.log("Error regenerating session ID:", err);
-        res.send(RESPONSE_MESSAGES.error);
-        return;
+        const response = RESPONSE_MESSAGES.error();
+        return res.status(response.status).send(response);
       }
 
       req.session.user_id = userInfo.user_id;
 
       res.cookie("userId", userInfo.user_id, USER_ID_COOKIE_OPTIONS);
 
-      res.send({ success: true, status: "success", message: "Success!" });
+      res.status(200).send({ success: true, status: 200, message: "Success!" });
     });
   } catch (err) {
     console.log(err);
-    res.send(RESPONSE_MESSAGES.error);
+    const response = RESPONSE_MESSAGES.error();
+    return res.status(response.status).send(response);
   }
 });
 
@@ -232,7 +238,8 @@ Router.get("/signin/google", async (req, res) => {
     const response = await auth.getToken(code);
     if (response.res.status !== 200) {
       console.log("err");
-      return res.send(RESPONSE_MESSAGES.error);
+      const response = RESPONSE_MESSAGES.error();
+      return res.status(response.status).send(response);
     }
     const connection = pool.promise();
     const { refresh_token, access_token, expiry_date } = response.tokens;
@@ -297,7 +304,8 @@ Router.get("/signin/google", async (req, res) => {
           req.session.regenerate((err) => {
             if (err) {
               console.log("Error regenerating session ID:", err);
-              return res.send(RESPONSE_MESSAGES.error);
+              const response = RESPONSE_MESSAGES.error();
+              return res.status(response.status).send(response);
             }
 
             req.session.user_id = user_id;
@@ -322,7 +330,8 @@ Router.get("/signin/google", async (req, res) => {
         req.session.regenerate((err) => {
           if (err) {
             console.log("Error regenerating session ID:", err);
-            res.send(RESPONSE_MESSAGES.error);
+            const response = RESPONSE_MESSAGES.error();
+            return res.status(response.status).send(response);
             return;
           }
 
@@ -343,7 +352,8 @@ Router.get("/signin/google", async (req, res) => {
     );
   } catch (err) {
     console.log(err);
-    res.send(RESPONSE_MESSAGES.error);
+    const response = RESPONSE_MESSAGES.error();
+    return res.status(response.status).send(response);
   }
 });
 
@@ -371,7 +381,8 @@ Router.get("/signin/spotify", async (req, res) => {
       );
     } catch (err) {
       console.log(err);
-      res.send(RESPONSE_MESSAGES.error);
+      const response = RESPONSE_MESSAGES.error();
+      return res.status(response.status).send(response);
     }
   });
 });
@@ -462,7 +473,8 @@ Router.get("/signin/spotify/callback", async (req, res) => {
     );
   } catch (err) {
     console.log(err);
-    res.send(RESPONSE_MESSAGES.error);
+    const response = RESPONSE_MESSAGES.error();
+    return res.status(response.status).send(response);
   }
 });
 
@@ -475,18 +487,18 @@ Router.post("/app/signin", async (req, res) => {
     const isValidEmail = validateEmail(email);
 
     if (!isValidEmail.isValid) {
-      return res.send({
+      return res.status(400).send({
         success: false,
-        status: "error",
+        status: 400,
         message: isValidEmail.reason,
         error: { reason: isValidEmail.reason },
       });
     }
 
     if (!password)
-      return res.send({
+      return res.status(400).send({
         success: false,
-        status: "error",
+        status: 400,
         message: "Password Missing",
         error: { reason: "Password Missing" },
       });
@@ -497,7 +509,8 @@ Router.post("/app/signin", async (req, res) => {
     );
 
     if (!userInfo) {
-      return res.send(RESPONSE_MESSAGES.noUser);
+      const response = RESPONSE_MESSAGES.noUser();
+      return res.status(response.status).send(response);
     }
 
     const hashedPassword = crypto
@@ -505,15 +518,17 @@ Router.post("/app/signin", async (req, res) => {
       .toString("hex");
 
     if (hashedPassword !== userInfo.hashed_password) {
-      return res.send(RESPONSE_MESSAGES.wrongPassword);
+      const response = RESPONSE_MESSAGES.wrongPassword();
+      return res.status(response.status).send(response);
     }
 
     const token = await appTokenCache(userInfo.user_id, true);
     req.session.user_id = userInfo.user_id;
     const deviceId = generateRandomId(10);
     console.log(token);
-    return res.send({
+    return res.status(200).send({
       success: true,
+      status: 200,
       message: "Authed",
       data: {
         token,
@@ -523,7 +538,8 @@ Router.post("/app/signin", async (req, res) => {
     });
   } catch (err) {
     console.log(err);
-    res.send(RESPONSE_MESSAGES.error);
+    const response = RESPONSE_MESSAGES.error();
+    return res.status(response.status).send(response);
   }
 });
 
@@ -534,20 +550,16 @@ Router.post("/app/validate-tokens", async (req, res) => {
     const isValidDeviceId = validateStrictString(userId, "user id", 10, 10);
 
     if (!isValidDeviceId.isValid) {
-      return res.send({
-        success: false,
-        status: "error",
-        message: isValidDeviceId.reason,
-        error: { reason: isValidDeviceId.reason },
-      });
+      const response = RESPONSE_MESSAGES.validationError(isValidDeviceId);
+      return res.status(response.status).send(response);
     }
 
     const isValidToken = validateStrictString(token, "token", 20, 20);
 
     if (!isValidToken.isValid) {
-      return res.send({
+      return res.status(400).send({
         success: false,
-        status: "error",
+        status: 400,
         message: isValidToken.reason,
         error: { reason: isValidToken.reason },
       });
@@ -556,12 +568,13 @@ Router.post("/app/validate-tokens", async (req, res) => {
     const savedToken = await appTokenCache(userId, false);
     console.log("token", savedToken, token, userId);
     if (savedToken !== token) {
-      return res.send(RESPONSE_MESSAGES.notAuthed);
+      const response = RESPONSE_MESSAGES.notAuthed();
+      return res.status(response.status).send(response);
     }
 
     req.session.user_id = userId;
 
-    return res.send({ success: true });
+    return res.status(200).send({ success: true, status: 200 });
   } catch (err) {
     console.log(err);
   }
@@ -578,7 +591,8 @@ Router.post("/verify", async (req, res) => {
       );
 
       if (!userInfo) {
-        return res.send(RESPONSE_MESSAGES.noUser);
+        const response = RESPONSE_MESSAGES.noUser();
+        return res.status(response.status).send(response);
       }
 
       const { email } = userInfo;
@@ -597,17 +611,19 @@ Router.post("/verify", async (req, res) => {
 
       if (!response.success) {
         console.log(response);
-        return res.send(RESPONSE_MESSAGES.error);
+        const response = RESPONSE_MESSAGES.error();
+        return res.status(response.status).send(response);
       }
 
-      res.send({
+      res.status(200).send({
         success: true,
-        status: "success",
+        status: 200,
         message: "Check your email!",
       });
     } catch (err) {
       console.log(err);
-      res.send(RESPONSE_MESSAGES.error);
+      const response = RESPONSE_MESSAGES.error();
+      return res.status(response.status).send(response);
     }
   });
 });
@@ -620,7 +636,7 @@ Router.get("/verify", async (req, res) => {
       return res.redirect(
         process.env.NEXT_SERVER +
           "/dashboard?" +
-          querystring.stringify(RESPONSE_MESSAGES.expiredRequest)
+          querystring.stringify(RESPONSE_MESSAGES.expiredRequest())
       );
     }
 
@@ -630,7 +646,7 @@ Router.get("/verify", async (req, res) => {
       return res.redirect(
         process.env.NEXT_SERVER +
           "/dashboard?" +
-          querystring.stringify(RESPONSE_MESSAGES.expiredRequest)
+          querystring.stringify(RESPONSE_MESSAGES.expiredRequest())
       );
     }
     const [storedVerifyId, email] = verifyInfo.split(":");
@@ -639,7 +655,7 @@ Router.get("/verify", async (req, res) => {
       return res.redirect(
         process.env.NEXT_SERVER +
           "/dashboard?" +
-          querystring.stringify(RESPONSE_MESSAGES.expiredRequest)
+          querystring.stringify(RESPONSE_MESSAGES.expiredRequest())
       );
     }
 
@@ -667,7 +683,7 @@ Router.get("/verify", async (req, res) => {
     return res.redirect(
       process.env.NEXT_SERVER +
         "/dashboard?" +
-        querystring.stringify(RESPONSE_MESSAGES.expiredRequest)
+        querystring.stringify(RESPONSE_MESSAGES.expiredRequest())
     );
   }
 });
@@ -679,9 +695,9 @@ Router.post("/signup", async (req, res) => {
     const isValidPassword = validatePassword(password, 30);
 
     if (!isValidPassword.isValid) {
-      return res.send({
+      return res.status(400).send({
         success: false,
-        status: "error",
+        status: 400,
         message: isValidPassword.reason,
         error: { reason: isValidPassword.reason },
       });
@@ -697,7 +713,7 @@ Router.post("/signup", async (req, res) => {
     const { success, data } = response;
 
     if (!success) {
-      return res.send(response);
+      return res.status(400).send(response);
     }
 
     const { user_id } = data;
@@ -705,17 +721,17 @@ Router.post("/signup", async (req, res) => {
     req.session.regenerate((err) => {
       if (err) {
         console.log("Error regenerating session ID:", err);
-        res.send(RESPONSE_MESSAGES.error);
-        return;
+        const response = RESPONSE_MESSAGES.error();
+        return res.status(response.status).send(response);
       }
       req.session.user_id = user_id;
     });
 
     res.cookie("userId", user_id, USER_ID_COOKIE_OPTIONS);
 
-    res.send({
+    res.status(200).send({
       success: true,
-      status: "success",
+      status: 200,
       message: "Login to Your Account!",
     });
   } catch (err) {
@@ -731,7 +747,7 @@ Router.get("/logout", function (req, res) {
         console.log("Error destroying session:", err);
       }
       res.clearCookie("userId");
-      res.send({ success: true, status: "success" });
+      res.status(200).send({ success: true, status: 200 });
     });
   } catch (err) {
     console.log(err);

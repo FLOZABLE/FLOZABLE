@@ -1,6 +1,6 @@
 const redisClient = require("../model/redis");
 const pool = require("../model/pool");
-const { getMidnightTimezones } = require("../Utils/tool");
+const { getMidnightTimezones } = require("../utils/tool");
 const { DateTime } = require("luxon");
 
 async function timerUpdate() {

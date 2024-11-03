@@ -3,22 +3,26 @@ const Router = express.Router();
 const pool = require("../model/pool");
 const redisClient = require("../model/redis");
 const { cacheExtensionToken } = require("../services/redisLoader");
-const { validateURL, validateOption } = require("../Utils/validate");
-const { RESPONSE_MESSAGES } = require("../Constant");
+const { validateURL, validateOption } = require("../utils/validate");
 const { extensionIo } = require("../sockets/io");
 const { autoSignin } = require("./auth");
+const RESPONSE_MESSAGES = require("../utils/responses");
 
 Router.post("/auth", async (req, res) => {
   autoSignin(req, res, async (userId) => {
     try {
       const token = await cacheExtensionToken(userId);
       if (!token) {
-        return res.send(RESPONSE_MESSAGES.error);
+        const response = RESPONSE_MESSAGES.error();
+        return res.status(response.status).send(response);
       }
-      res.send({ success: true, status: "success", data: { userId, token } });
+      res
+        .status(200)
+        .send({ success: true, status: 200, data: { userId, token } });
     } catch (err) {
       console.log(err);
-      res.send(RESPONSE_MESSAGES.error);
+      const response = RESPONSE_MESSAGES.error();
+      return res.status(response.status).send(response);
     }
   });
 });
@@ -32,14 +36,15 @@ Router.get("/settings", async (req, res) => {
         [userId]
       );
 
-      res.send({
+      res.status(200).send({
         success: true,
-        status: "success",
+        status: 200,
         data: { websiteSettings },
       });
     } catch (err) {
       console.log(err);
-      res.send(RESPONSE_MESSAGES.error);
+      const response = RESPONSE_MESSAGES.error();
+      return res.status(response.status).send(response);
     }
   });
 });
@@ -53,9 +58,9 @@ Router.put("/setting", async (req, res) => {
       const isValidURL = validateURL(url);
 
       if (!isValidURL.isValid) {
-        return res.send({
+        return res.status(400).send({
           success: false,
-          status: "error",
+          status: 400,
           message: isValidURL.reason,
           error: { reason: isValidURL.reason },
         });
@@ -64,9 +69,9 @@ Router.put("/setting", async (req, res) => {
       const { domain, origin } = isValidURL;
 
       if (domain.includes("flozable")) {
-        return res.send({
+        return res.status(400).send({
           success: false,
-          status: "error",
+          status: 400,
           message: `FLOZABLE can't be added`,
           error: { reason: `FLOZABLE can't be added` },
         });
@@ -91,18 +96,18 @@ Router.put("/setting", async (req, res) => {
       } catch (err) {
         console.log(err);
         if (err.code === "ER_DUP_ENTRY") {
-          return res.send({
+          return res.status(400).send({
             success: false,
-            status: "error",
+            status: 400,
             message: "Already existing website",
             error: { reason: "Already existing website" },
           });
         }
       }
       extensionIo.to(userId).emit("setting-updated", setting);
-      res.send({
+      res.status(200).send({
         success: true,
-        status: "success",
+        status: 200,
         message: `Added ${domain}`,
         data: {
           origin: origin,
@@ -112,7 +117,8 @@ Router.put("/setting", async (req, res) => {
       });
     } catch (err) {
       console.log(err);
-      res.send(RESPONSE_MESSAGES.error);
+      const response = RESPONSE_MESSAGES.error();
+      return res.status(response.status).send(response);
     }
   });
 });
@@ -130,9 +136,9 @@ Router.patch("/setting", async (req, res) => {
       ]);
 
       if (!isValidMode.isValid) {
-        return res.send({
+        return res.status(400).send({
           success: false,
-          status: "error",
+          status: 400,
           message: isValidMode.reason,
           error: { reason: isValidMode.reason },
         });
@@ -151,15 +157,16 @@ Router.patch("/setting", async (req, res) => {
       `,
         [setting, userId, website]
       );
-      res.send({
+      res.status(200).send({
         success: true,
-        status: "success",
+        status: 200,
         message: "Setting updated!",
       });
       extensionIo.to(userId).emit("setting-updated", { ...setting, website });
     } catch (err) {
       console.log(err);
-      res.send(RESPONSE_MESSAGES.error);
+      const response = RESPONSE_MESSAGES.error();
+      return res.status(response.status).send(response);
     }
   });
 });
@@ -200,10 +207,11 @@ Router.get("/usage", async (req, res) => {
         });
       }
 
-      res.send({ success: true, status: "success", data: { usage } });
+      res.status(200).send({ success: true, status: 200, data: { usage } });
     } catch (err) {
       console.log(err);
-      res.send(RESPONSE_MESSAGES.error);
+      const response = RESPONSE_MESSAGES.error();
+      return res.status(response.status).send(response);
     }
   });
 });

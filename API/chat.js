@@ -2,7 +2,7 @@ const express = require("express");
 const Router = express.Router();
 const pool = require("../model/pool");
 const redisClient = require("../model/redis");
-const { generateRandomId } = require("../Utils/tool");
+const { generateRandomId } = require("../utils/tool");
 const {
   notificationCache,
   usersCache,
@@ -10,10 +10,10 @@ const {
   userChatroomsCache,
   chatroomMessagesCache,
 } = require("../services/redisLoader");
-const { validateStrictString, validateBoolean } = require("../Utils/validate");
+const { validateStrictString, validateBoolean } = require("../utils/validate");
 const { mainIo } = require("../sockets/io");
-const { RESPONSE_MESSAGES } = require("../Constant");
 const { autoSignin } = require("./auth");
+const RESPONSE_MESSAGES = require("../utils/responses");
 
 Router.get("/rooms", async (req, res) => {
   autoSignin(req, res, async (userId) => {
@@ -76,10 +76,11 @@ Router.get("/rooms", async (req, res) => {
         return b.lastMsg.sent_at - a.lastMsg.sent_at; // Both have a lastMsg, compare normally
       });
 
-      res.send({ success: true, status: "success", data: { chatrooms } });
+      res.status(200).send({ success: true, status: 200, data: { chatrooms } });
     } catch (err) {
       console.log(err);
-      res.send(RESPONSE_MESSAGES.error);
+      const response = RESPONSE_MESSAGES.error();
+      return res.status(response.status).send(response);
     }
   });
 });
@@ -93,7 +94,8 @@ Router.get("/messages", async (req, res) => {
       const members = await chatroomMembersCache(null, chatroom_id);
 
       if (!members.includes(userId)) {
-        return res.send(RESPONSE_MESSAGES.nonMember);
+        const response = RESPONSE_MESSAGES.nonMember();
+        return res.status(response.status).send(response);
       }
 
       const messages = await chatroomMessagesCache(
@@ -103,9 +105,9 @@ Router.get("/messages", async (req, res) => {
         parseInt(length)
       );
 
-      res.send({
+      res.status(200).send({
         success: true,
-        status: "success",
+        status: 200,
         data: { messages, chatroom_id },
       });
     } catch (err) {
@@ -142,13 +144,15 @@ Router.get("/members", async (req, res) => {
       );
 
       if (!members.find((member) => member.user_id === userId)) {
-        return res.send(RESPONSE_MESSAGES.nonMember);
+        const response = RESPONSE_MESSAGES.nonMember();
+        return res.status(response.status).send(response);
       }
 
-      res.send({ success: true, status: "success", data: { members } });
+      res.status(200).send({ success: true, status: 200, data: { members } });
     } catch (err) {
       console.log(err);
-      res.send(RESPONSE_MESSAGES.error);
+      const response = RESPONSE_MESSAGES.error();
+      return res.status(response.status).send(response);
     }
   });
 });
@@ -161,18 +165,18 @@ Router.post("/request", async (req, res) => {
       const isValidTargetId = validateStrictString(targetId, "target user", 10);
 
       if (!isValidTargetId.isValid) {
-        return res.send({
+        return res.status(400).send({
           success: false,
-          status: "error",
+          status: 400,
           message: isValidTargetId.reason,
           error: { reason: isValidTargetId.reason },
         });
       }
 
       if (targetId === userId) {
-        return res.send({
+        return res.status(400).send({
           success: false,
-          status: "error",
+          status: 400,
           message: "Can't chat yourself",
           error: { reason: "Can't chat yourself" },
         });
@@ -197,9 +201,9 @@ Router.post("/request", async (req, res) => {
       ]);
 
       if (chatroom) {
-        return res.send({
+        return res.status(400).send({
           success: false,
-          status: "error",
+          status: 400,
           error: { reason: "DM already created!" },
           data: { chatroom: chatroom },
         });
@@ -210,10 +214,12 @@ Router.post("/request", async (req, res) => {
       const targetUser = usersInfo.find((user) => user.user_id === targetId);
 
       if (!userInfo) {
-        return RESPONSE_MESSAGES.noUser;
+        const response = RESPONSE_MESSAGES.noUser();
+        return res.status(response.status).send(response);
       }
       if (!targetUser) {
-        return RESPONSE_MESSAGES.noTargetUser;
+        const response = RESPONSE_MESSAGES.noTargetUser();
+        return res.status(response.status).send(response);
       }
 
       const targetDmRequests = await notificationCache(targetId, 4);
@@ -222,9 +228,9 @@ Router.post("/request", async (req, res) => {
       );
 
       if (prevDmRequest) {
-        return res.send({
+        return res.status(400).send({
           success: false,
-          status: "error",
+          status: 400,
           message: "Already sent the request!",
           error: { reason: "Already sent the request!" },
         });
@@ -246,14 +252,15 @@ Router.post("/request", async (req, res) => {
         JSON.stringify(notification)
       );
 
-      res.send({
+      res.status(200).send({
         success: true,
-        status: "success",
+        status: 200,
         message: `Sent request to ${targetUser.name}`,
       });
     } catch (err) {
       console.log(err);
-      res.send(RESPONSE_MESSAGES.error);
+      const response = RESPONSE_MESSAGES.error();
+      return res.status(response.status).send(response);
     }
   });
 });
@@ -270,9 +277,9 @@ Router.post("/request/reply", async (req, res) => {
       const isValidTargetId = validateStrictString(targetId, "target user", 10);
 
       if (!isValidTargetId.isValid) {
-        return res.send({
+        return res.status(400).send({
           success: false,
-          status: "error",
+          status: 400,
           message: isValidTargetId.reason,
           error: { reason: isValidTargetId.reason },
         });
@@ -281,9 +288,9 @@ Router.post("/request/reply", async (req, res) => {
       const isValidAcceped = validateBoolean(accepted, "accept", true);
 
       if (!isValidAcceped.isValid) {
-        return res.send({
+        return res.status(400).send({
           success: false,
-          status: "error",
+          status: 400,
           message: isValidAcceped.reason,
           error: { reason: isValidAcceped.reason },
         });
@@ -294,20 +301,22 @@ Router.post("/request/reply", async (req, res) => {
         notificationId
       );
       if (!chatReq) {
-        return res.send(RESPONSE_MESSAGES.expiredRequest);
+        const response = RESPONSE_MESSAGES.expiredRequest();
+        return res.status(response.status).send(response);
       }
 
       const parsedChatReq = JSON.parse(chatReq);
       if (!parsedChatReq.f === targetId) {
-        return res.send(RESPONSE_MESSAGES.expiredRequest);
+        const response = RESPONSE_MESSAGES.expiredRequest();
+        return res.status(response.status).send(response);
       }
 
       redisClient.hdel(`user:${userId}:notifications`, notificationId);
 
       if (!accepted) {
-        return res.send({
+        return res.status(200).send({
           success: true,
-          status: "success",
+          status: 200,
           message: `Declined chat request`,
         });
       }
@@ -319,10 +328,12 @@ Router.post("/request/reply", async (req, res) => {
 
       const targetUser = usersInfo.find((user) => user.user_id === targetId);
       if (!userInfo) {
-        return RESPONSE_MESSAGES.noUser;
+        const response = RESPONSE_MESSAGES.noUser();
+        return res.status(response.status).send(response);
       }
       if (!targetUser) {
-        return RESPONSE_MESSAGES.noTargetUser;
+        const response = RESPONSE_MESSAGES.noTargetUser();
+        return res.status(response.status).send(response);
       }
 
       const chatroom_id = generateRandomId(10);
@@ -354,14 +365,15 @@ Router.post("/request/reply", async (req, res) => {
         [newMember]
       );
 
-      res.send({
+      res.status(200).send({
         success: true,
-        status: "success",
+        status: 200,
         message: `Accepted chat request!`,
       });
     } catch (err) {
       console.log(err);
-      res.send(RESPONSE_MESSAGES.error);
+      const response = RESPONSE_MESSAGES.error();
+      return res.status(response.status).send(response);
     }
   });
 });

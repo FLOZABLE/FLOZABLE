@@ -3,7 +3,7 @@ const {
   generateRandomId,
   getDates,
   randomIntInRange,
-} = require("../Utils/tool");
+} = require("../utils/tool");
 const {
   notificationCache,
   userCache,
@@ -20,12 +20,13 @@ const {
   validateEmail,
   validateStrictString,
   validateBoolean,
-} = require("../Utils/validate");
+} = require("../utils/validate");
 const { DateTime } = require("luxon");
 const { mainIo } = require("../sockets/io");
-const { RESPONSE_MESSAGES, FRIENDS_LIMIT } = require("../Constant");
+const { FRIENDS_LIMIT } = require("../Constant");
 const Router = express.Router();
 const { autoSignin } = require("./auth");
+const RESPONSE_MESSAGES = require("../utils/responses");
 
 async function sendFriendRequest(userId, targetId) {
   try {
@@ -34,7 +35,7 @@ async function sendFriendRequest(userId, targetId) {
     if (!isValidTargetId.isValid) {
       return {
         success: false,
-        status: "error",
+        status: 400,
         message: isValidTargetId.reason,
         error: { reason: isValidTargetId.reason },
       };
@@ -43,7 +44,7 @@ async function sendFriendRequest(userId, targetId) {
     if (userId === targetId) {
       return {
         success: false,
-        status: "error",
+        status: 400,
         message: "Cannot send request to yourself",
         error: { reason: "Cannot send request to yourself" },
       };
@@ -61,10 +62,10 @@ async function sendFriendRequest(userId, targetId) {
     const targetInfo = usersInfo.find((user) => user.user_id === targetId);
 
     if (!userInfo) {
-      return RESPONSE_MESSAGES.noUser;
+      return RESPONSE_MESSAGES.noUser();
     }
     if (!targetInfo) {
-      return RESPONSE_MESSAGES.noTargetUser;
+      return RESPONSE_MESSAGES.noTargetUser();
     }
 
     if (friends.includes(userId)) {
@@ -75,7 +76,7 @@ async function sendFriendRequest(userId, targetId) {
     }
 
     if (friends.length > FRIENDS_LIMIT) {
-      return RESPONSE_MESSAGES.friendsLimitReached;
+      return RESPONSE_MESSAGES.friendsLimitReached();
     }
 
     const friendRequests = await notificationCache(targetId, 0);
@@ -86,7 +87,7 @@ async function sendFriendRequest(userId, targetId) {
     if (prevFriendReq) {
       return {
         success: false,
-        status: "error",
+        status: 400,
         message: "You've already sent a request to this user",
         error: { reason: "You've already sent a request to this user" },
       };
@@ -117,12 +118,12 @@ async function sendFriendRequest(userId, targetId) {
 
     return {
       success: true,
-      status: "success",
+      status: 200,
       message: `Sent friend request to ${targetInfo.name}!`,
     };
   } catch (err) {
     console.log(err);
-    return RESPONSE_MESSAGES.error;
+    return RESPONSE_MESSAGES.error();
   }
 }
 
@@ -139,7 +140,7 @@ async function replyFriendRequest(
     if (!isValidTargetId.isValid) {
       return {
         success: false,
-        status: "error",
+        status: 400,
         message: isValidTargetId.reason,
         error: { reason: isValidTargetId.reason },
       };
@@ -154,7 +155,7 @@ async function replyFriendRequest(
       if (!isValidNotificationId.isValid)
         return {
           success: false,
-          status: "error",
+          status: 400,
           message: isValidNotificationId.reason,
           error: { reason: isValidNotificationId.reason },
         };
@@ -165,7 +166,7 @@ async function replyFriendRequest(
     if (!isValidAcceped.isValid) {
       return {
         success: false,
-        status: "error",
+        status: 400,
         message: isValidAcceped.reason,
         error: { reason: isValidAcceped.reason },
       };
@@ -179,13 +180,13 @@ async function replyFriendRequest(
         return friendReq.f === targetId;
       });
 
-      if (!friendReq) return RESPONSE_MESSAGES.expiredRequest;
+      if (!friendReq) return RESPONSE_MESSAGES.expiredRequest();
     } else {
       friendReq = await redisClient.hget(
         `user:${userId}:notifications`,
         notificationId
       );
-      if (!friendReq) return RESPONSE_MESSAGES.expiredRequest;
+      if (!friendReq) return RESPONSE_MESSAGES.expiredRequest();
 
       friendReq = { i: notificationId, ...JSON.parse(friendReq) };
     }
@@ -196,7 +197,7 @@ async function replyFriendRequest(
     if (!accepted) {
       return {
         success: true,
-        status: "success",
+        status: 200,
         message: "Declined Friend Request!",
       };
     }
@@ -212,16 +213,16 @@ async function replyFriendRequest(
 
     const targetInfo = usersInfo.find((user) => user.user_id === targetId);
     if (!userInfo) {
-      return RESPONSE_MESSAGES.noUser;
+      return RESPONSE_MESSAGES.noUser();
     }
     if (!targetInfo) {
-      return RESPONSE_MESSAGES.noTargetUser;
+      return RESPONSE_MESSAGES.noTargetUser();
     }
 
     if (userFriends.includes(targetId))
       return {
         success: true,
-        status: "success",
+        status: 200,
         message: `You and ${targetInfo.name} were already friends!`,
       };
 
@@ -229,7 +230,7 @@ async function replyFriendRequest(
       userFriends.length >= FRIENDS_LIMIT ||
       targetUserFriends.length >= FRIENDS_LIMIT
     ) {
-      return RESPONSE_MESSAGES.friendsLimitReached;
+      return RESPONSE_MESSAGES.friendsLimitReached();
     }
 
     const date = Math.floor(new Date().getTime() / 1000);
@@ -313,12 +314,12 @@ async function replyFriendRequest(
 
     return {
       success: true,
-      status: "success",
+      status: 200,
       message: `You and ${targetInfo.name} are now friends!`,
     };
   } catch (err) {
     console.log(err);
-    return RESPONSE_MESSAGES.error;
+    return RESPONSE_MESSAGES.error();
   }
 }
 
@@ -329,10 +330,11 @@ Router.post("/request", async (req, res) => {
       const { target_id: targetId } = req.body;
 
       const response = await sendFriendRequest(userId, targetId);
-      return res.send(response);
+      return res.status(response.status).send(response);
     } catch (err) {
       console.log(err);
-      res.send(RESPONSE_MESSAGES.error);
+      const response = RESPONSE_MESSAGES.error();
+      return res.status(response.status).send(response);
     }
   });
 });
@@ -345,9 +347,9 @@ Router.delete("/request", async (req, res) => {
       const isValidTargetId = validateStrictString(targetId, "user id", 10);
 
       if (!isValidTargetId.isValid) {
-        return res.send({
+        return res.status(400).send({
           success: false,
-          status: "error",
+          status: 400,
           message: isValidTargetId.reason,
           error: { reason: isValidTargetId.reason },
         });
@@ -357,14 +359,19 @@ Router.delete("/request", async (req, res) => {
       const friendReq = friendRequests.find((friendReq) => {
         return friendReq.f === userId;
       });
-      if (!friendReq) return res.send(RESPONSE_MESSAGES.expiredRequest);
+      if (!friendReq) {
+        const response = RESPONSE_MESSAGES.expiredRequest();
+        return res.status(response.status).send(response);
+      }
+
       redisClient.hdel(`user:${targetId}:notifications`, friendReq.i);
       //remove it from ongoing friend req list
       redisClient.hdel(`user:${userId}:notifications`, friendReq.i);
-      res.send({ success: true, status: "success" });
+      res.status(200).send({ success: true, status: 200 });
     } catch (err) {
       console.log(err);
-      res.send(RESPONSE_MESSAGES.error);
+      const response = RESPONSE_MESSAGES.error();
+      return res.status(response.status).send(response);
     }
   });
 });
@@ -387,10 +394,11 @@ Router.post("/request/reply", async (req, res) => {
       );
 
       console.log(response);
-      return res.send(response);
+      return res.status(response.status).send(response);
     } catch (err) {
       console.log(err);
-      res.send(RESPONSE_MESSAGES.error);
+      const response = RESPONSE_MESSAGES.error();
+      return res.status(response.status).send(response);
     }
   });
 });
@@ -431,20 +439,24 @@ Router.get("/recommended", async (req, res) => {
         const excluded = [...friends, userId];
 
         const users = await getRecommendedFriends(connection, excluded);
-        return res.send({ success: true, status: "success", data: { users } });
+        return res
+          .status(200)
+          .send({ success: true, status: 200, data: { users } });
       } catch (err) {
         console.log(err);
-        res.send(RESPONSE_MESSAGES.error);
+        const response = RESPONSE_MESSAGES.error();
+        return res.status(response.status).send(response);
       }
     },
     async () => {
       try {
         const connection = pool.promise();
         const users = await getRecommendedFriends(connection);
-        return res.send({ success: true, data: { users } });
+        return res.status(400).send({ success: true, data: { users } });
       } catch (err) {
         console.log(err);
-        res.send(RESPONSE_MESSAGES.error);
+        const response = RESPONSE_MESSAGES.error();
+        return res.status(response.status).send(response);
       }
     }
   );
@@ -460,7 +472,10 @@ Router.get("/status", async (req, res) => {
         userFriendsCache(connection, userId),
       ]);
 
-      if (!userInfo) return res.send(RESPONSE_MESSAGES.noUser);
+      if (!userInfo) {
+        const response = RESPONSE_MESSAGES.noUser();
+        return res.status(response.status).send(response);
+      }
 
       const { timezone } = req.query;
 
@@ -471,9 +486,9 @@ Router.get("/status", async (req, res) => {
       const friends = await usersCache(connection, friendsIds);
 
       if (!friends.length) {
-        return res.send({
+        return res.status(400).send({
           success: false,
-          status: "error",
+          status: 400,
           error: { reason: "No friends" },
         });
       }
@@ -544,10 +559,13 @@ Router.get("/status", async (req, res) => {
           }
         });
       }
-      return res.send({ success: true, status: "success", data: { friends } });
+      return res
+        .status(200)
+        .send({ success: true, status: 200, data: { friends } });
     } catch (err) {
       console.log(err);
-      res.send(RESPONSE_MESSAGES.error);
+      const response = RESPONSE_MESSAGES.error();
+      return res.status(response.status).send(response);
     }
   });
 });
@@ -559,9 +577,9 @@ Router.get("/search", async (req, res) => {
     const isValidQuery = validateStrictString(query, "query", 10, 2);
 
     if (!isValidQuery.isValid) {
-      return res.send({
+      return res.status(400).send({
         success: false,
-        status: "error",
+        status: 400,
         message: isValidQuery.reason,
         error: { reason: isValidQuery.reason },
       });
@@ -572,10 +590,11 @@ Router.get("/search", async (req, res) => {
       `SELECT user_id, name, timezone from users where name like ? LIMIT 20`,
       `%${query}%`
     );
-    res.send({ success: true, status: "success", data: { users } });
+    res.status(200).send({ success: true, status: 200, data: { users } });
   } catch (err) {
     console.log(err);
-    res.send(RESPONSE_MESSAGES.error);
+    const response = RESPONSE_MESSAGES.error();
+    return res.status(response.status).send(response);
   }
 });
 
@@ -599,9 +618,12 @@ Router.post("/link/create", async (req, res) => {
   autoSignin(req, res, async (userId) => {
     const linkId = await createFriendLink(userId);
     if (linkId) {
-      return res.send({ success: true, status: "success", data: { linkId } });
+      return res
+        .status(200)
+        .send({ success: true, status: 200, data: { linkId } });
     } else {
-      return res.send(RESPONSE_MESSAGES.error);
+      const response = RESPONSE_MESSAGES.error();
+      return res.status(response.status).send(response);
     }
   });
 });
@@ -619,13 +641,17 @@ Router.get("/link/add", async (req, res) => {
       const isValidId = validateStrictString(id, "add id", 10);
 
       if (!isValidId.isValid) {
-        return res.send({ success: false, reason: isValidId.reason });
+        return res
+          .status(400)
+          .send({ success: false, reason: isValidId.reason });
       }
 
       const linkId = await redisClient.get(`link:friend:${targetId}`);
       console.log(linkId);
       if (!linkId || linkId !== id)
-        return res.send({ success: false, reason: "Expired or invalid link" });
+        return res
+          .status(400)
+          .send({ success: false, reason: "Expired or invalid link" });
 
       const response = await replyFriendRequest(userId, targetId, true);
 
@@ -657,10 +683,10 @@ Router.get("/link/add", async (req, res) => {
         redisClient.hdel(`user:${targetId}:notifications`, friendReq.i);
       });
 
-      res.send(response);
+      res.status(response.status).send(response);
     } catch (error) {
       console.log(error);
-      res.send({ success: false, reason: "An Error Occured" });
+      res.status(400).send({ success: false, reason: "An Error Occured" });
     }
   });
 });
@@ -673,14 +699,18 @@ Router.post("/invitation/email", async (req, res) => {
       const isValidEmail = validateEmail(email);
 
       if (!isValidEmail.isValid) {
-        return res.send({ success: false, reason: isValidEmail.reason });
+        return res
+          .status(400)
+          .send({ success: false, reason: isValidEmail.reason });
       }
 
       const linkId = await createFriendLink(userId);
-      if (!linkId) return res.send({ success: false, reason: "Error" });
+      if (!linkId)
+        return res.status(400).send({ success: false, reason: "Error" });
 
       const userInfo = await userCache(connection, userId);
-      if (!userInfo) return res.send({ success: false, reason: "Error" });
+      if (!userInfo)
+        return res.status(400).send({ success: false, reason: "Error" });
       const params = {
         name: userInfo.name,
         userId: userInfo.user_id,
@@ -688,10 +718,10 @@ Router.post("/invitation/email", async (req, res) => {
       };
       const to = [{ email }];
       sendEmail(to, params, 3);
-      res.send({ success: true });
+      res.status(400).send({ success: true });
     } catch (err) {
       console.log(err);
-      res.send({ success: false });
+      res.status(400).send({ success: false });
     }
   });
 });
@@ -709,7 +739,10 @@ Router.get("/trends", async (req, res) => {
         userFriendsCache(connection, userId),
       ]);
 
-      if (!userInfo) return res.send(RESPONSE_MESSAGES.noUser);
+      if (!userInfo) {
+        const response = RESPONSE_MESSAGES.noUser();
+        return res.status(response.status).send(response);
+      }
 
       const now = DateTime.now().setZone(timezone).startOf("day");
       const dates = getDates(now.toISO(), timezone, "day", 7);
@@ -787,10 +820,13 @@ Router.get("/trends", async (req, res) => {
         })
       );
 
-      return res.send({ success: true, status: "success", data: { trends } });
+      return res
+        .status(200)
+        .send({ success: true, status: 200, data: { trends } });
     } catch (err) {
       console.log(err);
-      res.send(RESPONSE_MESSAGES.error);
+      const response = RESPONSE_MESSAGES.error();
+      return res.status(response.status).send(response);
     }
   });
 });

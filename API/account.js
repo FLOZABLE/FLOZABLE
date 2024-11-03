@@ -4,12 +4,12 @@ const pool = require("../model/pool");
 const redisClient = require("../model/redis");
 const sharp = require("sharp");
 const multer = require("multer");
-const { hashing } = require("../Utils/tool");
+const { hashing } = require("../utils/tool");
 const {
   validateEmail,
   validateStrictString,
   validatePassword,
-} = require("../Utils/validate");
+} = require("../utils/validate");
 const {
   notificationCache,
   userCache,
@@ -21,9 +21,9 @@ const {
   usersCache,
   clearGoogleAccessToken,
 } = require("../services/redisLoader");
-const { RESPONSE_MESSAGES } = require("../Constant");
 const { googleOauth2client, autoSignin } = require("./auth");
 const { google } = require("googleapis");
+const RESPONSE_MESSAGES = require("../utils/responses");
 const upload = multer();
 
 Router.get("/", async (req, res) => {
@@ -53,15 +53,14 @@ Router.get("/", async (req, res) => {
         );
       });
       if (!userInfo) {
-        return res
-          .status(RESPONSE_MESSAGES.noUser.status)
-          .send(RESPONSE_MESSAGES.noUser);
+        const response = RESPONSE_MESSAGES.noUser();
+        return res.status(response.status).send(response);
       }
       userInfo.groups = groups;
       userInfo.friends = friends;
-      res.send({
+      res.status(200).send({
         success: true,
-        status: "success",
+        status: 200,
         data: {
           userInfo: userInfo,
           notifications: notifications,
@@ -70,9 +69,8 @@ Router.get("/", async (req, res) => {
       addActiveUserCache(userId);
     } catch (err) {
       console.log(err);
-      return res
-        .status(RESPONSE_MESSAGES.error.status)
-        .send(RESPONSE_MESSAGES.error);
+      const response = RESPONSE_MESSAGES.error();
+      return res.status(response.status).send(response);
     }
   });
 });
@@ -88,9 +86,13 @@ Router.get("/google", async (req, res) => {
       );
 
       if (!googleAccessToken) {
-        return res
-          .status(RESPONSE_MESSAGES.notAuthed.status)
-          .send(RESPONSE_MESSAGES.notAuthed);
+        return res.status(401).send({
+          success: false,
+          status: 401,
+          error: {
+            reason: "Not Authenticated",
+          },
+        });
       }
 
       const auth = googleOauth2client({ access_token: googleAccessToken });
@@ -104,25 +106,23 @@ Router.get("/google", async (req, res) => {
       ]);
 
       if (!accessTokenInfo) {
-        return res
-          .status(RESPONSE_MESSAGES.notAuthed.status)
-          .send(RESPONSE_MESSAGES.notAuthed);
+        const response = RESPONSE_MESSAGES.notAuthed();
+        return res.status(response.status).send(response);
       }
 
       const data = response.data;
       data.scopes = accessTokenInfo.scopes;
 
-      return res.send({
+      return res.status(200).send({
         success: true,
-        status: "success",
+        status: 200,
         data: { googleInfo: data },
       });
     } catch (err) {
       console.log(err);
       if (!err?.response?.data?.error) {
-        return res
-          .status(RESPONSE_MESSAGES.error.status)
-          .send(RESPONSE_MESSAGES.error);
+        const response = RESPONSE_MESSAGES.error();
+        return res.status(response.status).send(response);
       }
 
       if (err.response.data.error === "invalid_token") {
@@ -133,7 +133,7 @@ Router.get("/google", async (req, res) => {
 
       return res.status(code).send({
         success: false,
-        status: "error",
+        status: 400,
         error: {
           code,
           reason: err.response.data.error.message,
@@ -153,7 +153,7 @@ Router.patch("/password", async (req, res) => {
       if (!isValidPassword.isValid) {
         return res.status(400).send({
           success: false,
-          status: "error",
+          status: 400,
           message: isValidPassword.reason,
           error: {
             reason: isValidPassword.reason,
@@ -165,7 +165,7 @@ Router.patch("/password", async (req, res) => {
       if (password !== confirmPassword) {
         return res.status(400).send({
           success: false,
-          status: "error",
+          status: 400,
           message: "Password Does Not Match",
           error: {
             reason: "Password Does Not Match",
@@ -180,16 +180,15 @@ Router.patch("/password", async (req, res) => {
         "UPDATE users set ? WHERE user_id = ?",
         updateInfo
       );
-      res.send({
+      res.status(200).send({
         success: true,
-        status: "success",
+        status: 200,
         message: "Password Updated!",
       });
     } catch (err) {
       console.log(err);
-      return res
-        .status(RESPONSE_MESSAGES.error.status)
-        .send(RESPONSE_MESSAGES.error);
+      const response = RESPONSE_MESSAGES.error();
+      return res.status(response.status).send(response);
     }
   });
 });
@@ -200,7 +199,7 @@ Router.patch("/image", upload.single("image"), async (req, res) => {
       if (!req.file) {
         return res.status(400).send({
           success: false,
-          status: "error",
+          status: 400,
           message: "No image file found",
           error: { reason: "No image file found" },
         });
@@ -211,16 +210,15 @@ Router.patch("/image", upload.single("image"), async (req, res) => {
         .resize({ width: 800, height: 800 })
         .jpeg({ quality: 40 })
         .toFile(`./public/profile-images/${userId}.jpeg`);
-      res.send({
+      res.status(200).send({
         success: true,
-        status: "success",
+        status: 200,
         message: "Updated Profile Image!",
       });
     } catch (err) {
       console.log(err);
-      return res
-        .status(RESPONSE_MESSAGES.error.status)
-        .send(RESPONSE_MESSAGES.error);
+      const response = RESPONSE_MESSAGES.error();
+      return res.status(response.status).send(response);
     }
   });
 });
@@ -234,7 +232,7 @@ Router.patch("/info", async (req, res) => {
       if (!isValidEmail.isValid) {
         return res.status(400).send({
           success: false,
-          status: "error",
+          status: 400,
           message: isValidEmail.reason,
           error: { reason: isValidEmail.reason },
         });
@@ -244,7 +242,7 @@ Router.patch("/info", async (req, res) => {
       if (!isValidName.isValid) {
         return res.status(400).send({
           success: false,
-          status: "error",
+          status: 400,
           message: isValidName.reason,
           error: { reason: isValidName.reason },
         });
@@ -253,7 +251,7 @@ Router.patch("/info", async (req, res) => {
       if (email !== confirmEmail) {
         return res.status(400).send({
           success: false,
-          status: "error",
+          status: 400,
           message: "Email Confirmation Failed",
           error: { reason: "Email Confirmation Failed" },
         });
@@ -267,9 +265,8 @@ Router.patch("/info", async (req, res) => {
       );
 
       if (!userInfo) {
-        return res
-          .status(RESPONSE_MESSAGES.noUser.status)
-          .send(RESPONSE_MESSAGES.noUser);
+        const response = RESPONSE_MESSAGES.noUser();
+        return res.status(response.status).send(response);
       }
 
       const verified = userInfo.email === email ? userInfo.verified : 0;
@@ -280,17 +277,16 @@ Router.patch("/info", async (req, res) => {
         userId,
       ]);
 
-      res.send({
+      res.status(200).send({
         success: true,
-        status: "success",
+        status: 200,
         message: "Updated Your Information!",
         data: { verified },
       });
     } catch (err) {
       console.log(err);
-      return res
-        .status(RESPONSE_MESSAGES.error.status)
-        .send(RESPONSE_MESSAGES.error);
+      const response = RESPONSE_MESSAGES.error();
+      return res.status(response.status).send(response);
     }
   });
 });
@@ -307,23 +303,21 @@ Router.get("/profile", async (req, res) => {
       subjectsTimelineCache(connection, user_id),
     ]);
     if (!userInfo) {
-      return res
-        .status(RESPONSE_MESSAGES.noUser.status)
-        .send(RESPONSE_MESSAGES.noUser);
+      const response = RESPONSE_MESSAGES.noUser();
+      return res.status(response.status).send(response);
     }
 
     userInfo.groups = groups;
 
-    return res.send({
+    return res.status(200).send({
       success: true,
-      status: "success",
+      status: 200,
       data: { userInfo, friends, subjects },
     });
   } catch (err) {
     console.log(err);
-    return res
-      .status(RESPONSE_MESSAGES.error.status)
-      .send(RESPONSE_MESSAGES.error);
+    const response = RESPONSE_MESSAGES.error();
+    return res.status(response.status).send(response);
   }
 });
 

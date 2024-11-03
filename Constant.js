@@ -81,13 +81,15 @@ const RESPONSE_MESSAGES = {
       reason: "Unexpected Error",
     },
   },
-  notAuthed: {
-    success: false,
-    message: "Not Authenticated",
-    status: 401,
-    error: {
-      reason: "Not Authenticated",
-    },
+  notAuthed: (message = "Not Authenticated") => {
+    ({
+      success: false,
+      message,
+      status: 401,
+      error: {
+        reason: "Not Authenticated",
+      },
+    });
   },
   wrongPassword: {
     success: false,

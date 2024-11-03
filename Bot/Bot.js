@@ -1,4 +1,4 @@
-const { randomIntInRange, isTrueBasedOnPercentage } = require("../Utils/tool");
+const { randomIntInRange, isTrueBasedOnPercentage } = require("../utils/tool");
 const pool = require("../model/pool");
 const { DateTime } = require("luxon");
 const schedule = require("node-schedule");

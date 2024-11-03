@@ -2,7 +2,7 @@ const express = require("express");
 const Router = express.Router();
 const pool = require("../model/pool");
 const redisClient = require("../model/redis");
-const { generateRandomId } = require("../Utils/tool");
+const { generateRandomId } = require("../utils/tool");
 const {
   subjectsTimelineCache,
   userCache,
@@ -13,8 +13,8 @@ const {
   validateString,
   validateHEX,
   validateStrictString,
-} = require("../Utils/validate");
-const { RESPONSE_MESSAGES } = require("../Constant");
+} = require("../utils/validate");
+const RESPONSE_MESSAGES = require("../utils/responses");
 const { mainIo } = require("../sockets/io");
 const { autoSignin } = require("./auth");
 
@@ -24,10 +24,11 @@ Router.get("/", async (req, res) => {
       const connection = pool.promise();
       const subjects = await subjectsTimelineCache(connection, userId);
 
-      res.send({ success: true, status: "success", data: { subjects } });
+      res.status(200).send({ success: true, status: 200, data: { subjects } });
     } catch (err) {
       console.log(err);
-      RESPONSE_MESSAGES.error;
+      const response = RESPONSE_MESSAGES.error();
+      return res.status(response.status).send(response);
     }
   });
 });
@@ -40,9 +41,9 @@ Router.put("/subject", async (req, res) => {
       const isValidName = validateString(name, "subject name");
 
       if (!isValidName.isValid) {
-        return res.send({
+        return res.status(400).send({
           success: false,
-          status: "error",
+          status: 400,
           message: isValidName.reason,
           error: { reason: isValidName.reason },
         });
@@ -51,9 +52,9 @@ Router.put("/subject", async (req, res) => {
       const isValidColor = validateHEX(color, "Color");
 
       if (!isValidColor.isValid) {
-        return res.send({
+        return res.status(400).send({
           success: false,
-          status: "error",
+          status: 400,
           message: isValidColor.reason,
           error: { reason: isValidColor.reason },
         });
@@ -69,18 +70,21 @@ Router.put("/subject", async (req, res) => {
 
       const connection = pool.promise();
       await connection.query(`INSERT INTO subjects SET ?`, subject);
-      res.send({
+      res.status(200).send({
         success: true,
-        status: "success",
+        status: 200,
         message: `Added Subject "${subject.name}"`,
         data: { subject },
       });
     } catch (err) {
       console.log(err);
       if (err.errno === 1062) {
-        return res.send({ success: false, reason: "Name already in use" });
+        return res
+          .status(400)
+          .send({ success: false, reason: "Name already in use" });
       }
-      res.send(RESPONSE_MESSAGES.error);
+      const response = RESPONSE_MESSAGES.error();
+      return res.status(response.status).send(response);
     }
   });
 });
@@ -93,13 +97,17 @@ Router.patch("/subject", async (req, res) => {
       const isValidName = validateString(name, "subject name");
 
       if (!isValidName.isValid) {
-        return res.send({ success: false, reason: isValidName.reason });
+        return res
+          .status(400)
+          .send({ success: false, reason: isValidName.reason });
       }
 
       const isValidColor = validateHEX(color, "Color");
 
       if (!isValidColor.isValid) {
-        return res.send({ success: false, reason: isValidColor.reason });
+        return res
+          .status(400)
+          .send({ success: false, reason: isValidColor.reason });
       }
 
       const isValidSubjectId = validateStrictString(
@@ -110,7 +118,9 @@ Router.patch("/subject", async (req, res) => {
       );
 
       if (!isValidSubjectId.isValid) {
-        return res.send({ success: false, reason: isValidSubjectId.reason });
+        return res
+          .status(400)
+          .send({ success: false, reason: isValidSubjectId.reason });
       }
 
       const subject = {
@@ -126,18 +136,20 @@ Router.patch("/subject", async (req, res) => {
       );
 
       if (!affectedRows) {
-        return res.send(RESPONSE_MESSAGES.noSubject);
+        const response = RESPONSE_MESSAGES.noSubject();
+        return res.status(response.status).send(response);
       }
 
-      res.send({
+      res.status(200).send({
         success: true,
-        status: "success",
+        status: 200,
         message: `Modified Subject "${name}"`,
         data: { subject },
       });
     } catch (err) {
       console.log(err);
-      res.send(RESPONSE_MESSAGES.error);
+      const response = RESPONSE_MESSAGES.error();
+      return res.status(response.status).send(response);
     }
   });
 });
@@ -178,7 +190,8 @@ Router.delete("/subject", async (req, res) => {
       );
 
       if (!subject || subject.name === "others") {
-        return res.send(RESPONSE_MESSAGES.noSubject);
+        const response = RESPONSE_MESSAGES.noSubject();
+        return res.status(response.status).send(response);
       }
 
       if (otherSubject) {
@@ -224,14 +237,15 @@ Router.delete("/subject", async (req, res) => {
         [subjectId, userId]
       );
 
-      return res.send({
+      return res.status(200).send({
         success: true,
-        status: "success",
+        status: 200,
         message: `Deleted ${subject.name}`,
       });
     } catch (err) {
       console.log(err);
-      res.send(RESPONSE_MESSAGES.error);
+      const response = RESPONSE_MESSAGES.error();
+      return res.status(response.status).send(response);
     }
   });
 });
@@ -259,11 +273,13 @@ Router.post("/subject/share", async (req, res) => {
         ),
       ]);
       if (!userInfo) {
-        return res.send(RESPONSE_MESSAGES.noUser);
+        const response = RESPONSE_MESSAGES.noUser();
+        return res.status(response.status).send(response);
       }
 
       if (!subject) {
-        return res.send(RESPONSE_MESSAGES.noSubject);
+        const response = RESPONSE_MESSAGES.noSubject();
+        return res.status(response.status).send(response);
       }
 
       subject.share = subject.share ? subject.share.split(",") : [];
@@ -332,14 +348,15 @@ Router.post("/subject/share", async (req, res) => {
         );
       });
 
-      res.send({
+      res.status(200).send({
         success: true,
-        status: "success",
+        status: 200,
         message: "Subject shared!",
       });
     } catch (err) {
       console.log(err);
-      res.send(RESPONSE_MESSAGES.error);
+      const response = RESPONSE_MESSAGES.error();
+      return res.status(response.status).send(response);
     }
   });
 });
@@ -349,7 +366,8 @@ Router.post("/subject/share/respond", async (req, res) => {
     try {
     } catch (err) {
       console.log(err);
-      res.send(RESPONSE_MESSAGES.error);
+      const response = RESPONSE_MESSAGES.error();
+      return res.status(response.status).send(response);
     }
   });
 });
@@ -378,7 +396,8 @@ Router.delete("/subject/share", async (req, res) => {
       );
 
       if (!subject) {
-        return res.send(RESPONSE_MESSAGES.noSubject);
+        const response = RESPONSE_MESSAGES.noSubject();
+        return res.status(response.status).send(response);
       }
 
       subject.share = JSON.parse(subject.share).filter((user) => user.user_id);
@@ -392,7 +411,7 @@ Router.delete("/subject/share", async (req, res) => {
         { user_id: subject.user_id },
       ];
       if (!allowedUsers.find((user) => user.user_id === userId)) {
-        return res.send(RESPONSE_MESSAGES["non-memeber"]);
+        return res.status(400).send(RESPONSE_MESSAGES["non-memeber"]);
       }
 
       await connection.query(
@@ -412,10 +431,13 @@ Router.delete("/subject/share", async (req, res) => {
         redisClient.hdel(`user:${targetId}:notifications`, subjectRequest.i);
       }
 
-      res.send({ success: true, status: "success", message: `Removed user!` });
+      res
+        .status(200)
+        .send({ success: true, status: 200, message: `Removed user!` });
     } catch (err) {
       console.log(err);
-      res.send(RESPONSE_MESSAGES.error);
+      const response = RESPONSE_MESSAGES.error();
+      return res.status(response.status).send(response);
     }
   });
 });
@@ -444,7 +466,8 @@ Router.get("/subject/users", async (req, res) => {
       );
 
       if (!subject) {
-        return res.send(RESPONSE_MESSAGES.noSubject);
+        const response = RESPONSE_MESSAGES.noSubject();
+        return res.status(response.status).send(response);
       }
 
       subject.share = JSON.parse(subject.share).filter((user) => user.user_id);
@@ -458,13 +481,14 @@ Router.get("/subject/users", async (req, res) => {
         { user_id: subject.user_id },
       ];
       if (!allowedUsers.find((user) => user.user_id === userId)) {
-        return res.send(RESPONSE_MESSAGES["non-memeber"]);
+        return res.status(400).send(RESPONSE_MESSAGES["non-memeber"]);
       }
 
-      res.send({ success: true, status: "success", data: { subject } });
+      res.status(200).send({ success: true, status: 200, data: { subject } });
     } catch (err) {
       console.log(err);
-      res.send(RESPONSE_MESSAGES.error);
+      const response = RESPONSE_MESSAGES.error();
+      return res.status(response.status).send(response);
     }
   });
 });

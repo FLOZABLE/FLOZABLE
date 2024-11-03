@@ -1,7 +1,7 @@
 const express = require("express");
 const Router = express.Router();
 const redisClient = require("../model/redis");
-const { generateRandomId } = require("../Utils/tool");
+const { generateRandomId } = require("../utils/tool");
 const pool = require("../model/pool");
 const {
   validateStrictString,
@@ -10,10 +10,10 @@ const {
   validateInteger,
   validateURL,
   validateArray,
-} = require("../Utils/validate");
+} = require("../utils/validate");
 const { mainIo } = require("../sockets/io");
 const { autoSignin } = require("./auth");
-const { RESPONSE_MESSAGES } = require("../Constant");
+const RESPONSE_MESSAGES = require("../utils/responses");
 
 Router.get("/", async (req, res) => {
   try {
@@ -32,7 +32,9 @@ Router.get("/", async (req, res) => {
     `);
 
     if (!themes.length) {
-      return res.send({ success: true, status: "success", data: { themes } });
+      return res
+        .status(200)
+        .send({ success: true, status: 200, data: { themes } });
     }
 
     themes.map((theme) => {
@@ -52,10 +54,13 @@ Router.get("/", async (req, res) => {
       });
     }
 
-    return res.send({ success: true, status: "success", data: { themes } });
+    return res
+      .status(200)
+      .send({ success: true, status: 200, data: { themes } });
   } catch (err) {
     console.log(err);
-    res.send(RESPONSE_MESSAGES.error);
+    const response = RESPONSE_MESSAGES.error();
+    return res.status(response.status).send(response);
   }
 });
 
@@ -72,10 +77,13 @@ Router.get("/user", async (req, res) => {
         `,
         [userId]
       );
-      return res.send({ success: true, status: "success", data: { themes } });
+      return res
+        .status(200)
+        .send({ success: true, status: 200, data: { themes } });
     } catch (err) {
       console.log(err);
-      res.send(RESPONSE_MESSAGES.error);
+      const response = RESPONSE_MESSAGES.error();
+      return res.status(response.status).send(response);
     }
   });
 });
@@ -88,9 +96,9 @@ Router.put("/theme", async (req, res) => {
       const isValidName = validateString(name, "theme name", 40);
 
       if (!isValidName.isValid) {
-        return res.send({
+        return res.status(400).send({
           success: false,
-          status: "error",
+          status: 400,
           message: isValidName.reason,
           error: { reason: isValidName.reason },
         });
@@ -103,9 +111,9 @@ Router.put("/theme", async (req, res) => {
       );
 
       if (!isValidDescription.isValid) {
-        return res.send({
+        return res.status(400).send({
           success: false,
-          status: "error",
+          status: 400,
           message: isValidDescription.reason,
           error: { reason: isValidDescription.reason },
         });
@@ -114,9 +122,9 @@ Router.put("/theme", async (req, res) => {
       const isValidTags = validateArray(tags, "tags", 10);
 
       if (!isValidTags.isValid) {
-        return res.send({
+        return res.status(400).send({
           success: false,
-          status: "error",
+          status: 400,
           message: isValidTags.reason,
           error: { reason: isValidTags.reason },
         });
@@ -125,9 +133,9 @@ Router.put("/theme", async (req, res) => {
       const isValidURL = validateURL(url);
 
       if (!isValidURL.isValid) {
-        return res.send({
+        return res.status(400).send({
           success: false,
-          status: "error",
+          status: 400,
           message: isValidURL.reason,
           error: { reason: isValidURL.reason },
         });
@@ -137,9 +145,9 @@ Router.put("/theme", async (req, res) => {
         "v"
       );
       if (!video_id) {
-        return res.send({
+        return res.status(400).send({
           success: false,
-          status: "error",
+          status: 400,
           message: "Invalid Youtube link",
           error: { reason: "Invalid Youtube link" },
         });
@@ -158,15 +166,16 @@ Router.put("/theme", async (req, res) => {
       const insertInfo = { ...themeInfo, tags: tags.toString() };
       await connection.query(`INSERT INTO themes SET ?`, [insertInfo]);
 
-      res.send({
+      res.status(200).send({
         success: true,
-        status: "success",
+        status: 200,
         message: "New theme uploaded!",
         data: { theme: { ...themeInfo, likes: [] } },
       });
     } catch (err) {
       console.log(err);
-      res.send(RESPONSE_MESSAGES.error);
+      const response = RESPONSE_MESSAGES.error();
+      return res.status(response.status).send(response);
     }
   });
 });
@@ -179,9 +188,9 @@ Router.post("/theme/like", async (req, res) => {
       const isValidlike = validateBoolean(like, "like", true);
 
       if (!isValidlike.isValid) {
-        return res.send({
+        return res.status(400).send({
           success: false,
-          status: "error",
+          status: 400,
           message: isValidlike.reason,
           error: { reason: isValidlike.reason },
         });
@@ -190,9 +199,9 @@ Router.post("/theme/like", async (req, res) => {
       const isValidThemeId = validateStrictString(themeId, "theme id");
 
       if (!isValidThemeId.isValid) {
-        return res.send({
+        return res.status(400).send({
           success: false,
-          status: "error",
+          status: 400,
           message: isValidThemeId.reason,
           error: { reason: isValidThemeId.reason },
         });
@@ -218,10 +227,11 @@ Router.post("/theme/like", async (req, res) => {
         mainIo.emit(`unlike:theme:${themeId}`, { userId });
       }
 
-      res.send({ success: true, status: "success" });
+      res.status(200).send({ success: true, status: 200 });
     } catch (err) {
       console.log(err);
-      res.send(RESPONSE_MESSAGES.error);
+      const response = RESPONSE_MESSAGES.error();
+      return res.status(response.status).send(response);
     }
   });
 });
@@ -238,9 +248,9 @@ Router.post("/theme/save", async (req, res) => {
       const isValidCategoryId = validateInteger(categoryId, "category", 10, -1);
 
       if (!isValidCategoryId.isValid) {
-        return res.send({
+        return res.status(400).send({
           success: false,
-          status: "error",
+          status: 400,
           message: isValidCategoryId.reason,
           error: { reason: isValidCategoryId.reason },
         });
@@ -249,9 +259,9 @@ Router.post("/theme/save", async (req, res) => {
       const isValidThemeId = validateStrictString(themeId, "theme id");
 
       if (!isValidThemeId.isValid) {
-        return res.send({
+        return res.status(400).send({
           success: false,
-          status: "error",
+          status: 400,
           message: isValidThemeId.reason,
           error: { reason: isValidThemeId.reason },
         });
@@ -272,21 +282,22 @@ Router.post("/theme/save", async (req, res) => {
 
       if (categoryId !== -1) {
         connection.query(`INSERT INTO user_themes SET ?`, newUserTheme);
-        return res.send({
+        return res.status(200).send({
           success: true,
-          status: "success",
+          status: 200,
           message: `Theme saved to ${categoryName}`,
         });
       }
 
-      return res.send({
+      return res.status(200).send({
         success: true,
-        status: "success",
+        status: 200,
         message: `Theme unsaved`,
       });
     } catch (err) {
       console.log(err);
-      res.send(RESPONSE_MESSAGES.error);
+      const response = RESPONSE_MESSAGES.error();
+      return res.status(response.status).send(response);
     }
   });
 });

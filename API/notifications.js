@@ -1,12 +1,12 @@
 const express = require("express");
 const Router = express.Router();
-const { deriveKey } = require("../Utils/tool");
-const { validateStrictString, validateURL } = require("../Utils/validate");
+const { deriveKey } = require("../utils/tool");
+const { validateStrictString, validateURL } = require("../utils/validate");
 const redisClient = require("../model/redis");
-const { RESPONSE_MESSAGES } = require("../Constant");
 const crypto = require("crypto");
 const pool = require("../model/pool");
 const { autoSignin } = require("./auth");
+const RESPONSE_MESSAGES = require("../utils/responses");
 
 Router.get("/", async (req, res) => {
   autoSignin(req, res, async (userId) => {
@@ -41,10 +41,11 @@ Router.get("/", async (req, res) => {
         [userId]
       );
       console.log(notifications);
-      res.send({ success: true, status: "success", data: notifications });
+      res.status(200).send({ success: true, status: 200, data: notifications });
     } catch (err) {
       console.log(err);
-      res.send(RESPONSE_MESSAGES.error);
+      const response = RESPONSE_MESSAGES.error();
+      return res.status(response.status).send(response);
     }
   });
 });
@@ -53,10 +54,11 @@ Router.get("/vapidkeys", async (req, res) => {
   try {
     const publicKey = process.env.VAPID_PUBLIC_KEY;
 
-    res.send({ success: true, status: "success", publicKey });
+    res.status(200).send({ success: true, status: 200, publicKey });
   } catch (err) {
     console.log(err);
-    res.send(RESPONSE_MESSAGES.error);
+    const response = RESPONSE_MESSAGES.error();
+    return res.status(response.status).send(response);
   }
 });
 
@@ -67,9 +69,9 @@ Router.post("/subscribe", async (req, res) => {
 
       const isValidEndPoint = validateURL(endpoint);
       if (!isValidEndPoint.isValid) {
-        return res.send({
+        return res.status(400).send({
           success: false,
-          status: "error",
+          status: 400,
           message: isValidEndPoint.reason,
           error: { reason: isValidEndPoint.reason },
         });
@@ -83,7 +85,8 @@ Router.post("/subscribe", async (req, res) => {
       );
 
       if (!userInfo) {
-        return res.send(RESPONSE_MESSAGES.noUser);
+        const response = RESPONSE_MESSAGES.noUser();
+        return res.status(response.status).send(response);
       }
 
       const encryptKey = await deriveKey(userId, userInfo.key_salt);
@@ -106,10 +109,11 @@ Router.post("/subscribe", async (req, res) => {
         updateInfo,
         userId,
       ]);
-      return res.send({ success: true, status: "success" });
+      return res.status(200).send({ success: true, status: 200 });
     } catch (err) {
       console.log(err);
-      res.send(RESPONSE_MESSAGES.error);
+      const response = RESPONSE_MESSAGES.error();
+      return res.status(response.status).send(response);
     }
   });
 });
@@ -126,19 +130,20 @@ Router.post("/read", async (req, res) => {
       );
 
       if (!isValidNotificationId.isValid) {
-        return res.send({
+        return res.status(400).send({
           success: false,
-          status: "error",
+          status: 400,
           message: isValidNotificationId.reason,
           error: { reason: isValidNotificationId.reason },
         });
       }
 
       redisClient.hdel(`user:${userId}:notifications`, notificationId);
-      res.send({ success: true, status: "success" });
+      res.status(200).send({ success: true, status: 200 });
     } catch (err) {
       console.log(err);
-      res.send(RESPONSE_MESSAGES.error);
+      const response = RESPONSE_MESSAGES.error();
+      return res.status(response.status).send(response);
     }
   });
 });

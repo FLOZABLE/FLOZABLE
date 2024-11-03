@@ -8,8 +8,8 @@ const {
   userCache,
   userFriendsCache,
 } = require("../services/redisLoader");
-const { RESPONSE_MESSAGES } = require("../Constant");
-const { getDates } = require("../Utils/tool");
+const RESPONSE_MESSAGES = require("../utils/responses");
+const { getDates } = require("../utils/tool");
 const { autoSignin } = require("./auth");
 
 Router.get("/", async (req, res) => {
@@ -78,14 +78,15 @@ Router.get("/", async (req, res) => {
       })
       .filter((ranking) => ranking.name);
 
-    res.send({
+    res.status(200).send({
       success: true,
-      status: "success",
+      status: 200,
       data: { rankings: rankingsUsers },
     });
   } catch (err) {
     console.log(err);
-    res.send(RESPONSE_MESSAGES.error);
+    const response = RESPONSE_MESSAGES.error();
+    return res.status(response.status).send(response);
   }
 });
 
@@ -134,14 +135,15 @@ Router.get("/user", async (req, res) => {
       `SELECT COUNT(*) FROM users`
     );
 
-    res.send({
+    res.status(200).send({
       success: true,
-      status: "success",
+      status: 200,
       data: { rankings, max_length: Object.values(usersLength)[0] },
     });
   } catch (err) {
     console.log(err);
-    res.send(RESPONSE_MESSAGES.error);
+    const response = RESPONSE_MESSAGES.error();
+    return res.status(response.status).send(response);
   }
 });
 
@@ -155,7 +157,10 @@ Router.get("/friends", async (req, res) => {
         userFriendsCache(connection, userId),
       ]);
 
-      if (!userInfo) return res.send(RESPONSE_MESSAGES.noUser);
+      if (!userInfo) {
+        const response = RESPONSE_MESSAGES.noUser();
+        return res.status(response.status).send(response);
+      }
 
       const { mode, timezone, date } = req.query;
 
@@ -210,14 +215,15 @@ Router.get("/friends", async (req, res) => {
         });
       }
 
-      res.send({
+      res.status(200).send({
         success: true,
-        status: "success",
+        status: 200,
         data: { rankings: friends },
       });
     } catch (err) {
       console.log(err);
-      res.send(RESPONSE_MESSAGES.error);
+      const response = RESPONSE_MESSAGES.error();
+      return res.status(response.status).send(response);
     }
   });
 });
