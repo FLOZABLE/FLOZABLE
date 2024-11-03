@@ -67,10 +67,10 @@ export default function SubjectsModal() {
   }, [subjectUsersData]);
 
   const onShare = useCallback(
-    (userInfo) => {
+    async (userInfo) => {
       const subjectId = subject.subject_id;
       const users = [userInfo.user_id];
-      (async () => {
+      try {
         const response = await postSubjectShare({ subjectId, users });
         if (!response.success) return;
 
@@ -82,7 +82,9 @@ export default function SubjectsModal() {
         );
         setShare([...share, ...filteredUsers]);
         clearSubjectUsers();
-      })();
+      } catch (err) {
+        console.log(err);
+      }
     },
     [subject, share, shared]
   );
@@ -120,11 +122,11 @@ export default function SubjectsModal() {
   );
 
   const onDelete = useCallback(
-    (subject) => {
-      const subjectId = subject.subject_id;
-      (async () => {
-        const response = await deleteSubjectsSubject(subjectId);
+    async (subject) => {
+      try {
+        const subjectId = subject.subject_id;
 
+        const response = await deleteSubjectsSubject(subjectId);
         if (!response.success) return;
 
         setIsSubjectsModal((prev) => ({ ...prev, subject_id: null }));
@@ -188,39 +190,43 @@ export default function SubjectsModal() {
           newSubjects[otherSubjectIndex].timeline.sort((a, b) => a[0] - b[0]);
         }
         setSubjects(newSubjects);
-      })();
+      } catch (err) {
+        console.log(err);
+      }
     },
     [subjects]
   );
 
   const onUnshare = useCallback(
-    (userInfo) => {
-      (async () => {
+    async (userInfo) => {
+      try {
         const targetId = userInfo.user_id;
         const subjectId = subject.subject_id;
         const response = await deleteSubjectShare({ subjectId, targetId });
-
         if (!response.success) return;
 
         clearSubjectUsers();
         setShare((prev) => prev.filter((users) => users.user_id !== targetId));
-      })();
+      } catch (err) {
+        console.log(err);
+      }
     },
     [subject]
   );
 
   const onUnshared = useCallback(
-    (userInfo) => {
-      (async () => {
+    async (userInfo) => {
+      try {
         const targetId = userInfo.user_id;
         const subjectId = subject.subject_id;
         const response = await deleteSubjectShare({ subjectId, targetId });
-
         if (!response.success) return;
 
         clearSubjectUsers();
         setShared((prev) => prev.filter((users) => users.user_id !== targetId));
-      })();
+      } catch (err) {
+        console.log(err);
+      }
     },
     [subject]
   );

@@ -98,13 +98,17 @@ function AccountModal({}) {
               <GoogleLoginBtn scope={"email profile"} required={"email"} />
               <BlobBtn
                 onClick={async () => {
-                  const response = await postAuthSignin(login);
-                  if (response.success) {
+                  try {
+                    const response = await postAuthSignin(login);
+                    if (!response.success) return;
+
                     setIsAccountModal(false);
                     accountRefetch();
                     if (isNew) {
                       router.push("/dashboard?welcome=true");
                     }
+                  } catch (err) {
+                    console.log(err);
                   }
                 }}
               >
@@ -165,10 +169,14 @@ function AccountModal({}) {
               <GoogleLoginBtn scope={"email profile"} required={"email"} />
               <BlobBtn
                 onClick={async () => {
-                  const response = await postAuthSignup(signUp);
-                  if (response.success) {
+                  try {
+                    const response = await postAuthSignup(signUp);
+                    if (!response.success) return;
+                    
                     setIsLogin(false);
                     setIsNew(true);
+                  } catch (err) {
+                    console.log(err);
                   }
                 }}
               >

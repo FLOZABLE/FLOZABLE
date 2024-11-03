@@ -12,8 +12,8 @@ export default function ChatBtn({ targetInfo, padding }) {
   const { setChatModal } = useContext(ModalsContext);
   const { userInfo } = useContext(UserInfoContext);
 
-  const chatRequest = useCallback(() => {
-    (async () => {
+  const chatRequest = useCallback(async () => {
+    try {
       const response = await postChatRequest(targetInfo.user_id);
 
       if (response.message === "DM already created!") {
@@ -26,7 +26,9 @@ export default function ChatBtn({ targetInfo, padding }) {
           open: true,
         }));
       }
-    })();
+    } catch (err) {
+      console.log(err);
+    }
   }, [targetInfo]);
 
   return (

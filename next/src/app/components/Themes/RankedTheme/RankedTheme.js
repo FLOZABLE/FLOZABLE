@@ -18,20 +18,24 @@ function RankedTheme({ theme, setIsThemePreview }) {
   const [likes, setLikes] = useState([]);
 
   const onLike = useCallback(async () => {
-    if (!userInfo?.user_id) return;
+    try {
+      if (!userInfo?.user_id) return;
 
-    const like = !likes.includes(userInfo?.user_id);
-    const themeId = theme.theme_id;
-    const response = await postThemeLike({ themeId, like });
-    if (!response.success) return;
+      const like = !likes.includes(userInfo?.user_id);
+      const themeId = theme.theme_id;
+      const response = await postThemeLike({ themeId, like });
+      if (!response.success) return;
 
-    if (like) {
-      setLikes([...new Set([...likes, userInfo.user_id])]);
-    } else {
-      setLikes(likes.filter((like) => like !== userInfo.user_id));
+      if (like) {
+        setLikes([...new Set([...likes, userInfo.user_id])]);
+      } else {
+        setLikes(likes.filter((like) => like !== userInfo.user_id));
+      }
+    } catch (err) {
+      console.log(err);
     }
   }, [likes, theme, userInfo]);
-
+  
   useEffect(() => {
     if (!theme) return;
     setLikes(theme.likes);

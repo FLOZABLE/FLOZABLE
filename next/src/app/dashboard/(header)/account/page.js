@@ -78,34 +78,44 @@ function Account() {
   }, []);
 
   const uploadImage = useCallback(async (formData) => {
-    const response = await patchAccountImage(formData);
+    try {
+      await patchAccountImage(formData);
+    } catch (err) {
+      console.log(err);
+    }
   }, []);
 
-  const submitProfile = useCallback(() => {
-    (async () => {
+  const submitProfile = useCallback(async () => {
+    try {
       const { name, email } = profile;
       const response = await patchAccountInfo(profile);
-      if (response.success) {
-        setUserInfo((prev) => ({
-          ...prev,
-          name,
-          email,
-          verified: response.data.verified,
-        }));
-      }
-    })();
+      if (!response.success) return;
+
+      setUserInfo((prev) => ({
+        ...prev,
+        name,
+        email,
+        verified: response.data.verified,
+      }));
+    } catch (err) {
+      console.log(err);
+    }
   }, [profile]);
 
-  const submitPassword = useCallback(() => {
-    (async () => {
-      const response = await patchAccountPassword(password);
-    })();
+  const submitPassword = useCallback(async () => {
+    try {
+      await patchAccountPassword(password);
+    } catch (err) {
+      console.log(err);
+    }
   }, [password]);
 
-  const validateEmail = useCallback(() => {
-    (async () => {
-      const response = await postAuthVerify();
-    })();
+  const validateEmail = useCallback(async () => {
+    try {
+      await postAuthVerify();
+    } catch (err) {
+      console.log(err);
+    }
   }, []);
 
   return (
