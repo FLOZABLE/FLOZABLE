@@ -15,7 +15,7 @@ async function putSubjectsSubject({ name, color }) {
 
 async function patchSubjectsSubject({ subjectId, name, color }) {
   return requestHandler(
-    AxiosInstance.patch(`/subjects`, {
+    AxiosInstance.patch(`/subjects/subject`, {
       subject_id: subjectId,
       name,
       color,
