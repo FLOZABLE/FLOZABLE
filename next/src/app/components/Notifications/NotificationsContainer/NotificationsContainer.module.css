@@ -24,8 +24,7 @@
 
 .NotificationsContainer .notifications {
   position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
+  right: 0rem;
   width: 25rem;
   background-color: #fff;
   top: 3rem;

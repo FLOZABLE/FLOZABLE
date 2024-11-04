@@ -81,13 +81,11 @@ async function sendFriendRequest(userId, targetId) {
 
     const notification_id = generateRandomId(10);
     const sent_at = Math.floor(Date.now() / 1000);
-    const message = `${userInfo.name} wants to be friend!`;
     const notification = {
       from_user_id: userId,
       user_id: targetId,
       notification_id,
       sent_at,
-      message,
       type: "friend_request",
       related_id: userId,
     };
@@ -158,15 +156,109 @@ async function sendFriendRequest(userId, targetId) {
   }
 }
 
-async function replyFriendRequest(
-  userId,
-  targetId,
-  accepted,
+async function replyFriendRequest({
   notificationId,
-  createChat = true
-) {
+  userId,
+  accepted,
+  createChat = true,
+}) {
   try {
-    const isValidTargetId = validateStrictString(targetId, "user id", 10);
+    const connection = pool.promise();
+
+    const [userInfo, friends, [friendRequest]] = await Promise.all([
+      userCache(userId),
+      userFriendsCache(userId),
+      connection.query(
+        `
+        SELECT
+          n.from_user_id,
+          u.name as target_name
+        FROM notifications n
+        LEFT JOIN
+          users u ON u.user_id = n.from_user_id
+        WHERE n.user_id = ? AND n.notification_id = ? AND n.type = "friend_request"
+      `,
+        [userId, notificationId]
+      ),
+    ]);
+
+    if (!userInfo) {
+      const response = RESPONSE_MESSAGES.noUser();
+      return response;
+    }
+
+    if (friends.length >= FRIENDS_LIMIT) {
+      const response = RESPONSE_MESSAGES.friendsLimitReached();
+      return response;
+    }
+
+    console.log(friendRequest, userId, notificationId);
+    if (!friendRequest) {
+      const response = RESPONSE_MESSAGES.expiredRequest();
+      return response;
+    }
+
+    const targetId = friendRequest.from_user_id;
+    const targetName = friendRequest.name;
+
+    await connection.query(
+      `DELETE FROM notifications WHERE notification_id = ?`,
+      [notificationId]
+    );
+
+    if (!accepted) {
+      return {
+        success: true,
+        status: 200,
+        message: "Declined Friend Request!",
+      };
+    }
+
+    //create chat only if it does not exist
+    const [[chatroom]] = await connection.query(
+      `
+      SELECT c1.chatroom_id
+      FROM chatroom_members c1
+      JOIN chatroom_members c2 ON c1.chatroom_id = c2.chatroom_id
+      WHERE c1.user_id = ? AND c2.user_id = ?
+      `,
+      [userId, targetId]
+    );
+
+    if (!chatroom && createChat) {
+      const chatroom_id = generateRandomId(10);
+      const chatroomName = userInfo.name + ", " + targetName;
+      const roomInfo = {
+        chatroom_id,
+        type: 1,
+        name: chatroomName,
+      };
+      await connection.query(
+        `
+          INSERT INTO chatrooms SET ?
+        `,
+        [roomInfo]
+      );
+
+      const newMember = [
+        [userId, chatroom_id],
+        [targetId, chatroom_id],
+      ];
+
+      await connection.query(
+        `
+        INSERT 
+        INTO chatroom_members (user_id, chatroom_id) 
+        VALUES ? 
+        `,
+        [newMember]
+      );
+
+      mainIo.to([userId, targetId]).emit("joinChatRoom");
+    }
+
+    return { success: false, status: 400 };
+    /* const isValidTargetId = validateStrictString(targetId, "user id", 10);
 
     if (!isValidTargetId.isValid) {
       return {
@@ -290,16 +382,6 @@ async function replyFriendRequest(
     cacheUserFriends(userId, userFriends);
     cacheUserFriends(targetId, targetUserFriends);
 
-    //update cached value of user
-    /* userInfo.friends.push(targetId);
-    redisClient.hset(`user:${userId}`, "friends", userInfo.friends.join(","));
-    targetInfo.friends.push(userId);
-    redisClient.hset(
-      `user:${targetId}`,
-      "friends",
-      targetInfo.friends.join(",")
-    ); */
-
     //create chat only if it does not exist
     const [[chatroom]] = await connection.query(
       `
@@ -347,7 +429,7 @@ async function replyFriendRequest(
       success: true,
       status: 200,
       message: `You and ${targetInfo.name} are now friends!`,
-    };
+    }; */
   } catch (err) {
     console.log(err);
     return RESPONSE_MESSAGES.error();
@@ -411,18 +493,13 @@ Router.delete("/request", async (req, res) => {
 Router.post("/request/reply", async (req, res) => {
   autoSignin(req, res, async (userId) => {
     try {
-      const {
-        target_id: targetId,
-        notification_id: notificationId,
-        accepted,
-      } = req.body;
+      const { notification_id: notificationId, accepted } = req.body;
 
-      const response = await replyFriendRequest(
+      const response = await replyFriendRequest({
         userId,
-        targetId,
+        notificationId,
         accepted,
-        notificationId
-      );
+      });
 
       console.log(response);
       return res.status(response.status).send(response);
@@ -662,7 +739,7 @@ Router.post("/link/create", async (req, res) => {
 /**
  * add using link
  */
-
+/* 
 Router.get("/link/add", async (req, res) => {
   autoSignin(req, res, async (userId) => {
     try {
@@ -684,7 +761,7 @@ Router.get("/link/add", async (req, res) => {
           .status(400)
           .send({ success: false, reason: "Expired or invalid link" });
 
-      const response = await replyFriendRequest(userId, targetId, true);
+      const response = await replyFriendReques(userId, targetId, true);
 
       if (!response.success) return response;
 
@@ -720,7 +797,7 @@ Router.get("/link/add", async (req, res) => {
       res.status(400).send({ success: false, reason: "An Error Occured" });
     }
   });
-});
+}); */
 
 Router.post("/invitation/email", async (req, res) => {
   autoSignin(req, res, async (userId) => {

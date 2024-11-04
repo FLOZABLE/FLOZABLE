@@ -315,7 +315,7 @@ function Account() {
                 </div>
                 <div className={styles.authBtn}>
                   <GoogleLoginBtn
-                    scope="https://www.googleapis.com/auth/youtube.force-ssl"
+                    scope="https://www.googleapis.com/auth/youtube.readonly"
                     required="youtube"
                   />
                 </div>

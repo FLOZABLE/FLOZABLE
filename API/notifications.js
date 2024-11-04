@@ -46,6 +46,9 @@ Router.get("/", async (req, res) => {
       );
 
       notifications.map((notification) => {
+        if (notification.type === "friend_request") {
+          notification.message = "wants to be friend!";
+        }
         if (notification.userInfo) {
           notification.userInfo = JSON.parse(notification.userInfo);
         }
