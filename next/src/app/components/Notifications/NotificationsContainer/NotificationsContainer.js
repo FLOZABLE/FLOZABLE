@@ -46,7 +46,7 @@ function NotificationBtn({ children, hoverText, onClick }) {
 }
 
 export default function NotificationsContainer() {
-  const { notifications, updateNotificationsData } = useNotifications();
+  const { notifications, filterNotification } = useNotifications();
   const { friendsStatusRefetch } = useFriendsStatus();
   const { friendsTrendRefetch } = useFriendsTrends();
 
@@ -56,9 +56,7 @@ export default function NotificationsContainer() {
     async (notification, accepted) => {
       const targetId = notification?.f?.user_id;
       const notificationId = notification.notification_id;
-      updateNotificationsData((prev) =>
-        prev.filter(prev.notification_id !== notification.notificationId)
-      );
+      //filterNotification(notificationId);
 
       const response = await postFriendsRequestReply({
         targetId,
@@ -78,9 +76,7 @@ export default function NotificationsContainer() {
   const deleteNotification = useCallback(
     (notification) => {
       const notificationId = notification.notification_id;
-      updateNotificationsData((prev) =>
-        prev.filter(prev.notification_id !== notification.notificationId)
-      );
+      filterNotification(notificationId);
 
       postNotificationsRead(notificationId);
     },
@@ -92,9 +88,7 @@ export default function NotificationsContainer() {
       const targetId = notification?.f?.user_id;
       const notificationId = notification.notification_id;
 
-      updateNotificationsData((prev) =>
-        prev.filter(prev.notification_id !== notification.notificationId)
-      );
+      filterNotification(notificationId);
 
       postChatRequestReply({
         targetId,
@@ -108,9 +102,7 @@ export default function NotificationsContainer() {
   const planShareRespond = useCallback(
     (notification, accepted) => {
       const notificationId = notification.notification_id;
-      updateNotificationsData((prev) =>
-        prev.filter(prev.notification_id !== notification.notificationId)
-      );
+      filterNotification(notificationId);
 
       postPlanShareRespond(notificationId, accepted);
     },
