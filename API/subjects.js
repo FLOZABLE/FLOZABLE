@@ -143,7 +143,7 @@ Router.patch("/subject", async (req, res) => {
       res.status(200).send({
         success: true,
         status: 200,
-        message: `Modified Subject "${name}"`,
+        message: `Modified subject "${name}"`,
         data: { subject },
       });
     } catch (err) {
@@ -240,7 +240,7 @@ Router.delete("/subject", async (req, res) => {
       return res.status(200).send({
         success: true,
         status: 200,
-        message: `Deleted ${subject.name}`,
+        message: `Deleted subject "${subject.name}"`,
       });
     } catch (err) {
       console.log(err);

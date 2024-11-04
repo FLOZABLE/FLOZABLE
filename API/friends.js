@@ -79,6 +79,29 @@ async function sendFriendRequest(userId, targetId) {
       return RESPONSE_MESSAGES.friendsLimitReached();
     }
 
+    const notification_id = generateRandomId(10);
+    const sent_at = Math.floor(Date.now() / 1000);
+    const message = `${userInfo.name} wants to be friend!`;
+    const notification = {
+      from_user_id: userId,
+      user_id: targetId,
+      notification_id,
+      sent_at,
+      message,
+      type: "friend_request",
+      related_id: userId,
+    };
+
+    await connection.query(`INSERT INTO notifications SET ?`, [notification]);
+
+    mainIo.to(targetId).emit("notification", notification);
+
+    return {
+      success: true,
+      status: 200,
+      message: `Sent friend request to ${targetInfo.name}!`,
+    };
+    /* 
     const friendRequests = await notificationCache(targetId, 0);
 
     const prevFriendReq = friendRequests.find((friendReq) => {
@@ -120,9 +143,17 @@ async function sendFriendRequest(userId, targetId) {
       success: true,
       status: 200,
       message: `Sent friend request to ${targetInfo.name}!`,
-    };
+    }; */
   } catch (err) {
     console.log(err);
+    if (err?.code === "ER_DUP_ENTRY") {
+      return {
+        success: false,
+        status: 400,
+        message: `You've already sent a request to this user`,
+        error: { reason: "You've already sent a request to this user" },
+      };
+    }
     return RESPONSE_MESSAGES.error();
   }
 }

@@ -85,8 +85,6 @@ Router.get("/google", async (req, res) => {
         userId
       );
 
-      console.log(googleAccessToken, "gd");
-
       if (!googleAccessToken) {
         const response = RESPONSE_MESSAGES.notAuthed(null);
         return res.status(response.status).send(response);

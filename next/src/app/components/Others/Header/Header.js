@@ -26,6 +26,7 @@ import NotificationsBtn from "../../Notifications/NotificationsBtn/Notifications
 import Link from "next/link";
 import { faComment, faComments } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import NotificationsContainer from "../../Notifications/NotificationsContainer/NotificationsContainer";
 
 function HeaderEl({ children, value, title }) {
   return (
@@ -155,7 +156,7 @@ function Header({}) {
             <FontAwesomeIcon icon={faComment} />
           </div>
           <div className={styles.NotificationsBtn}>
-            <NotificationsBtn />
+            <NotificationsContainer />
           </div>
           <Link href={"/dashboard/account"} className={styles.userInfo}>
             <div>
