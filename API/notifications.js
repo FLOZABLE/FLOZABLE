@@ -16,32 +16,45 @@ Router.get("/", async (req, res) => {
       const [notifications] = await connection.query(
         `
         SELECT 
-          n.notification_id,
-          n.user_id,
-          n.from_user_id,
-          n.sent_at,
-          n.message,
-          n.type,
-          n.related_id,
-          CASE 
-            WHEN type LIKE '%subject%' THEN 'Subject Related'
-            WHEN type LIKE '%plan%' THEN 'Plan Related'
-            WHEN type LIKE '%group%' THEN 'Group Related'
-            ELSE 'Other'
-          END AS category
+            n.notification_id,
+            n.user_id,
+            n.from_user_id,
+            n.sent_at,
+            n.message,
+            n.type,
+            n.related_id,
+            CASE 
+                WHEN n.type = 'subject_share' THEN s.name
+                WHEN n.type = 'plan_share' THEN p.title
+                WHEN n.type = 'group_invitation' THEN g.name
+                ELSE NULL
+            END AS related_name,
+            CASE 
+                WHEN n.type = 'friend_request' THEN JSON_OBJECT('name', u.name, 'timezone', u.timezone)
+                ELSE NULL
+            END AS userInfo
         FROM 
-          notifications n
-        LEFT JOIN 
-          subjects s ON n.type = 'subject' AND n.related_id = s.subject_id
-        LEFT JOIN 
-          plans p ON n.type = 'plan' AND n.related_id = p.plan_id
+            notifications n
+            LEFT JOIN subjects s ON n.type = 'subject_share' AND n.related_id = s.subject_id
+            LEFT JOIN plans p ON n.type = 'plan_share' AND n.related_id = p.plan_id
+            LEFT JOIN groups g ON n.type = 'group_invitation' AND n.related_id = g.group_id
+            LEFT JOIN users u ON n.from_user_id = u.user_id
         WHERE 
-          n.user_id = ?;
-      `,
+            n.user_id = ?;
+        `,
         [userId]
       );
+
+      notifications.map((notification) => {
+        if (notification.userInfo) {
+          notification.userInfo = JSON.parse(notification.userInfo);
+        }
+      });
+
       console.log(notifications);
-      res.status(200).send({ success: true, status: 200, data: notifications });
+      res
+        .status(200)
+        .send({ success: true, status: 200, data: { notifications } });
     } catch (err) {
       console.log(err);
       const response = RESPONSE_MESSAGES.error();
