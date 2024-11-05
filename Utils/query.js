@@ -390,7 +390,7 @@ async function createNotificationsTable() {
     from_user_id VARCHAR(10),
     sent_at INT(10),
     message VARCHAR(300),
-    type VARCHAR(20),
+    type VARCHAR(40),
     related_id VARCHAR(10),
 
     FOREIGN KEY (user_id) REFERENCES users(user_id),
@@ -398,7 +398,6 @@ async function createNotificationsTable() {
 
     UNIQUE KEY unique_type_specific (user_id, from_user_id, type, related_id)
   );
-
   `);
 }
 

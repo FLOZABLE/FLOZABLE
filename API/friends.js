@@ -68,10 +68,11 @@ async function sendFriendRequest(userId, targetId) {
       return RESPONSE_MESSAGES.noTargetUser();
     }
 
-    if (friends.includes(userId)) {
+    if (friends.includes(targetId)) {
       return {
         success: false,
-        reason: "You're already friends with this user",
+        status: 400,
+        message: "You're already friends with this user",
       };
     }
 
@@ -92,8 +93,11 @@ async function sendFriendRequest(userId, targetId) {
 
     await connection.query(`INSERT INTO notifications SET ?`, [notification]);
 
-    notification.from_me = notification.from_user_id === userId;
+    notification.userInfo = notification.from_user_id === userId;
     mainIo.to(targetId).emit("notification", notification);
+
+    const myNotification = { ...notification, type: "friend_request_sent" };
+    mainIo.to(userId).emit("notification", myNotification);
 
     return {
       success: true,
@@ -123,9 +127,9 @@ async function replyFriendRequest({
   try {
     const connection = pool.promise();
 
-    const [userInfo, friends, [friendRequest]] = await Promise.all([
-      userCache(userId),
-      userFriendsCache(userId),
+    const [userInfo, friends, [[friendRequest]]] = await Promise.all([
+      userCache(connection, userId),
+      userFriendsCache(connection, userId),
       connection.query(
         `
         SELECT
@@ -157,7 +161,7 @@ async function replyFriendRequest({
     }
 
     const targetId = friendRequest.from_user_id;
-    const targetName = friendRequest.name;
+    const targetName = friendRequest.target_name;
 
     await connection.query(
       `DELETE FROM notifications WHERE notification_id = ?`,
@@ -228,6 +232,10 @@ async function replyFriendRequest({
 
     await connection.query(`INSERT INTO notifications SET ?`, [notification]);
     mainIo.to(targetId).emit("notification", notification);
+
+    friends.push(targetId);
+    cacheUserFriends(userId, friends);
+
     return {
       success: true,
       status: 200,

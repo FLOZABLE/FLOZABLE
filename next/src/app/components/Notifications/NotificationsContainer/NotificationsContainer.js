@@ -113,9 +113,22 @@ export default function NotificationsContainer() {
     <div className={styles.NotificationsContainer}>
       <div className={styles.bell}>
         <i>
-          <FontAwesomeIcon icon={faBell} bounce={!!notifications.length} />
+          <FontAwesomeIcon
+            icon={faBell}
+            bounce={
+              !!notifications.filter(
+                (notification) => notification.type !== "friend_request_sent"
+              ).length
+            }
+          />
         </i>
-        <div className={styles.count}>{notifications.length}</div>
+        <div className={styles.count}>
+          {
+            notifications.filter(
+              (notification) => notification.type !== "friend_request_sent"
+            ).length
+          }
+        </div>
       </div>
       <div className={`customScroll ${styles.notifications}`}>
         {notifications.map((notification, i) => {
