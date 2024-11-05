@@ -29,7 +29,8 @@ Router.get("/", async (req, res) => {
                 WHEN n.type = 'group_invitation' THEN g.name
                 ELSE NULL
             END AS related_name,
-            CASE 
+            CASE
+                WHEN n.type = 'friend_request' AND n.from_user_id = ? THEN JSON_OBJECT('name', uo.name, 'timezone', uo.timezone) 
                 WHEN n.type = 'friend_request' THEN JSON_OBJECT('name', u.name, 'timezone', u.timezone)
                 ELSE NULL
             END AS userInfo
@@ -39,10 +40,11 @@ Router.get("/", async (req, res) => {
             LEFT JOIN plans p ON n.type = 'plan_share' AND n.related_id = p.plan_id
             LEFT JOIN groups g ON n.type = 'group_invitation' AND n.related_id = g.group_id
             LEFT JOIN users u ON n.from_user_id = u.user_id
+            LEFT JOIN users uo ON n.user_id = uo.user_id
         WHERE 
-            n.user_id = ?;
+            n.user_id = ? OR (n.from_user_id = ? AND n.type = "friend_request");
         `,
-        [userId]
+        [userId, userId, userId]
       );
 
       notifications.map((notification) => {

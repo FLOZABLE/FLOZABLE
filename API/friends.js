@@ -92,6 +92,7 @@ async function sendFriendRequest(userId, targetId) {
 
     await connection.query(`INSERT INTO notifications SET ?`, [notification]);
 
+    notification.from_me = notification.from_user_id === userId;
     mainIo.to(targetId).emit("notification", notification);
 
     return {
@@ -99,49 +100,6 @@ async function sendFriendRequest(userId, targetId) {
       status: 200,
       message: `Sent friend request to ${targetInfo.name}!`,
     };
-    /* 
-    const friendRequests = await notificationCache(targetId, 0);
-
-    const prevFriendReq = friendRequests.find((friendReq) => {
-      return friendReq.f === userId;
-    });
-    if (prevFriendReq) {
-      return {
-        success: false,
-        status: 400,
-        message: "You've already sent a request to this user",
-        error: { reason: "You've already sent a request to this user" },
-      };
-    }
-
-    const id = generateRandomId(5);
-    const date = Math.floor(new Date().getTime() / 1000);
-    const socketNotif = { i: id, t: 0, f: userInfo, d: date };
-    const notification = { t: 0, f: userId, d: date };
-    mainIo.to(targetId).emit("notification", socketNotif);
-    //to target user
-    redisClient.hset(
-      `user:${targetId}:notifications`,
-      id,
-      JSON.stringify(notification)
-    );
-
-    //to me
-    const ongoing = { t: -2, f: targetId };
-    redisClient.hset(
-      `user:${userId}:notifications`,
-      id,
-      JSON.stringify(ongoing)
-    );
-    ongoing.f = targetInfo;
-    ongoing.i = id;
-    mainIo.to(userId).emit("notification", ongoing);
-
-    return {
-      success: true,
-      status: 200,
-      message: `Sent friend request to ${targetInfo.name}!`,
-    }; */
   } catch (err) {
     console.log(err);
     if (err?.code === "ER_DUP_ENTRY") {
@@ -254,182 +212,27 @@ async function replyFriendRequest({
         [newMember]
       );
 
-      mainIo.to([userId, targetId]).emit("joinChatRoom");
+      mainIo.to([userId, targetId]).emit("chat/room");
     }
 
-    return { success: false, status: 400 };
-    /* const isValidTargetId = validateStrictString(targetId, "user id", 10);
-
-    if (!isValidTargetId.isValid) {
-      return {
-        success: false,
-        status: 400,
-        message: isValidTargetId.reason,
-        error: { reason: isValidTargetId.reason },
-      };
-    }
-
-    if (notificationId) {
-      const isValidNotificationId = validateStrictString(
-        notificationId,
-        "notification id",
-        10
-      );
-      if (!isValidNotificationId.isValid)
-        return {
-          success: false,
-          status: 400,
-          message: isValidNotificationId.reason,
-          error: { reason: isValidNotificationId.reason },
-        };
-    }
-
-    const isValidAcceped = validateBoolean(accepted, "accept", true);
-
-    if (!isValidAcceped.isValid) {
-      return {
-        success: false,
-        status: 400,
-        message: isValidAcceped.reason,
-        error: { reason: isValidAcceped.reason },
-      };
-    }
-
-    let friendReq;
-
-    if (!notificationId) {
-      const friendRequests = await notificationCache(userId, 0);
-      friendReq = friendRequests.find((friendReq) => {
-        return friendReq.f === targetId;
-      });
-
-      if (!friendReq) return RESPONSE_MESSAGES.expiredRequest();
-    } else {
-      friendReq = await redisClient.hget(
-        `user:${userId}:notifications`,
-        notificationId
-      );
-      if (!friendReq) return RESPONSE_MESSAGES.expiredRequest();
-
-      friendReq = { i: notificationId, ...JSON.parse(friendReq) };
-    }
-
-    redisClient.hdel(`user:${userId}:notifications`, friendReq.i);
-    //remove it from ongoing friend req list
-    redisClient.hdel(`user:${targetId}:notifications`, friendReq.i);
-    if (!accepted) {
-      return {
-        success: true,
-        status: 200,
-        message: "Declined Friend Request!",
-      };
-    }
-
-    const connection = pool.promise();
-    const [usersInfo, userFriends, targetUserFriends] = await Promise.all([
-      usersCache(connection, [userId, targetId]),
-      userFriendsCache(connection, userId),
-      userFriendsCache(connection, targetId),
-    ]);
-
-    const userInfo = usersInfo.find((user) => user.user_id === userId);
-
-    const targetInfo = usersInfo.find((user) => user.user_id === targetId);
-    if (!userInfo) {
-      return RESPONSE_MESSAGES.noUser();
-    }
-    if (!targetInfo) {
-      return RESPONSE_MESSAGES.noTargetUser();
-    }
-
-    if (userFriends.includes(targetId))
-      return {
-        success: true,
-        status: 200,
-        message: `You and ${targetInfo.name} were already friends!`,
-      };
-
-    if (
-      userFriends.length >= FRIENDS_LIMIT ||
-      targetUserFriends.length >= FRIENDS_LIMIT
-    ) {
-      return RESPONSE_MESSAGES.friendsLimitReached();
-    }
-
-    const date = Math.floor(new Date().getTime() / 1000);
-
-    const newFriend = {
-      user_id: userId,
-      friend_id: targetId,
-      date,
+    const notification_id = generateRandomId(10);
+    const sent_at = Math.floor(Date.now() / 1000);
+    const notification = {
+      from_user_id: userId,
+      user_id: targetId,
+      notification_id,
+      sent_at,
+      type: "friend_request_accepted",
+      related_id: userId,
     };
 
-    await connection.query(`INSERT INTO friends SET ?`, newFriend);
-
-    const id = generateRandomId(5);
-    const notification = { t: 1, f: userId, d: date };
-    const socketNotif = { i: id, t: 1, f: userInfo, d: date };
-    mainIo.to(targetId).emit("notification", socketNotif);
-    redisClient.hset(
-      `user:${targetId}:notifications`,
-      id,
-      JSON.stringify(notification)
-    );
-
-    userFriends.push(targetId);
-    targetUserFriends.push(userId);
-
-    cacheUserFriends(userId, userFriends);
-    cacheUserFriends(targetId, targetUserFriends);
-
-    //create chat only if it does not exist
-    const [[chatroom]] = await connection.query(
-      `
-      SELECT c1.chatroom_id
-      FROM chatroom_members c1
-      JOIN chatroom_members c2 ON c1.chatroom_id = c2.chatroom_id
-      WHERE c1.user_id = ? AND c2.user_id = ?
-      `,
-      [userId, targetId]
-    );
-
-    if (!chatroom && createChat) {
-      const chatroom_id = generateRandomId(10);
-      const chatroomName = userInfo.name + ", " + targetInfo.name;
-      const roomInfo = {
-        chatroom_id,
-        type: 1,
-        name: chatroomName,
-      };
-      await connection.query(
-        `
-          INSERT INTO chatrooms SET ?
-        `,
-        [roomInfo]
-      );
-
-      const newMember = [
-        [userId, chatroom_id],
-        [targetId, chatroom_id],
-      ];
-
-      await connection.query(
-        `
-        INSERT 
-        INTO chatroom_members (user_id, chatroom_id) 
-        VALUES ? 
-        `,
-        [newMember]
-      );
-
-      mainIo.to([userId, targetId]).emit("joinChatRoom");
-    }
-
+    await connection.query(`INSERT INTO notifications SET ?`, [notification]);
+    mainIo.to(targetId).emit("notification", notification);
     return {
       success: true,
       status: 200,
-      message: `You and ${targetInfo.name} are now friends!`,
-    }; */
+      message: `You and ${targetName} are now friends!`,
+    };
   } catch (err) {
     console.log(err);
     return RESPONSE_MESSAGES.error();
