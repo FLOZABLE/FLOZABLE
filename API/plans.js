@@ -157,7 +157,7 @@ Router.get("/google", async (req, res) => {
         data: { plans: plans },
       });
     } catch (err) {
-      console.log(err);
+      //console.log(err);
       if (!err?.response?.data?.error) {
         const response = RESPONSE_MESSAGES.error();
         return res.status(response.status).send(response);
@@ -421,7 +421,7 @@ Router.patch("/plan/google", async (req, res) => {
       const response = RESPONSE_MESSAGES.error();
       return res.status(response.status).send(response);
     } catch (err) {
-      console.log(err);
+      //console.log(err);
       if (!err?.response?.data?.error) {
         const response = RESPONSE_MESSAGES.error();
         return res.status(response.status).send(response);
