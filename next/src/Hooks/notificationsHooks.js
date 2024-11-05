@@ -1,5 +1,7 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { getNotifications, getVapidKeys } from "@/Api/notificationsApi";
+import { useCallback, useEffect } from "react";
+import { socket } from "@/app/utils/socket";
 
 function useNotifications() {
   const queryClient = useQueryClient();
@@ -14,16 +16,16 @@ function useNotifications() {
 
   const { data: notifications } = queryResult;
 
-  const updateNotificationsData = async (newData) => {
+  const updateNotificationsData = useCallback(async (newData) => {
     await queryClient.setQueryData(["useNotifications"], (oldData) => {
       if (!oldData) return newData;
       return typeof newData === "function"
         ? newData(oldData)
         : { ...oldData, ...newData };
     });
-  };
+  }, []);
 
-  const filterNotification = (notificationId) => {
+  const filterNotification = useCallback((notificationId) => {
     updateNotificationsData((prev) => {
       if (!prev?.data?.notifications) return prev;
 
@@ -39,7 +41,31 @@ function useNotifications() {
         },
       };
     });
-  };
+  }, []);
+
+  useEffect(() => {
+    const onNotification = (notification) => {
+      updateNotificationsData((prev) => {
+        if (!prev?.data?.notifications) return prev;
+
+        const updatedNotifications = [...prev.data.notifications, notification];
+
+        return {
+          ...prev,
+          data: {
+            ...prev.data,
+            notifications: updatedNotifications,
+          },
+        };
+      });
+    };
+
+    socket.on("notification", onNotification);
+
+    return () => {
+      socket.off("notification");
+    };
+  }, []);
 
   return {
     notifications,
