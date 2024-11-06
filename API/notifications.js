@@ -7,45 +7,59 @@ const crypto = require("crypto");
 const pool = require("../model/pool");
 const { autoSignin } = require("./auth");
 const RESPONSE_MESSAGES = require("../utils/responses");
+const { usersCache } = require("../services/redisLoader");
 
 Router.get("/", async (req, res) => {
   autoSignin(req, res, async (userId) => {
     try {
       const connection = pool.promise();
-      res.send({ status: 400, success: false });
-      /*  const [notifications] = await connection.query(
+      const now = Date.now();
+      const [notifications] = await connection.query(
         `
-        SELECT 'friend_request' AS type, friendship_id AS notification_id, friend_id as from_user_id, user_id, date as sent_at
+        SELECT 'friend_request_sent' AS type, friendship_id AS notification_id, friend_id as from_user_id, date as sent_at
         FROM friends
-        WHERE (user_id = ? OR friend_id = ?) AND status = "pending"
+        WHERE user_id = ? AND status = "pending"
 
         UNION ALL
 
-        SELECT 'subject_share' AS type, subject_share_id AS notification_id, u.user_id as from_user_id, s.date as sent_at
-        FROM subject_share s
-        LEFT JOIN users u ON u.user_id  = s
-        WHERE user_id = ?
+        SELECT 'friend_request' AS type, friendship_id AS notification_id, user_id as from_user_id, date as sent_at
+        FROM friends
+        WHERE friend_id = ? AND status = "pending"
 
         UNION ALL
 
-        SELECT 'plan_share' AS type, plan_share_id AS notification_id, user_id, from_user_id, sent_at
-        FROM plan_shares
-        WHERE user_id = ?
+        SELECT 'subject_share' AS type, subject_share_id AS notification_id, s.user_id as from_user_id, ss.date as sent_at
+        FROM subject_share ss
+        LEFT JOIN subjects s ON s.subject_id  = ss.subject_id
+        WHERE ss.user_id = ?
 
         UNION ALL
 
-        SELECT 'group_invitation' AS type, invitation_id AS notification_id, user_id, from_user_id, sent_at
-        FROM group_invitations
-        WHERE user_id = ?
-        ORDER BY sent_at DESC;
-
+        SELECT 'plan_share' AS type, plan_share_id AS notification_id, p.user_id as from_user_id, ps.date as sent_at
+        FROM plan_share ps
+        LEFT JOIN plans p ON p.plan_id  = ps.plan_id
+        WHERE ps.user_id = ?
         `,
-        [userId, userId, userId]
-      ); */
+        [userId, userId, userId, userId]
+      );
+
+      const userIds = notifications.map(
+        (notification) => notification.from_user_id
+      );
+      const users = await usersCache(connection, userIds);
+      notifications.map((notification) => {
+        const userInfo = users.find(
+          (user) => user.user_id === notification.from_user_id
+        );
+        if (!userInfo) return;
+        notification.userInfo = userInfo;
+      });
+      console.log(notifications, Date.now() - now);
+      res.send({ success: true, status: 200, data: { notifications } });
     } catch (err) {
       console.log(err);
       const response = RESPONSE_MESSAGES.error();
-      return res.status(response.status).send(response);
+      //return res.status(response.status).send(response);
     }
   });
 });
