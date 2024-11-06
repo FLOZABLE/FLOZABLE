@@ -48,24 +48,15 @@ async function createSubjectShareTable() {
   const connection = pool.promise();
   await connection.query(`
   CREATE TABLE IF NOT EXISTS subject_share (
-    subject_id VARCHAR(10),
-    user_id VARCHAR(10),
+    subject_share_id VARCHAR(10) NOT NULL,
+    subject_id VARCHAR(10) NOT NULL,
+    user_id VARCHAR(10) NOT NULL,
+    status VARCHAR(10),
     FOREIGN KEY (subject_id) REFERENCES subjects(subject_id),
     FOREIGN KEY (user_id) REFERENCES users(user_id),
-    PRIMARY KEY (subject_id, user_id)
-  );  
-  `);
-}
-
-async function createSubjectSharedTable() {
-  const connection = pool.promise();
-  await connection.query(`
-  CREATE TABLE IF NOT EXISTS subject_shared (
-    subject_id VARCHAR(10),
-    user_id VARCHAR(10),
-    FOREIGN KEY (subject_id) REFERENCES subjects(subject_id),
-    FOREIGN KEY (user_id) REFERENCES users(user_id),
-    PRIMARY KEY (subject_id, user_id)
+    PRIMARY KEY (subject_share_id),
+    
+    UNIQUE KEY unique_subject_share (user_id, subject_id, status)
   );  
   `);
 }
@@ -135,12 +126,15 @@ async function createFriendsTable() {
   const connection = pool.promise();
   await connection.query(`
     CREATE TABLE IF NOT EXISTS friends (
+      friendship_id VARCHAR(10) PRIMARY KEY,
       user_id VARCHAR(10) NOT NULL,
       friend_id VARCHAR(10) NOT NULL,
-      date INT,
-      PRIMARY KEY (user_id, friend_id),
+      status ENUM("pending", "accepted") DEFAULT "pending",
+      date INT(10),
+      PRIMARY KEY friendship_id,
       FOREIGN KEY (user_id) REFERENCES users(user_id),
-      FOREIGN KEY (friend_id) REFERENCES users(user_id)
+      FOREIGN KEY (friend_id) REFERENCES users(user_id),
+      UNIQUE KEY unique_friend_pair (user_id, friend_id)
     );
   `);
 }
@@ -170,24 +164,15 @@ async function createPlanShare() {
   const connection = pool.promise();
   await connection.query(`
   CREATE TABLE IF NOT EXISTS plan_share (
+    plan_share_id VARCHAR(10) NOT NULL,
     plan_id VARCHAR(10),
     user_id VARCHAR(10),
+    status VARCHAR(10),
     FOREIGN KEY (user_id) REFERENCES users(user_id),
     FOREIGN KEY (plan_id) REFERENCES plans(plan_id),
-    PRIMARY KEY (plan_id, user_id)
-  );
-  `);
-}
+    PRIMARY KEY plan_share_id,
 
-async function createPlanShared() {
-  const connection = pool.promise();
-  await connection.query(`
-  CREATE TABLE IF NOT EXISTS plan_shared (
-    plan_id VARCHAR(10),
-    user_id VARCHAR(10),
-    FOREIGN KEY (user_id) REFERENCES users(user_id),
-    FOREIGN KEY (plan_id) REFERENCES plans(plan_id),
-    PRIMARY KEY (plan_id, user_id)
+    UNIQUE KEY unique_subject_share (user_id, plan_id, status)
   );
   `);
 }
@@ -405,7 +390,6 @@ module.exports = {
   createUsersTable,
   createSubjectsTable,
   createSubjectShareTable,
-  createSubjectSharedTable,
   createSubjectTimelinesTable,
   createGroupsTable,
   createGroupMembersTable,
@@ -413,7 +397,6 @@ module.exports = {
   createFriendsTable,
   createPlansTable,
   createPlanShare,
-  createPlanShared,
   createChatroomsTable,
   createChatroomMembersTable,
   createChatroomMessagesTable,
