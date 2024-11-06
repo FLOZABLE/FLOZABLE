@@ -377,7 +377,7 @@ async function userFriendsCache(connection, userId) {
       return await redisClient.smembers(`user:${userId}:friends`);
     }
     const [friendsData] = await connection.query(
-      `SELECT friend_id, user_id FROM friends WHERE user_id = ? OR friend_id = ?`,
+      `SELECT friend_id, user_id FROM friends WHERE (user_id = ? OR friend_id = ?) AND status = "accepted"`,
       [userId, userId]
     );
     const friends = friendsData.map((friend) => {

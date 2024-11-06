@@ -16,7 +16,6 @@ const {
   createUsersTable,
   createSubjectsTable,
   createSubjectShareTable,
-  createSubjectSharedTable,
   createSubjectTimelinesTable,
   createGroupsTable,
   createGroupMembersTable,
@@ -32,7 +31,6 @@ const {
   createUserThemesTable,
   createGroupLikesTable,
   createPlanShare,
-  createPlanShared,
   createThemeLikesTable,
   createWebsiteSettingsTable,
   createWebsiteUsageTable,
@@ -47,7 +45,7 @@ const {
   createGroups,
   updateBotSubjectsColor,
 } = require("../Bot/generator");
-const { generateRandomId } = require("../Utils/tool");
+const { generateRandomId } = require("../utils/tool");
 
 //const prompt = require("prompt-sync")({ sigint: true });
 
@@ -60,6 +58,7 @@ readline.question(
   4) createGroups:NUMBERS
   5) createFriends:MIN:MAX
   6) updateBotSubjectColor
+  7) migrateFriendsTable
   `,
   async (command) => {
     if (command === "maria:0") {
@@ -89,7 +88,6 @@ async function initializeMariadb() {
     await createUsersTable();
     await createSubjectsTable();
     await createSubjectShareTable();
-    await createSubjectSharedTable();
     await createSubjectTimelinesTable();
     await createGroupsTable();
     await createGroupMembersTable();
@@ -97,7 +95,6 @@ async function initializeMariadb() {
     await createFriendsTable();
     await createPlansTable();
     await createPlanShare();
-    await createPlanShared();
     await createChatroomsTable();
     await createChatroomMembersTable();
     await createChatroomMessagesTable();
@@ -186,22 +183,35 @@ async function syncStripeProducts() {
 async function migrateFriendsTable() {
   try {
     const connection = pool.promise();
-    await connection.query(
-      `RENAME TABLE friends TO old_friends IF NOT EXISTS old_friends;`
+
+    const [[oldFriendsTable]] = await connection.query(
+      `SHOW TABLES LIKE 'old_friends'`
     );
+
+    // If `old_friends` does not exist, rename `friends` to `old_friends`
+    if (!oldFriendsTable) {
+      await connection.query(`RENAME TABLE friends TO old_friends`);
+      console.log("Renamed `friends` table to `old_friends`.");
+    } else {
+      console.log("Table `old_friends` already exists. Skipping rename.");
+    }
 
     await createFriendsTable();
     const [rows] = await connection.query("SELECT * FROM old_friends");
 
-    rows.map(async (row) => {
-      const friendshipId = generateRandomId(10);
+    await Promise.all(
+      rows.map(async (row) => {
+        const friendshipId = generateRandomId(10);
 
-      await connection.query(
-        `INSERT INTO friends (friendship_id, user_id, friend_id, status, date) 
+        await connection.query(
+          `INSERT INTO friends (friendship_id, user_id, friend_id, status, date) 
          VALUES (?, ?, ?, ?, ?)`,
-        [friendshipId, row.user_id, row.friend_id, "accepted", row.date]
-      );
-    });
+          [friendshipId, row.user_id, row.friend_id, "accepted", row.date]
+        );
+      })
+    );
+
+    console.log("migration complete", rows.length);
   } catch (err) {
     console.log(err);
   }
