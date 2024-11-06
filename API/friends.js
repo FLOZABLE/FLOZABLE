@@ -80,23 +80,34 @@ async function sendFriendRequest(userId, targetId) {
       return RESPONSE_MESSAGES.friendsLimitReached();
     }
 
-    const notification_id = generateRandomId(10);
-    const sent_at = Math.floor(Date.now() / 1000);
-    const notification = {
-      from_user_id: userId,
-      user_id: targetId,
-      notification_id,
-      sent_at,
-      type: "friend_request",
-      related_id: userId,
+    const friendship_id = generateRandomId(10);
+    const date = Math.floor(Date.now() / 1000);
+
+    const friendRequest = {
+      friendship_id,
+      user_id: userId,
+      friend_id: targetId,
+      date,
     };
 
-    await connection.query(`INSERT INTO notifications SET ?`, [notification]);
+    const notification = {
+      ...friendRequest,
+      notification_id: friendship_id,
+      userInfo,
+      type: "friend_request",
+    };
 
-    notification.userInfo = notification.from_user_id === userId;
+    const myNotification = {
+      ...friendRequest,
+      notification_id: friendship_id,
+      userInfo: targetInfo,
+      type: "friend_request_sent",
+    };
+
+    await connection.query(`INSERT INTO friends SET ?`, [friendRequest]);
+
     mainIo.to(targetId).emit("notification", notification);
 
-    const myNotification = { ...notification, type: "friend_request_sent" };
     mainIo.to(userId).emit("notification", myNotification);
 
     return {

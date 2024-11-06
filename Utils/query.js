@@ -51,11 +51,11 @@ async function createSubjectShareTable() {
     subject_share_id VARCHAR(10) NOT NULL,
     subject_id VARCHAR(10) NOT NULL,
     user_id VARCHAR(10) NOT NULL,
+    date INT(10),
     status VARCHAR(10),
     FOREIGN KEY (subject_id) REFERENCES subjects(subject_id),
     FOREIGN KEY (user_id) REFERENCES users(user_id),
     PRIMARY KEY (subject_share_id),
-    
     UNIQUE KEY unique_subject_share (user_id, subject_id, status)
   );  
   `);
@@ -126,12 +126,12 @@ async function createFriendsTable() {
   const connection = pool.promise();
   await connection.query(`
     CREATE TABLE IF NOT EXISTS friends (
-      friendship_id VARCHAR(10) PRIMARY KEY,
+      friendship_id VARCHAR(10),
       user_id VARCHAR(10) NOT NULL,
       friend_id VARCHAR(10) NOT NULL,
       status ENUM("pending", "accepted") DEFAULT "pending",
       date INT(10),
-      PRIMARY KEY friendship_id,
+      PRIMARY KEY (friendship_id),
       FOREIGN KEY (user_id) REFERENCES users(user_id),
       FOREIGN KEY (friend_id) REFERENCES users(user_id),
       UNIQUE KEY unique_friend_pair (user_id, friend_id)
@@ -168,9 +168,10 @@ async function createPlanShare() {
     plan_id VARCHAR(10),
     user_id VARCHAR(10),
     status VARCHAR(10),
+    date INT(10),
     FOREIGN KEY (user_id) REFERENCES users(user_id),
     FOREIGN KEY (plan_id) REFERENCES plans(plan_id),
-    PRIMARY KEY plan_share_id,
+    PRIMARY KEY (plan_share_id),
 
     UNIQUE KEY unique_subject_share (user_id, plan_id, status)
   );
