@@ -47,9 +47,9 @@ Router.get("/", async (req, res) => {
         FROM 
           plans p
         LEFT JOIN 
-          plan_shared s ON p.plan_id = s.plan_id
+          plan_share ps ON p.plan_id = ps.plan_id AND ps.status = "accepted"
         WHERE 
-          p.user_id = ? OR s.user_id = ?
+          p.user_id = ? OR ps.user_id = ?
         GROUP BY 
           p.plan_id;`,
         [userId, `%${userId}%`]
@@ -560,12 +560,9 @@ Router.get("/plan/users", async (req, res) => {
           p.plan_id,
           p.user_id,
           JSON_ARRAYAGG(JSON_OBJECT('user_id', u.user_id, 'name', u.name)) AS shared,
-          JSON_ARRAYAGG(JSON_OBJECT('user_id', u2.user_id, 'name', u2.name)) AS share
         FROM plans p
-        LEFT JOIN plan_shared psd ON psd.plan_id = p.plan_id
-        LEFT JOIN users u ON u.user_id = psd.user_id
+        LEFT JOIN users u ON u.user_id = ps.user_id
         LEFT JOIN plan_share ps ON ps.plan_id = p.plan_id
-        LEFT JOIN users u2 ON u2.user_id = ps.user_id
         WHERE p.plan_id = ?
         GROUP BY p.plan_id
       `,
@@ -627,9 +624,7 @@ Router.post("/plan/share", async (req, res) => {
             p.plan_id,
             p.title,
             GROUP_CONCAT(DISTINCT ps.user_id) AS share,
-            GROUP_CONCAT(DISTINCT psd.user_id) AS shared
           FROM plans p
-          LEFT JOIN plan_shared psd ON psd.plan_id = p.plan_id
           LEFT JOIN plan_share ps ON ps.plan_id = p.plan_id
           WHERE p.plan_id = ? AND p.user_id = ?
           GROUP BY p.plan_id
@@ -751,12 +746,9 @@ Router.delete("/plan/share", async (req, res) => {
           p.title,
           p.user_id,
           JSON_ARRAYAGG(JSON_OBJECT('user_id', u.user_id, 'name', u.name)) AS shared,
-          JSON_ARRAYAGG(JSON_OBJECT('user_id', u2.user_id, 'name', u2.name)) AS share
         FROM plans p
-        LEFT JOIN plan_shared psd ON psd.plan_id = p.plan_id
-        LEFT JOIN users u ON u.user_id = psd.user_id
         LEFT JOIN plan_share ps ON ps.plan_id = p.plan_id
-        LEFT JOIN users u2 ON u2.user_id = ps.user_id
+        LEFT JOIN users u ON u.user_id = ps.user_id
         WHERE p.plan_id = ?
         GROUP BY p.plan_id
       `,
@@ -782,7 +774,7 @@ Router.delete("/plan/share", async (req, res) => {
       await connection.query(
         `
         DELETE FROM plan_share WHERE plan_id = ? AND user_id = ?;
-        DELETE FROM plan_shared WHERE plan_id = ? AND user_id = ?`,
+        `,
         [planId, targetId, planId, targetId]
       );
 
@@ -843,7 +835,7 @@ Router.post("/plan/share/respond", async (req, res) => {
           user_Id: userId,
         };
 
-        await connection.query(`INSERT INTO plan_shared SET ?`, [shared]);
+        await connection.query(`INSERT INTO plan_share SET ?`, [shared]);
         return res.status(200).send({
           success: true,
           status: 200,

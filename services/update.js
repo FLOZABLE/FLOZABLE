@@ -37,7 +37,7 @@ const {
   createProductsTable,
   createPurchasesTable,
   createNotificationsTable,
-} = require("../Utils/query");
+} = require("../utils/query");
 const pool = require("../model/pool");
 const {
   createFriends,

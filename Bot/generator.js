@@ -10,7 +10,7 @@ const {
   generateRandomId,
   randomIntInRange,
   hashing,
-} = require("../Utils/tool");
+} = require("../utils/tool");
 const sharp = require("sharp");
 
 /**create bots */
