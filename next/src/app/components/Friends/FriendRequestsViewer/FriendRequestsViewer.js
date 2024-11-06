@@ -9,6 +9,7 @@ import UserContainer from "../../Users/UserContainer/UserContainer";
 import { useRouter } from "next/navigation";
 import { postFriendsRequestReply } from "@/Api/friendsApi";
 import { useFriendsStatus, useFriendsTrends } from "@/Hooks/friendsHooks";
+import { useNotifications } from "@/Hooks/notificationsHooks";
 
 function FriendRequestContainer({ friendRequest, children, style }) {
   const router = useRouter();
@@ -16,9 +17,9 @@ function FriendRequestContainer({ friendRequest, children, style }) {
   return (
     <div className={styles.FriendRequestContainer} style={style}>
       <UserContainer
-        userInfo={friendRequest.f}
+        userInfo={friendRequest.userInfo}
         onClick={() => {
-          router.push(`/dashboard/user/${friendRequest.f.user_id}`);
+          router.push(`/dashboard/user/${friendRequest.userInfo.user_id}`);
         }}
       />
       {children}
@@ -27,9 +28,10 @@ function FriendRequestContainer({ friendRequest, children, style }) {
 }
 
 function FriendRequestsViewer() {
-  const { notifications, setNotifications } = useContext(NotificationsContext);
+  const { setNotifications } = useContext(NotificationsContext);
   const { friendsStatusRefetch } = useFriendsStatus();
   const { friendsTrendRefetch } = useFriendsTrends();
+  const { notifications, filterNotification } = useNotifications();
 
   const [viewer, setViewer] = useState(0);
   const [friendRequests, setFriendRequests] = useState([]);
@@ -41,15 +43,11 @@ function FriendRequestsViewer() {
     const sentRequests = [];
 
     notifications.map((notification) => {
-      const type = notification.t;
-      if (type === 0) {
+      if (notification.type === "friend_request") {
         friendRequests.push(notification);
-        return;
-      } else if (type === -2) {
+      } else if (notification.type === "friend_request_sent") {
         sentRequests.push(notification);
-        return;
       }
-      return;
     });
 
     setFriendRequests(friendRequests);
@@ -65,12 +63,10 @@ function FriendRequestsViewer() {
           notificationId,
         });
 
-        setNotifications(
-          notifications.filter((notif) => notif.i !== notificationId)
-        );
+        filterNotification(notificationId);
 
         if (!response.success) return;
-        
+
         friendsStatusRefetch();
         friendsTrendRefetch();
       } catch (err) {
@@ -92,9 +88,7 @@ function FriendRequestsViewer() {
       .then((response) => response.json())
       .catch((error) => console.error(error));
 
-    setNotifications(
-      notifications.filter((notif) => notif.i !== notificationId)
-    );
+    filterNotification(notificationId);
   };
 
   return (
@@ -130,7 +124,7 @@ function FriendRequestsViewer() {
                     <div
                       className={styles.button}
                       onClick={() => {
-                        sentRequestClear(request.f.user_id, request.i);
+                        sentRequestClear(request.notification_id);
                       }}
                     >
                       <FontAwesomeIcon icon={faXmark} />
@@ -153,7 +147,7 @@ function FriendRequestsViewer() {
                     <div
                       className={styles.button}
                       onClick={() => {
-                        friendRequestReply(request.f.user_id, false, request.i);
+                        friendRequestReply(request.notification_id, false);
                       }}
                     >
                       <FontAwesomeIcon icon={faXmark} />
@@ -164,7 +158,7 @@ function FriendRequestsViewer() {
                     <div
                       className={styles.button}
                       onClick={() => {
-                        friendRequestReply(request.f.user_id, true, request.i);
+                        friendRequestReply(request.notification_id, true);
                       }}
                     >
                       <FontAwesomeIcon icon={faCheck} />

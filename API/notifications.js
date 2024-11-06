@@ -12,57 +12,36 @@ Router.get("/", async (req, res) => {
   autoSignin(req, res, async (userId) => {
     try {
       const connection = pool.promise();
-
-      const [notifications] = await connection.query(
+      res.send({ status: 400, success: false });
+      /*  const [notifications] = await connection.query(
         `
-        SELECT 
-            n.notification_id,
-            n.user_id,
-            n.from_user_id,
-            n.sent_at,
-            n.message,
-            n.type,
-            n.related_id,
-            CASE 
-                WHEN n.type = 'subject_share' THEN s.name
-                WHEN n.type = 'plan_share' THEN p.title
-                WHEN n.type = 'group_invitation' THEN g.name
-                ELSE NULL
-            END AS related_name,
-            CASE
-                WHEN n.type = 'friend_request' AND n.from_user_id = ? THEN JSON_OBJECT('name', uo.name, 'timezone', uo.timezone) 
-                WHEN n.type = 'friend_request' THEN JSON_OBJECT('name', u.name, 'timezone', u.timezone)
-                ELSE NULL
-            END AS userInfo
-        FROM 
-            notifications n
-            LEFT JOIN subjects s ON n.type = 'subject_share' AND n.related_id = s.subject_id
-            LEFT JOIN plans p ON n.type = 'plan_share' AND n.related_id = p.plan_id
-            LEFT JOIN groups g ON n.type = 'group_invitation' AND n.related_id = g.group_id
-            LEFT JOIN users u ON n.from_user_id = u.user_id
-            LEFT JOIN users uo ON n.user_id = uo.user_id
-        WHERE 
-            n.user_id = ? OR (n.from_user_id = ? AND n.type = "friend_request");
+        SELECT 'friend_request' AS type, friendship_id AS notification_id, friend_id as from_user_id, user_id, date as sent_at
+        FROM friends
+        WHERE (user_id = ? OR friend_id = ?) AND status = "pending"
+
+        UNION ALL
+
+        SELECT 'subject_share' AS type, subject_share_id AS notification_id, u.user_id as from_user_id, s.date as sent_at
+        FROM subject_share s
+        LEFT JOIN users u ON u.user_id  = s
+        WHERE user_id = ?
+
+        UNION ALL
+
+        SELECT 'plan_share' AS type, plan_share_id AS notification_id, user_id, from_user_id, sent_at
+        FROM plan_shares
+        WHERE user_id = ?
+
+        UNION ALL
+
+        SELECT 'group_invitation' AS type, invitation_id AS notification_id, user_id, from_user_id, sent_at
+        FROM group_invitations
+        WHERE user_id = ?
+        ORDER BY sent_at DESC;
+
         `,
         [userId, userId, userId]
-      );
-
-      notifications.map((notification) => {
-        if (notification.type === "friend_request") {
-          notification.message = "wants to be friend!";
-          if (notification.from_user_id === userId) {
-            notification.type = "friend_request_sent";
-          }
-        }
-        if (notification.userInfo) {
-          notification.userInfo = JSON.parse(notification.userInfo);
-        }
-      });
-
-      console.log(notifications);
-      res
-        .status(200)
-        .send({ success: true, status: 200, data: { notifications } });
+      ); */
     } catch (err) {
       console.log(err);
       const response = RESPONSE_MESSAGES.error();
