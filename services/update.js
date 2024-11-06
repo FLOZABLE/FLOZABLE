@@ -47,6 +47,7 @@ const {
   createGroups,
   updateBotSubjectsColor,
 } = require("../Bot/generator");
+const { generateRandomId } = require("../Utils/tool");
 
 //const prompt = require("prompt-sync")({ sigint: true });
 
@@ -76,6 +77,8 @@ readline.question(
       await createFriends(parseInt(min), parseInt(max));
     } else if (command === "updateBotSubjectColor") {
       await updateBotSubjectsColor();
+    } else if (command === "migrateFriendsTable") {
+      await migrateFriendsTable();
     }
     readline.close();
   }
@@ -175,6 +178,30 @@ async function syncStripeProducts() {
     }
 
     console.log(products);
+  } catch (err) {
+    console.log(err);
+  }
+}
+
+async function migrateFriendsTable() {
+  try {
+    const connection = pool.promise();
+    await connection.query(
+      `RENAME TABLE friends TO old_friends IF NOT EXISTS old_friends;`
+    );
+
+    await createFriendsTable();
+    const [rows] = await connection.query("SELECT * FROM old_friends");
+
+    rows.map(async (row) => {
+      const friendshipId = generateRandomId(10);
+
+      await connection.query(
+        `INSERT INTO friends (friendship_id, user_id, friend_id, status, date) 
+         VALUES (?, ?, ?, ?, ?)`,
+        [friendshipId, row.user_id, row.friend_id, "accepted", row.date]
+      );
+    });
   } catch (err) {
     console.log(err);
   }
