@@ -136,6 +136,21 @@ const subjectColors = [
   "#A59E8C",
 ];
 
+const NOTIFICATION_MESSAGES = {
+  friendRequest: (name) => ({
+    contents: ["##profileCard", "sent friend request!"],
+    title: `${name} sent friend request!`,
+  }),
+  friendRequestDecline: () => ({
+    contents: "Declined friend request!",
+    title: "Declined friend request!",
+  }),
+  friendRequestAccept: (name) => ({
+    contents: ["#profileCard", `is now your friend!`],
+    title: `${name} is now your friend!`,
+  }),
+};
+
 module.exports = {
   MAX_STUDY_TIME,
   USER_ID_COOKIE_OPTIONS,
@@ -144,5 +159,6 @@ module.exports = {
   possibleBotsSubjects,
   REDIS_EXP,
   BOT_OPTIONS,
+  NOTIFICATION_MESSAGES,
   subjectColors,
 };

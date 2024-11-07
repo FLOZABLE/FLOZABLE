@@ -54,8 +54,6 @@ function AppProvider({ children }) {
   const searchParams = useSearchParams();
   const router = useRouter();
 
-  const { updateNotificationsData } = useNotifications();
-
   const success = searchParams.get("success");
   const message = searchParams.get("message");
 
@@ -77,31 +75,6 @@ function AppProvider({ children }) {
       scroll: false,
     });
   }, [success, message]);
-
-  useEffect(() => {
-    const onNotification = (notification) => {
-      updateNotificationsData((prev) => {
-        if (!prev?.data?.notifications) return prev;
-
-        const updatedNotifications = [...prev.data.notifications, notification];
-
-        return {
-          ...prev,
-          data: {
-            ...prev.data,
-            notifications: updatedNotifications,
-          },
-        };
-      });
-      toast.info(notification.toastMessage);
-    };
-
-    socket.on("notification", onNotification);
-
-    return () => {
-      socket.off("notification", onNotification);
-    };
-  }, []);
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -136,6 +109,8 @@ function AccountProvider({ children }) {
 
   const { accountData, accountRefetch } = queryResult;
 
+  const { updateNotificationsData } = useNotifications();
+
   useEffect(() => {
     if (accountData?.success === false) {
       setUserInfo(false);
@@ -158,8 +133,21 @@ function AccountProvider({ children }) {
   }, [accountData]);
 
   useEffect(() => {
-    const onNotification = (data) => {
-      setNotifications((prev) => [...prev, data]);
+    const onNotification = (notification) => {
+      updateNotificationsData((prev) => {
+        if (!prev?.data?.notifications) return prev;
+
+        const updatedNotifications = [...prev.data.notifications, notification];
+
+        return {
+          ...prev,
+          data: {
+            ...prev.data,
+            notifications: updatedNotifications,
+          },
+        };
+      });
+      toast.info(notification.message?.title);
     };
 
     socket.on("notification", onNotification);
