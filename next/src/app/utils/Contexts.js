@@ -14,6 +14,7 @@ import { useThemes, useThemesUser } from "@/Hooks/themesHooks";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { mediaSocket } from "./mediaSocket";
 import { toast } from "react-toastify";
+import { useNotifications } from "@/Hooks/notificationsHooks";
 
 const googleClientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
 
@@ -53,6 +54,8 @@ function AppProvider({ children }) {
   const searchParams = useSearchParams();
   const router = useRouter();
 
+  const { updateNotificationsData } = useNotifications();
+
   const success = searchParams.get("success");
   const message = searchParams.get("message");
 
@@ -74,6 +77,31 @@ function AppProvider({ children }) {
       scroll: false,
     });
   }, [success, message]);
+
+  useEffect(() => {
+    const onNotification = (notification) => {
+      updateNotificationsData((prev) => {
+        if (!prev?.data?.notifications) return prev;
+
+        const updatedNotifications = [...prev.data.notifications, notification];
+
+        return {
+          ...prev,
+          data: {
+            ...prev.data,
+            notifications: updatedNotifications,
+          },
+        };
+      });
+      toast.info(notification.toastMessage);
+    };
+
+    socket.on("notification", onNotification);
+
+    return () => {
+      socket.off("notification", onNotification);
+    };
+  }, []);
 
   return (
     <QueryClientProvider client={queryClient}>

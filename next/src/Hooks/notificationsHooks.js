@@ -1,7 +1,6 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { getNotifications, getVapidKeys } from "@/Api/notificationsApi";
-import { useCallback, useEffect } from "react";
-import { socket } from "@/app/utils/socket";
+import { useCallback } from "react";
 
 function useNotifications() {
   const queryClient = useQueryClient();
@@ -41,30 +40,6 @@ function useNotifications() {
         },
       };
     });
-  }, []);
-
-  useEffect(() => {
-    const onNotification = (notification) => {
-      updateNotificationsData((prev) => {
-        if (!prev?.data?.notifications) return prev;
-
-        const updatedNotifications = [...prev.data.notifications, notification];
-
-        return {
-          ...prev,
-          data: {
-            ...prev.data,
-            notifications: updatedNotifications,
-          },
-        };
-      });
-    };
-
-    socket.on("notification", onNotification);
-
-    return () => {
-      socket.off("notification");
-    };
   }, []);
 
   return {

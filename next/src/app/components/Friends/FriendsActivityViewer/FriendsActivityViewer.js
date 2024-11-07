@@ -11,9 +11,11 @@ import { useFriendsStatus } from "@/Hooks/friendsHooks";
 import CircularLoading from "../../LoadingScreen/CircularLoading/CircularLoading";
 import { ModalsContext } from "@/app/utils/Contexts";
 import ChatBtn from "../../Buttons/ChatBtn/ChatBtn";
+import { useNotifications } from "@/Hooks/notificationsHooks";
 
 function FriendsActivityViewer() {
   const { setSearchUsersModal } = useContext(ModalsContext);
+  const { notifications, filterNotification } = useNotifications();
 
   const router = useRouter();
 
