@@ -23,7 +23,7 @@ const {
 } = require("../utils/validate");
 const { DateTime } = require("luxon");
 const { mainIo } = require("../sockets/io");
-const { FRIENDS_LIMIT } = require("../Constant");
+const { FRIENDS_LIMIT, NOTIFICATION_MESSAGES } = require("../Constant");
 const Router = express.Router();
 const { autoSignin } = require("./auth");
 const RESPONSE_MESSAGES = require("../utils/responses");
@@ -97,6 +97,8 @@ async function sendFriendRequest(userId, targetId) {
       userInfo,
       type: "friend_request",
     };
+
+    notification.message = NOTIFICATION_MESSAGES.friendRequest(userInfo.name);
 
     const myNotification = {
       ...friendRequest,
@@ -180,7 +182,7 @@ async function replyFriendRequest({
       return {
         success: true,
         status: 200,
-        message: "Declined Friend Request!",
+        message: "Declined friend request!",
       };
     }
 
@@ -250,6 +252,9 @@ async function replyFriendRequest({
     };
 
     await connection.query(`INSERT INTO notifications SET ?`, [notification]);
+
+    notification.message =
+      NOTIFICATION_MESSAGES.friendRequestAccept(targetName);
     mainIo.to(targetId).emit("notification", notification);
 
     friends.push(targetId);

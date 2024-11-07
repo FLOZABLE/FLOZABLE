@@ -8,6 +8,7 @@ const pool = require("../model/pool");
 const { autoSignin } = require("./auth");
 const RESPONSE_MESSAGES = require("../utils/responses");
 const { usersCache } = require("../services/redisLoader");
+const { NOTIFICATION_MESSAGES } = require("../Constant");
 
 Router.get("/", async (req, res) => {
   autoSignin(req, res, async (userId) => {
@@ -39,8 +40,14 @@ Router.get("/", async (req, res) => {
         FROM plan_share ps
         LEFT JOIN plans p ON p.plan_id  = ps.plan_id
         WHERE ps.user_id = ?
+
+        UNION ALL
+
+        SELECT type, notification_id, from_user_id, sent_at
+        FROM notifications
+        WHERE user_id = ?
         `,
-        [userId, userId, userId, userId]
+        [userId, userId, userId, userId, userId]
       );
 
       const userIds = notifications.map(
@@ -55,7 +62,13 @@ Router.get("/", async (req, res) => {
         notification.userInfo = userInfo ? userInfo : {};
 
         if (notification.type === "friend_request") {
-          notification.message = `wants to be friend!`;
+          notification.message = NOTIFICATION_MESSAGES.friendRequest(
+            notification.userInfo.name
+          );
+        } else if (notification.type == "friend_request_accepted") {
+          notification.message = NOTIFICATION_MESSAGES.friendRequestAccept(
+            notification.userInfo.name
+          );
         }
       });
       console.log(notifications, Date.now() - now);
