@@ -15,19 +15,23 @@ function NotificationContainer({ children, userInfo, message }) {
 
   return (
     <div className={styles.NotificationContainer}>
-      {userInfo ? (
-        <div className={styles.profile}>
-          <UserContainer
-            userInfo={userInfo}
-            style={{ fontSize: "0.8rem" }}
-            maxNameWidht="7rem"
-            onClick={() => {
-              router.push(`/dashboard/user/${userInfo.user_id}`);
-            }}
-          />
-        </div>
-      ) : null}
-      <div className={styles.message}>{message}</div>
+      {message.contents.map((content, i) => {
+        if (content === "##profileCard") {
+          return (
+            <div className={styles.profile} key={i}>
+              <UserContainer
+                userInfo={userInfo}
+                style={{ fontSize: "0.8rem" }}
+                maxNameWidht="7rem"
+                onClick={() => {
+                  router.push(`/dashboard/user/${userInfo.user_id}`);
+                }}
+              />
+            </div>
+          );
+        }
+        return <div className={styles.message}>{content}</div>;
+      })}
       <div className={styles.buttons}>{children}</div>
     </div>
   );
