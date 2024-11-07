@@ -43,12 +43,21 @@ async function postFriendsRequest({ targetId }) {
   );
 }
 
-async function postFriendsRequestReply({ targetId, notificationId, accepted }) {
+async function postFriendsRequestReply({ notificationId, accepted }) {
   return requestHandler(
     AxiosInstance.post(`/friends/request/reply`, {
-      target_id: targetId,
       notification_id: notificationId,
       accepted,
+    })
+  );
+}
+
+async function deleteFriendRequest(notificationId) {
+  return requestHandler(
+    AxiosInstance.delete(`/friends/request`, {
+      data: {
+        notification_id: notificationId,
+      },
     })
   );
 }
@@ -60,4 +69,5 @@ export {
   getFriendsStatus,
   postFriendsRequest,
   postFriendsRequestReply,
+  deleteFriendRequest,
 };

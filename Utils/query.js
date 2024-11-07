@@ -378,11 +378,8 @@ async function createNotificationsTable() {
     message VARCHAR(300),
     type VARCHAR(40),
     related_id VARCHAR(10),
-
     FOREIGN KEY (user_id) REFERENCES users(user_id),
-    FOREIGN KEY (from_user_id) REFERENCES users(user_id),
-
-    UNIQUE KEY unique_type_specific (user_id, from_user_id, type, related_id)
+    FOREIGN KEY (from_user_id) REFERENCES users(user_id)
   );
   `);
 }
