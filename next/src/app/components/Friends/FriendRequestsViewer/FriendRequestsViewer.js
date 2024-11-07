@@ -1,13 +1,11 @@
-import React, { useCallback, useContext, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import styles from "./FriendRequestsViewer.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheck, faXmark } from "@fortawesome/free-solid-svg-icons";
-import { NotificationsContext } from "@/app/utils/Contexts";
-import config from "@/app/utils/config";
 import SlidingOptBtn from "@/app/components/Buttons/SlidingOptBtn/SlidingOptBtn";
 import UserContainer from "../../Users/UserContainer/UserContainer";
 import { useRouter } from "next/navigation";
-import { postFriendsRequestReply } from "@/Api/friendsApi";
+import { deleteFriendRequest, postFriendsRequestReply } from "@/Api/friendsApi";
 import { useFriendsStatus, useFriendsTrends } from "@/Hooks/friendsHooks";
 import { useNotifications } from "@/Hooks/notificationsHooks";
 
@@ -28,7 +26,6 @@ function FriendRequestContainer({ friendRequest, children, style }) {
 }
 
 function FriendRequestsViewer() {
-  const { setNotifications } = useContext(NotificationsContext);
   const { friendsStatusRefetch } = useFriendsStatus();
   const { friendsTrendRefetch } = useFriendsTrends();
   const { notifications, filterNotification } = useNotifications();
@@ -54,42 +51,25 @@ function FriendRequestsViewer() {
     setSentRequests(sentRequests);
   }, [notifications]);
 
-  const friendRequestReply = useCallback(
-    async (targetId, accepted, notificationId) => {
-      try {
-        const response = await postFriendsRequestReply({
-          targetId,
-          accepted,
-          notificationId,
-        });
-
-        filterNotification(notificationId);
-
-        if (!response.success) return;
-
-        friendsStatusRefetch();
-        friendsTrendRefetch();
-      } catch (err) {
-        console.log(err);
-      }
-    },
-    [notifications]
-  );
-
-  const sentRequestClear = (targetId, notificationId) => {
-    fetch(`${config.server}/friends/request`, {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ targetId }),
-      credentials: "include",
-    })
-      .then((response) => response.json())
-      .catch((error) => console.error(error));
+  const friendRequestReply = useCallback(async (notificationId, accepted) => {
+    const response = await postFriendsRequestReply({
+      notificationId,
+      accepted,
+    });
 
     filterNotification(notificationId);
-  };
+
+    if (!response.success) return;
+
+    friendsStatusRefetch();
+    friendsTrendRefetch();
+  }, []);
+
+  const friendRequestDelete = useCallback(async (notificationId) => {
+    await deleteFriendRequest(notificationId);
+
+    filterNotification(notificationId);
+  }, []);
 
   return (
     <div className={`Box ${styles.FriendRequestsViewer}`}>
@@ -124,7 +104,7 @@ function FriendRequestsViewer() {
                     <div
                       className={styles.button}
                       onClick={() => {
-                        sentRequestClear(request.notification_id);
+                        friendRequestDelete(request.notification_id);
                       }}
                     >
                       <FontAwesomeIcon icon={faXmark} />

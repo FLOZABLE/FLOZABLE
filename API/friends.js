@@ -83,6 +83,7 @@ async function sendFriendRequest(userId, targetId) {
     const friendship_id = generateRandomId(10);
     const date = Math.floor(Date.now() / 1000);
 
+    //user_id = me (one who sent), friend_id = other user (one who is receiving)
     const friendRequest = {
       friendship_id,
       user_id: userId,
@@ -144,14 +145,13 @@ async function replyFriendRequest({
       connection.query(
         `
         SELECT
-          n.from_user_id,
-          u.name as target_name
-        FROM notifications n
-        LEFT JOIN
-          users u ON u.user_id = n.from_user_id
-        WHERE n.user_id = ? AND n.notification_id = ? AND n.type = "friend_request"
+        u.name as target_name,
+        f.user_id as target_user_id
+        FROM friends f
+        LEFT JOIN users u ON u.user_id = f.user_id
+        WHERE f.friendship_id = ? AND f.friend_id = ? AND status = "pending"
       `,
-        [userId, notificationId]
+        [notificationId, userId]
       ),
     ]);
 
@@ -165,27 +165,36 @@ async function replyFriendRequest({
       return response;
     }
 
-    console.log(friendRequest, userId, notificationId);
     if (!friendRequest) {
       const response = RESPONSE_MESSAGES.expiredRequest();
       return response;
     }
 
-    const targetId = friendRequest.from_user_id;
+    const targetId = friendRequest.target_user_id;
     const targetName = friendRequest.target_name;
 
-    await connection.query(
-      `DELETE FROM notifications WHERE notification_id = ?`,
-      [notificationId]
-    );
-
     if (!accepted) {
+      await connection.query(`DELETE FROM friends WHERE friendship_id = ?`, [
+        notificationId,
+      ]);
       return {
         success: true,
         status: 200,
         message: "Declined Friend Request!",
       };
     }
+
+    const date = Math.floor(Date.now() / 1000);
+
+    const friend = {
+      date,
+      status: "accepted",
+    };
+
+    await connection.query(`UPDATE friends SET ? WHERE friendship_id = ?`, [
+      friend,
+      notificationId,
+    ]);
 
     //create chat only if it does not exist
     const [[chatroom]] = await connection.query(
@@ -231,12 +240,11 @@ async function replyFriendRequest({
     }
 
     const notification_id = generateRandomId(10);
-    const sent_at = Math.floor(Date.now() / 1000);
     const notification = {
       from_user_id: userId,
       user_id: targetId,
       notification_id,
-      sent_at,
+      sent_at: date,
       type: "friend_request_accepted",
       related_id: userId,
     };
@@ -246,6 +254,9 @@ async function replyFriendRequest({
 
     friends.push(targetId);
     cacheUserFriends(userId, friends);
+
+    //remove target's friends cache sunce it's mutated
+    redisClient.del(`user:${targetId}:friends`);
 
     return {
       success: true,
@@ -277,31 +288,37 @@ Router.post("/request", async (req, res) => {
 Router.delete("/request", async (req, res) => {
   autoSignin(req, res, async (userId) => {
     try {
-      const { targetId } = req.body;
+      const { notification_id: notificationId } = req.body;
 
-      const isValidTargetId = validateStrictString(targetId, "user id", 10);
+      const isValidNotificationId = validateStrictString(
+        notificationId,
+        "user id",
+        10
+      );
 
-      if (!isValidTargetId.isValid) {
+      if (!isValidNotificationId.isValid) {
         return res.status(400).send({
           success: false,
           status: 400,
-          message: isValidTargetId.reason,
-          error: { reason: isValidTargetId.reason },
+          message: isValidNotificationId.reason,
+          error: { reason: isValidNotificationId.reason },
         });
       }
 
-      const friendRequests = await notificationCache(targetId, 0);
-      const friendReq = friendRequests.find((friendReq) => {
-        return friendReq.f === userId;
-      });
-      if (!friendReq) {
+      const connection = pool.promise();
+
+      const [result] = await connection.query(
+        `
+        DELETE FROM friends WHERE friendship_id = ? AND status = "pending" AND user_id = ?
+      `,
+        [notificationId, userId]
+      );
+
+      if (!result.affectedRows) {
         const response = RESPONSE_MESSAGES.expiredRequest();
-        return res.status(response.status).send(response);
+        return res.send(response);
       }
 
-      redisClient.hdel(`user:${targetId}:notifications`, friendReq.i);
-      //remove it from ongoing friend req list
-      redisClient.hdel(`user:${userId}:notifications`, friendReq.i);
       res.status(200).send({ success: true, status: 200 });
     } catch (err) {
       console.log(err);

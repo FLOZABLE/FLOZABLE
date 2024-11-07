@@ -51,8 +51,12 @@ Router.get("/", async (req, res) => {
         const userInfo = users.find(
           (user) => user.user_id === notification.from_user_id
         );
-        if (!userInfo) return;
-        notification.userInfo = userInfo;
+
+        notification.userInfo = userInfo ? userInfo : {};
+
+        if (notification.type === "friend_request") {
+          notification.message = `wants to be friend!`;
+        }
       });
       console.log(notifications, Date.now() - now);
       res.send({ success: true, status: 200, data: { notifications } });
