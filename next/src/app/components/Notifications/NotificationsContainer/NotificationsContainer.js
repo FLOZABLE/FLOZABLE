@@ -9,6 +9,7 @@ import { postPlanShareRespond } from "@/Api/plansApi";
 import { useRouter } from "next/navigation";
 import UserContainer from "../../Users/UserContainer/UserContainer";
 import { postChatRequestReply } from "@/Api/chatApi";
+import { deleteNotification } from "@/Api/notificationsApi";
 
 function NotificationContainer({ children, userInfo, message }) {
   const router = useRouter();
@@ -61,7 +62,7 @@ export default function NotificationsContainer() {
       accepted,
     });
 
-    //filterNotification(notificationId);
+    filterNotification(notificationId);
 
     if (!response.success) return;
 
@@ -69,12 +70,11 @@ export default function NotificationsContainer() {
     friendsTrendRefetch();
   }, []);
 
-  const deleteNotification = useCallback(
-    (notification) => {
-      const notificationId = notification.notification_id;
+  const onDeleteNotification = useCallback(
+    (notificationId) => {
       filterNotification(notificationId);
 
-      postNotificationsRead(notificationId);
+      deleteNotification(notificationId);
     },
     [notifications]
   );
@@ -150,6 +150,23 @@ export default function NotificationsContainer() {
                   }}
                 >
                   <FontAwesomeIcon icon={faXmark} />
+                </NotificationBtn>
+              </NotificationContainer>
+            );
+          } else if (notification.type === "friend_request_accepted") {
+            return (
+              <NotificationContainer
+                key={i}
+                message={notification.message}
+                userInfo={notification.userInfo}
+              >
+                <NotificationBtn
+                  hoverText={"Got It"}
+                  onClick={() => {
+                    onDeleteNotification(notification.notification_id);
+                  }}
+                >
+                  <FontAwesomeIcon icon={faCheck} />
                 </NotificationBtn>
               </NotificationContainer>
             );

@@ -136,9 +136,13 @@ const subjectColors = [
   "#A59E8C",
 ];
 
+const NOTIFICATION_MARKERS = {
+  PROFILE_CARD: "##profileCard",
+};
+
 const NOTIFICATION_MESSAGES = {
   friendRequest: (name) => ({
-    contents: ["##profileCard", "sent friend request!"],
+    contents: [NOTIFICATION_MARKERS.PROFILE_CARD, "sent friend request!"],
     title: `${name} sent friend request!`,
   }),
   friendRequestDecline: () => ({
@@ -146,7 +150,7 @@ const NOTIFICATION_MESSAGES = {
     title: "Declined friend request!",
   }),
   friendRequestAccept: (name) => ({
-    contents: ["#profileCard", `is now your friend!`],
+    contents: [NOTIFICATION_MARKERS.PROFILE_CARD, `is now your friend!`],
     title: `${name} is now your friend!`,
   }),
 };
