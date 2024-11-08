@@ -6,7 +6,7 @@ import { faBell, faCheck, faXmark } from "@fortawesome/free-solid-svg-icons";
 import UserContainer from "../../Users/UserContainer/UserContainer";
 import { useRouter } from "next/navigation";
 import { postFriendsRequestReply } from "@/Api/friendsApi";
-import { postNotificationsRead } from "@/Api/notificationsApi";
+import { deleteNotification } from "@/Api/notificationsApi";
 import { postChatRequestReply } from "@/Api/chatApi";
 import { postPlanShareRespond } from "@/Api/plansApi";
 import { useFriendsStatus, useFriendsTrends } from "@/Hooks/friendsHooks";
@@ -95,7 +95,7 @@ export default function NotificationsBtn() {
           notifications.filter((notif) => notif.i !== notificationId)
         );
 
-        postNotificationsRead(notificationId);
+        deleteNotification(notificationId);
       } catch (err) {
         console.log(err);
       }
