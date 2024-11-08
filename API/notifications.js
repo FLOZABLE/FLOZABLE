@@ -149,7 +149,7 @@ Router.post("/subscribe", async (req, res) => {
   });
 });
 
-Router.post("/read", async (req, res) => {
+Router.delete("/notification", async (req, res) => {
   autoSignin(req, res, async (userId) => {
     try {
       const { notification_id: notificationId } = req.body;
@@ -157,19 +157,29 @@ Router.post("/read", async (req, res) => {
       const isValidNotificationId = validateStrictString(
         notificationId,
         "notification id",
-        5
+        10
       );
 
       if (!isValidNotificationId.isValid) {
-        return res.status(400).send({
-          success: false,
-          status: 400,
-          message: isValidNotificationId.reason,
-          error: { reason: isValidNotificationId.reason },
-        });
+        const response = RESPONSE_MESSAGES.validationError(
+          isValidNotificationId
+        );
+        return res.status(response.status).send(response);
       }
 
-      redisClient.hdel(`user:${userId}:notifications`, notificationId);
+      const connection = pool.promise();
+      const [result] = await connection.query(
+        "DELETE FROM notifications WHERE user_id = ? AND notification_id = ?",
+        [userId, notificationId]
+      );
+
+      console.log(result);
+
+      if (!result.affectedRows) {
+        const response = RESPONSE_MESSAGES.expiredRequest();
+        return res.status(response.status).send(response);
+      }
+
       res.status(200).send({ success: true, status: 200 });
     } catch (err) {
       console.log(err);

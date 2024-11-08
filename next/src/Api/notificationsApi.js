@@ -17,10 +17,10 @@ async function postNotificationsSubscribe({ endpoint, keys }) {
   );
 }
 
-async function postNotificationsRead(notificationId) {
+async function deleteNotification(notificationId) {
   return requestHandler(
-    AxiosInstance.get(`/notifications/read`, {
-      notification_id: notificationId,
+    AxiosInstance.delete(`/notifications/notification`, {
+      data: { notification_id: notificationId },
     })
   );
 }
@@ -29,5 +29,5 @@ export {
   getNotifications,
   getVapidKeys,
   postNotificationsSubscribe,
-  postNotificationsRead,
+  deleteNotification,
 };
