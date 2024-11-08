@@ -14,7 +14,6 @@ Router.get("/", async (req, res) => {
   autoSignin(req, res, async (userId) => {
     try {
       const connection = pool.promise();
-      const now = Date.now();
       const [notifications] = await connection.query(
         `
         SELECT 'friend_request_sent' AS type, friendship_id AS notification_id, friend_id as from_user_id, date as sent_at
@@ -71,7 +70,6 @@ Router.get("/", async (req, res) => {
           );
         }
       });
-      console.log(notifications, Date.now() - now);
       res.send({ success: true, status: 200, data: { notifications } });
     } catch (err) {
       console.log(err);

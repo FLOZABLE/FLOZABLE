@@ -2,7 +2,6 @@
 
 import { createContext, useContext, useEffect, useRef, useState } from "react";
 import { socket } from "./socket";
-import { timelineSort } from "./timelineSorting";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { DEFAULT_PLAN } from "./Constant";
@@ -21,7 +20,6 @@ const googleClientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
 const SubjectsContext = createContext({});
 const PlansContext = createContext({});
 const UserInfoContext = createContext({});
-const NotificationsContext = createContext({});
 const TutorialsContext = createContext({});
 const GroupsContext = createContext({});
 const ModalsContext = createContext({});
@@ -103,7 +101,6 @@ function AppProvider({ children }) {
 
 function AccountProvider({ children }) {
   const [userInfo, setUserInfo] = useState(null);
-  const [notifications, setNotifications] = useState([]);
 
   const queryResult = useAccount();
 
@@ -123,7 +120,6 @@ function AccountProvider({ children }) {
 
     const { userInfo, notifications } = accountData.data;
     setUserInfo(userInfo);
-    setNotifications(notifications);
     setTimeout(() => {
       console.log("gddddd");
       socket.connect();
@@ -166,11 +162,7 @@ function AccountProvider({ children }) {
         setUserInfo,
       }}
     >
-      <NotificationsContext.Provider
-        value={{ notifications, setNotifications }}
-      >
-        {children}
-      </NotificationsContext.Provider>
+      {children}
     </UserInfoContext.Provider>
   );
 }
@@ -192,25 +184,18 @@ function SubjectsProvider({ children }) {
   useEffect(() => {
     if (!subjectsData?.success) return;
 
-    const { subjects, groupedSubjects } = timelineSort(
-      subjectsData.data.subjects
-    );
+    const { subjects, groupedSubjects } = subjectsData.data;
 
     setSubjects(subjects);
     setGroupedSubjects(groupedSubjects);
   }, [subjectsData]);
 
   useEffect(() => {
-    if (
-      !plansData?.success ||
-      !plansGoogleData?.success ||
-      !subjectsData?.success
-    )
-      return;
+    if (!plansData?.success || !subjectsData?.success) return;
 
     const { subjects } = subjectsData.data;
 
-    const plans = [...plansData.data.plans, ...plansGoogleData.data.plans];
+    const plans = [...plansData.data.plans, /* ...plansGoogleData.data.plans */];
 
     plans.map((plan) => {
       //plan.saved = true;
@@ -511,7 +496,6 @@ function WorkersProvider({ children }) {
 export {
   AppProvider,
   UserInfoContext,
-  NotificationsContext,
   SubjectsContext,
   PlansContext,
   GroupsContext,
