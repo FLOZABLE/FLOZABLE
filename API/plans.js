@@ -43,11 +43,14 @@ Router.get("/", async (req, res) => {
           p.notification, 
           p.subject_id, 
           p.priority, 
-          p.completed
+          p.completed,
+          s.color as subject_color
         FROM 
           plans p
         LEFT JOIN 
           plan_share ps ON p.plan_id = ps.plan_id AND ps.status = "accepted"
+        LEFT JOIN
+          subjects s ON s.subject_id = p.subject_id
         WHERE 
           p.user_id = ? OR ps.user_id = ?
         GROUP BY 
@@ -58,6 +61,17 @@ Router.get("/", async (req, res) => {
         plan.type = "local";
         plan.editable = true;
         plan.isEditable = true;
+        plan.start = new Date(plan.start);
+        plan.end = new Date(plan.end);
+        plan.backgroundColor = plan.subject_color
+          ? plan.subject_color
+          : "#000000";
+        plan.backgroundColor = plan.subject_color
+          ? plan.subject_color
+          : "#000000";
+        if (plan.completed) {
+          plan.className = "completed";
+        }
       });
 
       return res.status(200).send({
