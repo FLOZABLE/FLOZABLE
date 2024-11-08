@@ -11,6 +11,14 @@ function useSubjects() {
     queryFn: getSubjects,
     staleTime: 1000 * 60 * 10,
     enabled: !!userInfo,
+    select: (response) =>
+      response?.data
+        ? {
+            subjects: response.data.subjects,
+            groupedSubjects: response.data.groupedSubjects,
+          }
+        : { subjects: [], groupedSubjects: {} },
+    placeholderData: { subjects: [], groupedSubjects: {} },
   });
 
   const {

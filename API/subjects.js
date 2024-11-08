@@ -17,14 +17,21 @@ const {
 const RESPONSE_MESSAGES = require("../utils/responses");
 const { mainIo } = require("../sockets/io");
 const { autoSignin } = require("./auth");
+const { timelineSort } = require("../utils/timelineSorting");
 
 Router.get("/", async (req, res) => {
   autoSignin(req, res, async (userId) => {
     try {
       const connection = pool.promise();
-      const subjects = await subjectsTimelineCache(connection, userId);
+      const subjectsTimeline = await subjectsTimelineCache(connection, userId);
 
-      res.status(200).send({ success: true, status: 200, data: { subjects } });
+      const { subjects, groupedSubjects } = timelineSort(subjectsTimeline);
+
+      res.status(200).send({
+        success: true,
+        status: 200,
+        data: { subjects, groupedSubjects },
+      });
     } catch (err) {
       console.log(err);
       const response = RESPONSE_MESSAGES.error();
