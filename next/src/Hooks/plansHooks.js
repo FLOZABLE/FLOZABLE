@@ -1,6 +1,7 @@
 import { getPlans, getPlansGoogle, getPlansPlanUsers } from "@/Api/plansApi";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useAccount } from "./accountHooks";
+import { DateTime } from "luxon";
 
 function usePlans() {
   const { accountData } = useAccount();
@@ -39,27 +40,69 @@ function usePlans() {
   };
 }
 
-function usePlansGoogle() {
+function usePlansGoogle(date) {
   const { accountData } = useAccount();
 
+  const dateTime = DateTime.fromJSDate(date)
+    .startOf("day")
+    .startOf("month")
+    .toISODate();
+
   const queryResult = useQuery({
-    queryKey: [`usePlansGoogle`],
-    queryFn: getPlansGoogle,
+    queryKey: [`usePlansGoogle`, dateTime],
+    queryFn: () => getPlansGoogle(dateTime),
     staleTime: 1000 * 60 * 10,
     enabled: !!accountData,
+    select: (response) => {
+      if (!response?.data?.plans) {
+        return [];
+      }
+
+      const plans = [...response.data.plans].map((plan) => {
+        plan.start = new Date(plan.start);
+        plan.end = new Date(plan.end);
+        return plan;
+      });
+      return plans;
+    },
+    placeholderData: [],
   });
 
   const {
-    data: plansGoogleData,
-    isLoading: plansDataIsLoading,
+    data: plansGoogle,
+    isLoading: plansGoogleIsLoading,
     refetch: plansGoogleRefetch,
   } = queryResult;
 
   return {
-    plansGoogleData,
-    plansDataIsLoading,
+    plansGoogle,
+    plansGoogleIsLoading,
     plansGoogleRefetch,
     ...queryResult,
+  };
+}
+
+function useCombinedPlans(date) {
+  const { plans, plansIsLoading, plansRefetch } = usePlans();
+  const { plansGoogle, plansGoogleIsLoading, plansGoogleRefetch } =
+    usePlansGoogle(date);
+
+  const combinedPlans = [...plans, ...plansGoogle].sort(
+    (a, b) => a.start - b.start
+  );
+
+  const isLoading = plansIsLoading || plansGoogleIsLoading;
+
+  const refetchPlans = async () => {
+    await Promise.all([plansRefetch(), plansGoogleRefetch()]);
+  };
+
+  return {
+    combinedPlans,
+    isLoading,
+    refetchPlans,
+    plansIsLoading,
+    plansGoogleIsLoading,
   };
 }
 
@@ -89,4 +132,4 @@ function usePlanUsers({ plan_id, isEditable, type }) {
   };
 }
 
-export { usePlans, usePlansGoogle, usePlanUsers };
+export { usePlans, usePlansGoogle, useCombinedPlans, usePlanUsers };

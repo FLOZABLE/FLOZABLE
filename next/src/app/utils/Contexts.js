@@ -18,6 +18,7 @@ import { useNotifications } from "@/Hooks/notificationsHooks";
 const googleClientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
 
 const SubjectsContext = createContext({});
+const PlanModalContext = createContext({});
 const PlansContext = createContext({});
 const UserInfoContext = createContext({});
 const TutorialsContext = createContext({});
@@ -136,33 +137,35 @@ function AppProvider({ children }) {
 
   return (
     <SubjectsProvider>
-      <GroupsProvider>
-        <TutorialsProvider>
-          <CallOptionsProvider>
-            <ThemesProvider>
-              <WorkersProvider>
-                <GoogleOAuthProvider clientId={googleClientId}>
-                  <AccountModalProvider>
-                    <JoinGroupModalProvider>
-                      <EditGroupModalProvider>
-                        <SubjectsModalProvider>
-                          <AddSubjectsModalProvider>
-                            <ChatModalProvider>
-                              <SearchUsersModalProvider>
-                                {children}
-                              </SearchUsersModalProvider>
-                            </ChatModalProvider>
-                          </AddSubjectsModalProvider>
-                        </SubjectsModalProvider>
-                      </EditGroupModalProvider>
-                    </JoinGroupModalProvider>
-                  </AccountModalProvider>
-                </GoogleOAuthProvider>
-              </WorkersProvider>
-            </ThemesProvider>
-          </CallOptionsProvider>
-        </TutorialsProvider>
-      </GroupsProvider>
+      <PlanModalProvider>
+        <GroupsProvider>
+          <TutorialsProvider>
+            <CallOptionsProvider>
+              <ThemesProvider>
+                <WorkersProvider>
+                  <GoogleOAuthProvider clientId={googleClientId}>
+                    <AccountModalProvider>
+                      <JoinGroupModalProvider>
+                        <EditGroupModalProvider>
+                          <SubjectsModalProvider>
+                            <AddSubjectsModalProvider>
+                              <ChatModalProvider>
+                                <SearchUsersModalProvider>
+                                  {children}
+                                </SearchUsersModalProvider>
+                              </ChatModalProvider>
+                            </AddSubjectsModalProvider>
+                          </SubjectsModalProvider>
+                        </EditGroupModalProvider>
+                      </JoinGroupModalProvider>
+                    </AccountModalProvider>
+                  </GoogleOAuthProvider>
+                </WorkersProvider>
+              </ThemesProvider>
+            </CallOptionsProvider>
+          </TutorialsProvider>
+        </GroupsProvider>
+      </PlanModalProvider>
     </SubjectsProvider>
   );
 }
@@ -400,6 +403,27 @@ function SubjectsModalProvider({ children }) {
   );
 }
 
+function PlanModalProvider({ children }) {
+  const [planModal, setPlanModal] = useState(DEFAULT_PLAN);
+
+  const pathname = usePathname();
+
+  useEffect(() => {
+    setPlanModal(DEFAULT_PLAN);
+  }, [pathname]);
+
+  return (
+    <PlanModalContext.Provider
+      value={{
+        planModal,
+        setPlanModal,
+      }}
+    >
+      {children}
+    </PlanModalContext.Provider>
+  );
+}
+
 function AddSubjectsModalProvider({ children }) {
   const [isAddSubjectModal, setIsAddSubjectModal] = useState(false);
 
@@ -583,6 +607,7 @@ export {
   AppContainer,
   UserInfoContext,
   SubjectsContext,
+  PlanModalContext,
   PlansContext,
   GroupsContext,
   TutorialsContext,

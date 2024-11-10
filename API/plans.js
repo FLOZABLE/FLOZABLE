@@ -89,6 +89,14 @@ Router.get("/google", async (req, res) => {
   autoSignin(req, res, async (userId) => {
     const connection = pool.promise();
     try {
+      const { date } = req.query;
+
+      const dateTime = DateTime.fromISO(date).startOf("day").startOf("month");
+
+      const startDate = dateTime.minus({ week: 1 }).toJSDate();
+
+      const endDate = dateTime.endOf("month").plus({ week: 1 }).toJSDate();
+
       const plans = [];
       const access_token = await googleAccessTokenCache(connection, userId);
 
@@ -113,17 +121,10 @@ Router.get("/google", async (req, res) => {
 
       await Promise.all(
         calendars.data.items.map(async (calendar) => {
-          // Only bring last 30 days events, future 30 days
-          const timeMin = new Date(
-            new Date().getTime() - 1000 * 60 * 60 * 24 * 30
-          );
-          const timeMax = new Date(
-            new Date().getTime() + 1000 * 60 * 60 * 24 * 30
-          );
           const response = await googleCalendar.events.list({
             calendarId: calendar.id,
-            timeMin,
-            timeMax,
+            startDate,
+            endDate,
           });
           const events = response.data.items;
 
