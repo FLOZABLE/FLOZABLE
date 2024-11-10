@@ -6,8 +6,8 @@ async function getPlans() {
   return requestHandler(AxiosInstance.get(`/plans`));
 }
 
-async function getPlansGoogle() {
-  return requestHandler(AxiosInstance.get(`/plans/google`));
+async function getPlansGoogle(date) {
+  return requestHandler(AxiosInstance.get(`/plans/google`, { date }));
 }
 
 async function patchPlan(planModal) {

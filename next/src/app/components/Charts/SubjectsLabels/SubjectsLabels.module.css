@@ -10,12 +10,10 @@
 }
 
 .SubjectsLabels .label {
-  transition: .3s ease-in-out color;
-}
-
-.SubjectsLabels .label {
+  transition: 0.3s ease-in-out color;
   cursor: pointer;
   font-size: 1.2rem;
+  white-space: nowrap;
 }
 
 .SubjectsLabels .label.filtered {

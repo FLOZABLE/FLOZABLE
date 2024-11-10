@@ -2,6 +2,7 @@
 
 import {
   AddSubjectsModalContext,
+  PlanModalContext,
   PlansContext,
   SearchUsersModalContext,
   TutorialsContext,
@@ -46,11 +47,14 @@ import { useSubjects } from "@/Hooks/subjectsHooks";
 
 export default function PlanModal() {
   const { subjects } = useSubjects();
-  const { plans, setPlans, planModal, setPlanModal } = useContext(PlansContext);
+
+  const { planModal, setPlanModal } = useContext(PlanModalContext);
   const { setIsAddSubjectModal } = useContext(AddSubjectsModalContext);
   const { setSearchUsersModal } = useContext(SearchUsersModalContext);
   const { tutorialBoxRef, tutorialTextRef, tutorial, setTutorial } =
     useContext(TutorialsContext);
+
+  const { plans, setPlans } = useContext(PlansContext);
 
   const modalRef = useRef();
   const addSubjectBtnRef = useRef();
