@@ -8,10 +8,10 @@ import CircularLoading from "../../LoadingScreen/CircularLoading/CircularLoading
 import UserContainer from "../../Users/UserContainer/UserContainer";
 import { useRouter } from "next/navigation";
 import { useFriendsRecommended } from "@/Hooks/friendsHooks";
-import { ModalsContext } from "@/app/utils/Contexts";
+import { SearchUsersModalContext } from "@/app/utils/Contexts";
 
 function RecommendedFriendsViewer({}) {
-  const { setSearchUsersModal } = useContext(ModalsContext);
+  const { setSearchUsersModal } = useContext(SearchUsersModalContext);
 
   const {
     friendsRecommendedData,

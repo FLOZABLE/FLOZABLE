@@ -3,7 +3,7 @@
 import { useCallback, useContext, useEffect, useState } from "react";
 import styles from "./Tutorial.module.css";
 import BlobBtn from "../../Buttons/BlobBtn/BlobBtn";
-import { ModalsContext, TutorialsContext } from "@/app/utils/Contexts";
+import { TutorialsContext } from "@/app/utils/Contexts";
 import { useRouter, useSearchParams } from "next/navigation";
 
 function Tutorial() {
@@ -19,7 +19,7 @@ function Tutorial() {
     const btnTutorial = parseInt(e.target.dataset.tutorial);
     console.log("btn tutorial", btnTutorial);
     setHighlight(false);
-    
+
     if (!btnTutorial) {
       e.stopPropagation();
       e.preventDefault();
