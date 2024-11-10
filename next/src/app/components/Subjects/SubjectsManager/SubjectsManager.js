@@ -1,10 +1,11 @@
-import React, { useCallback, useContext } from "react";
+import React, { useContext } from "react";
 import styles from "./SubjectsManager.module.css";
-import { ModalsContext, SubjectsContext } from "@/app/utils/Contexts";
+import { ModalsContext } from "@/app/utils/Contexts";
 import BlobBtn from "../../Buttons/BlobBtn/BlobBtn";
+import { useSubjects } from "@/Hooks/subjectsHooks";
 
 function SubjectsManager() {
-  const { subjects } = useContext(SubjectsContext);
+  const { subjects } = useSubjects();
   const { setIsSubjectsModal } = useContext(ModalsContext);
 
   return (

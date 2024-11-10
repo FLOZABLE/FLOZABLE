@@ -1,5 +1,5 @@
 import "./globals.css";
-import { AppProvider } from "@/app/utils/Contexts";
+import { AppContainer } from "@/app/utils/Contexts";
 import AddSubjectModal from "@/app/components/Modals/AddSubjectModal/AddSubjectModal";
 import JoinGroupModal from "@/app/components/Modals/JoinGroupModal/JoinGroupModal";
 import ChatModal from "@/app/components/Modals/ChatModal/ChatModal";
@@ -77,7 +77,7 @@ export default function RootLayout({ children }) {
       </head>
       <body>
         <Suspense>
-          <AppProvider>
+          <AppContainer>
             <PlanModal />
             <ChatModal />
             <AccountModal />
@@ -101,7 +101,7 @@ export default function RootLayout({ children }) {
               theme="light"
               transition={Bounce}
             />
-          </AppProvider>
+          </AppContainer>
         </Suspense>
       </body>
       {gaId ? <GoogleAnalytics gaId={gaId} /> : null}

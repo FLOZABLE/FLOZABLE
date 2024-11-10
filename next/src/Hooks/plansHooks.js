@@ -10,16 +10,29 @@ function usePlans() {
     queryFn: getPlans,
     staleTime: 1000 * 60 * 10,
     enabled: !!accountData,
+    select: (response) => {
+      if (!response?.data?.plans) {
+        return [];
+      }
+
+      const plans = [...response.data.plans].map((plan) => {
+        plan.start = new Date(plan.start);
+        plan.end = new Date(plan.end);
+        return plan;
+      });
+      return plans;
+    },
+    placeholderData: [],
   });
 
   const {
-    data: plansData,
+    data: plans,
     isLoading: plansIsLoading,
     refetch: plansRefetch,
   } = queryResult;
 
   return {
-    plansData,
+    plans,
     plansIsLoading,
     plansRefetch,
     ...queryResult,

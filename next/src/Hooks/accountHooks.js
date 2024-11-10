@@ -4,6 +4,7 @@ import {
   getAccountProfile,
   getAccountProfileSubjects,
 } from "@/Api/accountApi";
+import { updateQueryData } from "@/app/utils/Tool";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useCallback } from "react";
 
@@ -29,14 +30,7 @@ function useAccount() {
 
   const updateAccountUserInfo = useCallback(async (newData) => {
     await queryClient.setQueryData(["useAccount"], (oldData) => {
-      if (!oldData?.success) return oldData;
-      if (typeof newData === "function") {
-        return {
-          ...oldData,
-          data: { ...oldData.data, userInfo: newData(oldData) },
-        };
-      }
-      return { ...oldData, data: { ...oldData.data, userInfo: newData } };
+      return updateQueryData(oldData, newData, "userInfo");
     });
   }, []);
 

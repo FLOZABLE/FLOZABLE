@@ -8,7 +8,6 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import {
   ModalsContext,
-  SubjectsContext,
   TutorialsContext,
   WorkersContext,
 } from "@/app/utils/Contexts";
@@ -17,6 +16,7 @@ import SimpleToggleBtn from "../../Buttons/SimpleToggleBtn/SimpleToggleBtn";
 import PomodoroTimer from "../PomodoroTimer/PomodoroTimer";
 import { toTimer } from "@/app/utils/Tool";
 import { useAccount } from "@/Hooks/accountHooks";
+import { useSubjects } from "@/Hooks/subjectsHooks";
 
 function SubjecTimer({
   selectedSubject,
@@ -27,10 +27,11 @@ function SubjecTimer({
 }) {
   const { tutorialBoxRef, tutorialTextRef, tutorial, setTutorial } =
     useContext(TutorialsContext);
-  const { subjects, setSubjects } = useContext(SubjectsContext);
   const { subjectsTimerWorkerRef } = useContext(WorkersContext);
   const { setIsAddSubjectModal } = useContext(ModalsContext);
+
   const { accountData } = useAccount();
+  const { subjects, updateSubjects } = useSubjects();
 
   const [subjectOptions, setSubjectOptions] = useState([]);
   const [selectNewSubject, setSelectNewSubject] = useState(false);
@@ -100,7 +101,8 @@ function SubjecTimer({
         });
       } else {
         //socket.emit("stop", selectedSubject.subject_id);
-        const selectedSubjectIndex = subjects.findIndex(
+        const newSubjects = [...subjects];
+        const selectedSubjectIndex = newSubjects.findIndex(
           (subject) => subject.subject_id === selectedSubject.subject_id
         );
 
@@ -109,13 +111,13 @@ function SubjecTimer({
         });
 
         if (!selectedSubjectIndex !== -1) {
-          const day = subjects[selectedSubjectIndex].day;
+          const day = newSubjects[selectedSubjectIndex].day;
           day.total[day.total.length - 1].data = selectedSubject.value;
-          subjects[selectedSubjectIndex] = {
-            ...subjects[selectedSubjectIndex],
+          newSubjects[selectedSubjectIndex] = {
+            ...newSubjects[selectedSubjectIndex],
             day,
           };
-          setSubjects(subjects);
+          updateSubjects(newSubjects);
         }
       }
 

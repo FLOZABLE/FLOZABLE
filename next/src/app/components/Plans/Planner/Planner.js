@@ -7,12 +7,13 @@ import timeGridPlugin from "@fullcalendar/timegrid";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import { useCallback, useContext, useEffect, useRef, useState } from "react";
-import { PlansContext, SubjectsContext } from "@/app/utils/Contexts";
+import { PlansContext } from "@/app/utils/Contexts";
 import DateSelectorBtn from "../../Buttons/DateSelectorBtn/DateSelectorBtn";
 import { DEFAULT_PLAN } from "@/app/utils/Constant";
 import { patchPlan, patchPlanGoogle } from "@/Api/plansApi";
 import ViewerSelectorBtn from "../../Buttons/ViewerSelectorBtn/ViewerSelectorBtn";
 import { DateTime } from "luxon";
+import { useSubjects } from "@/Hooks/subjectsHooks";
 
 const StyleWrapper = styled.div`
   .fc-view-harness.fc-view-harness-active {
@@ -87,7 +88,7 @@ function PlanHeader(info, viewer) {
 
 export default function Planner() {
   const { plans, setPlans, planModal, setPlanModal } = useContext(PlansContext);
-  const { subjects } = useContext(SubjectsContext);
+  const { subjects } = useSubjects();
 
   const plannerRef = useRef(null);
 

@@ -2,23 +2,21 @@
 
 import SubjectsPie from "@/app/components/Charts/SubjectsPie/SubjectsPie";
 import styles from "./page.module.css";
-import { useContext, useState } from "react";
+import { useState } from "react";
 import StudyTrendChart from "@/app/components/Charts/StudyTrendChart/StudyTrendChart";
 import RankingsTrendsChart from "@/app/components/Charts/RankingsTrendsChart/RankingsTrendsChart";
-import { SubjectsContext } from "@/app/utils/Contexts";
 import WebsiteUsageChart from "@/app/components/Charts/WebsiteUsageChart/WebsiteUsageChart";
 import { useAccount } from "@/Hooks/accountHooks";
+import { useSubjects } from "@/Hooks/subjectsHooks";
 
 function Stats({}) {
   const { accountData } = useAccount();
-  const { subjects } = useContext(SubjectsContext);
+  const { subjects } = useSubjects();
 
   const [viewDate, setViewDate] = useState(
     new Date(new Date().setHours(0, 0, 0, 0))
   );
   const [viewer, setViewer] = useState("day");
-
-  console.log(userInfo);
 
   return (
     <div className="Main">

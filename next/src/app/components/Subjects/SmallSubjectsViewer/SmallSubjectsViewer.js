@@ -9,11 +9,10 @@ import {
 } from "@/app/components/Charts/Charts";
 import Link from "next/link";
 import { coldColorsList } from "@/app/utils/Constant";
-import { useContext } from "react";
-import { SubjectsContext } from "@/app/utils/Contexts";
+import { useSubjects } from "@/Hooks/subjectsHooks";
 
 function SmallSubjectsViewer({}) {
-  const { subjects } = useContext(SubjectsContext);
+  const { subjects } = useSubjects();
 
   return (
     <div className={styles.SmallSubjectsViewer}>
@@ -27,8 +26,7 @@ function SmallSubjectsViewer({}) {
                 cy="50%"
                 labelLine={false}
                 data={subjects.reduce((arr, subject) => {
-                  const value =
-                    subject.day.total[subject.day.total.length - 1];
+                  const value = subject.day.total[subject.day.total.length - 1];
                   if (value) {
                     const fill =
                       coldColorsList[arr.length % coldColorsList.length];
