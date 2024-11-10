@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useEffect, useRef, useState } from "react";
+import { createContext, useEffect, useRef, useState } from "react";
 import { socket } from "./socket";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -48,9 +48,19 @@ const queryClient = new QueryClient({
   },
 });
 
+function AppContainer({ children }) {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <AppProvider>{children}</AppProvider>
+    </QueryClientProvider>
+  );
+}
+
 function AppProvider({ children }) {
   const searchParams = useSearchParams();
   const router = useRouter();
+  const { accountData, isError } = useAccount();
+  const { updateNotificationsData } = useNotifications();
 
   const success = searchParams.get("success");
   const message = searchParams.get("message");
@@ -73,56 +83,6 @@ function AppProvider({ children }) {
       scroll: false,
     });
   }, [success, message]);
-
-  return (
-    <QueryClientProvider client={queryClient}>
-      <AccountProvider>
-        <SubjectsProvider>
-          <GroupsProvider>
-            <ModalsProvider>
-              <TutorialsProvider>
-                <CallOptionsProvider>
-                  <ThemesProvider>
-                    <WorkersProvider>
-                      <GoogleOAuthProvider clientId={googleClientId}>
-                        {children}
-                      </GoogleOAuthProvider>
-                    </WorkersProvider>
-                  </ThemesProvider>
-                </CallOptionsProvider>
-              </TutorialsProvider>
-            </ModalsProvider>
-          </GroupsProvider>
-        </SubjectsProvider>
-      </AccountProvider>
-    </QueryClientProvider>
-  );
-}
-
-function AccountProvider({ children }) {
-  const [userInfo, setUserInfo] = useState(null);
-
-  const queryResult = useAccount();
-
-  const { accountData, accountRefetch, isError } = queryResult;
-
-  const { updateNotificationsData } = useNotifications();
-
-  useEffect(() => {
-    if (!accountData) {
-      return;
-    }
-
-    if (isError) {
-    }
-
-    setTimeout(() => {
-      console.log("gddddd");
-      socket.connect();
-      mediaSocket.connect();
-      socket.emit("joinChats");
-    }, 100);
-  }, [accountData, isError]);
 
   useEffect(() => {
     const onNotification = (notification) => {
@@ -149,17 +109,40 @@ function AccountProvider({ children }) {
     };
   }, []);
 
+  useEffect(() => {
+    if (!accountData) {
+      return;
+    }
+
+    if (isError) {
+    }
+
+    setTimeout(() => {
+      console.log("gddddd");
+      socket.connect();
+      mediaSocket.connect();
+      socket.emit("joinChats");
+    }, 100);
+  }, [accountData, isError]);
+
   return (
-    <UserInfoContext.Provider
-      value={{
-        ...queryResult,
-        accountRefetch,
-        userInfo,
-        setUserInfo,
-      }}
-    >
-      {children}
-    </UserInfoContext.Provider>
+    <SubjectsProvider>
+      <GroupsProvider>
+        <ModalsProvider>
+          <TutorialsProvider>
+            <CallOptionsProvider>
+              <ThemesProvider>
+                <WorkersProvider>
+                  <GoogleOAuthProvider clientId={googleClientId}>
+                    {children}
+                  </GoogleOAuthProvider>
+                </WorkersProvider>
+              </ThemesProvider>
+            </CallOptionsProvider>
+          </TutorialsProvider>
+        </ModalsProvider>
+      </GroupsProvider>
+    </SubjectsProvider>
   );
 }
 
@@ -186,12 +169,11 @@ function SubjectsProvider({ children }) {
     setGroupedSubjects(groupedSubjects);
   }, [subjectsData]);
 
-  useEffect(() => {
+  /* useEffect(() => {
     if (!plansData?.success || !subjectsData?.success) return;
 
     const { subjects } = subjectsData.data;
 
-    const plans = [...plansData.data.plans /* ...plansGoogleData.data.plans */];
 
     plans.map((plan) => {
       //plan.saved = true;
@@ -218,7 +200,7 @@ function SubjectsProvider({ children }) {
       return plan;
     });
     setPlans(plans);
-  }, [subjectsData, plansData, plansGoogleData]);
+  }, [subjectsData, plansData, plansGoogleData]); */
 
   const pathname = usePathname();
 
@@ -238,7 +220,6 @@ function SubjectsProvider({ children }) {
     >
       <PlansContext.Provider
         value={{
-          plans,
           setPlans,
           planModal,
           setPlanModal,
@@ -491,6 +472,7 @@ function WorkersProvider({ children }) {
 
 export {
   AppProvider,
+  AppContainer,
   UserInfoContext,
   SubjectsContext,
   PlansContext,

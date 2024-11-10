@@ -11,7 +11,6 @@ import styles from "./AddSubjectModal.module.css";
 import { faBook } from "@fortawesome/free-solid-svg-icons";
 import {
   ModalsContext,
-  SubjectsContext,
   TutorialsContext,
   WorkersContext,
 } from "@/app/utils/Contexts";
@@ -24,9 +23,10 @@ import DraggableModal from "../DraggableModal/DraggableModal";
 import { sortNewSubject } from "@/app/utils/timelineSorting";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { putSubjectsSubject } from "@/Api/subjectsApi";
+import { useSubjects } from "@/Hooks/subjectsHooks";
 
 function AddSubjectModal({}) {
-  const { subjects, setSubjects } = useContext(SubjectsContext);
+  const { subjects, updateSubjects } = useSubjects();
 
   const { isAddSubjectModal, setIsAddSubjectModal } = useContext(ModalsContext);
   const { tutorialBoxRef, tutorialTextRef, tutorial, setTutorial } =
@@ -77,10 +77,10 @@ function AddSubjectModal({}) {
         if (!response.success) return;
 
         const newSubjects = sortNewSubject(
-          JSON.parse(JSON.stringify(subjects)),
+          structuredClone(subjects),
           response.data.subject
         );
-        setSubjects(newSubjects);
+        updateSubjects(newSubjects);
         setIsSelectColor(false);
         setIsAddSubjectModal(false);
         setSubject({ name: "", color: null });

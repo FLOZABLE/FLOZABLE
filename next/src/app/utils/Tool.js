@@ -316,6 +316,21 @@ async function requestHandler(request) {
   }
 }
 
+function updateQueryData(oldData, newData, key) {
+  try {
+    if (!oldData?.success) return oldData;
+    if (typeof newData === "function") {
+      return {
+        ...oldData,
+        data: { ...oldData.data, [key]: newData(oldData.data[key]) },
+      };
+    }
+    return { ...oldData, data: { ...oldData.data, [key]: newData } };
+  } catch (err) {
+    return oldData;
+  }
+}
+
 export {
   cyrb128,
   getCountryCode,
@@ -335,4 +350,5 @@ export {
   getDatesDisplay,
   exitFullscreen,
   requestHandler,
+  updateQueryData,
 };

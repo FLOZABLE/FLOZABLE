@@ -1,11 +1,11 @@
-import React, { useState, useEffect, useContext, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import styles from "./SmallCalendar.module.css";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import styled from "@emotion/styled";
 import { DateTime } from "luxon";
-import { SubjectsContext } from "@/app/utils/Contexts";
+import { useSubjects } from "@/Hooks/subjectsHooks";
 
 const StyleWrapper = styled.div`
   .fc td {
@@ -142,7 +142,7 @@ function SmallCalendar({
   setIsOpen,
   showHeatmap = false,
 }) {
-  const { subjects } = useContext(SubjectsContext);
+  const { subjects } = useSubjects();
 
   const [events, setEvents] = useState([]);
   const [smallCalendarApi, setSmallCalendarApi] = useState(null);
