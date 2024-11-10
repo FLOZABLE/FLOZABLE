@@ -1,15 +1,15 @@
 import { getExtensionSettings, getExtensionUsage } from "@/Api/extensionApi";
 import { useQuery } from "@tanstack/react-query";
-import { UserInfoContext } from "@/app/utils/Contexts";
-import { useContext } from "react";
+import { useAccount } from "./accountHooks";
 
 function useExtensionSettings() {
-  const { userInfo } = useContext(UserInfoContext);
+  const { accountData } = useAccount();
+
   const queryResult = useQuery({
     queryKey: [`getExtensionSettings`],
     queryFn: getExtensionSettings,
     staleTime: 1000 * 60,
-    enabled: !!userInfo,
+    enabled: !!accountData,
   });
 
   const {
@@ -25,13 +25,13 @@ function useExtensionSettings() {
 }
 
 function useExtensionUsage(date, mode) {
-  const { userInfo } = useContext(UserInfoContext);
+  const { accountData } = useAccount();
 
   const queryResult = useQuery({
     queryKey: [`extensionUsage`, date, mode],
     queryFn: () => getExtensionUsage(date, mode),
     staleTime: 1000 * 10,
-    enabled: !!userInfo,
+    enabled: !!accountData,
     refetchOnWindowFocus: true,
   });
 

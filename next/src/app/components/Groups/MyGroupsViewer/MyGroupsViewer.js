@@ -11,7 +11,7 @@ import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
 import styles from "./MyGroupsViewer.module.css";
-import { GroupsContext, UserInfoContext } from "@/app/utils/Contexts";
+import { GroupsContext } from "@/app/utils/Contexts";
 import MyGroupContainer from "../MyGroupContainer/MyGroupContainer";
 import { postGroupLeave } from "@/Api/groupsApi";
 import { useDebounce } from "use-debounce";
@@ -20,10 +20,11 @@ import { mediaSocket } from "@/app/utils/mediaSocket";
 import { ACTIVE_GROUP_DEBOUNCE } from "@/app/utils/Constant";
 import { useRouter, useSearchParams } from "next/navigation";
 import { MittInstance } from "@/app/utils/mittInstance";
+import { useAccount } from "@/Hooks/accountHooks";
 
 function MyGroupsViewer({}) {
   const { myGroups, setMyGroups } = useContext(GroupsContext);
-  const { userInfo } = useContext(UserInfoContext);
+  const { accountData } = useAccount();
 
   const [activeIndex, setActiveIndex] = useState(-1);
 
@@ -127,7 +128,7 @@ function MyGroupsViewer({}) {
                 group={group}
                 isActive={debouncedIndex === i}
                 leaveGroup={leaveGroup}
-                isAdmin={group.leader === userInfo?.user_id}
+                isAdmin={group.leader === accountData?.user_id}
               />
             </SwiperSlide>
           );
