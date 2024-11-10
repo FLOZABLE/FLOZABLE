@@ -3,7 +3,6 @@
 import {
   ModalsContext,
   PlansContext,
-  SubjectsContext,
   TutorialsContext,
 } from "@/app/utils/Contexts";
 import styles from "./PlanModal.module.css";
@@ -42,9 +41,10 @@ import ModalLayer from "../ModalLayer/ModalLayer";
 import { requestNotification, unsubscribeFromPush } from "@/app/utils/Tool";
 import { useVapidKeys } from "@/Hooks/notificationsHooks";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useSubjects } from "@/Hooks/subjectsHooks";
 
 export default function PlanModal() {
-  const { subjects } = useContext(SubjectsContext);
+  const { subjects } = useSubjects();
   const { plans, setPlans, planModal, setPlanModal } = useContext(PlansContext);
   const { setIsAddSubjectModal, setSearchUsersModal } =
     useContext(ModalsContext);

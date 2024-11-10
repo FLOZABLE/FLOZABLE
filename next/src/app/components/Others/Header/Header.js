@@ -14,11 +14,7 @@ import {
   HeaderMeteor,
   HeaderTarget,
 } from "@/app/utils/Svg";
-import {
-  ModalsContext,
-  SubjectsContext,
-  TutorialsContext,
-} from "@/app/utils/Contexts";
+import { ModalsContext, TutorialsContext } from "@/app/utils/Contexts";
 import { useExtensionUsage } from "@/Hooks/extensionHooks";
 import ProfileImage from "../../Users/ProfileImage/ProfileImage";
 import Link from "next/link";
@@ -26,6 +22,7 @@ import { faComment } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import NotificationsContainer from "../../Notifications/NotificationsContainer/NotificationsContainer";
 import { useAccount } from "@/Hooks/accountHooks";
+import { useSubjects } from "@/Hooks/subjectsHooks";
 
 function HeaderEl({ children, value, title }) {
   return (
@@ -40,7 +37,7 @@ function HeaderEl({ children, value, title }) {
 }
 function Header({}) {
   const { accountData } = useAccount();
-  const { groupedSubjects } = useContext(SubjectsContext);
+  const { groupedSubjects } = useSubjects();
   const { setChatModal } = useContext(ModalsContext);
 
   const { tutorialBoxRef, tutorialTextRef, tutorial } =

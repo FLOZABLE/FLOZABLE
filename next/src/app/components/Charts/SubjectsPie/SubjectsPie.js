@@ -1,17 +1,17 @@
 import styles from "./SubjectsPie.module.css";
 import { updateTimeUsagePie } from "@/app/utils/StatTools";
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { PieCustomTooltip } from "../Charts";
 import { secondConverter } from "@/app/utils/Tool";
 import { Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
 import CircularLoading from "../../LoadingScreen/CircularLoading/CircularLoading";
-import { SubjectsContext } from "@/app/utils/Contexts";
 import DateSelectorBtn from "../../Buttons/DateSelectorBtn/DateSelectorBtn";
 import ViewerSelectorBtn from "../../Buttons/ViewerSelectorBtn/ViewerSelectorBtn";
 import Link from "next/link";
+import { useSubjects } from "@/Hooks/subjectsHooks";
 
 function SubjectsPie({ viewDate, setViewDate, viewer, setViewer }) {
-  const { subjects, useSubjectsIsLoading } = useContext(SubjectsContext);
+  const { subjects, subjectsIsLoading } = useSubjects();
 
   const [subjectsPie, setSubjectsPie] = useState([]);
   const [totalTime, setTotalTime] = useState("0 Seconds");
@@ -50,7 +50,7 @@ function SubjectsPie({ viewDate, setViewDate, viewer, setViewer }) {
           <ViewerSelectorBtn viewer={viewer} setViewer={setViewer} />
         </div>
       </div>
-      {useSubjectsIsLoading ? (
+      {subjectsIsLoading ? (
         <CircularLoading />
       ) : !subjectsPie.length ? (
         <div className={styles.chartContainer} id={styles.noChart}>

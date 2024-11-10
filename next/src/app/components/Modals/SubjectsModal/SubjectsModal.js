@@ -2,7 +2,7 @@
 
 import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import styles from "./SubjectsModal.module.css";
-import { ModalsContext, SubjectsContext } from "@/app/utils/Contexts";
+import { ModalsContext } from "@/app/utils/Contexts";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faBook,
@@ -22,14 +22,14 @@ import {
   patchSubjectsSubject,
   postSubjectShare,
 } from "@/Api/subjectsApi";
-import { useSubjectUsers } from "@/Hooks/subjectsHooks";
+import { useSubjects, useSubjectUsers } from "@/Hooks/subjectsHooks";
 import ShareUserBox from "../../Users/ShareUserBox/ShareUserBox";
 import CircularLoading from "../../LoadingScreen/CircularLoading/CircularLoading";
 
 export default function SubjectsModal() {
   const { isSubjectsModal, setIsSubjectsModal, setSearchUsersModal } =
     useContext(ModalsContext);
-  const { subjects, setSubjects } = useContext(SubjectsContext);
+  const { subjects, updateSubjects } = useSubjects();
 
   const [subject, setSubject] = useState({
     name: "",
@@ -114,7 +114,7 @@ export default function SubjectsModal() {
           ...data.subject,
         };
 
-        setSubjects(newSubjects);
+        updateSubjects(newSubjects);
         setIsSubjectsModal((prev) => ({ ...prev, subject_id: null }));
       })();
     },
@@ -189,7 +189,7 @@ export default function SubjectsModal() {
           );
           newSubjects[otherSubjectIndex].timeline.sort((a, b) => a[0] - b[0]);
         }
-        setSubjects(newSubjects);
+        updateSubjects(newSubjects);
       } catch (err) {
         console.log(err);
       }

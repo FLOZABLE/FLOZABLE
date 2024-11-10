@@ -3,11 +3,7 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import styles from "./PlansTimeline.module.css";
 import { Alert } from "@/app/utils/Svg";
-import {
-  PlansContext,
-  SubjectsContext,
-  TutorialsContext,
-} from "@/app/utils/Contexts";
+import { PlansContext, TutorialsContext } from "@/app/utils/Contexts";
 import { DateTime } from "luxon";
 import { DEFAULT_PLAN, subjectIcons } from "@/app/utils/Constant";
 import Plan from "../Plan/Plan";
@@ -15,6 +11,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCirclePlus } from "@fortawesome/free-solid-svg-icons";
 import SubjectsLabels from "../../Charts/SubjectsLabels/SubjectsLabels";
 import DateSelectorBtn from "../../Buttons/DateSelectorBtn/DateSelectorBtn";
+import { useSubjects } from "@/Hooks/subjectsHooks";
 
 export default function PlansTimeline({
   viewer,
@@ -25,7 +22,7 @@ export default function PlansTimeline({
 }) {
   const { tutorialBoxRef, tutorialTextRef, tutorial, setTutorial } =
     useContext(TutorialsContext);
-  const { subjects } = useContext(SubjectsContext);
+  const { subjects } = useSubjects();
   const { plans, setPlans, planModal, setPlanModal } = useContext(PlansContext);
 
   const [filteredSubjects, setFilteredSubjects] = useState([]);

@@ -1,8 +1,12 @@
 import { getSubjects, getSubjectUsers } from "@/Api/subjectsApi";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useAccount } from "./accountHooks";
+import { useCallback } from "react";
+import { updateQueryData } from "@/app/utils/Tool";
 
 function useSubjects() {
+  const queryClient = useQueryClient();
+
   const { accountData } = useAccount();
 
   const queryResult = useQuery({
@@ -23,13 +27,24 @@ function useSubjects() {
   const {
     data: subjectsData,
     refetch: subjectsRefetch,
-    isLoading: useSubjectsIsLoading,
+    isLoading: subjectsIsLoading,
   } = queryResult;
 
+  const { subjects, groupedSubjects } = subjectsData;
+
+  const updateSubjects = useCallback(async (newData) => {
+    await queryClient.setQueryData(["useSubjects"], (oldData) => {
+      return updateQueryData(oldData, newData, "subjects");
+    });
+  }, []);
+
   return {
+    subjects,
+    groupedSubjects,
     subjectsData,
     subjectsRefetch,
-    useSubjectsIsLoading,
+    subjectsIsLoading,
+    updateSubjects,
     ...queryResult,
   };
 }
@@ -41,7 +56,7 @@ function useSubjectUsers(subjectId) {
     queryKey: [`useSubjectUsers`, subjectId],
     queryFn: () => getSubjectUsers(subjectId),
     staleTime: 1000 * 60 * 10,
-    enabled: !!subjectId,
+    enabled: !!false,
   });
 
   const clearSubjectUsers = () => {

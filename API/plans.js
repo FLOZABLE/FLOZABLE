@@ -61,8 +61,6 @@ Router.get("/", async (req, res) => {
         plan.type = "local";
         plan.editable = true;
         plan.isEditable = true;
-        plan.start = new Date(plan.start);
-        plan.end = new Date(plan.end);
         plan.backgroundColor = plan.subject_color
           ? plan.subject_color
           : "#000000";

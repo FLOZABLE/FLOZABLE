@@ -4,17 +4,19 @@ import React, { useContext, useEffect, useRef, useState } from "react";
 import styles from "./PlanTimeline.module.css";
 import { ResponsiveRadialBar } from "@nivo/radial-bar";
 import { Alert } from "@/app/utils/Svg";
-import { PlansContext, SubjectsContext, TutorialsContext } from "@/app/utils/Contexts";
+import { PlansContext, TutorialsContext } from "@/app/utils/Contexts";
 import { DateTime } from "luxon";
 import { subjectIcons } from "@/app/utils/Constant";
 import Plan from "../Plan/Plan";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCirclePlus } from "@fortawesome/free-solid-svg-icons";
+import { useSubjects } from "@/Hooks/subjectsHooks";
 
 function PlanTimeline({ viewer, viewDate, mode, maxHeight = "50rem" }) {
+  const { subjects } = useSubjects();
+
   const { tutorialBoxRef, tutorialTextRef, tutorial, setTutorial } =
     useContext(TutorialsContext);
-  const { subjects } = useContext(SubjectsContext);
   const { plans, setPlanModal } = useContext(PlansContext);
 
   const [planSeries, setPlanSeries] = useState([]);
