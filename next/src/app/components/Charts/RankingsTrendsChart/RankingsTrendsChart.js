@@ -19,16 +19,12 @@ function RankingsTrendsChart({
   viewDate,
   setViewDate,
   viewer,
-  userInfo,
+  userId,
   isDateSelector,
 }) {
   const [rankingsTrend, setRankingsTrend] = useState([]);
 
-  const { rankingsUserData } = useRankingsUser(
-    userInfo?.user_id,
-    viewer,
-    viewDate
-  );
+  const { rankingsUserData } = useRankingsUser(userId, viewer, viewDate);
 
   useEffect(() => {
     if (!rankingsUserData?.success || !viewer || !viewDate) return;
@@ -55,7 +51,7 @@ function RankingsTrendsChart({
           </div>
         ) : null}
       </div>
-      {!userInfo?.user_id ? (
+      {!userId ? (
         <AccountWall />
       ) : (
         <ResponsiveContainer width="100%" height="100%">

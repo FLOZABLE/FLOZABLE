@@ -4,16 +4,17 @@ import React, { useState, useEffect, useContext, useCallback } from "react";
 import styles from "./WelcomeModal.module.css";
 import BlobBtn from "../../Buttons/BlobBtn/BlobBtn";
 import Confetti from "react-confetti";
-import { TutorialsContext, UserInfoContext } from "@/app/utils/Contexts";
+import { TutorialsContext } from "@/app/utils/Contexts";
 import { useWindowSize } from "@/Hooks/otherHooks";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useAccount } from "@/Hooks/accountHooks";
 
 function WelcomeModal({}) {
   const { width, height } = useWindowSize();
   const searchParams = useSearchParams();
   const router = useRouter();
 
-  const { userInfo } = useContext(UserInfoContext);
+  const { accountData } = useAccount();
   const { setTutorial } = useContext(TutorialsContext);
 
   const [isModal, setIsModal] = useState(false);
@@ -27,7 +28,7 @@ function WelcomeModal({}) {
     } else {
       setIsModal(false);
     }
-  }, [userInfo]);
+  }, [accountData]);
 
   const skipTutorial = useCallback(() => {
     setIsModal(false);
@@ -55,7 +56,8 @@ function WelcomeModal({}) {
       <div className={styles.modal}>
         <p>Welcome to FLOZABLE!</p>
         <p className={styles.description}>
-          Hey {userInfo?.name}, let&apos;s get you all set up with this tutorial
+          Hey {accountData?.name}, let&apos;s get you all set up with this
+          tutorial
           <br />
           We hope your journey in studying is successful
         </p>

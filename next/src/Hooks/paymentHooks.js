@@ -1,6 +1,4 @@
 import { useQuery } from "@tanstack/react-query";
-import { UserInfoContext } from "@/app/utils/Contexts";
-import { useContext } from "react";
 import { getProduct, postSubscriptionInitialize } from "@/Api/payment";
 
 function useSubscriptionInitialize(priceId) {
