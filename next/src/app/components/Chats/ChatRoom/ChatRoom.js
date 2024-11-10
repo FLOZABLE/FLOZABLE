@@ -1,11 +1,11 @@
 import styles from "./ChatRoom.module.css";
 import React, { useContext, useEffect, useState } from "react";
 import { DateTime } from "luxon";
-import { ModalsContext } from "@/app/utils/Contexts";
+import { ChatModalContext } from "@/app/utils/Contexts";
 import ChatRoomCoverImg from "../ChatRoomCoverImg/ChatRoomCoverImg";
 
 function ChatRoom({ chatroom }) {
-  const { setChatModal } = useContext(ModalsContext);
+  const { setChatModal } = useContext(ChatModalContext);
 
   const [timeDisp, setTimeDisp] = useState("");
 

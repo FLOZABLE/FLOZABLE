@@ -12,7 +12,7 @@ import {
   faStopwatch,
   faTrashCan,
 } from "@fortawesome/free-solid-svg-icons";
-import { GroupsContext, ModalsContext } from "@/app/utils/Contexts";
+import { GroupsContext, EditGroupModalContext } from "@/app/utils/Contexts";
 import CustomInput from "@/app/components/Inputs/CustomInput/CustomInput";
 import TextEditor from "@/app/components/Inputs/TextEditor/TextEditor";
 import ColorPalette from "@/app/components/Inputs/ColorPalette/ColorPalette";
@@ -26,7 +26,9 @@ import { DEFAULT_GROUP } from "@/app/utils/Constant";
 import ModalLayer from "../ModalLayer/ModalLayer";
 
 function EditGroupModal() {
-  const { editGroupModal, setEditGroupModal } = useContext(ModalsContext);
+  const { editGroupModal, setEditGroupModal } = useContext(
+    EditGroupModalContext
+  );
   const { groups, setGroups } = useContext(GroupsContext);
 
   const [newGroup, setNewGroup] = useState(DEFAULT_GROUP);

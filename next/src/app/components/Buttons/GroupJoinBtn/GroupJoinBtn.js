@@ -1,5 +1,5 @@
 import styles from "./GroupJoinBtn.module.css";
-import { GroupsContext, ModalsContext } from "@/app/utils/Contexts";
+import { JoinGroupModalContext, GroupsContext } from "@/app/utils/Contexts";
 import { useContext } from "react";
 import Link from "next/link";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -8,7 +8,7 @@ import { faLock } from "@fortawesome/free-solid-svg-icons";
 export default function GroupJoinBtn({ groupInfo }) {
   const { myGroups } = useContext(GroupsContext);
 
-  const { setJoinGroupModal } = useContext(ModalsContext);
+  const { setJoinGroupModal } = useContext(JoinGroupModalContext);
 
   return (
     <div className={styles.GroupJoinBtn}>

@@ -2,10 +2,10 @@ import { faPen } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import styles from "./EditSubjectBtn.module.css";
 import { useContext } from "react";
-import { ModalsContext } from "@/app/utils/Contexts";
+import { SubjectsModalContext } from "@/app/utils/Contexts";
 
 export default function EditSubjectBtn() {
-  const { setIsSubjectsModal } = useContext(ModalsContext);
+  const { setIsSubjectsModal } = useContext(SubjectsModalContext);
 
   return (
     <div

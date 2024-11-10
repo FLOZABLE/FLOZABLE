@@ -5,10 +5,12 @@ import styles from "./SearchUsersModal.module.css";
 import DraggableModal from "../DraggableModal/DraggableModal";
 import SearchUsers from "../../Users/SearchUsers/SearchUsers";
 import SearchBar from "../../Inputs/SearchBar/SearchBar";
-import { ModalsContext } from "@/app/utils/Contexts";
+import { SearchUsersModalContext } from "@/app/utils/Contexts";
 
 export default function SearchUsersModal() {
-  const { searchUsersModal, setSearchUsersModal } = useContext(ModalsContext);
+  const { searchUsersModal, setSearchUsersModal } = useContext(
+    SearchUsersModalContext
+  );
   const [searchQuery, setSearchQuery] = useState("");
 
   const modalRef = useRef(null);
