@@ -14,7 +14,7 @@ import {
   HeaderMeteor,
   HeaderTarget,
 } from "@/app/utils/Svg";
-import { ModalsContext, TutorialsContext } from "@/app/utils/Contexts";
+import { ChatModalContext, TutorialsContext } from "@/app/utils/Contexts";
 import { useExtensionUsage } from "@/Hooks/extensionHooks";
 import ProfileImage from "../../Users/ProfileImage/ProfileImage";
 import Link from "next/link";
@@ -38,7 +38,7 @@ function HeaderEl({ children, value, title }) {
 function Header({}) {
   const { accountData } = useAccount();
   const { groupedSubjects } = useSubjects();
-  const { setChatModal } = useContext(ModalsContext);
+  const { setChatModal } = useContext(ChatModalContext);
 
   const { tutorialBoxRef, tutorialTextRef, tutorial } =
     useContext(TutorialsContext);
@@ -145,7 +145,7 @@ function Header({}) {
               setChatModal((prev) => ({
                 ...prev,
                 chatroom: null,
-                open: !prev.open,
+                opened: !prev.opened,
               }));
             }}
           >

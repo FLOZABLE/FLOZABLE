@@ -10,7 +10,7 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { ModalsContext } from "@/app/utils/Contexts";
+import { ChatModalContext } from "@/app/utils/Contexts";
 import { BackArrow } from "@/app/utils/Svg";
 import SendBtn from "@/app/components/Buttons/SendBtn/SendBtn";
 import ChatRoom from "@/app/components/Chats/ChatRoom/ChatRoom";
@@ -29,7 +29,7 @@ import { useAccount } from "@/Hooks/accountHooks";
 
 function ChatModal({}) {
   const { accountData } = useAccount();
-  const { chatModal, setChatModal } = useContext(ModalsContext);
+  const { chatModal, setChatModal } = useContext(ChatModalContext);
 
   const [chatrooms, setChatRooms] = useState([]);
   const [messages, setMessages] = useState([]);
@@ -239,13 +239,13 @@ function ChatModal({}) {
 
   return (
     <div
-      className={`${styles.ChatModal} ${chatModal.open ? styles.open : ""}`}
+      className={`${styles.ChatModal} ${chatModal.opened ? styles.open : ""}`}
       ref={moveRef}
     >
       <div className={styles.header}>
         <i
           onClick={() => {
-            setChatModal((prev) => ({ ...prev, open: true }));
+            setChatModal((prev) => ({ ...prev, opened: true }));
           }}
         >
           {/* <BackArrow /> */}
@@ -253,7 +253,7 @@ function ChatModal({}) {
         <p>Messages</p>
         <i
           onClick={() => {
-            setChatModal((prev) => ({ ...prev, open: false }));
+            setChatModal((prev) => ({ ...prev, opened: false }));
           }}
         >
           <FontAwesomeIcon icon={faXmark} />
@@ -284,7 +284,7 @@ function ChatModal({}) {
           <p className={`overflowDot ${styles.name}`}>{chatModal?.name}</p>
           <i
             onClick={() => {
-              setChatModal((prev) => ({ ...prev, open: false }));
+              setChatModal((prev) => ({ ...prev, opened: false }));
             }}
           >
             <FontAwesomeIcon icon={faXmark} />

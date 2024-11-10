@@ -1,4 +1,4 @@
-import { ModalsContext } from "@/app/utils/Contexts";
+import { AccountModalContext } from "@/app/utils/Contexts";
 import styles from "./AccountBtn.module.css";
 import { useContext } from "react";
 import { getAuthLogout } from "@/Api/authApi";
@@ -6,7 +6,7 @@ import { IconLogin, IconLogout } from "@/app/utils/Svg";
 import { useAccount } from "@/Hooks/accountHooks";
 
 export default function AccountBtn() {
-  const { setIsAccountModal } = useContext(ModalsContext);
+  const { setIsAccountModal } = useContext(AccountModalContext);
   const { accountData, clearAccountData } = useAccount();
 
   return (

@@ -9,7 +9,6 @@ import {
   faXmark,
 } from "@fortawesome/free-solid-svg-icons";
 import React, { useContext, useEffect, useState } from "react";
-import { ModalsContext } from "@/app/utils/Contexts";
 import ArrowOptionBtn from "@/app/components/Buttons/ArrowOptionBtn/ArrowOptionBtn";
 import BlobBtn from "@/app/components/Buttons/BlobBtn/BlobBtn";
 import { useRouter } from "next/navigation";
@@ -17,9 +16,10 @@ import GoogleLoginBtn from "../../Buttons/GoogleLoginBtn/GoogleLoginBtn";
 import { postAuthSignin, postAuthSignup } from "@/Api/authApi";
 import { getTimezone } from "@/app/utils/Tool";
 import { useAccount } from "@/Hooks/accountHooks";
+import { AccountModalContext } from "@/app/utils/Contexts";
 
 function AccountModal({}) {
-  const { isAccountModal, setIsAccountModal } = useContext(ModalsContext);
+  const { isAccountModal, setIsAccountModal } = useContext(AccountModalContext);
   const { accountRefetch } = useAccount();
 
   const router = useRouter();

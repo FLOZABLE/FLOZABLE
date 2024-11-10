@@ -2,7 +2,11 @@ import styles from "./MyGroupContainer.module.css";
 import React, { useContext, useEffect, useState } from "react";
 import config from "@/app/utils/config";
 import Link from "next/link";
-import { CallOptionsContext, ModalsContext } from "@/app/utils/Contexts";
+import {
+  CallOptionsContext,
+  ChatModalContext,
+  EditGroupModalContext,
+} from "@/app/utils/Contexts";
 import GroupUrlBtn from "@/app/components/Buttons/GroupUrlBtn/GroupUrlBtn";
 import {
   IconMessage,
@@ -51,7 +55,8 @@ const audioParams = {
 
 function MyGroupContainer({ group, isAdmin, isActive, leaveGroup }) {
   const { isCam, isMic } = useContext(CallOptionsContext);
-  const { setChatModal, setEditGroupModal } = useContext(ModalsContext);
+  const { setChatModal } = useContext(ChatModalContext);
+  const { setEditGroupModal } = useContext(EditGroupModalContext);
 
   const { groupMembersData, groupMembersIsLoading, clearGroupMembersData } =
     useGroupMembers(group?.group_id, isActive);
@@ -446,7 +451,7 @@ function MyGroupContainer({ group, isAdmin, isActive, leaveGroup }) {
                 ...prev,
                 chatroom: group.group_id,
                 name: group.name,
-                open: true,
+                opened: true,
               }));
             }}
           >

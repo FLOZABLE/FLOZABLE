@@ -1,6 +1,6 @@
 "use client";
 
-import { GroupsContext, ModalsContext } from "@/app/utils/Contexts";
+import { JoinGroupModalContext, GroupsContext } from "@/app/utils/Contexts";
 import styles from "./JoinGroupModal.module.css";
 import { faKey } from "@fortawesome/free-solid-svg-icons";
 import { useCallback, useContext, useEffect, useState } from "react";
@@ -14,7 +14,7 @@ import { toast } from "react-toastify";
 import { MittInstance } from "@/app/utils/mittInstance";
 
 function JoinGroupModal() {
-  const { joinGroupModal, setJoinGroupModal } = useContext(ModalsContext);
+  const { joinGroupModal, setJoinGroupModal } = useContext(JoinGroupModalContext);
   const { setMyGroups, groups } = useContext(GroupsContext);
 
   const router = useRouter();

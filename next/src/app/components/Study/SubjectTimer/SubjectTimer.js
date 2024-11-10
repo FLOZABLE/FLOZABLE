@@ -7,7 +7,7 @@ import {
   faPlay,
 } from "@fortawesome/free-solid-svg-icons";
 import {
-  ModalsContext,
+  AddSubjectsModalContext,
   TutorialsContext,
   WorkersContext,
 } from "@/app/utils/Contexts";
@@ -28,7 +28,7 @@ function SubjecTimer({
   const { tutorialBoxRef, tutorialTextRef, tutorial, setTutorial } =
     useContext(TutorialsContext);
   const { subjectsTimerWorkerRef } = useContext(WorkersContext);
-  const { setIsAddSubjectModal } = useContext(ModalsContext);
+  const { setIsAddSubjectModal } = useContext(AddSubjectsModalContext);
 
   const { accountData } = useAccount();
   const { subjects, updateSubjects } = useSubjects();

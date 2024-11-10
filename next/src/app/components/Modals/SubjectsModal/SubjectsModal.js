@@ -2,7 +2,6 @@
 
 import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import styles from "./SubjectsModal.module.css";
-import { ModalsContext } from "@/app/utils/Contexts";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faBook,
@@ -25,10 +24,15 @@ import {
 import { useSubjects, useSubjectUsers } from "@/Hooks/subjectsHooks";
 import ShareUserBox from "../../Users/ShareUserBox/ShareUserBox";
 import CircularLoading from "../../LoadingScreen/CircularLoading/CircularLoading";
+import {
+  SearchUsersModalContext,
+  SubjectsModalContext,
+} from "@/app/utils/Contexts";
 
 export default function SubjectsModal() {
-  const { isSubjectsModal, setIsSubjectsModal, setSearchUsersModal } =
-    useContext(ModalsContext);
+  const { isSubjectsModal, setIsSubjectsModal } =
+    useContext(SubjectsModalContext);
+  const { setSearchUsersModal } = useContext(SearchUsersModalContext);
   const { subjects, updateSubjects } = useSubjects();
 
   const [subject, setSubject] = useState({

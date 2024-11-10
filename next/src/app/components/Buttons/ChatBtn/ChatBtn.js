@@ -1,7 +1,7 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faComments } from "@fortawesome/free-solid-svg-icons";
 import React, { useCallback, useContext } from "react";
-import { ModalsContext } from "@/app/utils/Contexts";
+import { ChatModalContext } from "@/app/utils/Contexts";
 import BlobBtn from "../BlobBtn/BlobBtn";
 import { postChatRequest } from "@/Api/chatApi";
 import styles from "./ChatBtn.module.css";
@@ -9,8 +9,9 @@ import { useChatRooms } from "@/Hooks/chatHooks";
 import { useAccount } from "@/Hooks/accountHooks";
 
 export default function ChatBtn({ targetInfo, padding }) {
+  const { setChatModal } = useContext(ChatModalContext);
+
   const { chatRoomsData } = useChatRooms();
-  const { setChatModal } = useContext(ModalsContext);
   const { accountData } = useAccount();
 
   const chatRequest = useCallback(async () => {
@@ -24,7 +25,7 @@ export default function ChatBtn({ targetInfo, padding }) {
           ...prev,
           chatroom: chatroom_id,
           name,
-          open: true,
+          opened: true,
         }));
       }
     } catch (err) {
@@ -41,7 +42,7 @@ export default function ChatBtn({ targetInfo, padding }) {
             if (!targetInfo) {
               return setChatModal((prev) => ({
                 ...prev,
-                open: true,
+                opened: true,
                 chatroom: null,
                 name: null,
               }));
@@ -57,7 +58,7 @@ export default function ChatBtn({ targetInfo, padding }) {
                 ...prev,
                 chatroom: chatroom.chatroom_id,
                 name: chatroom.name,
-                open: true,
+                opened: true,
               }));
               return;
             }

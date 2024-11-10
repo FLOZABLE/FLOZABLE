@@ -22,10 +22,19 @@ const PlansContext = createContext({});
 const UserInfoContext = createContext({});
 const TutorialsContext = createContext({});
 const GroupsContext = createContext({});
-const ModalsContext = createContext({});
 const CallOptionsContext = createContext({});
 const ThemesContext = createContext({});
 const WorkersContext = createContext({});
+
+//modals
+
+const AccountModalContext = createContext({});
+const JoinGroupModalContext = createContext({});
+const EditGroupModalContext = createContext({});
+const SubjectsModalContext = createContext({});
+const AddSubjectsModalContext = createContext({});
+const ChatModalContext = createContext({});
+const SearchUsersModalContext = createContext({});
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -128,19 +137,31 @@ function AppProvider({ children }) {
   return (
     <SubjectsProvider>
       <GroupsProvider>
-        <ModalsProvider>
-          <TutorialsProvider>
-            <CallOptionsProvider>
-              <ThemesProvider>
-                <WorkersProvider>
-                  <GoogleOAuthProvider clientId={googleClientId}>
-                    {children}
-                  </GoogleOAuthProvider>
-                </WorkersProvider>
-              </ThemesProvider>
-            </CallOptionsProvider>
-          </TutorialsProvider>
-        </ModalsProvider>
+        <TutorialsProvider>
+          <CallOptionsProvider>
+            <ThemesProvider>
+              <WorkersProvider>
+                <GoogleOAuthProvider clientId={googleClientId}>
+                  <AccountModalProvider>
+                    <JoinGroupModalProvider>
+                      <EditGroupModalProvider>
+                        <SubjectsModalProvider>
+                          <AddSubjectsModalProvider>
+                            <ChatModalProvider>
+                              <SearchUsersModalProvider>
+                                {children}
+                              </SearchUsersModalProvider>
+                            </ChatModalProvider>
+                          </AddSubjectsModalProvider>
+                        </SubjectsModalProvider>
+                      </EditGroupModalProvider>
+                    </JoinGroupModalProvider>
+                  </AccountModalProvider>
+                </GoogleOAuthProvider>
+              </WorkersProvider>
+            </ThemesProvider>
+          </CallOptionsProvider>
+        </TutorialsProvider>
       </GroupsProvider>
     </SubjectsProvider>
   );
@@ -270,35 +291,10 @@ function GroupsProvider({ children }) {
   );
 }
 
-function ModalsProvider({ children }) {
+function AccountModalProvider({ children }) {
   const { accountData } = useAccount();
 
-  const [chatModal, setChatModal] = useState({
-    chatroom: null,
-    name: "",
-    opened: false,
-    totalNewMsg: 0,
-  });
-
-  const [isNotificationModal, setIsNotificationModal] = useState(false);
-  const [isAddSubjectModal, setIsAddSubjectModal] = useState(false);
-  const [joinGroupModal, setJoinGroupModal] = useState({
-    open: false,
-    group: null,
-  });
   const [isAccountModal, setIsAccountModal] = useState(false);
-  const [isSubjectsModal, setIsSubjectsModal] = useState({
-    opened: false,
-    subject_id: null,
-  });
-  const [editGroupModal, setEditGroupModal] = useState({
-    opened: false,
-    group_id: null,
-  });
-  const [searchUsersModal, setSearchUsersModal] = useState({
-    opened: false,
-    onClick: null,
-  });
 
   useEffect(() => {
     if (accountData === false) {
@@ -311,29 +307,155 @@ function ModalsProvider({ children }) {
   const pathname = usePathname();
 
   useEffect(() => {
-    console.log("Page changed to:", pathname);
-    //modal default
-    setChatModal({
-      chatroom: null,
-      name: "",
-      opened: false,
-      totalNewMsg: 0,
-    });
-    setIsNotificationModal(false);
-    setIsAddSubjectModal(false);
+    setIsAccountModal(false);
+  }, [pathname]);
+
+  return (
+    <AccountModalContext.Provider
+      value={{
+        isAccountModal,
+        setIsAccountModal,
+      }}
+    >
+      {children}
+    </AccountModalContext.Provider>
+  );
+}
+
+function JoinGroupModalProvider({ children }) {
+  const [joinGroupModal, setJoinGroupModal] = useState({
+    open: false,
+    group: null,
+  });
+
+  const pathname = usePathname();
+
+  useEffect(() => {
     setJoinGroupModal({
       open: false,
       group: null,
     });
-    setIsAccountModal(false);
-    setIsSubjectsModal({
-      opened: false,
-      subject_id: null,
-    });
+  }, [pathname]);
+
+  return (
+    <JoinGroupModalContext.Provider
+      value={{
+        joinGroupModal,
+        setJoinGroupModal,
+      }}
+    >
+      {children}
+    </JoinGroupModalContext.Provider>
+  );
+}
+
+function EditGroupModalProvider({ children }) {
+  const [editGroupModal, setEditGroupModal] = useState({
+    opened: false,
+    group_id: null,
+  });
+
+  const pathname = usePathname();
+
+  useEffect(() => {
     setEditGroupModal({
       opened: false,
       group_id: null,
     });
+  }, [pathname]);
+
+  return (
+    <EditGroupModalContext.Provider
+      value={{
+        editGroupModal,
+        setEditGroupModal,
+      }}
+    >
+      {children}
+    </EditGroupModalContext.Provider>
+  );
+}
+
+function SubjectsModalProvider({ children }) {
+  const [isSubjectsModal, setIsSubjectsModal] = useState({
+    opened: false,
+    subject_id: null,
+  });
+
+  const pathname = usePathname();
+
+  useEffect(() => {
+    setIsSubjectsModal({ opened: false, subject_id: null });
+  }, [pathname]);
+
+  return (
+    <SubjectsModalContext.Provider
+      value={{
+        isSubjectsModal,
+        setIsSubjectsModal,
+      }}
+    >
+      {children}
+    </SubjectsModalContext.Provider>
+  );
+}
+
+function AddSubjectsModalProvider({ children }) {
+  const [isAddSubjectModal, setIsAddSubjectModal] = useState(false);
+
+  const pathname = usePathname();
+
+  useEffect(() => {
+    setIsAddSubjectModal(false);
+  }, [pathname]);
+
+  return (
+    <AddSubjectsModalContext.Provider
+      value={{
+        isAddSubjectModal,
+        setIsAddSubjectModal,
+      }}
+    >
+      {children}
+    </AddSubjectsModalContext.Provider>
+  );
+}
+
+function ChatModalProvider({ children }) {
+  const [chatModal, setChatModal] = useState({
+    chatroom: null,
+    name: "",
+    opened: false,
+    totalNewMsg: 0,
+  });
+
+  const pathname = usePathname();
+
+  useEffect(() => {
+    setChatModal((prev) => ({ ...prev, chatroom: null, opened: false }));
+  }, [pathname]);
+
+  return (
+    <ChatModalContext.Provider
+      value={{
+        chatModal,
+        setChatModal,
+      }}
+    >
+      {children}
+    </ChatModalContext.Provider>
+  );
+}
+
+function SearchUsersModalProvider({ children }) {
+  const [searchUsersModal, setSearchUsersModal] = useState({
+    opened: false,
+    onClick: null,
+  });
+
+  const pathname = usePathname();
+
+  useEffect(() => {
     setSearchUsersModal({
       opened: false,
       onClick: null,
@@ -341,28 +463,14 @@ function ModalsProvider({ children }) {
   }, [pathname]);
 
   return (
-    <ModalsContext.Provider
+    <SearchUsersModalContext.Provider
       value={{
-        chatModal,
-        setChatModal,
-        isNotificationModal,
-        setIsNotificationModal,
-        isAddSubjectModal,
-        setIsAddSubjectModal,
-        joinGroupModal,
-        setJoinGroupModal,
-        isAccountModal,
-        setIsAccountModal,
-        isSubjectsModal,
-        setIsSubjectsModal,
         searchUsersModal,
         setSearchUsersModal,
-        editGroupModal,
-        setEditGroupModal,
       }}
     >
       {children}
-    </ModalsContext.Provider>
+    </SearchUsersModalContext.Provider>
   );
 }
 
@@ -477,9 +585,15 @@ export {
   SubjectsContext,
   PlansContext,
   GroupsContext,
-  ModalsContext,
   TutorialsContext,
   CallOptionsContext,
   ThemesContext,
   WorkersContext,
+  AccountModalContext,
+  JoinGroupModalContext,
+  EditGroupModalContext,
+  SubjectsModalContext,
+  AddSubjectsModalContext,
+  ChatModalContext,
+  SearchUsersModalContext,
 };

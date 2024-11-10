@@ -1,8 +1,9 @@
 "use client";
 
 import {
-  ModalsContext,
+  AddSubjectsModalContext,
   PlansContext,
+  SearchUsersModalContext,
   TutorialsContext,
 } from "@/app/utils/Contexts";
 import styles from "./PlanModal.module.css";
@@ -46,8 +47,8 @@ import { useSubjects } from "@/Hooks/subjectsHooks";
 export default function PlanModal() {
   const { subjects } = useSubjects();
   const { plans, setPlans, planModal, setPlanModal } = useContext(PlansContext);
-  const { setIsAddSubjectModal, setSearchUsersModal } =
-    useContext(ModalsContext);
+  const { setIsAddSubjectModal } = useContext(AddSubjectsModalContext);
+  const { setSearchUsersModal } = useContext(SearchUsersModalContext);
   const { tutorialBoxRef, tutorialTextRef, tutorial, setTutorial } =
     useContext(TutorialsContext);
 

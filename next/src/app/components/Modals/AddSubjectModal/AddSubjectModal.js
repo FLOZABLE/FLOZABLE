@@ -10,7 +10,7 @@ import React, {
 import styles from "./AddSubjectModal.module.css";
 import { faBook } from "@fortawesome/free-solid-svg-icons";
 import {
-  ModalsContext,
+  AddSubjectsModalContext,
   TutorialsContext,
   WorkersContext,
 } from "@/app/utils/Contexts";
@@ -28,7 +28,9 @@ import { useSubjects } from "@/Hooks/subjectsHooks";
 function AddSubjectModal({}) {
   const { subjects, updateSubjects } = useSubjects();
 
-  const { isAddSubjectModal, setIsAddSubjectModal } = useContext(ModalsContext);
+  const { isAddSubjectModal, setIsAddSubjectModal } = useContext(
+    AddSubjectsModalContext
+  );
   const { tutorialBoxRef, tutorialTextRef, tutorial, setTutorial } =
     useContext(TutorialsContext);
   const { subjectsTimerWorkerRef } = useContext(WorkersContext);
