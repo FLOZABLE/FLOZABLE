@@ -1,15 +1,15 @@
 import { useRankings } from "@/Hooks/rankingsHooks";
 import styles from "./Leaderboard.module.css";
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import CircularLoading from "../../LoadingScreen/CircularLoading/CircularLoading";
 import UserContainer from "../../Users/UserContainer/UserContainer";
-import { UserInfoContext } from "@/app/utils/Contexts";
+import { useAccount } from "@/Hooks/accountHooks";
 
 const PAGE_LENGTH = 30;
 
 export default function Leaderboard({ viewer, viewDate, isOnlyFriends }) {
-  const { userInfo } = useContext(UserInfoContext);
+  const { accountData } = useAccount();
 
   const { rankingsData, rankingsIsLoading } = useRankings(viewer, viewDate);
 
@@ -36,19 +36,19 @@ export default function Leaderboard({ viewer, viewDate, isOnlyFriends }) {
   useEffect(() => {
     if (!rankingsData?.success) return;
 
-    if (!isOnlyFriends || !userInfo) {
+    if (!isOnlyFriends || !accountData) {
       setRankings(rankingsData.data.rankings);
     } else {
       setRankings(
         rankingsData.data.rankings.filter(
           (ranking) =>
-            userInfo.friends.includes(ranking.user_id) ||
-            ranking.user_id === userInfo.user_id
+            accountData.friends.includes(ranking.user_id) ||
+            ranking.user_id === accountData.user_id
         )
       );
     }
     setPage(1);
-  }, [rankingsData, isOnlyFriends, userInfo]);
+  }, [rankingsData, isOnlyFriends, accountData]);
 
   return (
     <div className={`Box ${styles.Leaderboard}`}>

@@ -10,13 +10,13 @@ import {
   ModalsContext,
   SubjectsContext,
   TutorialsContext,
-  UserInfoContext,
   WorkersContext,
 } from "@/app/utils/Contexts";
 import { socket } from "@/app/utils/socket";
 import SimpleToggleBtn from "../../Buttons/SimpleToggleBtn/SimpleToggleBtn";
 import PomodoroTimer from "../PomodoroTimer/PomodoroTimer";
 import { toTimer } from "@/app/utils/Tool";
+import { useAccount } from "@/Hooks/accountHooks";
 
 function SubjecTimer({
   selectedSubject,
@@ -30,7 +30,7 @@ function SubjecTimer({
   const { subjects, setSubjects } = useContext(SubjectsContext);
   const { subjectsTimerWorkerRef } = useContext(WorkersContext);
   const { setIsAddSubjectModal } = useContext(ModalsContext);
-  const { userInfo } = useContext(UserInfoContext);
+  const { accountData } = useAccount();
 
   const [subjectOptions, setSubjectOptions] = useState([]);
   const [selectNewSubject, setSelectNewSubject] = useState(false);
@@ -49,11 +49,11 @@ function SubjecTimer({
 
     setSelectedSubject(subjectOptions[0]);
     setSubjectOptions(subjectOptions);
-  }, [subjects, userInfo]);
+  }, [subjects, accountData]);
 
   useEffect(() => {
     const onStudying = ({ userId, subject }) => {
-      if (!userInfo.user_id === userId) return;
+      if (!accountData.user_id === userId) return;
 
       const selectedSubject = subjectOptions.find(
         (subjectOption) => subjectOption.subject_id === subject.subject_id
@@ -64,7 +64,7 @@ function SubjecTimer({
     };
 
     const onStopStudying = ({ userId, status }) => {
-      if (userId !== userInfo?.user_id) return;
+      if (userId !== accountData?.user_id) return;
 
       toggleTimer({ ...selectedSubject, active: true });
     };
@@ -76,7 +76,7 @@ function SubjecTimer({
       socket.off("studying", onStudying);
       socket.off("stopStudying", onStopStudying);
     };
-  }, [userInfo, subjectOptions, selectedSubject]);
+  }, [accountData, subjectOptions, selectedSubject]);
 
   const toggleTimer = useCallback(
     (selectedSubject) => {

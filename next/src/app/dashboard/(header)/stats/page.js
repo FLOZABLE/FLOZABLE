@@ -5,11 +5,12 @@ import styles from "./page.module.css";
 import { useContext, useState } from "react";
 import StudyTrendChart from "@/app/components/Charts/StudyTrendChart/StudyTrendChart";
 import RankingsTrendsChart from "@/app/components/Charts/RankingsTrendsChart/RankingsTrendsChart";
-import { SubjectsContext, UserInfoContext } from "@/app/utils/Contexts";
+import { SubjectsContext } from "@/app/utils/Contexts";
 import WebsiteUsageChart from "@/app/components/Charts/WebsiteUsageChart/WebsiteUsageChart";
+import { useAccount } from "@/Hooks/accountHooks";
 
 function Stats({}) {
-  const { userInfo } = useContext(UserInfoContext);
+  const { accountData } = useAccount();
   const { subjects } = useContext(SubjectsContext);
 
   const [viewDate, setViewDate] = useState(
@@ -32,7 +33,7 @@ function Stats({}) {
               setViewDate={setViewDate}
               viewer={viewer}
               subjects={subjects}
-              userId={userInfo?.user_id}
+              userId={accountData?.user_id}
             />
           </div>
           <div
@@ -43,7 +44,7 @@ function Stats({}) {
               viewDate={viewDate}
               setViewDate={setViewDate}
               viewer={viewer}
-              userInfo={userInfo}
+              userId={accountData?.user_id}
             />
           </div>
           <div

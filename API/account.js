@@ -11,14 +11,12 @@ const {
   validatePassword,
 } = require("../utils/validate");
 const {
-  notificationCache,
   userCache,
   subjectsTimelineCache,
   addActiveUserCache,
   googleAccessTokenCache,
   userFriendsCache,
   userGroupsCache,
-  usersCache,
   clearGoogleAccessToken,
 } = require("../services/redisLoader");
 const { googleOauth2client, autoSignin } = require("./auth");
@@ -30,28 +28,14 @@ Router.get("/", async (req, res) => {
   autoSignin(req, res, async (userId) => {
     try {
       const connection = pool.promise();
-      const [[[userInfo]], groups, friends, notifications] = await Promise.all([
+      const [[[userInfo]], groups, friends] = await Promise.all([
         connection.query(
           `SELECT user_id, name, email, timezone, verified FROM users WHERE user_id = ?`,
           [userId]
         ),
         userGroupsCache(connection, userId),
         userFriendsCache(connection, userId),
-        notificationCache(userId),
       ]);
-
-      const notificationUserIds = notifications
-        .filter((notification) => notification.f)
-        .map((notification) => notification.f);
-      const notificationUsers = await usersCache(
-        connection,
-        notificationUserIds
-      );
-      notifications.map((notification) => {
-        notification.f = notificationUsers.find(
-          (user) => user.user_id === notification.f
-        );
-      });
       if (!userInfo) {
         const response = RESPONSE_MESSAGES.noUser();
         return res.status(response.status).send(response);
@@ -62,8 +46,7 @@ Router.get("/", async (req, res) => {
         success: true,
         status: 200,
         data: {
-          userInfo: userInfo,
-          notifications: notifications,
+          userInfo,
         },
       });
       addActiveUserCache(userId);

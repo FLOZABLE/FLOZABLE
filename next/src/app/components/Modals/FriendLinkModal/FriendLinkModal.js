@@ -1,14 +1,14 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import styles from "./FriendLinkModal.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
 import config from "@/app/utils/config";
 import { FriendLink } from "@/app/utils/Svg";
 import CopyBtn from "@/app/components/Buttons/CopyBtn/CopyBtn";
-import { UserInfoContext } from "@/app/utils/Contexts";
+import { useAccount } from "@/Hooks/accountHooks";
 
 function FriendLinkModal({ isOpen, setIsOpen }) {
-  const { userInfo } = useContext(UserInfoContext);
+  const { accountData } = useAccount();
 
   const [addFriendUrl, setAddFriendUrl] = useState("");
 
@@ -27,7 +27,7 @@ function FriendLinkModal({ isOpen, setIsOpen }) {
         if (res.success) {
           setAddFriendUrl(
             config.server +
-              `/friends/link/add?user=${userInfo.user_id}&id=${res.linkId}`
+              `/friends/link/add?user=${accountData.user_id}&id=${res.linkId}`
           );
         }
       })

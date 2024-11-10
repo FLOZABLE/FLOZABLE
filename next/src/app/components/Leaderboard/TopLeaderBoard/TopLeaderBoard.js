@@ -5,13 +5,12 @@ import styles from "./TopLeaderBoard.module.css";
 import CircularLoading from "../../LoadingScreen/CircularLoading/CircularLoading";
 import DateSelectorBtn from "../../Buttons/DateSelectorBtn/DateSelectorBtn";
 import { useRouter } from "next/navigation";
-import { UserInfoContext } from "@/app/utils/Contexts";
-import { useContext } from "react";
+import { useAccount } from "@/Hooks/accountHooks";
 
 function RankingContainer({ title, viewDate, viewer, isOnlyFriends }) {
   const { rankingsData, rankingsIsLoading } = useRankings(viewer, viewDate);
 
-  const { userInfo } = useContext(UserInfoContext);
+  const { accountData } = useAccount();
 
   const router = useRouter();
 
@@ -21,12 +20,12 @@ function RankingContainer({ title, viewDate, viewer, isOnlyFriends }) {
 
   let slicedRanking = [];
 
-  if (userInfo && isOnlyFriends) {
+  if (accountData && isOnlyFriends) {
     slicedRanking = rankingsData.data.rankings
       .filter(
         (ranking) =>
-          userInfo.friends.includes(ranking.user_id) ||
-          ranking.user_id === userInfo.user_id
+          accountData.friends.includes(ranking.user_id) ||
+          ranking.user_id === accountData.user_id
       )
       .slice(0, 3);
   } else {

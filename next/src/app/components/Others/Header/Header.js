@@ -18,15 +18,14 @@ import {
   ModalsContext,
   SubjectsContext,
   TutorialsContext,
-  UserInfoContext,
 } from "@/app/utils/Contexts";
 import { useExtensionUsage } from "@/Hooks/extensionHooks";
 import ProfileImage from "../../Users/ProfileImage/ProfileImage";
-import NotificationsBtn from "../../Notifications/NotificationsBtn/NotificationsBtn";
 import Link from "next/link";
-import { faComment, faComments } from "@fortawesome/free-solid-svg-icons";
+import { faComment } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import NotificationsContainer from "../../Notifications/NotificationsContainer/NotificationsContainer";
+import { useAccount } from "@/Hooks/accountHooks";
 
 function HeaderEl({ children, value, title }) {
   return (
@@ -40,7 +39,7 @@ function HeaderEl({ children, value, title }) {
   );
 }
 function Header({}) {
-  const { userInfo } = useContext(UserInfoContext);
+  const { accountData } = useAccount();
   const { groupedSubjects } = useContext(SubjectsContext);
   const { setChatModal } = useContext(ModalsContext);
 
@@ -141,7 +140,7 @@ function Header({}) {
           </i>
         </HeaderEl>
       </div>
-      {userInfo ? (
+      {accountData ? (
         <div className={styles.right}>
           <div
             className={styles.ChatBtn}
@@ -160,12 +159,12 @@ function Header({}) {
           </div>
           <Link href={"/dashboard/account"} className={styles.userInfo}>
             <div>
-              <p className={styles.name}>{userInfo.name}</p>
-              <p className={styles.email}>@{userInfo.email.split("@")[0]}</p>
+              <p className={styles.name}>{accountData.name}</p>
+              <p className={styles.email}>@{accountData.email.split("@")[0]}</p>
             </div>
             <div className={styles.ProfileImage}>
               <ProfileImage
-                userId={userInfo.user_id}
+                userId={accountData.user_id}
                 width="100%"
                 height="100%"
               />

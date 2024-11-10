@@ -15,12 +15,11 @@ import {
 } from "recharts";
 import CircularLoading from "../LoadingScreen/CircularLoading/CircularLoading";
 import { DateTime } from "luxon";
-import { useContext } from "react";
-import { UserInfoContext } from "@/app/utils/Contexts";
 import AccountWall from "../Others/AccountWall/AccountWall";
+import { useAccount } from "@/Hooks/accountHooks";
 
 function FriendsTrendChart() {
-  const { userInfo } = useContext(UserInfoContext);
+  const { accountData } = useAccount();
 
   const { friendsTrendData, friendsTrendsIsLoading } = useFriendsTrends();
 
@@ -28,7 +27,7 @@ function FriendsTrendChart() {
     return <CircularLoading />;
   }
 
-  if (!userInfo) {
+  if (!accountData) {
     return <AccountWall />;
   }
 

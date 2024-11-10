@@ -1,16 +1,15 @@
 import { getPlans, getPlansGoogle, getPlansPlanUsers } from "@/Api/plansApi";
-import { UserInfoContext } from "@/app/utils/Contexts";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useContext } from "react";
+import { useAccount } from "./accountHooks";
 
 function usePlans() {
-  const { userInfo } = useContext(UserInfoContext);
+  const { accountData } = useAccount();
 
   const queryResult = useQuery({
     queryKey: [`usePlans`],
     queryFn: getPlans,
     staleTime: 1000 * 60 * 10,
-    enabled: !!userInfo,
+    enabled: !!accountData,
   });
 
   const {
@@ -28,13 +27,13 @@ function usePlans() {
 }
 
 function usePlansGoogle() {
-  const { userInfo } = useContext(UserInfoContext);
+  const { accountData } = useAccount();
 
   const queryResult = useQuery({
     queryKey: [`usePlansGoogle`],
     queryFn: getPlansGoogle,
     staleTime: 1000 * 60 * 10,
-    enabled: !!userInfo,
+    enabled: !!accountData,
   });
 
   const {

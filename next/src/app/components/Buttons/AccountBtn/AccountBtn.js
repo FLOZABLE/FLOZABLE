@@ -1,19 +1,20 @@
-import { ModalsContext, UserInfoContext } from "@/app/utils/Contexts";
+import { ModalsContext } from "@/app/utils/Contexts";
 import styles from "./AccountBtn.module.css";
 import { useContext } from "react";
 import { getAuthLogout } from "@/Api/authApi";
 import { IconLogin, IconLogout } from "@/app/utils/Svg";
+import { useAccount } from "@/Hooks/accountHooks";
 
 export default function AccountBtn() {
   const { setIsAccountModal } = useContext(ModalsContext);
-  const { clearAccountData, userInfo } = useContext(UserInfoContext);
+  const { accountData, clearAccountData } = useAccount();
 
   return (
     <div
       className={styles.AccountBtn}
       onClick={async () => {
         try {
-          if (userInfo) {
+          if (accountData) {
             const response = await getAuthLogout();
             if (response.success) {
               clearAccountData();
@@ -27,7 +28,7 @@ export default function AccountBtn() {
         }
       }}
     >
-      {userInfo ? (
+      {accountData ? (
         <>
           <i>
             <IconLogout />

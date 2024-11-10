@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import styles from "./GroupContainer.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -15,9 +15,9 @@ import LikeBtn from "@/app/components/Buttons/LikeBtn/LikeBtn";
 import GroupUrlBtn from "@/app/components/Buttons/GroupUrlBtn/GroupUrlBtn";
 import GroupJoinBtn from "../../Buttons/GroupJoinBtn/GroupJoinBtn";
 import { secondConverter } from "@/app/utils/Tool";
-import { UserInfoContext } from "@/app/utils/Contexts";
 import { postGroupLike } from "@/Api/groupsApi";
 import SocketCounter from "../../Others/SocketCounter/SocketCounter";
+import { useAccount } from "@/Hooks/accountHooks";
 
 function GroupContainer({
   groupInfo,
@@ -25,30 +25,26 @@ function GroupContainer({
   rankings,
   style = {},
 }) {
-  const { userInfo } = useContext(UserInfoContext);
+  const { accountData } = useAccount();
 
   const [members, setMembers] = useState([]);
   const [likes, setLikes] = useState([]);
   const [totalTime, setTotalTime] = useState("0 h");
 
   const onLike = useCallback(async () => {
-    try {
-      if (!userInfo?.user_id) return;
+    if (!accountData?.user_id) return;
 
-      const like = !likes.includes(userInfo?.user_id);
-      const groupId = groupInfo.group_id;
-      const response = await postGroupLike({ groupId, like });
-      if (!response.success) return;
+    const like = !likes.includes(accountData?.user_id);
+    const groupId = groupInfo.group_id;
+    const response = await postGroupLike({ groupId, like });
+    if (!response.success) return;
 
-      if (like) {
-        setLikes([...new Set([...likes, userInfo.user_id])]);
-      } else {
-        setLikes(likes.filter((like) => like !== userInfo.user_id));
-      }
-    } catch (err) {
-      console.log(err);
+    if (like) {
+      setLikes([...new Set([...likes, accountData.user_id])]);
+    } else {
+      setLikes(likes.filter((like) => like !== accountData.user_id));
     }
-  }, [likes, groupInfo, userInfo]);
+  }, [likes, groupInfo, accountData]);
 
   useEffect(() => {
     if (!groupInfo) return;
@@ -145,7 +141,10 @@ function GroupContainer({
           text={`${config.server}/dashboard/groups?groupId=${groupInfo.group_id}`}
         />
         <GroupJoinBtn groupInfo={groupInfo} />
-        <LikeBtn liked={likes.includes(userInfo?.user_id)} onClick={onLike} />
+        <LikeBtn
+          liked={likes.includes(accountData?.user_id)}
+          onClick={onLike}
+        />
       </div>
     </div>
   );

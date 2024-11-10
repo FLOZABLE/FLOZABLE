@@ -104,29 +104,25 @@ function AccountProvider({ children }) {
 
   const queryResult = useAccount();
 
-  const { accountData, accountRefetch } = queryResult;
+  const { accountData, accountRefetch, isError } = queryResult;
 
   const { updateNotificationsData } = useNotifications();
 
   useEffect(() => {
-    if (accountData?.success === false) {
-      setUserInfo(false);
+    if (!accountData) {
       return;
     }
 
-    if (!accountData?.success) return;
+    if (isError) {
+    }
 
-    console.log("useaccount", accountData);
-
-    const { userInfo, notifications } = accountData.data;
-    setUserInfo(userInfo);
     setTimeout(() => {
       console.log("gddddd");
       socket.connect();
       mediaSocket.connect();
       socket.emit("joinChats");
     }, 100);
-  }, [accountData]);
+  }, [accountData, isError]);
 
   useEffect(() => {
     const onNotification = (notification) => {
@@ -195,7 +191,7 @@ function SubjectsProvider({ children }) {
 
     const { subjects } = subjectsData.data;
 
-    const plans = [...plansData.data.plans, /* ...plansGoogleData.data.plans */];
+    const plans = [...plansData.data.plans /* ...plansGoogleData.data.plans */];
 
     plans.map((plan) => {
       //plan.saved = true;
@@ -256,7 +252,7 @@ function SubjectsProvider({ children }) {
 }
 
 function GroupsProvider({ children }) {
-  const { userInfo } = useContext(UserInfoContext);
+  const { accountData } = useAccount();
 
   const [groups, setGroups] = useState([]);
   const [myGroups, setMyGroups] = useState([]);
@@ -265,13 +261,13 @@ function GroupsProvider({ children }) {
   const { groupsData } = groupsQueryResult;
 
   useEffect(() => {
-    if (!groups.length || !userInfo) return;
+    if (!groups.length || !accountData) return;
 
     const myGroups = groups.filter((group) =>
-      group.members.includes(userInfo.user_id)
+      group.members.includes(accountData.user_id)
     );
     setMyGroups(myGroups);
-  }, [userInfo, groups]);
+  }, [accountData, groups]);
 
   useEffect(() => {
     if (!groupsData?.success) return;
@@ -294,7 +290,7 @@ function GroupsProvider({ children }) {
 }
 
 function ModalsProvider({ children }) {
-  const { userInfo } = useContext(UserInfoContext);
+  const { accountData } = useAccount();
 
   const [chatModal, setChatModal] = useState({
     chatroom: null,
@@ -324,12 +320,12 @@ function ModalsProvider({ children }) {
   });
 
   useEffect(() => {
-    if (userInfo === false) {
+    if (accountData === false) {
       setIsAccountModal(true);
     } else {
       setIsAccountModal(false);
     }
-  }, [userInfo]);
+  }, [accountData]);
 
   const pathname = usePathname();
 

@@ -4,9 +4,8 @@ import {
   getAccountProfile,
   getAccountProfileSubjects,
 } from "@/Api/accountApi";
-import { UserInfoContext } from "@/app/utils/Contexts";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useContext } from "react";
+import { useCallback } from "react";
 
 function useAccount() {
   const queryClient = useQueryClient();
@@ -15,6 +14,7 @@ function useAccount() {
     queryKey: [`useAccount`],
     queryFn: getAccount,
     staleTime: 1000 * 60 * 10,
+    select: (response) => response?.data?.userInfo || false,
   });
 
   const {
@@ -23,27 +23,41 @@ function useAccount() {
     isLoading: accountIsLoading,
   } = queryResult;
 
-  const clearAccountData = () => {
+  const clearAccountData = useCallback(() => {
     queryClient.removeQueries({ queryKey: "useAccount" });
-  };
+  }, []);
+
+  const updateAccountUserInfo = useCallback(async (newData) => {
+    await queryClient.setQueryData(["useAccount"], (oldData) => {
+      if (!oldData?.success) return oldData;
+      if (typeof newData === "function") {
+        return {
+          ...oldData,
+          data: { ...oldData.data, userInfo: newData(oldData) },
+        };
+      }
+      return { ...oldData, data: { ...oldData.data, userInfo: newData } };
+    });
+  }, []);
 
   return {
     accountData,
     accountRefetch,
     accountIsLoading,
     clearAccountData,
+    updateAccountUserInfo,
     ...queryResult,
   };
 }
 
 function useAccountGoogle() {
-  const { userInfo } = useContext(UserInfoContext);
+  const { accountData } = useAccount();
 
   const queryResult = useQuery({
     queryKey: [`useAccountGoogle`],
     queryFn: getAccountGoogle,
     staleTime: 1000 * 60 * 10,
-    enabled: !!userInfo,
+    enabled: !!accountData,
   });
 
   const {

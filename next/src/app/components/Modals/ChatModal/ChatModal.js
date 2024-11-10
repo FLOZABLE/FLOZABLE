@@ -10,7 +10,7 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { ModalsContext, UserInfoContext } from "@/app/utils/Contexts";
+import { ModalsContext } from "@/app/utils/Contexts";
 import { BackArrow } from "@/app/utils/Svg";
 import SendBtn from "@/app/components/Buttons/SendBtn/SendBtn";
 import ChatRoom from "@/app/components/Chats/ChatRoom/ChatRoom";
@@ -25,9 +25,10 @@ import {
 import { socket } from "@/app/utils/socket";
 import { useInView } from "react-intersection-observer";
 import { toast } from "react-toastify";
+import { useAccount } from "@/Hooks/accountHooks";
 
 function ChatModal({}) {
-  const { userInfo } = useContext(UserInfoContext);
+  const { accountData } = useAccount();
   const { chatModal, setChatModal } = useContext(ModalsContext);
 
   const [chatrooms, setChatRooms] = useState([]);
@@ -223,7 +224,7 @@ function ChatModal({}) {
     return () => {
       socket.off("chat/message", onChatMessage);
     };
-  }, [chatModal.chatroom, userInfo]);
+  }, [chatModal.chatroom, accountData]);
 
   useEffect(() => {
     if (!lastReadMessageId) return;
@@ -310,7 +311,7 @@ function ChatModal({}) {
               lastReadMessageId &&
               messages[index - 1]?.message_id === lastReadMessageId;
 
-            if (user_id === userInfo.user_id) {
+            if (user_id === accountData.user_id) {
               return (
                 <div
                   ref={(el) => {

@@ -1,16 +1,15 @@
 import { getChatMembers, getChatMessages, getChatRooms } from "@/Api/chatApi";
-import { UserInfoContext } from "@/app/utils/Contexts";
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
-import { useContext } from "react";
+import { useAccount } from "./accountHooks";
 
 function useChatRooms() {
-  const { userInfo } = useContext(UserInfoContext);
+  const { accountData } = useAccount();
 
   const queryResult = useQuery({
     queryKey: [`useChatRooms`],
     queryFn: getChatRooms,
     staleTime: 1000 * 5,
-    enabled: !!userInfo,
+    enabled: !!accountData,
   });
 
   const { data: chatRoomsData, refetch: chatRoomsRefetch } = queryResult;

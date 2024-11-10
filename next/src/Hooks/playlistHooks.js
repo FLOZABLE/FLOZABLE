@@ -5,9 +5,7 @@ import {
   getPlaylistsYoutubeItems,
 } from "@/Api/playlistsApi";
 import { useQuery } from "@tanstack/react-query";
-import { UserInfoContext } from "@/app/utils/Contexts";
-import { useContext } from "react";
-import { useAccountGoogle } from "./accountHooks";
+import { useAccount, useAccountGoogle } from "./accountHooks";
 
 function usePlaylistsSpotify() {
   const { spotifyInfo } = useSpotifyInfo();
@@ -30,12 +28,13 @@ function usePlaylistsSpotify() {
 }
 
 function useSpotifyInfo() {
-  const { userInfo } = useContext(UserInfoContext);
+  const { accountData } = useAccount();
+
   const queryResult = useQuery({
     queryKey: [`useSpotifyInfo`],
     queryFn: getSpotifyInfo,
     staleTime: 1000 * 60 * 10,
-    enabled: !!userInfo,
+    enabled: !!accountData,
   });
 
   const { data: spotifyInfoData, isLoading: spotifyInfoIsLoading } =

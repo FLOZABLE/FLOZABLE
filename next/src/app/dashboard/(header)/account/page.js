@@ -1,12 +1,6 @@
 "use client";
 
-import React, {
-  useState,
-  useEffect,
-  useCallback,
-  useRef,
-  useContext,
-} from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import styles from "./page.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCamera } from "@fortawesome/free-solid-svg-icons";
@@ -18,8 +12,7 @@ import SpotifyAuthBtn from "@/app/components/Spotify/SpotifyAuthBtn/SpotifyAuthB
 import ExtensionSetting from "@/app/components/Account/ExtensionSetting/ExtensionSetting";
 import config from "@/app/utils/config";
 import { GoogleCalendar, SpotifyLogo, YouTubeIcon } from "@/app/utils/Svg";
-import { UserInfoContext } from "@/app/utils/Contexts";
-import { useAccountGoogle } from "@/Hooks/accountHooks";
+import { useAccount, useAccountGoogle } from "@/Hooks/accountHooks";
 import SubjectsManager from "@/app/components/Subjects/SubjectsManager/SubjectsManager";
 import { useSpotifyInfo } from "@/Hooks/playlistHooks";
 import {
@@ -31,7 +24,7 @@ import { postAuthVerify } from "@/Api/authApi";
 import Image from "next/image";
 
 function Account() {
-  const { userInfo, setUserInfo } = useContext(UserInfoContext);
+  const { accountData, updateAccountUserInfo } = useAccount();
 
   const { googleInfo } = useAccountGoogle();
   const { spotifyInfo } = useSpotifyInfo();
@@ -55,12 +48,12 @@ function Account() {
   const inputRef = useRef(null);
 
   useEffect(() => {
-    if (!userInfo) return;
-    const { user_id, name, email, verified } = userInfo;
+    if (!accountData) return;
+    const { user_id, name, email, verified } = accountData;
 
     setImageSrc(`${config.static_server}/profile-image/${user_id}.jpeg`);
     setProfile({ name, email, confirmEmail: email, verified });
-  }, [userInfo]);
+  }, [accountData]);
 
   const readURL = useCallback((input) => {
     if (input.files && input.files[0]) {
@@ -91,7 +84,7 @@ function Account() {
       const response = await patchAccountInfo(profile);
       if (!response.success) return;
 
-      setUserInfo((prev) => ({
+      updateAccountUserInfo((prev) => ({
         ...prev,
         name,
         email,
@@ -156,9 +149,9 @@ function Account() {
               </form>
             </div>
           </div>
-          {userInfo ? (
+          {accountData ? (
             <div id={styles.welcome}>
-              <h2>Welcome, {userInfo.name}</h2>
+              <h2>Welcome, {accountData.name}</h2>
             </div>
           ) : null}
         </div>

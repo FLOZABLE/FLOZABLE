@@ -1,16 +1,17 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faComments } from "@fortawesome/free-solid-svg-icons";
 import React, { useCallback, useContext } from "react";
-import { ModalsContext, UserInfoContext } from "@/app/utils/Contexts";
+import { ModalsContext } from "@/app/utils/Contexts";
 import BlobBtn from "../BlobBtn/BlobBtn";
 import { postChatRequest } from "@/Api/chatApi";
 import styles from "./ChatBtn.module.css";
 import { useChatRooms } from "@/Hooks/chatHooks";
+import { useAccount } from "@/Hooks/accountHooks";
 
 export default function ChatBtn({ targetInfo, padding }) {
   const { chatRoomsData } = useChatRooms();
   const { setChatModal } = useContext(ModalsContext);
-  const { userInfo } = useContext(UserInfoContext);
+  const { accountData } = useAccount();
 
   const chatRequest = useCallback(async () => {
     try {
@@ -48,7 +49,7 @@ export default function ChatBtn({ targetInfo, padding }) {
             const chatroom = chatRoomsData?.data?.chatrooms?.find(
               (chatroom) =>
                 chatroom.members.sort().join() ===
-                [userInfo.user_id, targetInfo?.user_id].sort().join()
+                [accountData.user_id, targetInfo?.user_id].sort().join()
             );
 
             if (chatroom) {

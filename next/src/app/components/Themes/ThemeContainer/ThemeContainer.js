@@ -1,40 +1,40 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import styles from "./ThemeContainer.module.css";
 import { faHeart, faPeopleGroup } from "@fortawesome/free-solid-svg-icons";
-import React, { useCallback, useContext, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import parse from "html-react-parser";
 import ThemeUsageCounter from "../ThemeUsageCounter/ThemeUsageCounter";
 import ThemeCategoryBtn from "@/app/components/Buttons/ThemeCategoryBtn/ThemeCategoryBtn";
 import LikeBtn from "@/app/components/Buttons/LikeBtn/LikeBtn";
 import config from "@/app/utils/config";
 import GroupUrlBtn from "@/app/components/Buttons/GroupUrlBtn/GroupUrlBtn";
-import { UserInfoContext } from "@/app/utils/Contexts";
 import SocketCounter from "../../Others/SocketCounter/SocketCounter";
 import { postThemeLike } from "@/Api/themesApi";
+import { useAccount } from "@/Hooks/accountHooks";
 
 function ThemeContainer({ theme, isSearched, setIsThemePreview }) {
-  const { userInfo } = useContext(UserInfoContext);
+  const { accountData } = useAccount();
 
   const [likes, setLikes] = useState([]);
 
   const onLike = useCallback(async () => {
     try {
-      if (!userInfo?.user_id) return;
+      if (!accountData?.user_id) return;
 
-      const like = !likes.includes(userInfo?.user_id);
+      const like = !likes.includes(accountData?.user_id);
       const themeId = theme.theme_id;
       const response = await postThemeLike({ themeId, like });
       if (!response.success) return;
 
       if (like) {
-        setLikes([...new Set([...likes, userInfo.user_id])]);
+        setLikes([...new Set([...likes, accountData.user_id])]);
       } else {
-        setLikes(likes.filter((like) => like !== userInfo.user_id));
+        setLikes(likes.filter((like) => like !== accountData.user_id));
       }
     } catch (err) {
       console.log(err);
     }
-  }, [likes, theme, userInfo]);
+  }, [likes, theme, accountData]);
 
   useEffect(() => {
     if (!theme) return;
@@ -102,7 +102,7 @@ function ThemeContainer({ theme, isSearched, setIsThemePreview }) {
           </div>
           <div>
             <LikeBtn
-              liked={likes.includes(userInfo?.user_id)}
+              liked={likes.includes(accountData?.user_id)}
               onClick={onLike}
             />
           </div>

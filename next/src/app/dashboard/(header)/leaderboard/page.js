@@ -1,14 +1,14 @@
 "use client";
 
-import { useContext, useState } from "react";
+import { useState } from "react";
 import styles from "./page.module.css";
 import TopLeaderBoard from "@/app/components/Leaderboard/TopLeaderBoard/TopLeaderBoard";
 import Leaderboard from "@/app/components/Leaderboard/Leaderboard/Leaderboard";
 import RankingsTrendsChart from "@/app/components/Charts/RankingsTrendsChart/RankingsTrendsChart";
-import { UserInfoContext } from "@/app/utils/Contexts";
+import { useAccount } from "@/Hooks/accountHooks";
 
 function Ranking({}) {
-  const { userInfo } = useContext(UserInfoContext);
+  const { accountData } = useAccount();
 
   const [viewDate, setViewDate] = useState(
     new Date(new Date().setHours(0, 0, 0, 0))
@@ -28,7 +28,7 @@ function Ranking({}) {
               viewDate={viewDate}
               setViewDate={setViewDate}
               viewer={viewer}
-              userInfo={userInfo}
+              userId={accountData?.user_id}
             />
           </div>
           <div

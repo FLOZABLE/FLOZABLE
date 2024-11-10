@@ -90,7 +90,7 @@ function User({ params }) {
               viewDate={viewDate}
               setViewDate={setViewDate}
               viewer={viewer}
-              userInfo={userInfo}
+              userId={accountData?.user_id}
             />
           </div>
           {userGroups.length ? (
