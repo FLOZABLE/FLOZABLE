@@ -7,7 +7,9 @@ async function getPlans() {
 }
 
 async function getPlansGoogle(date) {
-  return requestHandler(AxiosInstance.get(`/plans/google`, { date }));
+  return requestHandler(
+    AxiosInstance.get(`/plans/google`, { params: { date } })
+  );
 }
 
 async function patchPlan(planModal) {
