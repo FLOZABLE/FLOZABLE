@@ -16,7 +16,6 @@ import "react-calendar-timeline/lib/Timeline.css";
 import { DateTime } from "luxon";
 import styled from "@emotion/styled";
 import { PlanModalContext } from "@/app/utils/Contexts";
-import { useCombinedPlans } from "@/Hooks/plansHooks";
 
 const StyleWrapper = styled.div`
   .react-calendar-timeline .rct-horizontal-lines .rct-hl-even,
@@ -49,7 +48,7 @@ const StyleWrapper = styled.div`
 
 function StudyTimelineBar() {
   const { setPlanModal } = useContext(PlanModalContext);
-  const { combinedPlans } = useCombinedPlans(new Date());
+  const { plans } = useContext(plans);
 
   const [lineHeight, setLineHeight] = useState(0);
 
@@ -69,7 +68,7 @@ function StudyTimelineBar() {
   }
 
   useEffect(() => {
-    const tempItems = combinedPlans.map((event, i) => {
+    const tempItems = plans.map((event, i) => {
       return {
         id: i,
         group: 1,
@@ -108,7 +107,7 @@ function StudyTimelineBar() {
       };
     });
     setItems(tempItems);
-  }, [combinedPlans]);
+  }, [plans]);
 
   const zoomTimeline = useCallback(
     (e) => {

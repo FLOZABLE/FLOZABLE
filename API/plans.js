@@ -15,6 +15,7 @@ const {
   validateLength,
   validateString,
   validateBoolean,
+  validateISO,
 } = require("../utils/validate");
 const {
   googleAccessTokenCache,
@@ -64,6 +65,7 @@ Router.get("/", async (req, res) => {
         plan.backgroundColor = plan.subject_color
           ? plan.subject_color
           : "#000000";
+        plan.borderColor = plan.subject_color ? plan.subject_color : "#000000";
         plan.backgroundColor = plan.subject_color
           ? plan.subject_color
           : "#000000";
@@ -91,11 +93,18 @@ Router.get("/google", async (req, res) => {
     try {
       const { date } = req.query;
 
+      const isValidDate = validateISO(date, "date");
+      console.log(req.query);
+      if (!isValidDate.isValid) {
+        const response = RESPONSE_MESSAGES.validationError(isValidDate);
+        return res.status(response.status).send(response);
+      }
+
       const dateTime = DateTime.fromISO(date).startOf("day").startOf("month");
 
-      const startDate = dateTime.minus({ week: 1 }).toJSDate();
+      const timeMin = dateTime.minus({ week: 1 }).toISO();
 
-      const endDate = dateTime.endOf("month").plus({ week: 1 }).toJSDate();
+      const timeMax = dateTime.endOf("month").plus({ week: 1 }).toISO();
 
       const plans = [];
       const access_token = await googleAccessTokenCache(connection, userId);
@@ -123,8 +132,8 @@ Router.get("/google", async (req, res) => {
         calendars.data.items.map(async (calendar) => {
           const response = await googleCalendar.events.list({
             calendarId: calendar.id,
-            startDate,
-            endDate,
+            timeMax,
+            timeMin,
           });
           const events = response.data.items;
 
@@ -170,7 +179,7 @@ Router.get("/google", async (req, res) => {
         data: { plans: plans },
       });
     } catch (err) {
-      //console.log(err);
+      console.log(err);
       if (!err?.response?.data?.error) {
         const response = RESPONSE_MESSAGES.error();
         return res.status(response.status).send(response);
