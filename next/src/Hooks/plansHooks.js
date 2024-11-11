@@ -27,13 +27,13 @@ function usePlans() {
   });
 
   const {
-    data: plans,
+    data: plansData,
     isLoading: plansIsLoading,
     refetch: plansRefetch,
   } = queryResult;
 
   return {
-    plans,
+    plansData,
     plansIsLoading,
     plansRefetch,
     ...queryResult,
@@ -52,7 +52,7 @@ function usePlansGoogle(date) {
     queryKey: [`usePlansGoogle`, dateTime],
     queryFn: () => getPlansGoogle(dateTime),
     staleTime: 1000 * 60 * 10,
-    enabled: !!accountData,
+    enabled: !!accountData && !!dateTime,
     select: (response) => {
       if (!response?.data?.plans) {
         return [];
@@ -69,40 +69,16 @@ function usePlansGoogle(date) {
   });
 
   const {
-    data: plansGoogle,
+    data: plansGoogleData,
     isLoading: plansGoogleIsLoading,
     refetch: plansGoogleRefetch,
   } = queryResult;
 
   return {
-    plansGoogle,
+    plansGoogleData,
     plansGoogleIsLoading,
     plansGoogleRefetch,
     ...queryResult,
-  };
-}
-
-function useCombinedPlans(date) {
-  const { plans, plansIsLoading, plansRefetch } = usePlans();
-  const { plansGoogle, plansGoogleIsLoading, plansGoogleRefetch } =
-    usePlansGoogle(date);
-
-  const combinedPlans = [...plans, ...plansGoogle].sort(
-    (a, b) => a.start - b.start
-  );
-
-  const isLoading = plansIsLoading || plansGoogleIsLoading;
-
-  const refetchPlans = async () => {
-    await Promise.all([plansRefetch(), plansGoogleRefetch()]);
-  };
-
-  return {
-    combinedPlans,
-    isLoading,
-    refetchPlans,
-    plansIsLoading,
-    plansGoogleIsLoading,
   };
 }
 
@@ -132,4 +108,4 @@ function usePlanUsers({ plan_id, isEditable, type }) {
   };
 }
 
-export { usePlans, usePlansGoogle, useCombinedPlans, usePlanUsers };
+export { usePlans, usePlansGoogle, usePlanUsers };

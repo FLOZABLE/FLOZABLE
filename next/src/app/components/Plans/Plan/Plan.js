@@ -1,13 +1,14 @@
 import styles from "./Plan.module.css";
 import { useCallback, useContext } from "react";
-import { PlansContext } from "@/app/utils/Contexts";
+import { PlanModalContext, PlansContext } from "@/app/utils/Contexts";
 import parse from "html-react-parser";
 import { DEFAULT_PLAN } from "@/app/utils/Constant";
 import { patchPlanStatus } from "@/Api/plansApi";
 import BounceCheckBox from "../../Buttons/BounceCheckBox/BounceCheckBox";
 
 export default function Plan({ plan }) {
-  const { plans, setPlanModal, setPlans } = useContext(PlansContext);
+  const { setPlanModal } = useContext(PlanModalContext);
+  const { plans, setPlans } = useContext(PlansContext);
 
   const togglePlan = useCallback(async () => {
     try {

@@ -7,7 +7,7 @@ import timeGridPlugin from "@fullcalendar/timegrid";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import { useCallback, useContext, useEffect, useRef, useState } from "react";
-import { PlansContext } from "@/app/utils/Contexts";
+import { PlanModalContext, PlansContext } from "@/app/utils/Contexts";
 import DateSelectorBtn from "../../Buttons/DateSelectorBtn/DateSelectorBtn";
 import { DEFAULT_PLAN } from "@/app/utils/Constant";
 import { patchPlan, patchPlanGoogle } from "@/Api/plansApi";
@@ -87,7 +87,8 @@ function PlanHeader(info, viewer) {
 }
 
 export default function Planner() {
-  const { plans, setPlans, planModal, setPlanModal } = useContext(PlansContext);
+  const { planModal, setPlanModal } = useContext(PlanModalContext);
+  const { plans, setPlans, setPlansDate } = useContext(PlansContext);
   const { subjects } = useSubjects();
 
   const plannerRef = useRef(null);
@@ -104,6 +105,10 @@ export default function Planner() {
 
     setPlannerApi(plannerRef.current.getApi());
   }, [plannerRef]);
+
+  useEffect(() => {
+    setPlansDate(new Date(new Date(viewDate).setHours(0, 0, 0, 0)));
+  }, [viewDate]);
 
   useEffect(() => {
     if (!PlannerApi || !viewDate || !viewer) return;

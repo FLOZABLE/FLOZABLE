@@ -3,7 +3,11 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import styles from "./PlansTimeline.module.css";
 import { Alert } from "@/app/utils/Svg";
-import { PlansContext, TutorialsContext } from "@/app/utils/Contexts";
+import {
+  PlanModalContext,
+  PlansContext,
+  TutorialsContext,
+} from "@/app/utils/Contexts";
 import { DateTime } from "luxon";
 import { DEFAULT_PLAN, subjectIcons } from "@/app/utils/Constant";
 import Plan from "../Plan/Plan";
@@ -23,7 +27,8 @@ export default function PlansTimeline({
   const { tutorialBoxRef, tutorialTextRef, tutorial, setTutorial } =
     useContext(TutorialsContext);
   const { subjects } = useSubjects();
-  const { plans, setPlans, planModal, setPlanModal } = useContext(PlansContext);
+  const { planModal, setPlanModal } = useContext(PlanModalContext);
+  const { plans, setPlans, setPlansDate } = useContext(PlansContext);
 
   const [filteredSubjects, setFilteredSubjects] = useState([]);
   const [donePlans, setDonePlans] = useState([]);
@@ -32,6 +37,10 @@ export default function PlansTimeline({
   //const searchParams = useSearchParams();
   const addBtnRef = useRef(null);
   const containerRef = useRef(null);
+
+  useEffect(() => {
+    setPlansDate(new Date(new Date(viewDate).setHours(0, 0, 0, 0)));
+  }, [viewDate]);
 
   const isInViewRange = (plan) => {
     const viewDateTime = DateTime.fromJSDate(viewDate);

@@ -136,7 +136,7 @@ function AppProvider({ children }) {
   }, [accountData, isError]);
 
   return (
-    <SubjectsProvider>
+    <PlansProvider>
       <PlanModalProvider>
         <GroupsProvider>
           <TutorialsProvider>
@@ -166,93 +166,31 @@ function AppProvider({ children }) {
           </TutorialsProvider>
         </GroupsProvider>
       </PlanModalProvider>
-    </SubjectsProvider>
+    </PlansProvider>
   );
 }
 
-function SubjectsProvider({ children }) {
-  const [subjects, setSubjects] = useState([]);
-  const [groupedSubjects, setGroupedSubjects] = useState({});
+function PlansProvider({ children }) {
   const [plans, setPlans] = useState([]);
-  const [planModal, setPlanModal] = useState(DEFAULT_PLAN);
+  const [plansDate, setPlansDate] = useState(
+    new Date(new Date().setHours(0, 0, 0, 0))
+  );
 
-  const subjectsQueryResult = useSubjects();
-  const plansQueryResult = usePlans();
-  const plansGoogleQueryResult = usePlansGoogle();
-
-  const { subjectsData } = subjectsQueryResult;
-  const { plansData } = plansQueryResult;
-  const { plansGoogleData } = plansGoogleQueryResult;
+  const { plansData } = usePlans();
+  const { plansGoogleData } = usePlansGoogle(plansDate);
 
   useEffect(() => {
-    if (!subjectsData?.success) return;
-
-    const { subjects, groupedSubjects } = subjectsData.data;
-
-    setSubjects(subjects);
-    setGroupedSubjects(groupedSubjects);
-  }, [subjectsData]);
-
-  /* useEffect(() => {
-    if (!plansData?.success || !subjectsData?.success) return;
-
-    const { subjects } = subjectsData.data;
-
-
-    plans.map((plan) => {
-      //plan.saved = true;
-      plan.start = new Date(plan.start);
-      plan.end = new Date(plan.end);
-      const subject = subjects.find(
-        (subject) => subject.subject_id === plan.subject_id
-      );
-      if (subject) {
-        plan.backgroundColor = subject.color;
-        plan.borderColor = subject.color;
-        //lan.subject_color = subject.color;
-        //plan.color = subject.color;
-        //plan.textColor = subject.color;
-      } else if (plan.type === "local") {
-        plan.backgroundColor = "#000";
-        plan.borderColor = "#000";
-        //plan.color = "#000";
-      }
-
-      if (plan.completed) {
-        plan.className = "completed";
-      }
-      return plan;
-    });
-    setPlans(plans);
-  }, [subjectsData, plansData, plansGoogleData]); */
-
-  const pathname = usePathname();
-
-  useEffect(() => {
-    setPlanModal(DEFAULT_PLAN);
-  }, [pathname]);
+    const sortedPlans = [...plansData, ...plansGoogleData].sort(
+      (a, b) => a.start - b.start
+    );
+    if (JSON.stringify(sortedPlans) === JSON.stringify(plans)) return;
+    setPlans(sortedPlans);
+  }, [plansData, plansGoogleData]);
 
   return (
-    <SubjectsContext.Provider
-      value={{
-        ...subjectsQueryResult,
-        subjects,
-        setSubjects,
-        groupedSubjects,
-        setGroupedSubjects,
-      }}
-    >
-      <PlansContext.Provider
-        value={{
-          setPlans,
-          planModal,
-          setPlanModal,
-          ...plansQueryResult,
-        }}
-      >
-        {children}
-      </PlansContext.Provider>
-    </SubjectsContext.Provider>
+    <PlansContext.Provider value={{ plans, setPlans, plansDate, setPlansDate }}>
+      {children}
+    </PlansContext.Provider>
   );
 }
 
