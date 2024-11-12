@@ -69,7 +69,7 @@ async function postPlanShare(users, planId) {
   return requestHandler(
     AxiosInstance.post(`/plans/plan/share`, {
       users,
-      planId,
+      plan_id: planId,
     })
   );
 }

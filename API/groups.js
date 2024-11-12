@@ -31,24 +31,24 @@ Router.get("/", async (req, res) => {
     const connection = pool.promise();
     const [groups] = await connection.query(
       `
-      SELECT 
-        g.group_id, 
-        g.name, 
-        g.leader, 
-        g.visibility, 
-        g.description, 
-        g.created_at, 
-        g.max_members, 
-        g.tags, 
-        g.color, 
-        g.goal_hr, 
-      GROUP_CONCAT(DISTINCT m.user_id) AS members, 
-      GROUP_CONCAT(DISTINCT l.user_id) AS likes
-      FROM \`groups\` g
-      LEFT JOIN group_members m ON g.group_id = m.group_id
-      LEFT JOIN group_likes l ON g.group_id = l.group_id
-      GROUP BY g.group_id
-      `
+    SELECT 
+      g.group_id, 
+      g.name, 
+      g.leader, 
+      g.visibility, 
+      g.description, 
+      g.created_at, 
+      g.max_members, 
+      g.tags, 
+      g.color, 
+      g.goal_hr, 
+    GROUP_CONCAT(DISTINCT m.user_id) AS members, 
+    GROUP_CONCAT(DISTINCT l.user_id) AS likes
+    FROM \`groups\` g
+    LEFT JOIN group_members m ON g.group_id = m.group_id
+    LEFT JOIN group_likes l ON g.group_id = l.group_id
+    GROUP BY g.group_id
+    `
     );
 
     const formattedGroups = groups.map((group) => ({
@@ -57,9 +57,42 @@ Router.get("/", async (req, res) => {
       likes: group.likes ? group.likes.split(",") : [],
       tags: group.tags ? JSON.parse(group.tags) : [],
     }));
-    res
-      .status(200)
-      .send({ success: true, status: 200, data: { groups: formattedGroups } });
+
+    autoSignin(
+      req,
+      res,
+      async (userId) => {
+        try {
+          const myGroups = await userGroupsCache(connection, userId);
+          const myGroupsInfo = groups.filter((group) =>
+            myGroups.includes(group.group_id)
+          );
+
+          return res.status(200).send({
+            success: true,
+            status: 200,
+            data: { groups: formattedGroups, my_groups: myGroupsInfo },
+          });
+        } catch (err) {
+          console.log(err);
+          const response = RESPONSE_MESSAGES.error();
+          return res.status(response.status).send(response);
+        }
+      },
+      async () => {
+        try {
+          res.status(200).send({
+            success: true,
+            status: 200,
+            data: { groups: formattedGroups },
+          });
+        } catch (err) {
+          console.log(err);
+          const response = RESPONSE_MESSAGES.error();
+          return res.status(response.status).send(response);
+        }
+      }
+    );
   } catch (err) {
     console.log(err);
     const response = RESPONSE_MESSAGES.error();

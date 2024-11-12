@@ -1,4 +1,3 @@
-
 .ShareUserBox {
   width: 3rem;
   height: 3rem;
@@ -20,4 +19,8 @@
 .ShareUserBox:hover .hoverText {
   bottom: -1.5rem;
   opacity: 1;
+}
+
+.ShareUserBox.pending img {
+  filter: brightness(50%);
 }

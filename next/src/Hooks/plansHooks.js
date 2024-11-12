@@ -2,6 +2,8 @@ import { getPlans, getPlansGoogle, getPlansPlanUsers } from "@/Api/plansApi";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useAccount } from "./accountHooks";
 import { DateTime } from "luxon";
+import { useCallback } from "react";
+import { updateQueryData } from "@/app/utils/Tool";
 
 function usePlans() {
   const { accountData } = useAccount();
@@ -91,19 +93,27 @@ function usePlanUsers({ plan_id, isEditable, type }) {
     staleTime: 1000 * 60 * 10,
     enabled:
       !!plan_id && plan_id !== "0000000000" && isEditable && type !== "google",
+    select: (response) => response?.data?.users || [],
+    placeholderData: [],
   });
 
-  const clearPlanUsers = () => {
-    queryClient.removeQueries({ queryKey: ["usePlanUsers", plan_id] });
-  };
+  const clearPlanUsers = useCallback((planId) => {
+    queryClient.removeQueries({ queryKey: ["usePlanUsers", planId] });
+  }, []);
 
-  const { data: usePlansPlanUsersData, isLoading: usePlansPlanUsersIsLoading } =
-    queryResult;
+  const { data: planUsers, isLoading: planUsersIsLoading } = queryResult;
+
+  const updatePlanUsers = useCallback(async (planId, newData) => {
+    await queryClient.setQueryData(["usePlanUsers", planId], (oldData) => {
+      return updateQueryData(oldData, newData, "users");
+    });
+  }, []);
 
   return {
-    usePlansPlanUsersData,
-    usePlansPlanUsersIsLoading,
+    planUsers,
+    planUsersIsLoading,
     clearPlanUsers,
+    updatePlanUsers,
     ...queryResult,
   };
 }
