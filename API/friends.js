@@ -176,9 +176,10 @@ async function replyFriendRequest({
     const targetName = friendRequest.target_name;
 
     if (!accepted) {
-      await connection.query(`DELETE FROM friends WHERE friendship_id = ?`, [
-        notificationId,
-      ]);
+      await connection.query(
+        `DELETE FROM friends WHERE friendship_id = ? AND friend_id = ?`,
+        [notificationId, userId]
+      );
       return {
         success: true,
         status: 200,
@@ -193,10 +194,10 @@ async function replyFriendRequest({
       status: "accepted",
     };
 
-    await connection.query(`UPDATE friends SET ? WHERE friendship_id = ?`, [
-      friend,
-      notificationId,
-    ]);
+    await connection.query(
+      `UPDATE friends SET ? WHERE friendship_id = ? AND friend_id = ?`,
+      [friend, notificationId, userId]
+    );
 
     //create chat only if it does not exist
     const [[chatroom]] = await connection.query(
