@@ -70,40 +70,30 @@ export default function NotificationsContainer() {
     friendsTrendRefetch();
   }, []);
 
-  const onDeleteNotification = useCallback(
-    (notificationId) => {
-      filterNotification(notificationId);
+  const onDeleteNotification = useCallback((notificationId) => {
+    filterNotification(notificationId);
 
-      deleteNotification(notificationId);
-    },
-    [notifications]
-  );
+    deleteNotification(notificationId);
+  }, []);
 
-  const chatRequestReply = useCallback(
-    async (notification, accepted) => {
-      const targetId = notification?.f?.user_id;
-      const notificationId = notification.notification_id;
+  const chatRequestReply = useCallback(async (notification, accepted) => {
+    const targetId = notification?.f?.user_id;
+    const notificationId = notification.notification_id;
 
-      filterNotification(notificationId);
+    filterNotification(notificationId);
 
-      postChatRequestReply({
-        targetId,
-        accepted,
-        notificationId,
-      });
-    },
-    [notifications]
-  );
+    postChatRequestReply({
+      targetId,
+      accepted,
+      notificationId,
+    });
+  }, []);
 
-  const planShareRespond = useCallback(
-    (notification, accepted) => {
-      const notificationId = notification.notification_id;
-      filterNotification(notificationId);
+  const planShareRespond = useCallback((notificationId, accepted) => {
+    filterNotification(notificationId);
 
-      postPlanShareRespond(notificationId, accepted);
-    },
-    [notifications]
-  );
+    postPlanShareRespond(notificationId, accepted);
+  }, []);
 
   return (
     <div className={styles.NotificationsContainer}>
@@ -154,6 +144,48 @@ export default function NotificationsContainer() {
               </NotificationContainer>
             );
           } else if (notification.type === "friend_request_accepted") {
+            return (
+              <NotificationContainer
+                key={i}
+                message={notification.message}
+                userInfo={notification.userInfo}
+              >
+                <NotificationBtn
+                  hoverText={"Got It"}
+                  onClick={() => {
+                    onDeleteNotification(notification.notification_id);
+                  }}
+                >
+                  <FontAwesomeIcon icon={faCheck} />
+                </NotificationBtn>
+              </NotificationContainer>
+            );
+          } else if (notification.type === "plan_share") {
+            return (
+              <NotificationContainer
+                key={i}
+                message={notification.message}
+                userInfo={notification.userInfo}
+              >
+                <NotificationBtn
+                  hoverText={"Accept"}
+                  onClick={() => {
+                    planShareRespond(notification.notification_id, true);
+                  }}
+                >
+                  <FontAwesomeIcon icon={faCheck} />
+                </NotificationBtn>
+                <NotificationBtn
+                  hoverText={"Decline"}
+                  onClick={() => {
+                    planShareRespond(notification.notification_id, false);
+                  }}
+                >
+                  <FontAwesomeIcon icon={faXmark} />
+                </NotificationBtn>
+              </NotificationContainer>
+            );
+          } else if (notification.type === "plan_shared") {
             return (
               <NotificationContainer
                 key={i}

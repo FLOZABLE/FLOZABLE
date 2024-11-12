@@ -20,7 +20,6 @@ const {
 const {
   googleAccessTokenCache,
   userCache,
-  notificationCache,
   userFriendsCache,
   clearGoogleAccessToken,
 } = require("../services/redisLoader");
@@ -57,7 +56,7 @@ Router.get("/", async (req, res) => {
           p.user_id = ? OR ps.user_id = ?
         GROUP BY 
           p.plan_id;`,
-        [userId, `%${userId}%`]
+        [userId, userId]
       );
       plans.map((plan) => {
         plan.type = "local";
@@ -180,7 +179,7 @@ Router.get("/google", async (req, res) => {
         data: { plans: plans },
       });
     } catch (err) {
-      console.log(err);
+      //console.log(err);
       if (!err?.response?.data?.error) {
         const response = RESPONSE_MESSAGES.error();
         return res.status(response.status).send(response);
@@ -813,7 +812,7 @@ Router.delete("/plan/share", async (req, res) => {
 Router.post("/plan/share/respond", async (req, res) => {
   autoSignin(req, res, async (userId) => {
     try {
-      const { notificationId, accepted } = req.body;
+      const { notification_id: notificationId, accepted } = req.body;
 
       const isValidAcceped = validateBoolean(accepted, "accept", true);
 
@@ -826,40 +825,66 @@ Router.post("/plan/share/respond", async (req, res) => {
         });
       }
 
-      const notification = await redisClient.hget(
-        `user:${userId}:notifications`,
-        notificationId
+      const isValidNotificationId = validateStrictString(
+        notificationId,
+        "notification id",
+        10
       );
-
-      if (!notification) {
-        const response = RESPONSE_MESSAGES.expiredRequest();
+      if (!isValidNotificationId.isValid) {
+        const response = RESPONSE_MESSAGES.validationError(
+          isValidNotificationId
+        );
         return res.status(response.status).send(response);
       }
 
-      const plan_id = JSON.parse(notification).pi;
-
-      redisClient.hdel(`user:${userId}:notifications`, notificationId);
-
       const connection = pool.promise();
 
-      if (accepted) {
-        const shared = {
-          plan_id,
-          user_Id: userId,
-        };
+      await connection.query(
+        "DELETE FROM notifications WHERE user_id = ? AND notification_id = ?",
+        [userId, notificationId]
+      );
 
-        await connection.query(`INSERT INTO plan_share SET ?`, [shared]);
+      console.log("gddd");
+
+      if (!accepted) {
+        const [result] = await connection.query(
+          `
+          DELETE FROM plan_share
+          WHERE plan_share_id = ? AND user_id = ?
+        `,
+          [notificationId, userId]
+        );
+
+        console.log(result);
+
+        if (!result.affectedRows) {
+          const response = RESPONSE_MESSAGES.expiredRequest();
+          return res.status(response.status).send(response);
+        }
+
         return res.status(200).send({
           success: true,
           status: 200,
-          message: `Accepted share request!`,
+          message: `Declined share request!`,
         });
       }
 
-      res.status(200).send({
+      const date = Math.floor(Date.now() / 1000);
+
+      const shared = {
+        date,
+        status: "accepted",
+      };
+
+      await connection.query(
+        `UPDATE plan_share SET ? WHERE plan_share_id = ? AND user_id = ?`,
+        [shared, notificationId, userId]
+      );
+
+      return res.status(200).send({
         success: true,
         status: 200,
-        message: `Declined share request!`,
+        message: `Accepted share request!`,
       });
     } catch (err) {
       console.log(err);
