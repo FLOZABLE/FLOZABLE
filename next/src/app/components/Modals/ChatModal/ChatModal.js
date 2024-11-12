@@ -31,7 +31,6 @@ function ChatModal({}) {
   const { accountData } = useAccount();
   const { chatModal, setChatModal } = useContext(ChatModalContext);
 
-  const [chatrooms, setChatRooms] = useState([]);
   const [messages, setMessages] = useState([]);
   const [messageDataOptions, setMessageDataOptions] = useState({
     chatroomId: null,
@@ -48,7 +47,7 @@ function ChatModal({}) {
   const [scrollBottom, setScrollBottom] = useState(0);
   //const debouncedScrollBottom = useDebounce(scrollBottom, 300);
 
-  const { chatRoomsData } = useChatRooms();
+  const { chatrooms, updateChatrooms } = useChatRooms();
   const { chatroomMembersData } = useChatRoomMembers(chatModal.chatroom);
   const { chatMessagesData, fetchNextPage, hasNextPage } =
     useChatMessages(messageDataOptions);
@@ -89,12 +88,6 @@ function ChatModal({}) {
   }, [chatroomMembersData]);
 
   useEffect(() => {
-    if (!chatRoomsData?.success) return;
-
-    setChatRooms(chatRoomsData.data.chatrooms);
-  }, [chatRoomsData]);
-
-  useEffect(() => {
     //console.log(inView, "gd", hasNextPage);
     if (inView && hasNextPage) {
       console.log("fetch");
@@ -110,14 +103,8 @@ function ChatModal({}) {
     chatMessagesData.pages.map((page) => {
       if (!page?.success) return;
 
-      allMessages.push(...page.data.messages);
+      allMessages.push(...page);
     });
-    /* const allMessages = chatMessagesData.pages.reduce((acc, page) => {
-      if (page?.success) {
-        return [...acc, ...page.messages];
-      }
-      return acc;
-    }, []); */
     allMessages.sort((a, b) => a.sent_at - b.sent_at);
 
     const container = chatsContainerRef.current;
@@ -157,7 +144,7 @@ function ChatModal({}) {
       });
 
       //change unread/last read value when selected chatroom changes
-      setChatRooms((prev) => {
+      updateChatrooms((prev) => {
         const newState = [...prev];
         const chatroomIndex = newState.findIndex(
           (chatroom) => chatroom.chatroom_id === chatModal.chatroom
@@ -190,7 +177,7 @@ function ChatModal({}) {
     const onChatMessage = ({ message }) => {
       console.log(message);
       scrollToBottom("smooth");
-      setChatRooms((prev) => {
+      updateChatrooms((prev) => {
         const newChatrooms = [...prev];
         const chatroomIndex = newChatrooms.findIndex(
           (chatroom) => chatroom.chatroom_id === message.chatroom_id

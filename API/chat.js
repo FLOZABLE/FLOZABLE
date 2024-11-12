@@ -14,6 +14,7 @@ const { validateStrictString, validateBoolean } = require("../utils/validate");
 const { mainIo } = require("../sockets/io");
 const { autoSignin } = require("./auth");
 const RESPONSE_MESSAGES = require("../utils/responses");
+const { NOTIFICATION_MESSAGES } = require("../Constant");
 
 Router.get("/rooms", async (req, res) => {
   autoSignin(req, res, async (userId) => {
@@ -160,7 +161,7 @@ Router.get("/members", async (req, res) => {
 Router.post("/request", async (req, res) => {
   autoSignin(req, res, async (userId) => {
     try {
-      const targetId = req.body.target_id;
+      const { target_id: targetId } = req.body;
 
       const isValidTargetId = validateStrictString(targetId, "target user", 10);
 
@@ -222,12 +223,17 @@ Router.post("/request", async (req, res) => {
         return res.status(response.status).send(response);
       }
 
-      const targetDmRequests = await notificationCache(targetId, 4);
-      const prevDmRequest = targetDmRequests.find(
-        (dmRequest) => dmRequest.f === userId
+      const [[existingNotification]] = await connection.query(
+        `
+        SELECT notification_id 
+        FROM notifications 
+        WHERE user_id = ? AND from_user_id = ? AND type = "chat_request"
+        LIMIT 1
+        `,
+        [targetId, userId]
       );
 
-      if (prevDmRequest) {
+      if (existingNotification) {
         return res.status(400).send({
           success: false,
           status: 400,
@@ -236,23 +242,36 @@ Router.post("/request", async (req, res) => {
         });
       }
 
-      const id = generateRandomId(5);
-      const date = Math.floor(new Date().getTime() / 1000);
-      const notification = { t: 4, f: userId, d: date };
-      const socketNotification = {
-        i: id,
-        t: 4,
-        f: userInfo,
-        d: date,
+      const notification_id = generateRandomId(10);
+      const date = Math.floor(Date.now() / 1000);
+
+      const notification = {
+        notification_id,
+        user_id: targetId,
+        from_user_id: userId,
+        sent_at: date,
+        type: "chat_request",
+        related_id: userId,
       };
-      mainIo.to(targetId).emit("notification", socketNotification);
-      redisClient.hset(
-        `user:${targetId}:notifications`,
-        id,
-        JSON.stringify(notification)
+
+      await connection.query(
+        `
+        INSERT INTO notifications SET ?
+      `,
+        [notification]
       );
 
-      res.status(200).send({
+      const socketNotification = {
+        ...notification,
+        userinfo: userInfo,
+      };
+      socketNotification.message = NOTIFICATION_MESSAGES.chatRequest(
+        userInfo.name
+      );
+
+      mainIo.to(targetId).emit("notification", socketNotification);
+
+      return res.send({
         success: true,
         status: 200,
         message: `Sent request to ${targetUser.name}`,
@@ -268,22 +287,7 @@ Router.post("/request", async (req, res) => {
 Router.post("/request/reply", async (req, res) => {
   autoSignin(req, res, async (userId) => {
     try {
-      const {
-        target_id: targetId,
-        notification_id: notificationId,
-        accepted,
-      } = req.body;
-
-      const isValidTargetId = validateStrictString(targetId, "target user", 10);
-
-      if (!isValidTargetId.isValid) {
-        return res.status(400).send({
-          success: false,
-          status: 400,
-          message: isValidTargetId.reason,
-          error: { reason: isValidTargetId.reason },
-        });
-      }
+      const { notification_id: notificationId, accepted } = req.body;
 
       const isValidAcceped = validateBoolean(accepted, "accept", true);
 
@@ -296,22 +300,22 @@ Router.post("/request/reply", async (req, res) => {
         });
       }
 
-      const chatReq = await redisClient.hget(
-        `user:${userId}:notifications`,
-        notificationId
+      const connection = pool.promise();
+
+      const [[chatrequest]] = await connection.query(
+        "SELECT from_user_id FROM notifications WHERE user_id = ? AND notification_id = ?",
+        [userId, notificationId]
       );
-      if (!chatReq) {
+
+      if (!chatrequest) {
         const response = RESPONSE_MESSAGES.expiredRequest();
         return res.status(response.status).send(response);
       }
 
-      const parsedChatReq = JSON.parse(chatReq);
-      if (!parsedChatReq.f === targetId) {
-        const response = RESPONSE_MESSAGES.expiredRequest();
-        return res.status(response.status).send(response);
-      }
-
-      redisClient.hdel(`user:${userId}:notifications`, notificationId);
+      await connection.query(
+        "DELETE FROM notifications WHERE user_id = ? AND notification_id = ?",
+        [userId, notificationId]
+      );
 
       if (!accepted) {
         return res.status(200).send({
@@ -320,7 +324,8 @@ Router.post("/request/reply", async (req, res) => {
           message: `Declined chat request`,
         });
       }
-      const connection = pool.promise();
+
+      const targetId = chatrequest.from_user_id;
 
       const usersInfo = await usersCache(connection, [userId, targetId], false);
 

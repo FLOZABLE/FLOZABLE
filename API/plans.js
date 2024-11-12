@@ -688,7 +688,7 @@ Router.post("/plan/share", async (req, res) => {
         const socketNotification = {
           ...notification,
           plan_share_id: notification_id,
-          userInfo,
+          userinfo: userInfo,
         };
         //share directly when it's friend
         if (userFriends.includes(user)) {

@@ -64,27 +64,31 @@ Router.get("/", async (req, res) => {
           (user) => user.user_id === notification.from_user_id
         );
 
-        notification.userInfo = userInfo ? userInfo : {};
+        notification.userinfo = userInfo ? userInfo : {};
 
         if (notification.type === "friend_request") {
           notification.message = NOTIFICATION_MESSAGES.friendRequest(
-            notification.userInfo.name
+            notification.userinfo.name
           );
         } else if (notification.type === "friend_request_accepted") {
           notification.message = NOTIFICATION_MESSAGES.friendRequestAccept(
-            notification.userInfo.name
+            notification.userinfo.name
           );
         } else if (notification.type === "plan_share") {
           notification.extra_info = JSON.parse(notification.extra_info);
           notification.message = NOTIFICATION_MESSAGES.planShare(
-            notification.userInfo.name,
+            notification.userinfo.name,
             notification.extra_info.title
           );
         } else if (notification.type === "plan_shared") {
           notification.extra_info = JSON.parse(notification.extra_info);
           notification.message = NOTIFICATION_MESSAGES.planShared(
-            notification.userInfo.name,
+            notification.userinfo.name,
             notification.extra_info.title
+          );
+        } else if (notification.type === "chat_request") {
+          notification.message = NOTIFICATION_MESSAGES.chatRequest(
+            notification.userinfo.name
           );
         }
       });
@@ -189,8 +193,6 @@ Router.delete("/notification", async (req, res) => {
         "DELETE FROM notifications WHERE user_id = ? AND notification_id = ?",
         [userId, notificationId]
       );
-
-      console.log(result);
 
       if (!result.affectedRows) {
         const response = RESPONSE_MESSAGES.expiredRequest();
