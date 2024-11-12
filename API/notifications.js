@@ -16,35 +16,41 @@ Router.get("/", async (req, res) => {
       const connection = pool.promise();
       const [notifications] = await connection.query(
         `
-        SELECT 'friend_request_sent' AS type, friendship_id AS notification_id, friend_id as from_user_id, date as sent_at
+        SELECT 'friend_request_sent' AS type, friendship_id AS notification_id, friend_id AS from_user_id, date AS sent_at, NULL AS extra_info
         FROM friends
         WHERE user_id = ? AND status = "pending"
-
+      
         UNION ALL
-
-        SELECT 'friend_request' AS type, friendship_id AS notification_id, user_id as from_user_id, date as sent_at
+      
+        SELECT 'friend_request' AS type, friendship_id AS notification_id, user_id AS from_user_id, date AS sent_at, NULL AS extra_info
         FROM friends
         WHERE friend_id = ? AND status = "pending"
-
+      
         UNION ALL
-
-        SELECT 'subject_share' AS type, subject_share_id AS notification_id, s.user_id as from_user_id, ss.date as sent_at
+      
+        SELECT 'subject_share' AS type, subject_share_id AS notification_id, s.user_id AS from_user_id, ss.date AS sent_at, NULL AS extra_info
         FROM subject_share ss
-        LEFT JOIN subjects s ON s.subject_id  = ss.subject_id
+        LEFT JOIN subjects s ON s.subject_id = ss.subject_id
         WHERE ss.user_id = ?
-
+      
         UNION ALL
-
-        SELECT 'plan_share' AS type, plan_share_id AS notification_id, p.user_id as from_user_id, ps.date as sent_at
+      
+        SELECT 'plan_share' AS type, plan_share_id AS notification_id, p.user_id AS from_user_id, ps.date AS sent_at, 
+          JSON_OBJECT('title', p.title, 'description', p.description) AS extra_info
         FROM plan_share ps
-        LEFT JOIN plans p ON p.plan_id  = ps.plan_id
-        WHERE ps.user_id = ?
-
+        LEFT JOIN plans p ON p.plan_id = ps.plan_id
+        WHERE ps.user_id = ? AND ps.status = "pending"
+      
         UNION ALL
-
-        SELECT type, notification_id, from_user_id, sent_at
-        FROM notifications
-        WHERE user_id = ?
+      
+        SELECT n.type, n.notification_id, n.from_user_id, n.sent_at, 
+          CASE 
+            WHEN n.type = 'plan_shared' THEN JSON_OBJECT('title', p.title)
+            ELSE NULL 
+          END AS extra_info
+        FROM notifications n
+        LEFT JOIN plans p ON p.plan_id = n.related_id
+        WHERE n.user_id = ?
         `,
         [userId, userId, userId, userId, userId]
       );
@@ -64,17 +70,30 @@ Router.get("/", async (req, res) => {
           notification.message = NOTIFICATION_MESSAGES.friendRequest(
             notification.userInfo.name
           );
-        } else if (notification.type == "friend_request_accepted") {
+        } else if (notification.type === "friend_request_accepted") {
           notification.message = NOTIFICATION_MESSAGES.friendRequestAccept(
             notification.userInfo.name
           );
+        } else if (notification.type === "plan_share") {
+          notification.extra_info = JSON.parse(notification.extra_info);
+          notification.message = NOTIFICATION_MESSAGES.planShare(
+            notification.userInfo.name,
+            notification.extra_info.title
+          );
+        } else if (notification.type === "plan_shared") {
+          notification.extra_info = JSON.parse(notification.extra_info);
+          notification.message = NOTIFICATION_MESSAGES.planShared(
+            notification.userInfo.name,
+            notification.extra_info.title
+          );
         }
       });
+      console.log(notifications);
       res.send({ success: true, status: 200, data: { notifications } });
     } catch (err) {
       console.log(err);
       const response = RESPONSE_MESSAGES.error();
-      //return res.status(response.status).send(response);
+      return res.status(response.status).send(response);
     }
   });
 });
