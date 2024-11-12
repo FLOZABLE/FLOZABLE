@@ -28,6 +28,7 @@ const schedule = require("node-schedule");
 const RESPONSE_MESSAGES = require("../utils/responses");
 const { mainIo } = require("../sockets/io");
 const { googleOauth2client, autoSignin } = require("./auth");
+const { NOTIFICATION_MESSAGES } = require("../Constant");
 
 Router.get("/", async (req, res) => {
   autoSignin(req, res, async (userId) => {
@@ -575,44 +576,32 @@ Router.get("/plan/users", async (req, res) => {
       }
 
       const connection = pool.promise();
-
       const [[planInfo]] = await connection.query(
         `
         SELECT
-          p.plan_id,
           p.user_id,
-          JSON_ARRAYAGG(JSON_OBJECT('user_id', u.user_id, 'name', u.name)) AS shared,
+          CASE
+            WHEN COUNT(u.user_id) = 0 THEN '[]'
+            ELSE JSON_ARRAYAGG(JSON_OBJECT('user_id', u.user_id, 'name', u.name, 'status', ps.status))
+          END AS share
         FROM plans p
-        LEFT JOIN users u ON u.user_id = ps.user_id
         LEFT JOIN plan_share ps ON ps.plan_id = p.plan_id
+        LEFT JOIN users u ON u.user_id = ps.user_id
         WHERE p.plan_id = ?
         GROUP BY p.plan_id
       `,
         [planId]
       );
 
-      if (!planInfo) {
-        const response = RESPONSE_MESSAGES.noPlan();
+      planInfo.share = JSON.parse(planInfo.share);
+
+      const sharedUserIds = planInfo.share.map((share) => share.user_id);
+      if (!sharedUserIds.includes(userId) && planInfo.user_id !== userId) {
+        const response = RESPONSE_MESSAGES.nonMember();
         return res.status(response.status).send(response);
       }
 
-      planInfo.share = JSON.parse(planInfo.share).filter(
-        (user) => user.user_id
-      );
-      planInfo.shared = JSON.parse(planInfo.shared).filter(
-        (user) => user.user_id
-      );
-
-      const allowedUsers = [
-        ...planInfo.shared,
-        ...planInfo.share,
-        { user_id: planInfo.user_id },
-      ];
-      if (!allowedUsers.find((user) => user.user_id === userId)) {
-        return res.status(400).send(RESPONSE_MESSAGES["non-memeber"]);
-      }
-
-      res.status(200).send({ success: true, status: 200, data: { planInfo } });
+      res.send({ success: true, status: 200, data: { users: planInfo.share } });
     } catch (err) {
       console.log(err);
       const response = RESPONSE_MESSAGES.error();
@@ -637,7 +626,7 @@ Router.post("/plan/share", async (req, res) => {
 
       const connection = pool.promise();
 
-      const [userInfo, userFriends, plan] = await Promise.all([
+      const [userInfo, userFriends, [[plan]]] = await Promise.all([
         userCache(connection, userId),
         userFriendsCache(connection, userId),
         connection.query(
@@ -645,7 +634,7 @@ Router.post("/plan/share", async (req, res) => {
           SELECT
             p.plan_id,
             p.title,
-            GROUP_CONCAT(DISTINCT ps.user_id) AS share,
+            GROUP_CONCAT(DISTINCT ps.user_id) AS share
           FROM plans p
           LEFT JOIN plan_share ps ON ps.plan_id = p.plan_id
           WHERE p.plan_id = ? AND p.user_id = ?
@@ -666,69 +655,84 @@ Router.post("/plan/share", async (req, res) => {
       }
 
       plan.share = plan.share ? plan.share.split(",") : [];
-      plan.shared = plan.shared ? plan.shared.split(",") : [];
 
-      const filteredUsers = users.filter(
-        (user) => !plan.share.includes(user) && !plan.shared.includes(user)
-      );
+      //users that is not shared yet
+      const filteredUsers = users.filter((user) => !plan.share.includes(user));
 
       const friends = filteredUsers.filter((user) =>
         userFriends.includes(user)
       );
 
-      if (friends.length) {
-        const newShared = friends.map((friend) => [planId, friend]);
-
-        await connection.query(
-          `INSERT IGNORE INTO plan_shared 
-          (plan_id, user_id) 
-          VALUES ?`,
-          [newShared]
-        );
-      }
-
       const nonFriends = filteredUsers.filter(
         (user) => !userFriends.includes(user)
       );
 
-      if (nonFriends.length) {
-        const newShare = nonFriends.map((friend) => [planId, friend]);
+      const date = Math.floor(Date.now() / 1000);
 
+      const notifications = [];
+
+      //friends  = accepted, non friend = send request
+      const newShare = [];
+
+      filteredUsers.map((user) => {
+        const notification_id = generateRandomId(10);
+
+        const notification = {
+          notification_id,
+          user_id: user,
+          from_user_id: userId,
+          sent_at: date,
+          type: "plan_shared",
+          related_id: planId,
+        };
+
+        const socketNotification = {
+          ...notification,
+          plan_share_id: notification_id,
+          userInfo,
+        };
+        //share directly when it's friend
+        if (userFriends.includes(user)) {
+          notifications.push(notification);
+
+          socketNotification.message = NOTIFICATION_MESSAGES.planShared(
+            userInfo.name,
+            plan.title
+          );
+
+          mainIo.to(user).emit("notification", socketNotification);
+          newShare.push([notification_id, planId, user, "accepted", date]);
+        } else {
+          //non friends
+          socketNotification.type = "plan_share";
+          socketNotification.message = NOTIFICATION_MESSAGES.planShare(
+            userInfo.name,
+            plan.title
+          );
+
+          mainIo.to(user).emit("notification", socketNotification);
+          newShare.push([notification_id, planId, user, "pending", date]);
+        }
+      });
+
+      if (newShare.length) {
         await connection.query(
-          `INSERT IGNORE INTO plan_share 
-          (plan_id, user_id) 
+          `INSERT IGNORE INTO plan_share
+          (plan_share_id, plan_id, user_id, status, date) 
           VALUES ?`,
           [newShare]
         );
       }
 
-      const date = Math.floor(new Date().getTime() / 1000);
-
-      nonFriends.map(async (targetId) => {
-        const id = generateRandomId(5);
-        const notification = {
-          t: 7,
-          f: userId,
-          d: date,
-          n: plan.title,
-          pi: planId,
-        };
-        const socketNotif = {
-          i: id,
-          t: 7,
-          f: userInfo,
-          d: date,
-          n: plan.title,
-          pi: planId,
-        };
-        mainIo.to(targetId).emit("notification", socketNotif);
-        redisClient.hset(
-          `user:${targetId}:notifications`,
-          id,
-          JSON.stringify(notification)
+      if (notifications.length) {
+        await connection.query(
+          `INSERT IGNORE INTO notifications
+          (notification_id, user_id, from_user_id, sent_at, type, related_id) 
+          VALUES ?`,
+          [notifications.map((notification) => Object.values(notification))]
         );
-      });
-      console.log("shared", friends, nonFriends);
+      }
+
       res.status(200).send({
         success: true,
         message: "Plan shared!",
@@ -746,7 +750,7 @@ Router.post("/plan/share", async (req, res) => {
 Router.delete("/plan/share", async (req, res) => {
   autoSignin(req, res, async (userId) => {
     try {
-      const { targetId, planId } = req.body;
+      const { target_id: targetId, plan_id: planId } = req.body;
 
       const isValidTargetId = validateStrictString(targetId, "user id", 10);
 
@@ -767,7 +771,7 @@ Router.delete("/plan/share", async (req, res) => {
           p.plan_id,
           p.title,
           p.user_id,
-          JSON_ARRAYAGG(JSON_OBJECT('user_id', u.user_id, 'name', u.name)) AS shared,
+          JSON_ARRAYAGG(JSON_OBJECT('user_id', u.user_id, 'name', u.name)) AS share
         FROM plans p
         LEFT JOIN plan_share ps ON ps.plan_id = p.plan_id
         LEFT JOIN users u ON u.user_id = ps.user_id
@@ -780,33 +784,20 @@ Router.delete("/plan/share", async (req, res) => {
       planInfo.share = JSON.parse(planInfo.share).filter(
         (user) => user.user_id
       );
-      planInfo.shared = JSON.parse(planInfo.shared).filter(
-        (user) => user.user_id
-      );
 
-      const allowedUsers = [
-        ...planInfo.shared,
-        ...planInfo.share,
-        { user_id: planInfo.user_id },
-      ];
-      if (!allowedUsers.find((user) => user.user_id === userId)) {
-        return res.status(400).send(RESPONSE_MESSAGES["non-memeber"]);
+      const sharedIds = planInfo.share.map((share) => share.user_id);
+      if (!sharedIds.includes(userId) && planInfo.user_id !== userId) {
+        const response = RESPONSE_MESSAGES.nonMember();
+        return res.status(response.status).send(response);
       }
 
       await connection.query(
         `
         DELETE FROM plan_share WHERE plan_id = ? AND user_id = ?;
+        DELETE FROM notifications WHERE related_id = ? AND type = "plan_shared" AND from_user_id = ? AND user_id = ?
         `,
-        [planId, targetId, planId, targetId]
+        [planId, targetId, planId, userId, targetId]
       );
-
-      const planRequests = await notificationCache(targetId, 7);
-      const planRequest = planRequests.find((planRequest) => {
-        return planRequest.pi === planId;
-      });
-      if (planRequest) {
-        redisClient.hdel(`user:${targetId}:notifications`, planRequest.i);
-      }
 
       res
         .status(200)

@@ -25,10 +25,6 @@
   align-items: center;
 }
 
-.UserBoxes div#share img {
-  filter: brightness(50%);
-}
-
 .UserBoxes > div {
   display: flex;
 }
