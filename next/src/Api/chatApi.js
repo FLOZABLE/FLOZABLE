@@ -35,10 +35,9 @@ async function postChatRequest(targetId) {
   );
 }
 
-async function postChatRequestReply({ targetId, accepted, notificationId }) {
+async function postChatRequestReply({ accepted, notificationId }) {
   return requestHandler(
     AxiosInstance.post(`/chat/request/reply`, {
-      target_id: targetId,
       notification_id: notificationId,
       accepted,
     })

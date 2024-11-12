@@ -76,14 +76,11 @@ export default function NotificationsContainer() {
     deleteNotification(notificationId);
   }, []);
 
-  const chatRequestReply = useCallback(async (notification, accepted) => {
-    const targetId = notification?.f?.user_id;
-    const notificationId = notification.notification_id;
+  const chatRequestReply = useCallback(async (notificationId, accepted) => {
 
     filterNotification(notificationId);
 
     postChatRequestReply({
-      targetId,
       accepted,
       notificationId,
     });
@@ -123,7 +120,7 @@ export default function NotificationsContainer() {
               <NotificationContainer
                 key={i}
                 message={notification.message}
-                userInfo={notification.userInfo}
+                userInfo={notification.userinfo}
               >
                 <NotificationBtn
                   hoverText={"Accept"}
@@ -148,7 +145,7 @@ export default function NotificationsContainer() {
               <NotificationContainer
                 key={i}
                 message={notification.message}
-                userInfo={notification.userInfo}
+                userInfo={notification.userinfo}
               >
                 <NotificationBtn
                   hoverText={"Got It"}
@@ -165,7 +162,7 @@ export default function NotificationsContainer() {
               <NotificationContainer
                 key={i}
                 message={notification.message}
-                userInfo={notification.userInfo}
+                userInfo={notification.userinfo}
               >
                 <NotificationBtn
                   hoverText={"Accept"}
@@ -190,7 +187,7 @@ export default function NotificationsContainer() {
               <NotificationContainer
                 key={i}
                 message={notification.message}
-                userInfo={notification.userInfo}
+                userInfo={notification.userinfo}
               >
                 <NotificationBtn
                   hoverText={"Got It"}
@@ -199,6 +196,31 @@ export default function NotificationsContainer() {
                   }}
                 >
                   <FontAwesomeIcon icon={faCheck} />
+                </NotificationBtn>
+              </NotificationContainer>
+            );
+          } else if (notification.type === "chat_request") {
+            return (
+              <NotificationContainer
+                key={i}
+                message={notification.message}
+                userInfo={notification.userinfo}
+              >
+                <NotificationBtn
+                  hoverText={"Accept"}
+                  onClick={() => {
+                    chatRequestReply(notification.notification_id, true);
+                  }}
+                >
+                  <FontAwesomeIcon icon={faCheck} />
+                </NotificationBtn>
+                <NotificationBtn
+                  hoverText={"Decline"}
+                  onClick={() => {
+                    chatRequestReply(notification.notification_id, false);
+                  }}
+                >
+                  <FontAwesomeIcon icon={faXmark} />
                 </NotificationBtn>
               </NotificationContainer>
             );
