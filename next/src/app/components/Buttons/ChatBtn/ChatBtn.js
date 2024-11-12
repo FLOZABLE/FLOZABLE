@@ -11,7 +11,7 @@ import { useAccount } from "@/Hooks/accountHooks";
 export default function ChatBtn({ targetInfo, padding }) {
   const { setChatModal } = useContext(ChatModalContext);
 
-  const { chatRoomsData } = useChatRooms();
+  const { chatrooms } = useChatRooms();
   const { accountData } = useAccount();
 
   const chatRequest = useCallback(async () => {
@@ -47,7 +47,7 @@ export default function ChatBtn({ targetInfo, padding }) {
                 name: null,
               }));
             }
-            const chatroom = chatRoomsData?.data?.chatrooms?.find(
+            const chatroom = chatrooms.find(
               (chatroom) =>
                 chatroom.members.sort().join() ===
                 [accountData.user_id, targetInfo?.user_id].sort().join()

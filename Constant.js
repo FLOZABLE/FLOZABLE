@@ -164,6 +164,10 @@ const NOTIFICATION_MESSAGES = {
     contents: [NOTIFICATION_MARKERS.PROFILE_CARD, `shared plan "${planName}"!`],
     title: `${name} shared plan "${planName}"!`,
   }),
+  chatRequest: (name) => ({
+    contents: [NOTIFICATION_MARKERS.PROFILE_CARD, `wants to chat!`],
+    title: `${name} wants to chat!`,
+  }),
 };
 
 module.exports = {

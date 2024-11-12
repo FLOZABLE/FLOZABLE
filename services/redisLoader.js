@@ -491,6 +491,12 @@ async function notificationCache(userId, type = -1) {
   }
 }
 
+/**
+ * 
+ * @param {*} userId 
+ * @returns 
+ * get user chatrooms unreads/new msgs count, last read id
+ */
 async function userChatroomsCache(userId) {
   try {
     const chatrooms = await redisClient.hgetall(`user:${userId}:chatrooms`);
