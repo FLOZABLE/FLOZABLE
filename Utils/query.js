@@ -165,8 +165,8 @@ async function createPlanShare() {
   await connection.query(`
   CREATE TABLE IF NOT EXISTS plan_share (
     plan_share_id VARCHAR(10) NOT NULL,
-    plan_id VARCHAR(10),
-    user_id VARCHAR(10),
+    plan_id VARCHAR(10) NOT NULL,
+    user_id VARCHAR(10) NOT NULL,
     status ENUM("pending", "accepted") DEFAULT "pending",
     date INT(10),
     FOREIGN KEY (user_id) REFERENCES users(user_id),

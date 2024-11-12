@@ -56,6 +56,8 @@ export default function PlanModal() {
 
   const { plans, setPlans } = useContext(PlansContext);
 
+  const [newShare, setNewShare] = useState([]);
+
   const modalRef = useRef();
   const addSubjectBtnRef = useRef();
   const submitBtnRef = useRef();
@@ -64,11 +66,9 @@ export default function PlanModal() {
   const router = useRouter();
 
   const { vapidKeysData } = useVapidKeys();
-  const { planUsersData, planUsersIsLoading, clearPlanUsers } =
+  const { planUsers, planUsersIsLoading, updatePlanUsers, clearPlanUsers } =
     usePlanUsers(planModal);
 
-  const [shared, setShared] = useState([]);
-  const [share, setShare] = useState([]);
   const [planModalss, setPlanModalss] = useState(null);
 
   const planId = searchParams.get("plan");
@@ -142,15 +142,6 @@ export default function PlanModal() {
   }, [tutorial]);
 
   useEffect(() => {
-    if (!planUsersData?.success) return;
-
-    const { shared, share } = planUsersData.planInfo;
-
-    setShare(share);
-    setShared(shared);
-  }, [planUsersData]);
-
-  useEffect(() => {
     if (planModal.plan_id === "0000000000") return;
 
     setPlans((prev) => prev.filter((plan) => plan.plan_id !== "0000000000"));
@@ -160,6 +151,7 @@ export default function PlanModal() {
       }
       return planModal;
     });
+    setNewShare([]);
   }, [planModal.plan_id]);
 
   useEffect(() => {
@@ -231,19 +223,20 @@ export default function PlanModal() {
       const planIndex = plans.findIndex(
         (event) => event.plan_id === planModal.plan_id
       );
+      const planId = data.plan.plan_id;
       if (planIndex !== -1) {
         const updatedEvents = [...plans];
         //updatedEvents[planIndex].saved = true;
-        updatedEvents[planIndex].plan_id = data.plan.plan_id;
+        updatedEvents[planIndex].plan_id = planId;
         setPlans(updatedEvents);
       }
       setPlanModalss(null);
       setPlanModal((prev) => ({ ...prev, opened: false, plan_id: null }));
-      if (data.is_new && share.length) {
-        const newShare = share.map((user) => user.user_id);
-        const response = await postPlanShare(newShare, planModal.plan_id);
+      if (data.is_new && newShare.length) {
+        const userIds = newShare.map((user) => user.user_id);
+        const response = await postPlanShare(userIds, planId);
         if (response.success) {
-          clearPlanUsers();
+          clearPlanUsers(planId);
         }
       }
       if (tutorial === 5) {
@@ -253,7 +246,7 @@ export default function PlanModal() {
     } catch (err) {
       console.log(err);
     }
-  }, [planModal, tutorial]);
+  }, [planModal, tutorial, newShare]);
 
   const onDeletePlan = useCallback(async () => {
     if (planModal.plan_id === "0000000000") {
@@ -285,24 +278,9 @@ export default function PlanModal() {
         );
         if (!response.success) return;
 
-        clearPlanUsers();
-      } catch (err) {
-        console.log(err);
-      }
-    },
-    [planModal]
-  );
-
-  const onUnshared = useCallback(
-    async (userInfo) => {
-      try {
-        const response = await deletePlanShare(
-          userInfo.user_id,
-          planModal.plan_id
+        updatePlanUsers(planModal.plan_id, (prev) =>
+          prev.filter((sharedUser) => sharedUser.user_id !== userInfo.user_id)
         );
-        if (!response.success) return;
-
-        clearPlanUsers();
       } catch (err) {
         console.log(err);
       }
@@ -458,36 +436,24 @@ export default function PlanModal() {
                 {planUsersIsLoading ? (
                   <CircularLoading />
                 ) : (
-                  <>
-                    <div id={styles.shared}>
-                      {shared.map((userInfo, i) => {
-                        return (
-                          <ShareUserBox
-                            userInfo={userInfo}
-                            key={i}
-                            text={`Remove ${userInfo.name}`}
-                            onClick={() => {
-                              onUnshared(userInfo);
-                            }}
-                          />
-                        );
-                      })}
-                    </div>
-                    <div id={styles.share}>
-                      {share.map((userInfo, i) => {
-                        return (
-                          <ShareUserBox
-                            userInfo={userInfo}
-                            key={i}
-                            text={`(Pending) Remove ${userInfo.name}`}
-                            onClick={() => {
-                              onUnshare(userInfo);
-                            }}
-                          />
-                        );
-                      })}
-                    </div>
-                  </>
+                  <div id={styles.share}>
+                    {[...planUsers, ...newShare].map((userInfo, i) => {
+                      const text =
+                        userInfo.status === "pending"
+                          ? `(Pending) Remove ${userInfo.name}`
+                          : `Remove ${userInfo.name}`;
+                      return (
+                        <ShareUserBox
+                          userInfo={userInfo}
+                          key={i}
+                          text={text}
+                          onClick={() => {
+                            onUnshare(userInfo);
+                          }}
+                        />
+                      );
+                    })}
+                  </div>
                 )}
               </div>
             </ModalLayer>
@@ -499,18 +465,29 @@ export default function PlanModal() {
                   setSearchUsersModal((prev) => ({
                     opened: !prev.opened,
                     onClick: async (userInfo) => {
-                      try {
-                        if (planModal.opened) {
-                          await postPlanShare(
-                            [userInfo.user_id],
-                            planModal.plan_id
+                      if (planModal.plan_id === "0000000000") {
+                        return setNewShare((prev) => {
+                          const sharedUser = prev.find(
+                            (sharedUser) =>
+                              sharedUser.user_id === userInfo.user_id
                           );
-
-                          clearPlanUsers();
-                        }
-                      } catch (err) {
-                        console.log(err);
+                          if (sharedUser) {
+                            return prev;
+                          }
+                          return [...prev, { ...userInfo, status: "pending" }];
+                        });
                       }
+
+                      const response = await postPlanShare(
+                        [userInfo.user_id],
+                        planModal.plan_id
+                      );
+                      if (!response.success) return;
+
+                      updatePlanUsers(planModal.plan_id, (prev) => [
+                        ...prev,
+                        { ...userInfo, status: "pending" },
+                      ]);
                     },
                   }));
                 }}

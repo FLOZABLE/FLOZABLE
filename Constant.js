@@ -153,6 +153,17 @@ const NOTIFICATION_MESSAGES = {
     contents: [NOTIFICATION_MARKERS.PROFILE_CARD, `is now your friend!`],
     title: `${name} is now your friend!`,
   }),
+  planShare: (name, planName) => ({
+    contents: [
+      NOTIFICATION_MARKERS.PROFILE_CARD,
+      `wants to share plan "${planName}"!`,
+    ],
+    title: `${name} wants to share plan "${planName}"!`,
+  }),
+  planShared: (name, planName) => ({
+    contents: [NOTIFICATION_MARKERS.PROFILE_CARD, `shared plan "${planName}"!`],
+    title: `${name} shared plan "${planName}"!`,
+  }),
 };
 
 module.exports = {
