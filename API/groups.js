@@ -10,6 +10,7 @@ const {
   userCache,
   userGroupsCache,
   cacheUserGroups,
+  cacheChatroomMembers,
 } = require("../services/redisLoader");
 const {
   validateArray,
@@ -544,6 +545,8 @@ Router.post("/group/join", async (req, res) => {
         return res.status(response.status).send(response);
       }
 
+      groupInfo.members = groupInfo.members ? groupInfo.members.split(",") : [];
+
       if (groupInfo.members.includes(userId)) {
         return res.status(400).send({
           success: false,
@@ -612,6 +615,21 @@ Router.post("/group/join", async (req, res) => {
       });
 
       mainIo.to(userId).emit("joinChatRoom", groupId);
+
+      cacheChatroomMembers(connection, groupId, userId, false);
+
+      console.log(groupInfo);
+      const chatroom = {
+        chatroom_id: groupInfo.group_id,
+        name: groupInfo.name,
+        type: 0,
+        members: groupInfo.members,
+        lastMsg: null,
+        lastRead: null,
+        unreads: 0,
+      };
+
+      mainIo.to(userId).emit("new-chatroom", { chatroom });
 
       res.status(200).send({
         success: true,
