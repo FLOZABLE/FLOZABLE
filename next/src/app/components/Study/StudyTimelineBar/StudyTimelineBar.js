@@ -15,7 +15,7 @@ import Timeline, {
 import "react-calendar-timeline/lib/Timeline.css";
 import { DateTime } from "luxon";
 import styled from "@emotion/styled";
-import { PlanModalContext } from "@/app/utils/Contexts";
+import { PlanModalContext, PlansContext } from "@/app/utils/Contexts";
 
 const StyleWrapper = styled.div`
   .react-calendar-timeline .rct-horizontal-lines .rct-hl-even,
@@ -48,7 +48,7 @@ const StyleWrapper = styled.div`
 
 function StudyTimelineBar() {
   const { setPlanModal } = useContext(PlanModalContext);
-  const { plans } = useContext(plans);
+  const { plans } = useContext(PlansContext);
 
   const [lineHeight, setLineHeight] = useState(0);
 

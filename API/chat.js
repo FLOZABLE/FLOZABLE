@@ -347,7 +347,7 @@ Router.post("/request/reply", async (req, res) => {
       const roomInfo = {
         chatroom_id,
         type: 1,
-        chatroomName,
+        name: chatroomName,
       };
       await connection.query(
         `
@@ -369,6 +369,14 @@ Router.post("/request/reply", async (req, res) => {
         `,
         [newMember]
       );
+
+      roomInfo.members = [userId, targetId];
+      roomInfo.lastMsg = null;
+      roomInfo.lastRead = null;
+      roomInfo.unreads = 0;
+      
+      mainIo.to(targetId).emit("new-chatroom", { chatroom: roomInfo });
+      mainIo.to(userId).emit("new-chatroom", { chatroom: roomInfo });
 
       res.status(200).send({
         success: true,

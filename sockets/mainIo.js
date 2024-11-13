@@ -214,10 +214,13 @@ mainIo.on("connection", (socket) => {
 
   socket.on("chat/send", async (roomId, message) => {
     try {
+      console.log(roomId, message);
       if (!roomId || !message) return;
 
       const connection = pool.promise();
       const members = await chatroomMembersCache(connection, roomId);
+
+      console.log(members);
 
       if (!members.includes(userId) || !message.length) return;
 

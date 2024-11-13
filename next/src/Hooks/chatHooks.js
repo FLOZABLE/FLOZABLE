@@ -40,7 +40,7 @@ function useChatMessages({ chatroomId, length, lastMsgId }) {
     staleTime: 1000 * 60 * 10,
     enabled: !!chatroomId,
     initialPageParam: 0,
-    select: (response) => response?.data?.messages || [],
+    //select: (response) => response?.data?.messages || [],
     getNextPageParam: (lastPage, allPages) => {
       const nextPage =
         lastPage?.data?.messages.length === length
