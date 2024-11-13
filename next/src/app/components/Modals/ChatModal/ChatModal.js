@@ -101,9 +101,9 @@ function ChatModal({}) {
     console.log(chatMessagesData);
     const allMessages = [];
     chatMessagesData.pages.map((page) => {
-      if (!page?.success) return;
+      if (!page?.data?.messages) return;
 
-      allMessages.push(...page);
+      allMessages.push(...page.data.messages);
     });
     allMessages.sort((a, b) => a.sent_at - b.sent_at);
 
@@ -182,6 +182,7 @@ function ChatModal({}) {
         const chatroomIndex = newChatrooms.findIndex(
           (chatroom) => chatroom.chatroom_id === message.chatroom_id
         );
+        console.log("chatroomindex", chatroomIndex, newChatrooms);
         if (chatroomIndex === -1) return prev;
 
         newChatrooms[chatroomIndex].lastMsg = message;
@@ -223,6 +224,34 @@ function ChatModal({}) {
       });
     }, 50);
   }, [lastReadMessageId]);
+
+  useEffect(() => {
+    const onNewChatroom = ({ chatroom }) => {
+      if (!chatroom) return;
+
+      updateChatrooms((prev) => {
+        const newChatrooms = [...prev];
+        const prevIndex = newChatrooms.findIndex(
+          (prevChatroom) => prevChatroom.chatroom_id === chatroom.chatroom_id
+        );
+        console.log("new chatroom", prevIndex);
+
+        //not found, then add it
+        if (prevIndex === -1) {
+          return [chatroom, ...prev];
+        }
+
+        newChatrooms[prevIndex] = { ...newChatrooms[prevIndex], ...chatroom };
+        return newChatrooms;
+      });
+    };
+
+    socket.on("new-chatroom", onNewChatroom);
+
+    return () => {
+      socket.on("new-chatroom", onNewChatroom);
+    };
+  }, [chatrooms]);
 
   return (
     <div
