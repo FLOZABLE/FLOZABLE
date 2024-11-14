@@ -15,9 +15,9 @@ function FriendRequestContainer({ friendRequest, children, style }) {
   return (
     <div className={styles.FriendRequestContainer} style={style}>
       <UserContainer
-        userInfo={friendRequest.userInfo}
+        userInfo={friendRequest.userinfo}
         onClick={() => {
-          router.push(`/dashboard/user/${friendRequest.userInfo.user_id}`);
+          router.push(`/dashboard/user/${friendRequest.userinfo.user_id}`);
         }}
       />
       {children}

@@ -6,7 +6,6 @@ const { generateRandomId } = require("../utils/tool");
 const {
   subjectsTimelineCache,
   userCache,
-  notificationCache,
   userFriendsCache,
 } = require("../services/redisLoader");
 const {
@@ -429,7 +428,7 @@ Router.delete("/subject/share", async (req, res) => {
         [subjectId, targetId, subjectId, targetId]
       );
 
-      const subjectRequests = await notificationCache(targetId, 2);
+      const subjectRequests = [];
       const subjectRequest = subjectRequests.find((subjectRequest) => {
         return subjectRequest.si === subjectId;
       });
