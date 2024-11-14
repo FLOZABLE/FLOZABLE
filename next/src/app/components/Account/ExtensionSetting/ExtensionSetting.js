@@ -19,7 +19,7 @@ function ExtensionSetting() {
   useEffect(() => {
     if (!useExtensionSettingsData?.success) return;
 
-    setSettings(useExtensionSettingsData.data.websiteSettings);
+    setSettings(useExtensionSettingsData.data.settings);
   }, [useExtensionSettingsData]);
 
   const onSubmitUrl = useCallback(() => {

@@ -65,7 +65,8 @@ function ThemeCategoryBtn({ theme, bgColor = "#ffffffC0", color = "#000" }) {
       onFocus={() => {
         setIsOpen(true);
       }}
-      onClick={() => {
+      onClick={(e) => {
+        e.stopPropagation();
         setIsOpen(true);
       }}
       onBlur={() => {
