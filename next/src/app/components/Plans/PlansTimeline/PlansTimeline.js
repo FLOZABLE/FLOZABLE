@@ -131,6 +131,7 @@ export default function PlansTimeline({
               viewDate={viewDate}
               setViewDate={setViewDate}
               viewer={viewer}
+              style={{color: "var(--gray2)"}}
             />
           </div>
           <div className={styles.buttons}>

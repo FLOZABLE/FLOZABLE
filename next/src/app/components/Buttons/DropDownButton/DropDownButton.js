@@ -5,7 +5,7 @@ import styles from "./DropDownButton.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCaretDown } from "@fortawesome/free-solid-svg-icons";
 
-function DropDownButton({ options, setValue, onClick = () => {}, value }) {
+function DropDownButton({ options, setValue, onClick = () => {}, value, style }) {
   const [clicked, setClicked] = useState(false);
   const [disp, setDisp] = useState(null);
 
@@ -21,6 +21,7 @@ function DropDownButton({ options, setValue, onClick = () => {}, value }) {
       onClick={() => {
         setClicked(!clicked);
       }}
+      style={style}
     >
       <div className={styles.disp}>
         {disp}

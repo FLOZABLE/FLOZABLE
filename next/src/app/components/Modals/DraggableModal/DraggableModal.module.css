@@ -1,12 +1,13 @@
 .DraggableModal .header {
-  background-color: var(--gray1);
-  height: 1.875rem;
+  background-color: rgba(111, 111, 111, 0.267);
+  height: 2.1rem;
   border-top-right-radius: 1.25rem;
   border-top-left-radius: 1.25rem;
   text-align: right;
   display: flex;
   justify-content: right;
   align-items: center;
+  margin-bottom: 1rem;
 }
 
 
@@ -14,9 +15,9 @@
   cursor: move;
 }
 
-.DraggableModal .header i {
-  font-size: 1.875rem;
-  color: #fff;
+.DraggableModal .header i { 
+  font-size: 2rem;
+  color: var(--gray);
   cursor: pointer;
   padding: 0.625rem;
 }

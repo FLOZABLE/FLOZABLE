@@ -37,17 +37,20 @@ function SubjectsPie({ viewDate, setViewDate, viewer, setViewer }) {
 
   return (
     <div className={`Box ${styles.SubjectsPie}`}>
-      <div className="header">Subjects</div>
-      <div className={styles.options}>
-        <div className={styles.DateSelectorBtn}>
-          <DateSelectorBtn
-            viewDate={viewDate}
-            setViewDate={setViewDate}
-            viewer={viewer}
-          />
-        </div>
-        <div className={styles.ViewerSelectorBtn}>
-          <ViewerSelectorBtn viewer={viewer} setViewer={setViewer} />
+      <div className={styles.optionAlign}>
+        <h2>Subjects</h2>
+        <div className={styles.options}>
+          <div className={styles.DateSelectorBtn}>
+            <DateSelectorBtn
+              viewDate={viewDate}
+              setViewDate={setViewDate}
+              viewer={viewer}
+              style={{color: "var(--gray2)"}}
+            />
+          </div>
+          <div className={styles.ViewerSelectorBtn}>
+            <ViewerSelectorBtn viewer={viewer} setViewer={setViewer} />
+          </div>
         </div>
       </div>
       {subjectsIsLoading ? (
@@ -72,7 +75,7 @@ function SubjectsPie({ viewDate, setViewDate, viewer, setViewer }) {
                 data={subjectsPie}
                 dataKey={"value"}
                 outerRadius={"100%"}
-                innerRadius={"65%"}
+                innerRadius={"70%"}
                 fill="green"
               ></Pie>
             </PieChart>

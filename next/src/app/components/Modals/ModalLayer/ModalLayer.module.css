@@ -1,13 +1,13 @@
 .ModalLayer {
   display: flex;
-  flex-direction: row;
-  margin: 0.625rem 0rem;
+  flex-direction: row;  
+  margin: .625rem 0rem;
   align-items: center;
   width: 100%;
 }
 
 .ModalLayer .iconWrapper {
-  width: 4.375rem;
+  margin-left: 2rem;
   height: 2.5rem;
   display: flex;
   justify-content: center;
