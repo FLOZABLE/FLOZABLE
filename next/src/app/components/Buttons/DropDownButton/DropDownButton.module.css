@@ -7,7 +7,9 @@
   border-radius: 0.5em;
   cursor: pointer;
   display: flex;
+  color: var(--gray1);
   align-items: center;
+  font-size: 1rem;
   height: 2em;
   max-width: 10em;
   /* overflow-x: hidden;

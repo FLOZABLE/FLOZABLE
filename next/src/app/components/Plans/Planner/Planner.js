@@ -258,12 +258,15 @@ export default function Planner() {
   return (
     <StyleWrapper className={styles.Planner}>
       <div className={styles.header}>
-        <ViewerSelectorBtn viewer={viewer} setViewer={setViewer} />
-        <DateSelectorBtn
-          viewDate={viewDate}
-          setViewDate={setViewDate}
-          viewer={viewer}
-        />
+        <h2>Calendar</h2>
+        <div className={styles.right}>
+          <DateSelectorBtn
+              viewDate={viewDate}
+              setViewDate={setViewDate}
+              viewer={viewer}
+            />
+          <ViewerSelectorBtn viewer={viewer} setViewer={setViewer} />
+        </div>
       </div>
       <FullCalendar
         /* dayHeaderContent={(info) => PlanHeader(info, viewer)} */

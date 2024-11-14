@@ -38,7 +38,7 @@ function StudyTrendChart({
   return (
     <div className={`Box ${styles.StudyTrendChart}`}>
       <div className={`header ${styles.header}`}>
-        <p className={styles.name}>Study Trend</p>
+        <h2 className={styles.name}>Study Trend</h2>
         {isDateSelector ? (
           <div className={styles.DateSelectorBtn}>
             <DateSelectorBtn
@@ -48,7 +48,7 @@ function StudyTrendChart({
             />
           </div>
         ) : null}
-      </div>
+      </div>  
       {userId ? (
         <>
           <ResponsiveContainer width="100%" height="100%">

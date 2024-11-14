@@ -9,11 +9,12 @@
 
 .Stats .right {
   position: fixed;
-  top: 6rem;
+  top: 8rem;
+  padding-top: 1rem;
   width: var(--rightWidth);
   right: 0rem;
   border-left: 0.1rem solid var(--gray0);
-  height: calc(100vh - 12rem);
+  height: calc(100vh - 11rem);
   display: flex;
   justify-content: center;
 }

@@ -24,7 +24,7 @@ function RecommendedFriendsViewer({}) {
   return (
     <div className={`Box ${styles.RecommendedFriendsViewer}`}>
       <div className={styles.header}>
-        <h3>Recommended Friends</h3>
+        <h2>Recommended Friends</h2>
         <RefreshBtn onClick={friendsRecommendedRefetch} />
         <div
           id={styles.searchFriendBtn}
