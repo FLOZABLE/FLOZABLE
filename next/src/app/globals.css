@@ -12,7 +12,7 @@
   --dark-gray: #e5e4e5;
   --gray0: #e0e0e0;
   --gray1: #c7c7c7;
-  --gray2: #575767;
+  --gray2: #6d6d6d;
   --gray3: #3f4d5a;
   --light-blue: #b3f2ff;
   --opacity-black: #000000c3;
@@ -161,8 +161,13 @@ button:hover {
 
 .BoxContainer {
   background-color: #ffffff;
-  margin: 3rem;
-  padding: 2rem;
+  margin: 2rem;
+  padding-top: 2rem;
+  padding-left: 2rem;
+  padding-right: 2rem;
+  padding-bottom: 1rem;
+  top: -1rem;
+  left: -2rem;
   border-radius: 30px;
   border: 1px solid #cacaca;
   display: flex;

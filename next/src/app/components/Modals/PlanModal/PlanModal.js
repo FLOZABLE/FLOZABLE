@@ -293,7 +293,7 @@ export default function PlanModal() {
       <DraggableModal
         isOpen={planModal.opened}
         setIsOpen={() => {
-          setPlanModal(DEFAULT_PLAN);
+          setPlanModal(DEFAULT_PLAN); 
         }}
       >
         <div className={`customScroll ${styles.inner}`} ref={modalRef}>
@@ -308,8 +308,6 @@ export default function PlanModal() {
             ></CustomInput>
           </ModalLayer>
           <ModalLayer
-            icon={<FontAwesomeIcon icon={faClock} />}
-            hoverText={"Select Time"}
           >
             <DateSelector
               start={planModal.start}
@@ -326,8 +324,6 @@ export default function PlanModal() {
             />
           </ModalLayer>
           <ModalLayer
-            icon={<FontAwesomeIcon icon={faFileLines} />}
-            hoverText={"Add Description"}
           >
             <TextEditor
               setValue={(description) => {
@@ -337,8 +333,6 @@ export default function PlanModal() {
             />
           </ModalLayer>
           <ModalLayer
-            icon={<FontAwesomeIcon icon={faRepeat} />}
-            hoverText={"Repeat"}
           >
             <DropDownButton
               options={[
@@ -355,8 +349,6 @@ export default function PlanModal() {
           </ModalLayer>
           {planModal.type === "local" ? (
             <ModalLayer
-              icon={<FontAwesomeIcon icon={faBook} />}
-              hoverText={"Select Subject"}
             >
               <DropDownButton
                 options={subjects.map(({ subject_id, name }) => {
@@ -384,8 +376,6 @@ export default function PlanModal() {
             </ModalLayer>
           ) : null}
           <ModalLayer
-            icon={<FontAwesomeIcon icon={faBell} />}
-            hoverText={"Select Notification"}
           >
             <DropDownButton
               options={[
@@ -413,8 +403,6 @@ export default function PlanModal() {
           </ModalLayer>
           {planModal.type === "local" ? (
             <ModalLayer
-              icon={<FontAwesomeIcon icon={faCircleExclamation} />}
-              hoverText={"Select Importance"}
             >
               <SliderAnimation
                 min={0}
@@ -429,8 +417,6 @@ export default function PlanModal() {
           ) : null}
           {planModal.type === "local" ? (
             <ModalLayer
-              icon={<FontAwesomeIcon icon={faUserGroup} />}
-              hoverText={"Shared Users"}
             >
               <div className={styles.UserBoxes}>
                 {planUsersIsLoading ? (

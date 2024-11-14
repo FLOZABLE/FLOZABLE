@@ -104,7 +104,7 @@ const colorPaletteOptions = [
     colors: ["#393D3F", "#FDFDFF", "#C6C5B9", "#546A7B"],
   },
   {
-    name: "No man's land",
+    name: "Peace",
     colors: ["#93A3B1", "#7C898B", "#636564", "#4C443C"],
   },
   {

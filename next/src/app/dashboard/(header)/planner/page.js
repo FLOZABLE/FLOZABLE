@@ -8,7 +8,6 @@ function Planner({}) {
       <div className={styles.Planner}>
         <div className={styles.layer}>
           <div className={`BoxContainer ${styles.box}`} id={styles.calendar}>
-            <div className={styles.title}>Calendar</div>
             <EventPlanner />
           </div>
           <div

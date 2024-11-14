@@ -10,7 +10,7 @@
   background-color: #f9f9f9;
   font-size:  1.25rem;
   padding: 0.938rem;
-  transition: .3s ease border;
+  transition: .3s ease border;  
   border: transparent 0.0625rem solid;
 }
 
@@ -54,7 +54,7 @@
   font-family: 'Nunito', sans-serif;
 }
 
-.CustomInput>span {
+.CustomInput>span { 
   text-align: center;
   display: flex;
   justify-content: center;

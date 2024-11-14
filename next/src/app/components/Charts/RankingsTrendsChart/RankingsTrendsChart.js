@@ -40,7 +40,7 @@ function RankingsTrendsChart({
   return (
     <div className={`Box ${styles.RankingsTrendsChart}`}>
       <div className={`header ${styles.header}`}>
-        <p className={styles.name}>Ranking Trend</p>
+        <h2 className={styles.name}>Ranking Trend</h2>
         {isDateSelector ? (
           <div className={styles.DateSelectorBtn}>
             <DateSelectorBtn

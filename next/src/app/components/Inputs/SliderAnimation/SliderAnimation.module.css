@@ -2,7 +2,7 @@
   display: flex;
   align-items: center;
   font-size: 1rem;
-  color: #664aff;
+  color: var(--blue2);
   width: 100%;
 }
 

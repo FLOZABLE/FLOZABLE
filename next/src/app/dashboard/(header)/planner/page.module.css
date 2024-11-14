@@ -12,15 +12,8 @@
   flex-direction: column;
 }
 
-.Planner .layer .box .title {
-  justify-content: left;
-  width: 100%;
-  font-weight: 700;
-  font-size: 2.5rem;
-}
-
 .Planner .box#calendar {
-  padding: 2rem 5rem;
+  padding: 1.5rem 2.5rem;
 }
 
 .Planner .box#planTimeline {
