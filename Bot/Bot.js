@@ -6,7 +6,6 @@ const redisClient = require("../model/redis");
 const {
   activeSubjectCache,
   subjectsCache,
-  notificationCache,
   getActiveUsers,
   addActiveUserCache,
   cacheActiveSubject,
@@ -103,20 +102,24 @@ async function addFriends(botId, allMembers) {
     if (isSend) {
       const targetId = allMembers[randomIntInRange(0, allMembers.length - 1)];
       const response = await sendFriendRequest(botId, targetId);
-      console.log(response);
+      console.log("bot friend request:", response);
     }
 
-    const friendRequests = await notificationCache(botId, 0);
+    const connection = pool.promise();
+
+    const [friendRequests] = await connection.query(
+      `SELECT friendship_id FROM friends WHERE friend_id = ? AND status = "pending"`,
+      [botId]
+    );
     friendRequests.map(async (request) => {
       const accepted = isTrueBasedOnPercentage(50);
-      const response = await replyFriendRequest(
-        botId,
-        request.f,
+      const response = await replyFriendRequest({
+        notificationId: request.friendship_id,
+        userId: botId,
         accepted,
-        request.i,
-        false
-      );
-      console.log(response);
+        createChat: false,
+      });
+      console.log("bot reply:", response);
     });
   } catch (err) {
     console.log(err);

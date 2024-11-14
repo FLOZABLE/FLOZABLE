@@ -92,7 +92,6 @@ Router.get("/", async (req, res) => {
           );
         }
       });
-      console.log(notifications);
       res.send({ success: true, status: 200, data: { notifications } });
     } catch (err) {
       console.log(err);

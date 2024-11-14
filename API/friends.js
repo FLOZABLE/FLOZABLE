@@ -5,7 +5,6 @@ const {
   randomIntInRange,
 } = require("../utils/tool");
 const {
-  notificationCache,
   userCache,
   activeSubjectCache,
   usersCache,
@@ -589,69 +588,6 @@ Router.post("/link/create", async (req, res) => {
     }
   });
 });
-
-/**
- * add using link
- */
-/* 
-Router.get("/link/add", async (req, res) => {
-  autoSignin(req, res, async (userId) => {
-    try {
-      const { id } = req.query;
-      const targetId = req.query.user;
-
-      const isValidId = validateStrictString(id, "add id", 10);
-
-      if (!isValidId.isValid) {
-        return res
-          .status(400)
-          .send({ success: false, reason: isValidId.reason });
-      }
-
-      const linkId = await redisClient.get(`link:friend:${targetId}`);
-      console.log(linkId);
-      if (!linkId || linkId !== id)
-        return res
-          .status(400)
-          .send({ success: false, reason: "Expired or invalid link" });
-
-      const response = await replyFriendReques(userId, targetId, true);
-
-      if (!response.success) return response;
-
-      const [myNotifications, targetNotifications] = await Promise.all([
-        notificationCache(userId),
-        notificationCache(targetId),
-      ]);
-
-      //remove friend request if any from target & me
-      const myFriendReqs = myNotifications.filter((notification) => {
-        return (
-          notification.f === targetId &&
-          (notification.t === 0 || notification.t === -2)
-        );
-      });
-      myFriendReqs.map((friendReq) => {
-        redisClient.hdel(`user:${userId}:notifications`, friendReq.i);
-      });
-
-      const targetFriendReqs = targetNotifications.filter((notification) => {
-        return (
-          notification.f === userId &&
-          (notification.t === 0 || notification.t === -2)
-        );
-      });
-      targetFriendReqs.map((friendReq) => {
-        redisClient.hdel(`user:${targetId}:notifications`, friendReq.i);
-      });
-
-      res.status(response.status).send(response);
-    } catch (error) {
-      console.log(error);
-      res.status(400).send({ success: false, reason: "An Error Occured" });
-    }
-  });
-}); */
 
 Router.post("/invitation/email", async (req, res) => {
   autoSignin(req, res, async (userId) => {
