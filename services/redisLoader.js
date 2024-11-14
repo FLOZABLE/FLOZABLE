@@ -458,38 +458,6 @@ async function clearUsersCache() {
   }
 }
 //clearUsersCache();
-/**
- * notification's key:
- * i: id
- * t: type ex) -1 = all (default),  0 = friend-request, 1 = friend-request-accept, 2 = subject share, 3 = face-off-accept, 4 = dm request, 5 = dm accepted, 6 = group-invitation, 7 = plan share invitation, 8 = plan shared notification
- * -2 = ongoing friend req
- * d: date (unix but divided by 1000
- * optional:
- * f: from (used for friend-request, friend-accept, group invitation)
- * @param {*} userId
- * @param {*} type
- * @returns {[]} selectedNotifications
- */
-async function notificationCache(userId, type = -1) {
-  try {
-    const notificationsObj = {
-      ...(await redisClient.hgetall(`user:${userId}:notifications`)),
-    };
-    const notifications = Object.keys(notificationsObj).map((id) => ({
-      i: id,
-      ...JSON.parse(notificationsObj[id]),
-    }));
-    if (type === -1) {
-      return notifications;
-    }
-    const selectedNotifications = notifications.filter((notification) => {
-      return notification.t === type;
-    });
-    return selectedNotifications;
-  } catch (err) {
-    console.log(err);
-  }
-}
 
 /**
  *
@@ -901,7 +869,6 @@ module.exports = {
   cacheActiveSubject,
   activeGroupCache,
   cacheActiveGroup,
-  notificationCache,
   userChatroomsCache,
   usersCache,
   userCache,

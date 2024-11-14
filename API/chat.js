@@ -4,7 +4,6 @@ const pool = require("../model/pool");
 const redisClient = require("../model/redis");
 const { generateRandomId } = require("../utils/tool");
 const {
-  notificationCache,
   usersCache,
   chatroomMembersCache,
   userChatroomsCache,

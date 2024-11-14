@@ -28,6 +28,14 @@ const BOT_OPTIONS = {
   MAX_START_DELAY: 60 * 60 * 1,
 };
 
+//used for bot testing
+/* const BOT_OPTIONS = {
+  MIN_STUDY: 10,
+  MAX_STUDY: 11,
+  MIN_START_DELAY: 0,
+  MAX_START_DELAY: 60,
+}; */
+
 const MAX_STUDY_TIME = 60 * 60 * 20; // 20hr = max study time. ignore more than 6 hr
 
 const PASSWORD_LINK_EXP = 60 * 60 * 24; //reset password link only available for 24 hr
