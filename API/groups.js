@@ -614,13 +614,11 @@ Router.post("/group/join", async (req, res) => {
         },
       });
 
-      mainIo.to(userId).emit("joinChatRoom", groupId);
-
       cacheChatroomMembers(connection, groupId, userId, false);
+      mainIo.in(userId).socketsJoin(`chatroom:${groupId}`);
 
-      console.log(groupInfo);
       const chatroom = {
-        chatroom_id: groupInfo.group_id,
+        chatroom_id: groupId,
         name: groupInfo.name,
         type: 0,
         members: groupInfo.members,
@@ -630,6 +628,7 @@ Router.post("/group/join", async (req, res) => {
       };
 
       mainIo.to(userId).emit("new-chatroom", { chatroom });
+      mainIo.in(userId).socketsJoin(`chatroom:${groupId}`);
 
       res.status(200).send({
         success: true,

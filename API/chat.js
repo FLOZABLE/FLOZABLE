@@ -374,9 +374,11 @@ Router.post("/request/reply", async (req, res) => {
       roomInfo.lastMsg = null;
       roomInfo.lastRead = null;
       roomInfo.unreads = 0;
-      
-      mainIo.to(targetId).emit("new-chatroom", { chatroom: roomInfo });
-      mainIo.to(userId).emit("new-chatroom", { chatroom: roomInfo });
+
+      mainIo
+        .to([targetId, userId])
+        .emit("new-chatroom", { chatroom: roomInfo });
+      mainIo.in([targetId, userId]).socketsJoin(`chatroom:${chatroom_id}`);
 
       res.status(200).send({
         success: true,

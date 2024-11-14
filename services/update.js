@@ -44,6 +44,7 @@ const {
   createBots,
   createGroups,
   updateBotSubjectsColor,
+  createGroupChatrooms,
 } = require("../Bot/generator");
 const { generateRandomId } = require("../utils/tool");
 
@@ -52,13 +53,14 @@ const { generateRandomId } = require("../utils/tool");
 readline.question(
   `
   type command
-  1) maria:VERSION_NAME
-  2) syncStripeProducts
-  3) createBots:NUMBERS
-  4) createGroups:NUMBERS
-  5) createFriends:MIN:MAX
-  6) updateBotSubjectColor
-  7) migrateFriendsTable
+  maria:VERSION_NAME
+  syncStripeProducts
+  createBots:NUMBERS
+  createGroups:NUMBERS
+  createGroupChatrooms
+  createFriends:MIN:MAX
+  updateBotSubjectColor
+  migrateFriendsTable
   `,
   async (command) => {
     if (command === "maria:0") {
@@ -71,6 +73,8 @@ readline.question(
     } else if (command.startsWith("createGroups:")) {
       const numberOfGroups = parseInt(command.split(":")[1]);
       await createGroups(numberOfGroups);
+    } else if (command === "createGroupChatrooms") {
+      await createGroupChatrooms();
     } else if (command.startsWith("createFriends:")) {
       const [_, min, max] = command.split(":");
       await createFriends(parseInt(min), parseInt(max));
