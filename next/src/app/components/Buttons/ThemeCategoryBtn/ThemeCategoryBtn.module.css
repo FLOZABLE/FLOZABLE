@@ -23,8 +23,8 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  height: 0em;
-  transition: .3s ease-in-out all;
+  transition: 0.3s ease-in-out all;
+  font-size: 0rem;
 }
 
 .ThemeCategoryBtn.open .options {
@@ -32,8 +32,8 @@
   visibility: visible;
   opacity: 1;
   top: 1.25rem;
-  height: 8.75rem;
   color: var(--font-gray);
+  font-size: 1rem;
 }
 
 .ThemeCategoryBtn .categoryDisp {

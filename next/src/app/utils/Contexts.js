@@ -6,7 +6,6 @@ import { GoogleOAuthProvider } from "@react-oauth/google";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { DEFAULT_PLAN } from "./Constant";
 import { useAccount } from "@/Hooks/accountHooks";
-import { useSubjects } from "@/Hooks/subjectsHooks";
 import { usePlans, usePlansGoogle } from "@/Hooks/plansHooks";
 import { useGroups } from "@/Hooks/groupsHook";
 import { useThemes, useThemesUser } from "@/Hooks/themesHooks";
@@ -17,10 +16,8 @@ import { useNotifications } from "@/Hooks/notificationsHooks";
 
 const googleClientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
 
-const SubjectsContext = createContext({});
 const PlanModalContext = createContext({});
 const PlansContext = createContext({});
-const UserInfoContext = createContext({});
 const TutorialsContext = createContext({});
 const GroupsContext = createContext({});
 const CallOptionsContext = createContext({});
@@ -543,8 +540,6 @@ function WorkersProvider({ children }) {
 export {
   AppProvider,
   AppContainer,
-  UserInfoContext,
-  SubjectsContext,
   PlanModalContext,
   PlansContext,
   GroupsContext,

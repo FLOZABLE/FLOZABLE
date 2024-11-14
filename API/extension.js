@@ -18,7 +18,7 @@ Router.post("/auth", async (req, res) => {
       }
       res
         .status(200)
-        .send({ success: true, status: 200, data: { userId, token } });
+        .send({ success: true, status: 200, data: { user_id: userId, token } });
     } catch (err) {
       console.log(err);
       const response = RESPONSE_MESSAGES.error();
@@ -39,7 +39,7 @@ Router.get("/settings", async (req, res) => {
       res.status(200).send({
         success: true,
         status: 200,
-        data: { websiteSettings },
+        data: { settings: websiteSettings },
       });
     } catch (err) {
       console.log(err);

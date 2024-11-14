@@ -2,14 +2,13 @@
 
 import React, { useContext, useEffect, useRef, useState } from "react";
 import styles from "./PlansTimeline.module.css";
-import { Alert } from "@/app/utils/Svg";
 import {
   PlanModalContext,
   PlansContext,
   TutorialsContext,
 } from "@/app/utils/Contexts";
 import { DateTime } from "luxon";
-import { DEFAULT_PLAN, subjectIcons } from "@/app/utils/Constant";
+import { DEFAULT_PLAN } from "@/app/utils/Constant";
 import Plan from "../Plan/Plan";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCirclePlus } from "@fortawesome/free-solid-svg-icons";
@@ -191,21 +190,11 @@ export default function PlansTimeline({
               DateTime.TIME_SIMPLE
             );
 
-            let icon = subjectIcons[plan.icon];
-
-            if (!icon) {
-              icon = <Alert />;
-            }
-
             if (filteredSubjects.includes(plan.subject_id)) {
               return null;
             }
 
-            return (
-              <Plan plan={plan} key={i}>
-                {icon}
-              </Plan>
-            );
+            return <Plan plan={plan} key={i} />;
           })}
         </div>
       </div>
@@ -220,21 +209,11 @@ export default function PlansTimeline({
               DateTime.TIME_SIMPLE
             );
 
-            let icon = subjectIcons[plan.icon];
-
-            if (!icon) {
-              icon = <Alert />;
-            }
-
             if (filteredSubjects.includes(plan.subject_id)) {
               return null;
             }
 
-            return (
-              <Plan plan={plan} key={i}>
-                {icon}
-              </Plan>
-            );
+            return <Plan plan={plan} key={i} />;
           })}
         </div>
       </div>

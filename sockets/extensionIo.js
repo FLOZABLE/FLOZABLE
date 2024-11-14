@@ -5,7 +5,7 @@ const { extensionIo } = require("./io");
 extensionIo.on("connection", async (socket) => {
   console.log(socket.handshake.auth);
   try {
-    const { userId, token } = socket.handshake.auth;
+    const { user_id: userId, token } = socket.handshake.auth;
     if (!userId || !token) return;
 
     const storedToken = await redisClient.get(`extension:authToken:${userId}`);
