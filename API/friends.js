@@ -239,7 +239,15 @@ async function replyFriendRequest({
         [newMember]
       );
 
-      mainIo.to([userId, targetId]).emit("chat/room");
+      roomInfo.members = [userId, targetId];
+      roomInfo.lastMsg = null;
+      roomInfo.lastRead = null;
+      roomInfo.unreads = 0;
+
+      mainIo
+        .to([targetId, userId])
+        .emit("new-chatroom", { chatroom: roomInfo });
+      mainIo.in([targetId, userId]).socketsJoin(`chatroom:${chatroom_id}`);
     }
 
     const notification_id = generateRandomId(10);

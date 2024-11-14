@@ -461,10 +461,33 @@ async function deleteBots() {
   }); */
 }
 
+async function createGroupChatrooms() {
+  try {
+    const connection = pool.promise();
+    const [groups] = await connection.query(
+      `SELECT group_id, name from groups`
+    );
+
+    const chatrooms = groups.map((group) => [group.group_id, group.name]);
+
+    await connection.query(
+      `
+      INSERT IGNORE INTO \`chatrooms\`
+      (chatroom_id, name)
+      VALUES ?
+      `,
+      [chatrooms]
+    );
+  } catch (err) {
+    console.log(err);
+  }
+}
+
 module.exports = {
   createBots,
   createGroups,
   createFriends,
   deleteBots,
   updateBotSubjectsColor,
+  createGroupChatrooms,
 };
