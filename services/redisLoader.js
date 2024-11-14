@@ -492,9 +492,9 @@ async function notificationCache(userId, type = -1) {
 }
 
 /**
- * 
- * @param {*} userId 
- * @returns 
+ *
+ * @param {*} userId
+ * @returns
  * get user chatrooms unreads/new msgs count, last read id
  */
 async function userChatroomsCache(userId) {
@@ -658,28 +658,25 @@ async function chatroomMembersCache(connection, chatroomId) {
     const [members] = await connection.query(
       `
       SELECT DISTINCT user_id
-      FROM (
-        SELECT user_id
-        FROM chatroom_members
-        WHERE chatroom_id = ?
-        
-        UNION ALL
-        
-        SELECT user_id
-        FROM group_members
-        WHERE group_id = (
-          SELECT chatroom_id
-          FROM chatrooms
-          WHERE chatroom_id = ? AND type = 0
-        )
-      ) AS combined_members
+      FROM chatroom_members
+      WHERE chatroom_id = ?
+      
+      UNION
+      
+      SELECT DISTINCT gm.user_id
+      FROM group_members gm
+      INNER JOIN chatrooms cr ON cr.chatroom_id = gm.group_id
+      WHERE cr.chatroom_id = ? AND cr.type = 0
       `,
       [chatroomId, chatroomId]
     );
 
     const membersUserId = members.map((member) => member.user_id);
 
-    redisClient.sadd(`chatroom:${chatroomId}`, membersUserId);
+    console.log("cache", membersUserId);
+    if (membersUserId.length) {
+      redisClient.sadd(`chatroom:${chatroomId}`, membersUserId);
+    }
 
     await redisClient.expire(
       `chatroom:${chatroomId}`,
@@ -700,6 +697,8 @@ async function cacheChatroomMembers(
   forceCache = false
 ) {
   try {
+    if (!userId) return;
+
     const isCached = await redisClient.exists(`chatroom:${chatroomId}`);
     if (isCached) {
       redisClient.sadd(`chatroom:${chatroomId}`, userId);
