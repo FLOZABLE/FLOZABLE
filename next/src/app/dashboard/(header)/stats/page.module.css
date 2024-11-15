@@ -22,6 +22,7 @@
 .Stats .right .SubjectsPie {
   display: flex;
   position: relative;
+  width: 90%;
 }
 
 .Stats .boxContainer {
@@ -55,7 +56,6 @@
     margin-bottom: 2rem;
   }
 }
-
 
 @media (max-width: 1000px) {
   .Stats .boxContainer {

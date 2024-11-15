@@ -29,6 +29,7 @@
   overflow: hidden;
   flex: 0;
   display: block;
+  padding-top: 0.5rem;
 }
 
 .Main .box#FriendsActivityViewer {
@@ -38,6 +39,7 @@
 .Main .box#SubjectsPie {
   max-height: 80vh;
   max-width: 30rem;
+  padding-top: 1rem;
 }
 
 @media (max-width: 1800px) {

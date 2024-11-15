@@ -21,10 +21,14 @@ const { timelineSort } = require("../utils/timelineSorting");
 Router.get("/", async (req, res) => {
   autoSignin(req, res, async (userId) => {
     try {
+      const { timezone } = req.query;
       const connection = pool.promise();
       const subjectsTimeline = await subjectsTimelineCache(connection, userId);
 
-      const { subjects, groupedSubjects } = timelineSort(subjectsTimeline);
+      const { subjects, groupedSubjects } = timelineSort(
+        subjectsTimeline,
+        timezone
+      );
 
       res.status(200).send({
         success: true,
