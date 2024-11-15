@@ -54,8 +54,6 @@ export default function NotificationsContainer() {
   const { friendsStatusRefetch } = useFriendsStatus();
   const { friendsTrendRefetch } = useFriendsTrends();
 
-  console.log(notifications, "notifications");
-
   const friendRequestReply = useCallback(async (notificationId, accepted) => {
     const response = await postFriendsRequestReply({
       notificationId,

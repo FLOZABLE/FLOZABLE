@@ -540,7 +540,6 @@ Router.delete("/plan", async (req, res) => {
       await connection.query(
         `
         DELETE FROM plan_share WHERE plan_id = ?;
-        DELETE FROM plan_shared WHERE plan_id = ?;
         DELETE FROM plans WHERE user_id = ? AND plan_id = ?`,
         [planId, planId, userId, planId]
       );

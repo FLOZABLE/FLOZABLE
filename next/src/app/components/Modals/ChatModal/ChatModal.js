@@ -203,6 +203,9 @@ function ChatModal({}) {
             </div>
           );
         }
+
+        const element = newChatrooms.splice(chatroomIndex, 1)[0]; // Remove the element from fromIndex
+        newChatrooms.splice(0, 0, element);
         return newChatrooms;
       });
     };

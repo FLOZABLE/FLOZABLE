@@ -15,7 +15,7 @@
  */
 const { DateTime } = require("luxon");
 
-function timelineSort(subjects) {
+function timelineSort(subjects, timezone) {
   try {
     if (!subjects || !subjects.length) {
       return { subjects: [], groupedSubjects: [] };
@@ -25,16 +25,18 @@ function timelineSort(subjects) {
 
     const groupedSubjects = {};
 
-    const dayDate = DateTime.fromSeconds(subjects[0].created_at).startOf("day");
+    const dayDate = DateTime.fromSeconds(subjects[0].created_at, {
+      zone: timezone,
+    }).startOf("day");
     const weekDate = dayDate.startOf("week");
     const monthDate = dayDate.startOf("month");
 
-    const now = DateTime.now().startOf("day");
+    const now = DateTime.now().setZone(timezone).startOf("day");
 
     const daysLength = now.diff(dayDate, "days").days + 1;
-    const weeksLength = now.diff(weekDate.startOf("week"), "weeks").weeks + 1;
+    const weeksLength = now.startOf("week").diff(weekDate, "weeks").weeks + 1;
     const monthsLength =
-      now.diff(monthDate.startOf("month"), "months").months + 1;
+      now.startOf("month").diff(monthDate, "months").months + 1;
 
     const dailyArray = [];
     for (let i = 0; i < daysLength; i++) {

@@ -1,8 +1,11 @@
 import AxiosInstance from "@/app/utils/axiosInstance";
-import { requestHandler } from "@/app/utils/Tool";
+import { getTimezone, requestHandler } from "@/app/utils/Tool";
 
 async function getSubjects() {
-  return requestHandler(AxiosInstance.get(`/subjects`));
+  const timezone = getTimezone();
+  return requestHandler(
+    AxiosInstance.get(`/subjects`, { params: { timezone } })
+  );
 }
 
 async function putSubjectsSubject({ name, color }) {
