@@ -31,7 +31,7 @@ function timelineSort(subjects, timezone) {
     const weekDate = dayDate.startOf("week");
     const monthDate = dayDate.startOf("month");
 
-    const now = DateTime.now().startOf("day");
+    const now = DateTime.now().setZone(timezone).startOf("day");
 
     const daysLength = now.diff(dayDate, "days").days + 1;
     const weeksLength = now.startOf("week").diff(weekDate, "weeks").weeks + 1;
