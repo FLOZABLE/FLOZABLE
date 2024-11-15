@@ -27,11 +27,18 @@ function timelineSort(subjects, timezone) {
 
     const dayDate = DateTime.fromSeconds(subjects[0].created_at, {
       zone: timezone,
-    }).startOf("day");
+    })
+      .startOf("day")
+      .setZone(timezone);
     const weekDate = dayDate.startOf("week");
     const monthDate = dayDate.startOf("month");
 
-    const now = DateTime.now().setZone(timezone).startOf("day");
+    const now = DateTime.now()
+      .setZone(timezone)
+      .startOf("day")
+      .setZone(timezone);
+
+    console.log("test", dayDate.toSeconds(), now.toSeconds());
 
     const daysLength = now.diff(dayDate, "days").days + 1;
     const weeksLength = now.startOf("week").diff(weekDate, "weeks").weeks + 1;
@@ -114,7 +121,9 @@ function timelineSort(subjects, timezone) {
       subject.timeline.map(([start, duration]) => {
         const endDateTime = DateTime.fromSeconds(start + duration, {
           zone: timezone,
-        }).startOf("day");
+        })
+          .startOf("day")
+          .setZone(timezone);
         const dayIndex = subject.day.timeline.findIndex(
           (day) => day.date === endDateTime.toISODate()
         );
