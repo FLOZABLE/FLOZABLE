@@ -269,27 +269,23 @@ function getDates(date, mode, length) {
   return dates;
 }
 
-function getDatesDisplay(
-  date,
+function getDatesDisplay({
+  date1,
+  date2,
   mode,
   formats = { day: "LLLL d", week: "LLLL d", month: "kkkk LLLL" },
-  length = 1
-) {
-  const dateTime = DateTime.fromJSDate(date);
-
-  if (mode === "day") {
-    if (length === 1) {
-      return dateTime.toFormat(formats.day);
-    }
-  } else if (mode === "week") {
-    if (length === 1) {
-      return dateTime.toFormat(formats.week);
-    }
-  } else {
-    if (length === 1) {
-      return dateTime.toFormat(formats.month);
-    }
+}) {
+  const dateTime = DateTime.fromJSDate(date1);
+  if (!date2) {
+    //show single dates
+    return dateTime.toFormat(formats[mode]);
   }
+
+  const endDateTime = DateTime.fromJSDate(date2);
+
+  return `${dateTime.toFormat(formats[mode])} - ${endDateTime.toFormat(
+    formats[mode]
+  )}`;
 }
 
 function exitFullscreen() {

@@ -212,27 +212,27 @@ function sortNewSubject(subjects, subject) {
     }
 
     subject.day = {
-      timeline: JSON.parse(
-        JSON.stringify(dailyArray.map((val) => ({ ...val, data: [] })))
+      timeline: structuredClone(
+        dailyArray.map((val) => ({ ...val, data: [] }))
       ),
-      total: JSON.parse(JSON.stringify(dailyArray)),
-      focus: JSON.parse(JSON.stringify(dailyArray)),
+      total: structuredClone(dailyArray),
+      focus: structuredClone(dailyArray),
     };
 
     subject.week = {
-      timeline: JSON.parse(
-        JSON.stringify(weeklyArray.map((val) => ({ ...val, data: [] })))
+      timeline: structuredClone(
+        weeklyArray.map((val) => ({ ...val, data: [] }))
       ),
-      total: JSON.parse(JSON.stringify(weeklyArray)),
-      focus: JSON.parse(JSON.stringify(weeklyArray)),
+      total: structuredClone(weeklyArray),
+      focus: structuredClone(weeklyArray),
     };
 
     subject.month = {
-      timeline: JSON.parse(
-        JSON.stringify(monthlyArray.map((val) => ({ ...val, data: [] })))
+      timeline: structuredClone(
+        monthlyArray.map((val) => ({ ...val, data: [] }))
       ),
-      total: JSON.parse(JSON.stringify(monthlyArray)),
-      focus: JSON.parse(JSON.stringify(monthlyArray)),
+      total: structuredClone(monthlyArray),
+      focus: structuredClone(monthlyArray),
     };
 
     subjects.push(subject);

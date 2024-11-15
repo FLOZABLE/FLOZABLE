@@ -8,10 +8,19 @@ function DateSelectorBtn({ viewDate, setViewDate, viewer }) {
 
   useEffect(() => {
     if (!viewDate || !viewer) return;
-    const dateDisp = getDatesDisplay(viewDate, viewer, {
-      day: "LLL d",
-      week: "LLL d",
-      month: "kkkk LLL",
+    const dateTime = DateTime.fromJSDate(viewDate);
+    const date1 = dateTime.startOf(viewer).toJSDate();
+    const date2 = viewer === "week" ? dateTime.endOf(viewer).toJSDate() : null;
+
+    const dateDisp = getDatesDisplay({
+      date1,
+      date2,
+      mode: viewer,
+      formats: {
+        day: "LLL d",
+        week: "LLL d",
+        month: "kkkk LLL",
+      },
     });
     setDateDisp(dateDisp);
   }, [viewDate, viewer]);
