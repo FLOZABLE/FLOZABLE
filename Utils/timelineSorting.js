@@ -31,7 +31,7 @@ function timelineSort(subjects, timezone) {
     const weekDate = dayDate.startOf("week");
     const monthDate = dayDate.startOf("month");
 
-    const now = DateTime.now().setZone(timezone).startOf("day");
+    const now = DateTime.now().startOf("day");
 
     const daysLength = now.diff(dayDate, "days").days + 1;
     const weeksLength = now.startOf("week").diff(weekDate, "weeks").weeks + 1;
@@ -61,60 +61,60 @@ function timelineSort(subjects, timezone) {
 
     groupedSubjects.day = {
       created_at: dayDate.toISODate(),
-      timeline: JSON.parse(
-        JSON.stringify(dailyArray.map((val) => ({ ...val, data: [] })))
+      timeline: structuredClone(
+        dailyArray.map((val) => ({ ...val, data: [] }))
       ),
-      total: JSON.parse(JSON.stringify(dailyArray)),
-      focus: JSON.parse(JSON.stringify(dailyArray)),
+      total: structuredClone(dailyArray),
+      focus: structuredClone(dailyArray),
     };
 
     groupedSubjects.week = {
       created_at: weekDate.toISODate(),
-      timeline: JSON.parse(
-        JSON.stringify(weeklyArray.map((val) => ({ ...val, data: [] })))
+      timeline: structuredClone(
+        weeklyArray.map((val) => ({ ...val, data: [] }))
       ),
-      total: JSON.parse(JSON.stringify(weeklyArray)),
-      focus: JSON.parse(JSON.stringify(weeklyArray)),
+      total: structuredClone(weeklyArray),
+      focus: structuredClone(weeklyArray),
     };
 
     groupedSubjects.month = {
       created_at: monthDate.toISODate(),
-      timeline: JSON.parse(
-        JSON.stringify(monthlyArray.map((val) => ({ ...val, data: [] })))
+      timeline: structuredClone(
+        monthlyArray.map((val) => ({ ...val, data: [] }))
       ),
-      total: JSON.parse(JSON.stringify(monthlyArray)),
-      focus: JSON.parse(JSON.stringify(monthlyArray)),
+      total: structuredClone(monthlyArray),
+      focus: structuredClone(monthlyArray),
     };
 
     subjects.map((subject) => {
       subject.day = {
-        timeline: JSON.parse(
-          JSON.stringify(dailyArray.map((val) => ({ ...val, data: [] })))
+        timeline: structuredClone(
+          dailyArray.map((val) => ({ ...val, data: [] }))
         ),
-        total: JSON.parse(JSON.stringify(dailyArray)),
-        focus: JSON.parse(JSON.stringify(dailyArray)),
+        total: structuredClone(dailyArray),
+        focus: structuredClone(dailyArray),
       };
 
       subject.week = {
-        timeline: JSON.parse(
-          JSON.stringify(weeklyArray.map((val) => ({ ...val, data: [] })))
+        timeline: structuredClone(
+          weeklyArray.map((val) => ({ ...val, data: [] }))
         ),
-        total: JSON.parse(JSON.stringify(weeklyArray)),
-        focus: JSON.parse(JSON.stringify(weeklyArray)),
+        total: structuredClone(weeklyArray),
+        focus: structuredClone(weeklyArray),
       };
 
       subject.month = {
-        timeline: JSON.parse(
-          JSON.stringify(monthlyArray.map((val) => ({ ...val, data: [] })))
+        timeline: structuredClone(
+          monthlyArray.map((val) => ({ ...val, data: [] }))
         ),
-        total: JSON.parse(JSON.stringify(monthlyArray)),
-        focus: JSON.parse(JSON.stringify(monthlyArray)),
+        total: structuredClone(monthlyArray),
+        focus: structuredClone(monthlyArray),
       };
 
       subject.timeline.map(([start, duration]) => {
-        const endDateTime = DateTime.fromSeconds(start + duration).startOf(
-          "day"
-        );
+        const endDateTime = DateTime.fromSeconds(start + duration, {
+          zone: timezone,
+        }).startOf("day");
         const dayIndex = subject.day.timeline.findIndex(
           (day) => day.date === endDateTime.toISODate()
         );
@@ -187,71 +187,6 @@ function timelineSort(subjects, timezone) {
   } catch (err) {
     console.log(err);
     return { subjects: [], groupedSubjects: [] };
-  }
-}
-
-function sortNewSubject(subjects, subject) {
-  try {
-    subjects.sort((a, b) => a.created_at - b.created_at);
-
-    const dayDate = DateTime.fromSeconds(subjects[0].created_at).startOf("day");
-    const weekDate = dayDate.startOf("week");
-    const monthDate = dayDate.startOf("month");
-
-    const daysLength = subjects[0].day.total.length;
-    const weeksLength = subjects[0].week.total.length;
-    const monthsLength = subjects[0].month.total.length;
-
-    const dailyArray = [];
-    for (let i = 0; i < daysLength; i++) {
-      dailyArray.push({ date: dayDate.plus({ day: i }).toISODate(), data: 0 });
-    }
-
-    const weeklyArray = [];
-    for (let i = 0; i < weeksLength; i++) {
-      weeklyArray.push({
-        date: weekDate.plus({ week: i }).toISODate(),
-        data: 0,
-      });
-    }
-
-    const monthlyArray = [];
-    for (let i = 0; i < monthsLength; i++) {
-      monthlyArray.push({
-        date: monthDate.plus({ month: i }).toISODate(),
-        data: 0,
-      });
-    }
-
-    subject.day = {
-      timeline: JSON.parse(
-        JSON.stringify(dailyArray.map((val) => ({ ...val, data: [] })))
-      ),
-      total: JSON.parse(JSON.stringify(dailyArray)),
-      focus: JSON.parse(JSON.stringify(dailyArray)),
-    };
-
-    subject.week = {
-      timeline: JSON.parse(
-        JSON.stringify(weeklyArray.map((val) => ({ ...val, data: [] })))
-      ),
-      total: JSON.parse(JSON.stringify(weeklyArray)),
-      focus: JSON.parse(JSON.stringify(weeklyArray)),
-    };
-
-    subject.month = {
-      timeline: JSON.parse(
-        JSON.stringify(monthlyArray.map((val) => ({ ...val, data: [] })))
-      ),
-      total: JSON.parse(JSON.stringify(monthlyArray)),
-      focus: JSON.parse(JSON.stringify(monthlyArray)),
-    };
-
-    subjects.push(subject);
-    return subjects;
-  } catch (err) {
-    console.log(err);
-    return subjects;
   }
 }
 
