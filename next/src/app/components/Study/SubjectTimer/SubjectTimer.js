@@ -31,7 +31,7 @@ function SubjecTimer({
   const { setIsAddSubjectModal } = useContext(AddSubjectsModalContext);
 
   const { accountData } = useAccount();
-  const { subjects, updateSubjects } = useSubjects();
+  const { subjects, updateSubjects, subjectsRefetch } = useSubjects();
 
   const [subjectOptions, setSubjectOptions] = useState([]);
   const [selectNewSubject, setSelectNewSubject] = useState(false);
@@ -41,6 +41,16 @@ function SubjecTimer({
   });
 
   useEffect(() => {
+    return () => {
+      console.log("unhook");
+      socket.emit("stop");
+      setTimeout(() => {
+        subjectsRefetch();
+      }, 500);
+    };
+  }, []);
+
+  useEffect(() => {
     if (!subjects || !subjects.length) return;
     const subjectOptions = subjects.map((subject) => {
       const value = subject.day.total[subject.day.total.length - 1].data;
@@ -48,7 +58,14 @@ function SubjecTimer({
       return { subject_id, name, value, active: false };
     });
 
-    setSelectedSubject(subjectOptions[0]);
+    subjectOptions.sort((a, b) => b.value - a.value);
+
+    setSelectedSubject((prev) => {
+      if (!prev) {
+        return subjectOptions[0];
+      }
+      return prev;
+    });
     setSubjectOptions(subjectOptions);
   }, [subjects, accountData]);
 
@@ -81,6 +98,7 @@ function SubjecTimer({
 
   const toggleTimer = useCallback(
     (selectedSubject) => {
+      console.log("toggle");
       if (pomodoro.mode === 1 || pomodoro.mode === 2) {
         setPomodoro((prev) => ({ ...prev, active: !prev.active }));
         return;
@@ -120,12 +138,6 @@ function SubjecTimer({
           updateSubjects(newSubjects);
         }
       }
-
-      return () => {
-        subjectsTimerWorkerRef?.current?.postMessage({
-          command: "stopSubjectTimer",
-        });
-      };
     },
     [subjects, pomodoro]
   );
