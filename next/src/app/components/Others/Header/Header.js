@@ -14,15 +14,14 @@ import {
   HeaderMeteor,
   HeaderTarget,
 } from "@/app/utils/Svg";
-import { ChatModalContext, TutorialsContext } from "@/app/utils/Contexts";
+import { TutorialsContext } from "@/app/utils/Contexts";
 import { useExtensionUsage } from "@/Hooks/extensionHooks";
 import ProfileImage from "../../Users/ProfileImage/ProfileImage";
 import Link from "next/link";
-import { faComment } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import NotificationsContainer from "../../Notifications/NotificationsContainer/NotificationsContainer";
 import { useAccount } from "@/Hooks/accountHooks";
 import { useSubjects } from "@/Hooks/subjectsHooks";
+import ChatModalBtn from "../../Buttons/ChatModalBtn/ChatModalBtn";
 
 function HeaderEl({ children, value, title }) {
   return (
@@ -38,7 +37,6 @@ function HeaderEl({ children, value, title }) {
 function Header({}) {
   const { accountData } = useAccount();
   const { groupedSubjects } = useSubjects();
-  const { setChatModal } = useContext(ChatModalContext);
 
   const { tutorialBoxRef, tutorialTextRef, tutorial } =
     useContext(TutorialsContext);
@@ -139,17 +137,8 @@ function Header({}) {
       </div>
       {accountData ? (
         <div className={styles.right}>
-          <div
-            className={styles.ChatBtn}
-            onClick={() => {
-              setChatModal((prev) => ({
-                ...prev,
-                chatroom: null,
-                opened: !prev.opened,
-              }));
-            }}
-          >
-            <FontAwesomeIcon icon={faComment} />
+          <div className={styles.ChatBtn}>
+            <ChatModalBtn />
           </div>
           <div className={styles.NotificationsBtn}>
             <NotificationsContainer />

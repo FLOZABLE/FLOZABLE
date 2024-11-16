@@ -25,6 +25,7 @@ import { faPeopleGroup } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { ACTIVE_GROUP_DEBOUNCE } from "@/app/utils/Constant";
 import Skeleton from "react-loading-skeleton";
+import ChatModalBtn from "../../Buttons/ChatModalBtn/ChatModalBtn";
 
 const videoParams = {
   encodings: [
@@ -445,19 +446,8 @@ function MyGroupContainer({ group, isAdmin, isActive, leaveGroup }) {
             </i>
             <p>{totalTime}</p>
           </div>
-          <div
-            onClick={() => {
-              setChatModal((prev) => ({
-                ...prev,
-                chatroom: group.group_id,
-                name: group.name,
-                opened: true,
-              }));
-            }}
-          >
-            <i>
-              <IconMessage />
-            </i>
+          <div>
+            <ChatModalBtn chatroomId={group.group_id} />
           </div>
           {isAdmin ? (
             <div

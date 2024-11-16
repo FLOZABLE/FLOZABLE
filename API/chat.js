@@ -64,8 +64,9 @@ Router.get("/rooms", async (req, res) => {
             1
           );
           chatroom.lastMsg = lastMsg;
-          chatroom.lastRead = chatroomsMessages[chatroom.chatroom_id]?.lastMsg;
-          chatroom.unreads = chatroomsMessages[chatroom.chatroom_id]?.unreads;
+          chatroom.lastRead = chatroomsMessages[chatroom.chatroom_id]?.lastMsg || null;
+          chatroom.unreads =
+            chatroomsMessages[chatroom.chatroom_id]?.unreads || 0;
         })
       );
 

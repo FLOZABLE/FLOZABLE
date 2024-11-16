@@ -27,6 +27,9 @@ export default function MembersStatus({ groupId, members }) {
       if (!members.find((member) => member.user_id === userId)) return;
 
       if (subject.subject_id === "0") {
+        setStudyingMembers((prev) =>
+          prev.filter((memberId) => memberId !== userId)
+        );
         setRestingMembers((prev) => [...new Set([...prev, userId])]);
       } else {
         setStudyingMembers((prev) => [...new Set([...prev, userId])]);
