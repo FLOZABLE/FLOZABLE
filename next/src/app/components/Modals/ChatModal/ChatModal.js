@@ -174,9 +174,15 @@ function ChatModal({}) {
       socket.emit("chat/read", chatModal.chatroom);
     }
 
+    const messageAudio = new Audio("/audio/message.mp3");
+
     const onChatMessage = ({ message }) => {
       console.log(message);
       scrollToBottom("smooth");
+      if (message.user_id !== accountData?.user_id) {
+        //const messageAudio = new Audio("/audio/message.mp3");
+        messageAudio.play();
+      }
       updateChatrooms((prev) => {
         const newChatrooms = [...prev];
         const chatroomIndex = newChatrooms.findIndex(
