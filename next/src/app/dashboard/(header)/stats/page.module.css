@@ -35,6 +35,11 @@
   height: fit-content;
 }
 
+.Stats .boxContainer#StudyHeatMap {
+  height: fit-content;
+  min-height: 0rem;
+}
+
 /* .Stats .layer {
   display: flex;
   height: 50vh;
