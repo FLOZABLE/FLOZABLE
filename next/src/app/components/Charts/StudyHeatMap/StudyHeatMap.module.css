@@ -1,8 +1,11 @@
 .StudyHeatMap {
   width: 100%;
-  height: 100%;
 }
 
 .StudyHeatMap * {
-  pointer-events: all !important;
+  pointer-events: all;
+}
+
+.StudyHeatMap *:focus {
+  outline: none;
 }

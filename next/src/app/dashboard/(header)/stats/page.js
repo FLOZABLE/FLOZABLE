@@ -48,9 +48,9 @@ function Stats({}) {
           </div>
           <div
             className={`BoxContainer ${styles.boxContainer}`}
-            id={styles.RankingsTrendsChart}
+            id={styles.StudyHeatMap}
           >
-            <StudyHeatMap />
+            <StudyHeatMap viewDate={viewDate} setViewDate={setViewDate} />
           </div>
           <div
             className={`BoxContainer ${styles.boxContainer}`}
