@@ -8,6 +8,7 @@ import RankingsTrendsChart from "@/app/components/Charts/RankingsTrendsChart/Ran
 import WebsiteUsageChart from "@/app/components/Charts/WebsiteUsageChart/WebsiteUsageChart";
 import { useAccount } from "@/Hooks/accountHooks";
 import { useSubjects } from "@/Hooks/subjectsHooks";
+import StudyHeatMap from "@/app/components/Charts/StudyHeatMap/StudyHeatMap";
 
 function Stats({}) {
   const { accountData } = useAccount();
@@ -45,6 +46,29 @@ function Stats({}) {
               userId={accountData?.user_id}
             />
           </div>
+          <div
+            className={`BoxContainer ${styles.boxContainer}`}
+            id={styles.RankingsTrendsChart}
+          >
+            <StudyHeatMap />
+          </div>
+          <div
+            className={`BoxContainer ${styles.boxContainer}`}
+            id={styles.RankingsTrendsChart}
+          >
+            <RankingsTrendsChart
+              viewDate={viewDate}
+              setViewDate={setViewDate}
+              viewer={viewer}
+              userId={accountData?.user_id}
+            />
+          </div>
+          {/* <div
+            className={`BoxContainer ${styles.boxContainer}`}
+            id={styles.WebsiteUsageChart}
+          >
+            <WebsiteUsageChart viewDate={viewDate} viewer={viewer} />
+          </div> */}
           <div
             className={`BoxContainer ${styles.boxContainer}`}
             id={styles.WebsiteUsageChart}
