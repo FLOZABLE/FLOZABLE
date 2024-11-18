@@ -283,6 +283,37 @@ async function replyFriendRequest({
   }
 }
 
+Router.get("/", async (req, res) => {
+  autoSignin(req, res, async (userId) => {
+    try {
+      const connection = pool.promise();
+
+      const [friendsData] = await connection.query(
+        `SELECT friend_id, user_id, friendship_id, date FROM friends WHERE (user_id = ? OR friend_id = ?) AND status = "accepted"`,
+        [userId, userId]
+      );
+
+      const friends = friendsData.map((friend) => {
+        const friend_id =
+          friend.friend_id !== userId ? friend.friend_id : friend.user_id;
+        return {
+          friend_id,
+          friendship_id: friend.friendship_id,
+          date: friend.date,
+        };
+      });
+
+      console.log(friends);
+
+      return res.send({ success: true, status: 200, data: { friends } });
+    } catch (err) {
+      console.log(err);
+      const response = RESPONSE_MESSAGES.error();
+      return res.status(response.status).send(response);
+    }
+  });
+});
+
 //send friend request
 Router.post("/request", async (req, res) => {
   autoSignin(req, res, async (userId) => {
