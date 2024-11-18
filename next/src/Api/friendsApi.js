@@ -1,6 +1,10 @@
 import AxiosInstance from "@/app/utils/axiosInstance";
 import { getTimezone, requestHandler } from "@/app/utils/Tool";
 
+async function getFriends() {
+  return requestHandler(AxiosInstance.get(`/friends`));
+}
+
 async function getFriendsRecommended() {
   return requestHandler(AxiosInstance.get(`/friends/recommended`));
 }
@@ -63,6 +67,7 @@ async function deleteFriendRequest(notificationId) {
 }
 
 export {
+  getFriends,
   getFriendsRecommended,
   getFriendsSearch,
   getFriendsTrends,

@@ -18,6 +18,7 @@ export default function ChatModalBtn({ chatroomId }) {
         0
       );
       setCount(count);
+      return;
     }
 
     const chatroom = chatrooms.find(
