@@ -1,4 +1,5 @@
 import {
+  getFriends,
   getFriendsRecommended,
   getFriendsSearch,
   getFriendsStatus,
@@ -6,6 +7,23 @@ import {
 } from "@/Api/friendsApi";
 import { useQuery } from "@tanstack/react-query";
 import { useAccount } from "./accountHooks";
+
+function useFriends() {
+  const { accountData } = useAccount();
+
+  const queryResult = useQuery({
+    queryKey: [`useFriends`],
+    queryFn: () => getFriends(),
+    staleTime: 1000 * 10,
+    enabled: !!accountData,
+    select: (response) => response?.data?.friends || [],
+    placeholderData: [],
+  });
+
+  const { data: friendsData } = queryResult;
+
+  return { friendsData, ...queryResult };
+}
 
 function useFriendsSearch(searchQuery) {
   const queryResult = useQuery({
@@ -89,6 +107,7 @@ function useFriendsStatus() {
 }
 
 export {
+  useFriends,
   useFriendsSearch,
   useFriendsTrends,
   useFriendsRecommended,
