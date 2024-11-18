@@ -202,6 +202,7 @@ function SubjecTimer({
               }
             }}
             tutorial={8}
+            id="subjectimer"
           />
           <p>Pomodoro</p>
         </div>

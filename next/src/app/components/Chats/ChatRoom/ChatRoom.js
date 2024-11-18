@@ -27,7 +27,7 @@ function ChatRoom({ chatroom }) {
       onClick={() => {
         setChatModal((prev) => ({
           ...prev,
-          chatroom: chatroom.chatroom_id,
+          chatroom_id: chatroom.chatroom_id,
           name: chatroom.name,
         }));
       }}
