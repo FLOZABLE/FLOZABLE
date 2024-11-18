@@ -91,9 +91,7 @@ function StudyTimelineBar() {
             openModal(event);
           },
           style: {
-            background: event.backgroundColor
-              ? event.backgroundColor
-              : "rgb(159, 225, 231)",
+            background: event.color || "#fff",
             textAlign: "center",
             fontSize: "1rem",
             zIndex: event.completed

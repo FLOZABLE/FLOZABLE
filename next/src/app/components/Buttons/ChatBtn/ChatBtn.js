@@ -19,12 +19,11 @@ export default function ChatBtn({ targetInfo, padding }) {
       const response = await postChatRequest(targetInfo.user_id);
 
       if (response.message === "DM already created!") {
-        const { name, chatroom_id } = response.data.chatroom;
+        const { chatroom_id } = response.data.chatroom;
 
         setChatModal((prev) => ({
           ...prev,
-          chatroom: chatroom_id,
-          name,
+          chatroom_id,
           opened: true,
         }));
       }
@@ -43,8 +42,7 @@ export default function ChatBtn({ targetInfo, padding }) {
               return setChatModal((prev) => ({
                 ...prev,
                 opened: true,
-                chatroom: null,
-                name: null,
+                chatroom_id: null,
               }));
             }
             const chatroom = chatrooms.find(
@@ -56,8 +54,7 @@ export default function ChatBtn({ targetInfo, padding }) {
             if (chatroom) {
               setChatModal((prev) => ({
                 ...prev,
-                chatroom: chatroom.chatroom_id,
-                name: chatroom.name,
+                chatroom_id: chatroom.chatroom_id,
                 opened: true,
               }));
               return;

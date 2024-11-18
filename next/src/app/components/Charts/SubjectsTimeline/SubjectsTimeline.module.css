@@ -7,3 +7,17 @@
   overflow-x: hidden;
   overflow-y: auto;
 }
+
+.SubjectsTimeline .noTimeline {
+  text-align: center;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  height: 100%;
+  font-size: 2rem;
+}
+
+.SubjectsTimeline .noTimeline a {
+  text-decoration: underline;
+  font-weight: bold;
+}

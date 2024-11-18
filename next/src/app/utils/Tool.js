@@ -289,14 +289,20 @@ function getDatesDisplay({
 }
 
 function exitFullscreen() {
-  if (document.exitFullscreen) {
-    document.exitFullscreen();
-  } else if (document.mozCancelFullScreen) {
-    document.mozCancelFullScreen(); // Firefox
-  } else if (document.webkitExitFullscreen) {
-    document.webkitExitFullscreen(); // Chrome, Safari, and Opera
-  } else if (document.msExitFullscreen) {
-    document.msExitFullscreen(); // IE/Edge
+  try {
+    if (document.fullscreenElement === null) return;
+    
+    if (document.exitFullscreen) {
+      document.exitFullscreen();
+    } else if (document.mozCancelFullScreen) {
+      document.mozCancelFullScreen(); // Firefox
+    } else if (document.webkitExitFullscreen) {
+      document.webkitExitFullscreen(); // Chrome, Safari, and Opera
+    } else if (document.msExitFullscreen) {
+      document.msExitFullscreen(); // IE/Edge
+    }
+  } catch (err) {
+    console.log(err);
   }
 }
 

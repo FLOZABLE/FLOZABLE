@@ -1,13 +1,7 @@
-import { generateRandomId } from "@/app/utils/Tool";
 import styles from "./SimpleToggleBtn.module.css";
 import React from "react";
 
-function SimpleToggleBtn({
-  onToggle,
-  checked,
-  id = generateRandomId(10),
-  tutorial,
-}) {
+function SimpleToggleBtn({ onToggle, checked, id, tutorial }) {
   return (
     <div
       className={styles.SimpleToggleBtn}

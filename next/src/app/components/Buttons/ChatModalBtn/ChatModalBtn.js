@@ -33,9 +33,8 @@ export default function ChatModalBtn({ chatroomId }) {
       onClick={() => {
         setChatModal((prev) => ({
           ...prev,
-          chatroom: null,
           opened: !prev.opened,
-          chatroom: chatroomId ? chatroomId : prev.chatroom,
+          chatroom_id: chatroomId ? chatroomId : prev.chatroom,
         }));
       }}
     >

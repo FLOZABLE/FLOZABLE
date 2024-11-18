@@ -69,42 +69,51 @@ export default function SubjectsTimeline({ viewDate }) {
   return (
     <div className={`Box ${styles.SubjectsTimeline}`} ref={ref}>
       <div className="header">Study Timeline</div>
-      <div className={`${styles.timeline} customScroll`}>
-        <VerticalTimeline>
-          {timeline.slice(0, page * pageLength).map((data, i) => {
-            return (
-              <VerticalTimelineElement
-                contentStyle={{ background: data.color, color: "#fff" }}
-                contentArrowStyle={{
-                  borderRight: `7px solid  ${data.color}`,
-                }}
-                iconStyle={{ background: data.color, color: "#fff" }}
-                icon={<IconBook />}
-                visible={inView}
-              >
-                <div
-                  className={styles.element}
-                  ref={(el) => {
-                    if (i === timeline.slice(0, page * pageLength).length - 5) {
-                      setTimeout(() => {
-                        bottomTimelineRef(el);
-                      }, 100);
-                    }
+      {timeline.length ? (
+        <div className={`${styles.timeline} customScroll`}>
+          <VerticalTimeline>
+            {timeline.slice(0, page * pageLength).map((data, i) => {
+              return (
+                <VerticalTimelineElement
+                  contentStyle={{ background: data.color, color: "#fff" }}
+                  contentArrowStyle={{
+                    borderRight: `7px solid  ${data.color}`,
                   }}
+                  iconStyle={{ background: data.color, color: "#fff" }}
+                  icon={<IconBook />}
+                  visible={inView}
                 >
-                  <h3>{data.name}</h3>
-                  <p>
-                    {data.start}-{data.end}
-                  </p>
-                  <p>
-                    Studied {data.name} for {data.duration}
-                  </p>
-                </div>
-              </VerticalTimelineElement>
-            );
-          })}
-        </VerticalTimeline>
-      </div>
+                  <div
+                    className={styles.element}
+                    ref={(el) => {
+                      if (
+                        i ===
+                        timeline.slice(0, page * pageLength).length - 5
+                      ) {
+                        setTimeout(() => {
+                          bottomTimelineRef(el);
+                        }, 100);
+                      }
+                    }}
+                  >
+                    <h3>{data.name}</h3>
+                    <p>
+                      {data.start}-{data.end}
+                    </p>
+                    <p>
+                      Studied {data.name} for {data.duration}
+                    </p>
+                  </div>
+                </VerticalTimelineElement>
+              );
+            })}
+          </VerticalTimeline>
+        </div>
+      ) : (
+        <div className={styles.noTimeline}>
+          <a href="/dashboard/study">Study to view the timeline</a>
+        </div>
+      )}
     </div>
   );
 }

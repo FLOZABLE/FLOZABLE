@@ -382,7 +382,7 @@ function AddSubjectsModalProvider({ children }) {
 
 function ChatModalProvider({ children }) {
   const [chatModal, setChatModal] = useState({
-    chatroom: null,
+    chatroom_id: null,
     name: "",
     opened: false,
     totalNewMsg: 0,
@@ -391,7 +391,7 @@ function ChatModalProvider({ children }) {
   const pathname = usePathname();
 
   useEffect(() => {
-    setChatModal((prev) => ({ ...prev, chatroom: null, opened: false }));
+    setChatModal((prev) => ({ ...prev, chatroom_id: null, opened: false }));
   }, [pathname]);
 
   return (
