@@ -110,9 +110,9 @@ function ExtensionSetting() {
                     <SimpleToggleBtn
                       checked={block}
                       onToggle={() => {
-                        console.log("gddd");
                         settingUpdate(website, "block", !block);
                       }}
+                      id={`${website}-block`}
                     />
                   </div>
                   <div>
@@ -121,6 +121,7 @@ function ExtensionSetting() {
                       onToggle={() => {
                         settingUpdate(website, "study_block", !study_block);
                       }}
+                      id={`${website}-study_block`}
                     />
                   </div>
                   <div>
@@ -129,6 +130,7 @@ function ExtensionSetting() {
                       onToggle={() => {
                         settingUpdate(website, "timer", !timer);
                       }}
+                      id={`${website}-timer`}
                     />
                   </div>
                   <div>
@@ -137,6 +139,7 @@ function ExtensionSetting() {
                       onToggle={() => {
                         settingUpdate(website, "study_timer", !study_timer);
                       }}
+                      id={`${website}-study_timer`}
                     />
                   </div>
                 </li>

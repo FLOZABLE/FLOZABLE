@@ -37,6 +37,8 @@ function ChatModal({}) {
     length: 30,
     lastMsgId: null,
   });
+  const [chatroomName, setChatroomName] = useState("");
+
   const [lastReadMessageId, setLastReadMessageId] = useState(null);
   const [members, setMembers] = useState([]);
   const [msgInput, setMsgInput] = useState("");
@@ -48,7 +50,7 @@ function ChatModal({}) {
   //const debouncedScrollBottom = useDebounce(scrollBottom, 300);
 
   const { chatrooms, updateChatrooms } = useChatRooms();
-  const { chatroomMembersData } = useChatRoomMembers(chatModal.chatroom);
+  const { chatroomMembersData } = useChatRoomMembers(chatModal.chatroom_id);
   const { chatMessagesData, fetchNextPage, hasNextPage } =
     useChatMessages(messageDataOptions);
 
@@ -67,10 +69,21 @@ function ChatModal({}) {
   }, []);
 
   const onSubmit = useCallback(() => {
-    socket.emit("chat/send", chatModal.chatroom, msgInput);
+    socket.emit("chat/send", chatModal.chatroom_id, msgInput);
     setMsgInput("");
     scrollToBottom("smooth");
-  }, [msgInput, chatModal.chatroom]);
+  }, [msgInput, chatModal.chatroom_id]);
+
+  useEffect(() => {
+    if (!chatModal.chatroom_id) return;
+
+    const chatroom = chatrooms.find(
+      (chatroom) => chatroom.chatroom_id === chatModal.chatroom_id
+    );
+    if (!chatroom) return;
+
+    setChatroomName(chatroom.name);
+  }, [chatrooms, chatModal.chatroom_id]);
 
   const onScroll = useCallback((event) => {
     const scrollBottom =
@@ -127,19 +140,19 @@ function ChatModal({}) {
 
   useEffect(() => {
     scrollToBottom();
-    if (chatModal.chatroom) {
+    if (chatModal.chatroom_id) {
       setMessageDataOptions((prev) => {
         const newMessageDataOptions = structuredClone(prev);
         const chatroom = chatrooms.find(
-          (chatroom) => chatroom.chatroom_id === chatModal.chatroom
+          (chatroom) => chatroom.chatroom_id === chatModal.chatroom_id
         );
         if (chatroom?.lastMsg) {
           newMessageDataOptions.lastMsgId = chatroom.lastMsg.message_id;
         }
-        if (newMessageDataOptions.chatroomId === chatModal.chatroom) {
+        if (newMessageDataOptions.chatroomId === chatModal.chatroom_id) {
           return newMessageDataOptions;
         }
-        newMessageDataOptions.chatroomId = chatModal.chatroom;
+        newMessageDataOptions.chatroomId = chatModal.chatroom_id;
         return newMessageDataOptions;
       });
 
@@ -147,7 +160,7 @@ function ChatModal({}) {
       updateChatrooms((prev) => {
         const newState = [...prev];
         const chatroomIndex = newState.findIndex(
-          (chatroom) => chatroom.chatroom_id === chatModal.chatroom
+          (chatroom) => chatroom.chatroom_id === chatModal.chatroom_id
         );
 
         if (chatroomIndex === -1) return prev;
@@ -171,7 +184,7 @@ function ChatModal({}) {
 
         return newState;
       });
-      socket.emit("chat/read", chatModal.chatroom);
+      socket.emit("chat/read", chatModal.chatroom_id);
     }
 
     const messageAudio = new Audio("/audio/message.mp3");
@@ -193,9 +206,9 @@ function ChatModal({}) {
 
         newChatrooms[chatroomIndex].lastMsg = message;
 
-        if (chatModal.chatroom === message.chatroom_id) {
+        if (chatModal.chatroom_id === message.chatroom_id) {
           setMessages((prev) => [...prev, message]);
-          socket.emit("chat/read", chatModal.chatroom);
+          socket.emit("chat/read", chatModal.chatroom_id);
           newChatrooms[chatroomIndex].unreads = 0;
           newChatrooms[chatroomIndex].lastRead = message.message_id;
           setLastReadMessageId(message.message_id);
@@ -221,7 +234,7 @@ function ChatModal({}) {
     return () => {
       socket.off("chat/message", onChatMessage);
     };
-  }, [chatModal.chatroom, accountData]);
+  }, [chatModal.chatroom_id, accountData]);
 
   useEffect(() => {
     if (!lastReadMessageId) return;
@@ -295,18 +308,18 @@ function ChatModal({}) {
       </ul>
       <div
         className={`${styles.chatScreen} ${
-          chatModal?.chatroom ? styles.open : ""
+          chatModal.chatroom_id ? styles.open : ""
         }`}
       >
         <div className={styles.header}>
           <i
             onClick={() => {
-              setChatModal((prev) => ({ ...prev, chatroom: null }));
+              setChatModal((prev) => ({ ...prev, chatroom_id: null }));
             }}
           >
             <BackArrow />
           </i>
-          <p className={`overflowDot ${styles.name}`}>{chatModal?.name}</p>
+          <p className={`overflowDot ${styles.name}`}>{chatroomName}</p>
           <i
             onClick={() => {
               setChatModal((prev) => ({ ...prev, opened: false }));

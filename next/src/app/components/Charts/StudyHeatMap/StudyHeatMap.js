@@ -39,7 +39,6 @@ export default function StudyHeatMap({ viewDate, setViewDate }) {
             .minus({ year: 1 })
             .toJSDate()}
           endDate={DateTime.fromJSDate(viewDate).endOf("year").toJSDate()}
-          /* titleForValue={(value) => "value"} */
           tooltipDataAttrs={(value) => {
             if (!value.date) {
               return null;
