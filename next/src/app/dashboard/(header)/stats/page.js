@@ -9,6 +9,7 @@ import WebsiteUsageChart from "@/app/components/Charts/WebsiteUsageChart/Website
 import { useAccount } from "@/Hooks/accountHooks";
 import { useSubjects } from "@/Hooks/subjectsHooks";
 import StudyHeatMap from "@/app/components/Charts/StudyHeatMap/StudyHeatMap";
+import SubjectsTimeline from "@/app/components/Charts/SubjectsTimeline/SubjectsTimeline";
 
 function Stats({}) {
   const { accountData } = useAccount();
@@ -56,12 +57,7 @@ function Stats({}) {
             className={`BoxContainer ${styles.boxContainer}`}
             id={styles.RankingsTrendsChart}
           >
-            <RankingsTrendsChart
-              viewDate={viewDate}
-              setViewDate={setViewDate}
-              viewer={viewer}
-              userId={accountData?.user_id}
-            />
+            <SubjectsTimeline viewDate={viewDate} />
           </div>
           {/* <div
             className={`BoxContainer ${styles.boxContainer}`}

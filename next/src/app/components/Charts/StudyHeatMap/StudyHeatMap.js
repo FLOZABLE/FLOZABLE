@@ -30,7 +30,8 @@ export default function StudyHeatMap({ viewDate, setViewDate }) {
   const { groupedSubjects } = useSubjects();
 
   return (
-    <div className={styles.StudyHeatMap}>
+    <div className={`Box ${styles.StudyHeatMap}`}>
+      <div className="header">Study Heatmap</div>
       <StyleWrapper>
         <CalendarHeatmap
           startDate={DateTime.fromJSDate(viewDate)
@@ -58,8 +59,7 @@ export default function StudyHeatMap({ viewDate, setViewDate }) {
           }
           showWeekdayLabels={true}
           onClick={(value) => {
-            console.log(value);
-            if (!value.date) return;
+            if (!value?.date) return;
             const date = DateTime.fromISO(value.date).toJSDate();
             setViewDate(date);
           }}

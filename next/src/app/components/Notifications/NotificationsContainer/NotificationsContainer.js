@@ -31,7 +31,11 @@ function NotificationContainer({ children, userInfo, message }) {
             </div>
           );
         }
-        return <div className={styles.message}>{content}</div>;
+        return (
+          <div className={styles.message} key={i}>
+            {content}
+          </div>
+        );
       })}
       <div className={styles.buttons}>{children}</div>
     </div>
@@ -75,7 +79,6 @@ export default function NotificationsContainer() {
   }, []);
 
   const chatRequestReply = useCallback(async (notificationId, accepted) => {
-
     filterNotification(notificationId);
 
     postChatRequestReply({
