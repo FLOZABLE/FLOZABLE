@@ -262,8 +262,9 @@ async function replyFriendRequest({
     await connection.query(`INSERT INTO notifications SET ?`, [notification]);
 
     notification.userinfo = userInfo;
-    notification.message =
-      NOTIFICATION_MESSAGES.friendRequestAccept(targetName);
+    notification.message = NOTIFICATION_MESSAGES.friendRequestAccept(
+      userInfo.name
+    );
     mainIo.to(targetId).emit("notification", notification);
 
     friends.push(targetId);
