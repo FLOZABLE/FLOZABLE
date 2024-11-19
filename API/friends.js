@@ -419,6 +419,51 @@ async function getRecommendedFriends(connection, excluded = []) {
   }
 }
 
+//delete friends
+Router.delete("/friend", async (req, res) => {
+  autoSignin(req, res, async (userId) => {
+    try {
+      const { friend_id: friendId } = req.body;
+
+      const isValidFriendId = validateStrictString(friendId, "friend id", 10);
+
+      if (!isValidFriendId.isValid) {
+        const response = RESPONSE_MESSAGES.validationError(isValidFriendId);
+        return res.status(response.status).send(response);
+      }
+
+      const connection = pool.promise();
+      const [result] = await connection.query(
+        `DELETE FROM friends WHERE (user_id = ? AND friend_id = ?) OR (user_id = ? AND friend_id = ?)`,
+        [userId, friendId, friendId, userId]
+      );
+
+      if (!result.affectedRows) {
+        return res.status(400).send({
+          success: false,
+          status: 400,
+          message: "Not a friend",
+          error: { reason: "Not a friend" },
+        });
+      }
+
+      //update cache values
+      redisClient.srem(`user:${userId}:friends`, friendId);
+      redisClient.srem(`user:${friendId}:friends`, userId);
+
+      return res.send({
+        success: true,
+        message: "Deleted friend!",
+        status: 200,
+      });
+    } catch (err) {
+      console.log(err);
+      const response = RESPONSE_MESSAGES.error();
+      return res.status(response.status).send(response);
+    }
+  });
+});
+
 Router.get("/recommended", async (req, res) => {
   autoSignin(
     req,

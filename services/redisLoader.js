@@ -479,7 +479,7 @@ async function userChatroomsCache(userId) {
       if (key.includes("unreads")) {
         formattedChatrooms[chatroomId].unreads = parseInt(chatrooms[key]);
       } else {
-        formattedChatrooms[chatroomId].lastMsg = chatrooms[key];
+        formattedChatrooms[chatroomId].lastReadMessage = chatrooms[key];
       }
     });
 

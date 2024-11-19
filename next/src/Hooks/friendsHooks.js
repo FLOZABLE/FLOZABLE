@@ -5,10 +5,14 @@ import {
   getFriendsStatus,
   getFriendsTrends,
 } from "@/Api/friendsApi";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useAccount } from "./accountHooks";
+import { useCallback } from "react";
+import { updateQueryData } from "@/app/utils/Tool";
 
 function useFriends() {
+  const queryClient = useQueryClient();
+
   const { accountData } = useAccount();
 
   const queryResult = useQuery({
@@ -22,7 +26,13 @@ function useFriends() {
 
   const { data: friendsData } = queryResult;
 
-  return { friendsData, ...queryResult };
+  const updateFriendsData = useCallback(async (newData) => {
+    await queryClient.setQueryData(["useFriends"], (oldData) => {
+      return updateQueryData(oldData, newData, "friends");
+    });
+  }, []);
+
+  return { friendsData, updateFriendsData, ...queryResult };
 }
 
 function useFriendsSearch(searchQuery) {

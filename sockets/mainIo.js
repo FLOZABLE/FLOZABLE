@@ -237,17 +237,12 @@ mainIo.on("connection", (socket) => {
 
       /*
       add unread messages to chatroom members who is not me.
-      room:ROOMID:last_read_msg stores last message's (current sent message) id
+      room:ROOMID:last_read_message stores last message's (current sent message) id
       room:ROOMID:unreads stores total number of unread messages
       */
       members
         .filter((member) => member !== userId)
         .map((member) => {
-          redisClient.hset(
-            `user:${member}:chatrooms`,
-            `room:${roomId}:last_read_msg`,
-            message_id
-          );
           redisClient.hincrby(
             `user:${member}:chatrooms`,
             `room:${roomId}:unreads`,
@@ -260,11 +255,11 @@ mainIo.on("connection", (socket) => {
         });
 
       /**
-       * for me, set last_read_msg id as same as other members, but hset room:ROOMID:unreads as 0 instead of hincryby.
+       * for me, set last_read_message id as same as other members, but hset room:ROOMID:unreads as 0 instead of hincryby.
        */
       redisClient.hset(
         `user:${userId}:chatrooms`,
-        `room:${roomId}:last_read_msg`,
+        `room:${roomId}:last_read_message`,
         message_id
       );
       redisClient.hset(`user:${userId}:chatrooms`, `room:${roomId}:unreads`, 0);
@@ -293,7 +288,7 @@ mainIo.on("connection", (socket) => {
       if (lastMsg) {
         redisClient.hset(
           `user:${userId}:chatrooms`,
-          `room:${roomId}:last_read_msg`,
+          `room:${roomId}:last_read_message`,
           lastMsg.message_id
         );
       }
