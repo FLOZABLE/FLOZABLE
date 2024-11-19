@@ -126,10 +126,6 @@ function ChatModal({}) {
 
     setMessages(allMessages);
     if (chatsContainerRef.current) {
-      console.log(
-        "last scroll",
-        chatsContainerRef.current.scrollHeight - scrollBottom
-      );
       setTimeout(() => {
         const newScrollHeight = container.scrollHeight;
         const heightDifference = newScrollHeight - previousScrollHeight;
@@ -165,22 +161,29 @@ function ChatModal({}) {
 
         if (chatroomIndex === -1) return prev;
 
-        newState[chatroomIndex].unreads = 0;
-
         const lastRead = newState[chatroomIndex].lastRead;
-        console.log("lastread", lastRead);
+        //console.log("lastread", lastRead);
         if (lastRead) {
           setTimeout(() => {
-            console.log("trigger");
+            //console.log("trigger");
             setLastReadMessageId(lastRead);
           }, 100);
         }
 
         const lastMsg = newState[chatroomIndex].lastMsg;
 
+        //console.log("last", lastMsg);
         if (lastMsg) {
           newState[chatroomIndex].lastRead = lastMsg.message_id;
         }
+
+        const updatedChatroom = {
+          ...newState[chatroomIndex],
+          unreads: 0,
+          lastRead: newState[chatroomIndex].lastMsg?.message_id || lastRead,
+        };
+
+        newState[chatroomIndex] = updatedChatroom;
 
         return newState;
       });

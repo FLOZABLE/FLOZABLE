@@ -5,6 +5,12 @@ async function getFriends() {
   return requestHandler(AxiosInstance.get(`/friends`));
 }
 
+async function deleteFriend(friendId) {
+  return requestHandler(
+    AxiosInstance.delete(`/friends/friend`, { data: { friend_id: friendId } })
+  );
+}
+
 async function getFriendsRecommended() {
   return requestHandler(AxiosInstance.get(`/friends/recommended`));
 }
@@ -68,6 +74,7 @@ async function deleteFriendRequest(notificationId) {
 
 export {
   getFriends,
+  deleteFriend,
   getFriendsRecommended,
   getFriendsSearch,
   getFriendsTrends,

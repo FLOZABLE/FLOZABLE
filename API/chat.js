@@ -64,7 +64,8 @@ Router.get("/rooms", async (req, res) => {
             1
           );
           chatroom.lastMsg = lastMsg;
-          chatroom.lastRead = chatroomsMessages[chatroom.chatroom_id]?.lastMsg || null;
+          chatroom.lastRead =
+            chatroomsMessages[chatroom.chatroom_id]?.lastReadMessage || null;
           chatroom.unreads =
             chatroomsMessages[chatroom.chatroom_id]?.unreads || 0;
         })
@@ -91,7 +92,6 @@ Router.get("/messages", async (req, res) => {
     try {
       const { chatroom_id, offset, length } = req.query;
 
-      console.log(req.query);
       const members = await chatroomMembersCache(null, chatroom_id);
 
       if (!members.includes(userId)) {

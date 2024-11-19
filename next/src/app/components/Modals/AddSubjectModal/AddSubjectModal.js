@@ -96,16 +96,14 @@ function AddSubjectModal({}) {
     [tutorial, subjects]
   );
 
-  //setTutorial(0)
-
   return (
-    <div ref={addSubjectModalRef} className={styles.AddSubjectModal}>
+    <div className={styles.AddSubjectModal}>
       <DraggableModal
         isOpen={isAddSubjectModal}
         setIsOpen={setIsAddSubjectModal}
         top="15rem"
       >
-        <div className={styles.inner}>
+        <div className={styles.inner} ref={addSubjectModalRef}>
           <div className={styles.inputWrapper}>
             <CustomInput
               input={subject.name}
