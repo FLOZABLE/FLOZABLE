@@ -5,7 +5,6 @@ import styles from "./page.module.css";
 import FriendsActivityViewer from "@/app/components/Friends/FriendsActivityViewer/FriendsActivityViewer";
 import FriendRequestsViewer from "@/app/components/Friends/FriendRequestsViewer/FriendRequestsViewer";
 import FriendsTrendChart from "@/app/components/Charts/FriendsTrendChart";
-import SearchUsersBox from "@/app/components/Users/SearchUsersBox/SearchUsersBox";
 
 function Friends({}) {
   const [viewDate, setViewDate] = useState(
