@@ -47,6 +47,9 @@ function SubjecTimer({
       setTimeout(() => {
         subjectsRefetch();
       }, 500);
+      subjectsTimerWorkerRef?.current?.postMessage({
+        command: "stopSubjectTimer",
+      });
     };
   }, []);
 
