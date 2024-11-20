@@ -21,14 +21,14 @@ function WelcomeModal({}) {
   const [isConfetti, setIsConfetti] = useState(false);
 
   useEffect(() => {
-    const isNew = new URLSearchParams(window.location.search);
-    if (isNew.get("welcome") === "true") {
+    const welcome = searchParams.get("welcome");
+    if (welcome === "true") {
       setIsModal(true);
       setIsConfetti(true);
     } else {
       setIsModal(false);
     }
-  }, [accountData]);
+  }, [searchParams]);
 
   const skipTutorial = useCallback(() => {
     setIsModal(false);

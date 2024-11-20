@@ -128,16 +128,22 @@ export default function PlanModal() {
         tutorialTextRef.current.style.top = top - 100 + "px";
       }, 500);
     } else if (tutorial === 5) {
-      const { width, top, left, height } =
-        submitBtnRef.current.getBoundingClientRect();
-      tutorialBoxRef.current.style.left = left - 20 + "px";
-      tutorialBoxRef.current.style.top = top - 20 + "px";
-      tutorialBoxRef.current.style.width = width + 40 + "px";
-      tutorialBoxRef.current.style.height = height + 40 + "px";
+      modalRef.current.scroll({
+        top: 200000,
+        behavior: "smooth",
+      });
+      setTimeout(() => {
+        const { width, top, left, height } =
+          submitBtnRef.current.getBoundingClientRect();
+        tutorialBoxRef.current.style.left = left - 20 + "px";
+        tutorialBoxRef.current.style.top = top - 20 + "px";
+        tutorialBoxRef.current.style.width = width + 40 + "px";
+        tutorialBoxRef.current.style.height = height + 40 + "px";
 
-      tutorialTextRef.current.textContent = "Save your plan!";
-      tutorialTextRef.current.style.left = left - 15 + "px";
-      tutorialTextRef.current.style.top = top - 100 + "px";
+        tutorialTextRef.current.textContent = "Save your plan!";
+        tutorialTextRef.current.style.left = left - 15 + "px";
+        tutorialTextRef.current.style.top = top - 100 + "px";
+      }, 500);
     }
   }, [tutorial]);
 
@@ -293,7 +299,7 @@ export default function PlanModal() {
       <DraggableModal
         isOpen={planModal.opened}
         setIsOpen={() => {
-          setPlanModal(DEFAULT_PLAN); 
+          setPlanModal(DEFAULT_PLAN);
         }}
       >
         <div className={`customScroll ${styles.inner}`} ref={modalRef}>
@@ -307,8 +313,7 @@ export default function PlanModal() {
               placeHolder={"Enter title"}
             ></CustomInput>
           </ModalLayer>
-          <ModalLayer
-          >
+          <ModalLayer>
             <DateSelector
               start={planModal.start}
               setStart={(start) => {
@@ -323,8 +328,7 @@ export default function PlanModal() {
               }}
             />
           </ModalLayer>
-          <ModalLayer
-          >
+          <ModalLayer>
             <TextEditor
               setValue={(description) => {
                 handleInput({ description });
@@ -332,8 +336,7 @@ export default function PlanModal() {
               value={planModal.description}
             />
           </ModalLayer>
-          <ModalLayer
-          >
+          <ModalLayer>
             <DropDownButton
               options={[
                 { value: 0, name: "Does not repeat" },
@@ -348,8 +351,7 @@ export default function PlanModal() {
             />
           </ModalLayer>
           {planModal.type === "local" ? (
-            <ModalLayer
-            >
+            <ModalLayer>
               <DropDownButton
                 options={subjects.map(({ subject_id, name }) => {
                   return { value: subject_id, name };
@@ -375,8 +377,7 @@ export default function PlanModal() {
               </div>
             </ModalLayer>
           ) : null}
-          <ModalLayer
-          >
+          <ModalLayer>
             <DropDownButton
               options={[
                 { value: -1, name: "No notification" },
@@ -402,8 +403,7 @@ export default function PlanModal() {
             />
           </ModalLayer>
           {planModal.type === "local" ? (
-            <ModalLayer
-            >
+            <ModalLayer>
               <SliderAnimation
                 min={0}
                 max={100}
@@ -416,8 +416,7 @@ export default function PlanModal() {
             </ModalLayer>
           ) : null}
           {planModal.type === "local" ? (
-            <ModalLayer
-            >
+            <ModalLayer>
               <div className={styles.UserBoxes}>
                 {planUsersIsLoading ? (
                   <CircularLoading />

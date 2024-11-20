@@ -723,7 +723,7 @@ Router.post("/signup", async (req, res) => {
     res.status(200).send({
       success: true,
       status: 200,
-      message: "Login to Your Account!",
+      message: "Account Created!",
     });
   } catch (err) {
     console.log(err);
