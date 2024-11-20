@@ -11,7 +11,7 @@ import {
 import React, { useContext, useEffect, useState } from "react";
 import ArrowOptionBtn from "@/app/components/Buttons/ArrowOptionBtn/ArrowOptionBtn";
 import BlobBtn from "@/app/components/Buttons/BlobBtn/BlobBtn";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import GoogleLoginBtn from "../../Buttons/GoogleLoginBtn/GoogleLoginBtn";
 import { postAuthSignin, postAuthSignup } from "@/Api/authApi";
 import { getTimezone } from "@/app/utils/Tool";
@@ -34,6 +34,8 @@ function AccountModal({}) {
   });
   const [login, setLogin] = useState({ email: "", password: "" });
   const [isNew, setIsNew] = useState(false);
+
+  const searchParams = useSearchParams();
 
   useEffect(() => {
     try {
@@ -174,8 +176,15 @@ function AccountModal({}) {
                     const response = await postAuthSignup(signUp);
                     if (!response.success) return;
 
+                    accountRefetch();
                     setIsLogin(false);
                     setIsNew(true);
+
+                    const newSearchParams = new URLSearchParams(searchParams);
+                    newSearchParams.set("welcome", "true");
+                    router.replace(`/dashboard?${newSearchParams.toString()}`, {
+                      scroll: false,
+                    });
                   } catch (err) {
                     console.log(err);
                   }

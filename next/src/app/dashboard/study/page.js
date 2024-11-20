@@ -25,11 +25,16 @@ import PlaylistModal from "@/app/components/Modals/PlaylistModal/PlaylistModal";
 import ThemeSelector from "@/app/components/Themes/ThemeSelector/ThemeSelector";
 import { useRouter } from "next/navigation";
 import { exitFullscreen } from "@/app/utils/Tool";
-import { TutorialsContext } from "@/app/utils/Contexts";
+import { ChatModalContext, TutorialsContext } from "@/app/utils/Contexts";
+import ChatModalBtn from "@/app/components/Buttons/ChatModalBtn/ChatModalBtn";
 
 function StudyOption({ onClick, children, hoverText }) {
   return (
-    <div className={styles.studyOption} onClick={onClick} data-tutorial={9}>
+    <div
+      className={styles.studyOption}
+      onClick={onClick ?? onClick}
+      data-tutorial={9}
+    >
       {children}
       <div className={`HoverText ${styles.hoverText}`}>{hoverText}</div>
     </div>
@@ -40,6 +45,7 @@ function Study() {
   const router = useRouter();
   const { tutorialBoxRef, tutorialTextRef, tutorial, setTutorial } =
     useContext(TutorialsContext);
+  const { setChatModal } = useContext(ChatModalContext);
 
   const selectSubjectRef = useRef();
   const switchPomodoroRef = useRef();
@@ -235,6 +241,9 @@ function Study() {
               <FontAwesomeIcon icon={faUpRightAndDownLeftFromCenter} />
             )}
           </i>
+        </StudyOption>
+        <StudyOption hoverText={"Chat"}>
+          <ChatModalBtn />
         </StudyOption>
         <StudyOption
           onClick={() => {
