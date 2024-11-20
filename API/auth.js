@@ -533,7 +533,7 @@ Router.post("/app/signin", async (req, res) => {
       data: {
         token,
         deviceId,
-        userId: userInfo.user_id,
+        user_id: userInfo.user_id,
       },
     });
   } catch (err) {
