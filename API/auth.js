@@ -543,6 +543,60 @@ Router.post("/app/signin", async (req, res) => {
   }
 });
 
+Router.post("app/signup", async (req, res) => {
+  try {
+    const { email, name, password, timezone } = req.body;
+
+    const isValidPassword = validatePassword(password, 30);
+
+    if (!isValidPassword.isValid) {
+      return res.status(400).send({
+        success: false,
+        status: 400,
+        message: isValidPassword.reason,
+        error: { reason: isValidPassword.reason },
+      });
+    }
+
+    const [salt, hashed_password] = hashing(password);
+
+    const response = await createAccount(name, email, timezone, {
+      salt,
+      hashed_password,
+    });
+
+    const { success, data } = response;
+
+    if (!success) {
+      return res.status(400).send(response);
+    }
+
+    const { user_id } = data;
+
+    const token = await appTokenCache(user_id, true);
+
+    req.session.regenerate((err) => {
+      if (err) {
+        console.log("Error regenerating session ID:", err);
+        const response = RESPONSE_MESSAGES.error();
+        return res.status(response.status).send(response);
+      }
+      req.session.user_id = user_id;
+    });
+
+    res.cookie("userId", user_id, USER_ID_COOKIE_OPTIONS);
+
+    res.status(200).send({
+      success: true,
+      status: 200,
+      message: "Account Created!",
+      data: { token, user_id },
+    });
+  } catch (err) {
+    console.log(err);
+  }
+});
+
 Router.post("/app/validate-tokens", async (req, res) => {
   try {
     const { userId, token } = req.body;
