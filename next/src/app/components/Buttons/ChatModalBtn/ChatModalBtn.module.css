@@ -4,6 +4,7 @@
   height: 3rem;
   display: flex;
   justify-content: center;
+  pointer-events: all;
 }
 
 .ChatModalBtn i {
