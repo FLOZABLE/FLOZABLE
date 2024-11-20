@@ -304,8 +304,6 @@ Router.get("/", async (req, res) => {
         };
       });
 
-      console.log(friends);
-
       return res.send({ success: true, status: 200, data: { friends } });
     } catch (err) {
       console.log(err);

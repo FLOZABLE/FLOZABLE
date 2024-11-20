@@ -327,7 +327,21 @@ Router.post("/request/reply", async (req, res) => {
 
       const targetId = chatrequest.from_user_id;
 
-      const usersInfo = await usersCache(connection, [userId, targetId], false);
+      const [usersInfo, [[chatroom]]] = await Promise.all([
+        usersCache(connection, [userId, targetId], false),
+        connection.query(
+          `
+          SELECT 
+          cm1.chatroom_id,
+          c.name
+          FROM chatroom_members cm1
+          JOIN chatroom_members cm2 ON cm1.chatroom_id = cm2.chatroom_id
+          JOIN chatrooms c ON c.chatroom_id = cm1.chatroom_id
+          WHERE cm1.user_id = ? AND cm2.user_id = ?
+        `,
+          [userId, targetId]
+        ),
+      ]);
 
       const userInfo = usersInfo.find((user) => user.user_id === userId);
 
@@ -339,6 +353,16 @@ Router.post("/request/reply", async (req, res) => {
       if (!targetUser) {
         const response = RESPONSE_MESSAGES.noTargetUser();
         return res.status(response.status).send(response);
+      }
+
+      if (chatroom) {
+        return res.status(400).send({
+          success: false,
+          status: 400,
+          message: "DM already created!",
+          error: { reason: "DM already created!" },
+          data: { chatroom: chatroom },
+        });
       }
 
       const chatroom_id = generateRandomId(10);
