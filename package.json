@@ -22,7 +22,7 @@
     "@googleapis/calendar": "^9.7.0",
     "ajv": "^8.12.0",
     "async": "^3.2.5",
-    "axios": "^1.6.7",
+    "axios": "^1.7.4",
     "body-parser": "^1.20.3",
     "connect-redis": "^7.1.1",
     "convert-svg-to-jpeg": "^0.6.4",
