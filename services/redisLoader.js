@@ -842,16 +842,16 @@ async function cacheExtensionToken(userId) {
 
 async function appTokenCache(userId, refresh) {
   try {
-    const token = await redisClient.get(`user${userId}:app:auth_token`);
+    const token = await redisClient.get(`user:${userId}:app:auth_token`);
     if (token) {
-      redisClient.expire(`user${userId}:app:auth_token`, REDIS_EXP.APP_AUTH);
+      redisClient.expire(`user:${userId}:app:auth_token`, REDIS_EXP.APP_AUTH);
       return token;
     }
     //if refresh is false, it won't regenerate even when token is DNE
     if (!refresh) return;
     const newToken = generateRandomId(20);
     redisClient.setex(
-      `user${userId}:app:auth_token`,
+      `user:${userId}:app:auth_token`,
       REDIS_EXP.APP_AUTH,
       newToken
     );

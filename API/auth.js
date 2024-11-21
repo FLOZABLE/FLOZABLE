@@ -525,14 +525,14 @@ Router.post("/app/signin", async (req, res) => {
     const token = await appTokenCache(userInfo.user_id, true);
     req.session.user_id = userInfo.user_id;
     const deviceId = generateRandomId(10);
-    console.log(token);
+    console.log(token, "token");
     return res.status(200).send({
       success: true,
       status: 200,
       message: "Authed",
       data: {
         token,
-        deviceId,
+        device_id: deviceId,
         user_id: userInfo.user_id,
       },
     });
@@ -597,14 +597,14 @@ Router.post("app/signup", async (req, res) => {
   }
 });
 
-Router.post("/app/validate-tokens", async (req, res) => {
+Router.post("/verify/token", async (req, res) => {
   try {
-    const { userId, token } = req.body;
+    const { user_id: userId, token } = req.body;
 
-    const isValidDeviceId = validateStrictString(userId, "user id", 10, 10);
+    const isValidUserId = validateStrictString(userId, "user id", 10, 10);
 
-    if (!isValidDeviceId.isValid) {
-      const response = RESPONSE_MESSAGES.validationError(isValidDeviceId);
+    if (!isValidUserId.isValid) {
+      const response = RESPONSE_MESSAGES.validationError(isValidUserId);
       return res.status(response.status).send(response);
     }
 
