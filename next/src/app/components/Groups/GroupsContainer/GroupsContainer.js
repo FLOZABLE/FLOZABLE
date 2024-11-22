@@ -1,11 +1,11 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import styles from "./GroupsContainer.module.css";
-import { GroupsContext } from "@/app/utils/Contexts";
 import GroupContainer from "../GroupContainer/GroupContainer";
 import { useRankings } from "@/Hooks/rankingsHooks";
+import { useGroups } from "@/Hooks/groupsHook";
 
 function GroupsContainer({ searchQuery, tags }) {
-  const { groups } = useContext(GroupsContext);
+  const { groups } = useGroups();
 
   const { rankingsData } = useRankings(
     "day",

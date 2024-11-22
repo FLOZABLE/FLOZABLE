@@ -19,7 +19,6 @@ const googleClientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
 const PlanModalContext = createContext({});
 const PlansContext = createContext({});
 const TutorialsContext = createContext({});
-const GroupsContext = createContext({});
 const CallOptionsContext = createContext({});
 const ThemesContext = createContext({});
 const WorkersContext = createContext({});
@@ -68,6 +67,7 @@ function AppProvider({ children }) {
   const router = useRouter();
   const { accountData, isError } = useAccount();
   const { updateNotificationsData } = useNotifications();
+  const { groups } = useGroups();
 
   const success = searchParams.get("success");
   const message = searchParams.get("message");
@@ -132,36 +132,36 @@ function AppProvider({ children }) {
     }, 100);
   }, [accountData, isError]);
 
+  useEffect(() => {}, [grou]);
+
   return (
     <PlansProvider>
       <PlanModalProvider>
-        <GroupsProvider>
-          <TutorialsProvider>
-            <CallOptionsProvider>
-              <ThemesProvider>
-                <WorkersProvider>
-                  <GoogleOAuthProvider clientId={googleClientId}>
-                    <AccountModalProvider>
-                      <JoinGroupModalProvider>
-                        <EditGroupModalProvider>
-                          <SubjectsModalProvider>
-                            <AddSubjectsModalProvider>
-                              <ChatModalProvider>
-                                <SearchUsersModalProvider>
-                                  {children}
-                                </SearchUsersModalProvider>
-                              </ChatModalProvider>
-                            </AddSubjectsModalProvider>
-                          </SubjectsModalProvider>
-                        </EditGroupModalProvider>
-                      </JoinGroupModalProvider>
-                    </AccountModalProvider>
-                  </GoogleOAuthProvider>
-                </WorkersProvider>
-              </ThemesProvider>
-            </CallOptionsProvider>
-          </TutorialsProvider>
-        </GroupsProvider>
+        <TutorialsProvider>
+          <CallOptionsProvider>
+            <ThemesProvider>
+              <WorkersProvider>
+                <GoogleOAuthProvider clientId={googleClientId}>
+                  <AccountModalProvider>
+                    <JoinGroupModalProvider>
+                      <EditGroupModalProvider>
+                        <SubjectsModalProvider>
+                          <AddSubjectsModalProvider>
+                            <ChatModalProvider>
+                              <SearchUsersModalProvider>
+                                {children}
+                              </SearchUsersModalProvider>
+                            </ChatModalProvider>
+                          </AddSubjectsModalProvider>
+                        </SubjectsModalProvider>
+                      </EditGroupModalProvider>
+                    </JoinGroupModalProvider>
+                  </AccountModalProvider>
+                </GoogleOAuthProvider>
+              </WorkersProvider>
+            </ThemesProvider>
+          </CallOptionsProvider>
+        </TutorialsProvider>
       </PlanModalProvider>
     </PlansProvider>
   );
@@ -188,44 +188,6 @@ function PlansProvider({ children }) {
     <PlansContext.Provider value={{ plans, setPlans, plansDate, setPlansDate }}>
       {children}
     </PlansContext.Provider>
-  );
-}
-
-function GroupsProvider({ children }) {
-  const { accountData } = useAccount();
-
-  const [groups, setGroups] = useState([]);
-  const [myGroups, setMyGroups] = useState([]);
-
-  const groupsQueryResult = useGroups();
-  const { groupsData } = groupsQueryResult;
-
-  useEffect(() => {
-    if (!groups.length || !accountData) return;
-
-    const myGroups = groups.filter((group) =>
-      group.members.includes(accountData.user_id)
-    );
-    setMyGroups(myGroups);
-  }, [accountData, groups]);
-
-  useEffect(() => {
-    if (!groupsData?.success) return;
-
-    setGroups(groupsData.data.groups);
-  }, [groupsData]);
-
-  return (
-    <GroupsContext.Provider
-      value={{
-        groups,
-        setGroups,
-        myGroups,
-        setMyGroups,
-      }}
-    >
-      {children}
-    </GroupsContext.Provider>
   );
 }
 
@@ -542,7 +504,6 @@ export {
   AppContainer,
   PlanModalContext,
   PlansContext,
-  GroupsContext,
   TutorialsContext,
   CallOptionsContext,
   ThemesContext,

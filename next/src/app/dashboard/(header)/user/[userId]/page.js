@@ -1,23 +1,23 @@
 "use client";
 
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import styles from "./page.module.css";
 import ProfileImage from "@/app/components/Users/ProfileImage/ProfileImage";
 import { useAccountProfile } from "@/Hooks/accountHooks";
 import { timelineSort } from "@/app/utils/timelineSorting";
 import StudyTrendChart from "@/app/components/Charts/StudyTrendChart/StudyTrendChart";
 import RankingsTrendsChart from "@/app/components/Charts/RankingsTrendsChart/RankingsTrendsChart";
-import { GroupsContext } from "@/app/utils/Contexts";
 import GroupContainer from "@/app/components/Groups/GroupContainer/GroupContainer";
 import CountryViewer from "@/app/components/Others/CountryViewer/CountryViewer";
 import ChatBtn from "@/app/components/Buttons/ChatBtn/ChatBtn";
 import FriendRequestBtn from "@/app/components/Buttons/FriendRequestBtn/FriendRequestBtn";
+import { useGroups } from "@/Hooks/groupsHook";
 
 function User({ params }) {
   const { userId } = params;
 
   const { useAccountProfileData } = useAccountProfile(userId);
-  const { groups } = useContext(GroupsContext);
+  const { groups } = useGroups();
 
   const [subjects, setSubjects] = useState([]);
   const [friends, setFriends] = useState([]);

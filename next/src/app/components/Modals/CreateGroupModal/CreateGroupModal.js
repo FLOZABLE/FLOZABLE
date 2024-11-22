@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useCallback, useState, useContext } from "react";
+import React, { useCallback, useState } from "react";
 import styles from "./CreateGroupModal.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -11,7 +11,6 @@ import {
   faLock,
   faStopwatch,
 } from "@fortawesome/free-solid-svg-icons";
-import { GroupsContext } from "@/app/utils/Contexts";
 import CustomInput from "@/app/components/Inputs/CustomInput/CustomInput";
 import TextEditor from "@/app/components/Inputs/TextEditor/TextEditor";
 import ColorPalette from "@/app/components/Inputs/ColorPalette/ColorPalette";
@@ -24,9 +23,10 @@ import { putGroup } from "@/Api/groupsApi";
 import { DEFAULT_GROUP } from "@/app/utils/Constant";
 import ModalLayer from "../ModalLayer/ModalLayer";
 import { MittInstance } from "@/app/utils/mittInstance";
+import { useGroups } from "@/Hooks/groupsHook";
 
 function CreateGroupModal({ isOpen, setIsOpen }) {
-  const { setGroups } = useContext(GroupsContext);
+  const { updateGroupsData } = useGroups();
 
   const [newGroup, setNewGroup] = useState(DEFAULT_GROUP);
 
@@ -41,7 +41,11 @@ function CreateGroupModal({ isOpen, setIsOpen }) {
 
       setIsOpen(false);
       setNewGroup(DEFAULT_GROUP);
-      setGroups((prev) => [...prev, data.group]);
+      updateGroupsData((prev) => {
+        const newGroups = [...prev.groups, data.group];
+        const newMyGroups = [...prev.my_groups, data.group];
+        return { groups: newGroups, my_groups: newMyGroups };
+      });
 
       setTimeout(() => {
         MittInstance.emit("moveMyGroupsViewer");

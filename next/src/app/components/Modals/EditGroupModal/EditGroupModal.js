@@ -12,7 +12,7 @@ import {
   faStopwatch,
   faTrashCan,
 } from "@fortawesome/free-solid-svg-icons";
-import { GroupsContext, EditGroupModalContext } from "@/app/utils/Contexts";
+import { EditGroupModalContext } from "@/app/utils/Contexts";
 import CustomInput from "@/app/components/Inputs/CustomInput/CustomInput";
 import TextEditor from "@/app/components/Inputs/TextEditor/TextEditor";
 import ColorPalette from "@/app/components/Inputs/ColorPalette/ColorPalette";
@@ -24,12 +24,13 @@ import TagsGenerator from "../../Inputs/TagsGenerator/TagsGenerator";
 import { deleteGroup, patchGroup } from "@/Api/groupsApi";
 import { DEFAULT_GROUP } from "@/app/utils/Constant";
 import ModalLayer from "../ModalLayer/ModalLayer";
+import { useGroups } from "@/Hooks/groupsHook";
 
 function EditGroupModal() {
   const { editGroupModal, setEditGroupModal } = useContext(
     EditGroupModalContext
   );
-  const { groups, setGroups } = useContext(GroupsContext);
+  const { groups, updateGroupsData } = useGroups();
 
   const [newGroup, setNewGroup] = useState(DEFAULT_GROUP);
 
@@ -47,7 +48,10 @@ function EditGroupModal() {
       );
       if (groupIndex === -1) return;
       newGroups[groupIndex] = newGroup;
-      setGroups(newGroups);
+      updateGroupsData((prev) => {
+        const newMyGroups = [...prev.my_groups, newGroup];
+        return { groups: newGroups, my_groups: newMyGroups };
+      });
     } catch (err) {
       console.log(err);
     }
@@ -61,7 +65,12 @@ function EditGroupModal() {
 
       setEditGroupModal({ group_id: null, opened: false });
       const newGroups = groups.filter((group) => group.group_id !== groupId);
-      setGroups(newGroups);
+      updateGroupsData((prev) => {
+        const newMyGroups = prev.my_groups.filter(
+          (group) => group.group_id !== groupId
+        );
+        return { groups: newGroups, my_groups: newMyGroups };
+      });
     } catch (err) {
       console.log(err);
     }
