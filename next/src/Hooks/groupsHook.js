@@ -1,7 +1,10 @@
 import { getGroupMembers, getGroups } from "@/Api/groupsApi";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useCallback } from "react";
 
 function useGroups() {
+  const queryClient = useQueryClient();
+
   const queryResult = useQuery({
     queryKey: [`useGroups`],
     queryFn: getGroups,
@@ -19,7 +22,26 @@ function useGroups() {
     refetch: groupsRefetch,
   } = queryResult;
 
-  return { groupsData, groupsIsLoading, groupsRefetch, ...queryResult };
+  const { groups, my_groups: myGroups } = groupsData;
+
+  const updateGroupsData = useCallback(async (newData) => {
+    await queryClient.setQueryData(["useGroups"], (oldData) => {
+      if (!oldData) return newData;
+      return typeof newData === "function"
+        ? newData(oldData)
+        : { ...oldData, ...newData };
+    });
+  }, []);
+
+  return {
+    groupsData,
+    groups,
+    myGroups,
+    groupsIsLoading,
+    groupsRefetch,
+    updateGroupsData,
+    ...queryResult,
+  };
 }
 
 function useGroupMembers(groupId, isActive) {
