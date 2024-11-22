@@ -6,6 +6,11 @@ function useGroups() {
     queryKey: [`useGroups`],
     queryFn: getGroups,
     staleTime: 1000 * 60 * 5,
+    select: (response) =>
+      response?.data?.my_groups
+        ? { my_groups: response.data.my_groups, groups: response.data.groups }
+        : { my_groups: [], groups: [] },
+    placeholderData: { my_groups: [], groups: [] },
   });
 
   const {
