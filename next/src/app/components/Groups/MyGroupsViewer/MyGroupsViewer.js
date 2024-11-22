@@ -3,7 +3,6 @@ import React, {
   useState,
   useEffect,
   useCallback,
-  useContext,
 } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination } from "swiper/modules";
@@ -11,7 +10,6 @@ import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
 import styles from "./MyGroupsViewer.module.css";
-import { GroupsContext } from "@/app/utils/Contexts";
 import MyGroupContainer from "../MyGroupContainer/MyGroupContainer";
 import { postGroupLeave } from "@/Api/groupsApi";
 import { useDebounce } from "use-debounce";
@@ -21,9 +19,10 @@ import { ACTIVE_GROUP_DEBOUNCE } from "@/app/utils/Constant";
 import { useRouter, useSearchParams } from "next/navigation";
 import { MittInstance } from "@/app/utils/mittInstance";
 import { useAccount } from "@/Hooks/accountHooks";
+import { useGroups } from "@/Hooks/groupsHook";
 
 function MyGroupsViewer({}) {
-  const { myGroups, setMyGroups } = useContext(GroupsContext);
+  const { myGroups, updateGroupsData } = useGroups();
   const { accountData } = useAccount();
 
   const [activeIndex, setActiveIndex] = useState(-1);
@@ -41,7 +40,12 @@ function MyGroupsViewer({}) {
       const response = await postGroupLeave(groupId);
       if (!response.success) return;
 
-      setMyGroups((prev) => prev.filter((group) => group.group_id !== groupId));
+      updateGroupsData((prev) => {
+        const newMyGroups = prev.my_groups.filter(
+          (group) => group.group_id !== groupId
+        );
+        return { ...prev, my_groups: newMyGroups };
+      });
     } catch (err) {
       console.log(err);
     }

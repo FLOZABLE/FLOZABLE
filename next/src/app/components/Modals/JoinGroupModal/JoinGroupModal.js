@@ -1,6 +1,6 @@
 "use client";
 
-import { JoinGroupModalContext, GroupsContext } from "@/app/utils/Contexts";
+import { JoinGroupModalContext } from "@/app/utils/Contexts";
 import styles from "./JoinGroupModal.module.css";
 import { faKey } from "@fortawesome/free-solid-svg-icons";
 import { useCallback, useContext, useEffect, useState } from "react";
@@ -12,10 +12,13 @@ import DraggableModal from "../DraggableModal/DraggableModal";
 import { postGroupJoin } from "@/Api/groupsApi";
 import { toast } from "react-toastify";
 import { MittInstance } from "@/app/utils/mittInstance";
+import { useGroups } from "@/Hooks/groupsHook";
 
 function JoinGroupModal() {
-  const { joinGroupModal, setJoinGroupModal } = useContext(JoinGroupModalContext);
-  const { setMyGroups, groups } = useContext(GroupsContext);
+  const { joinGroupModal, setJoinGroupModal } = useContext(
+    JoinGroupModalContext
+  );
+  const { updateGroupsData, groups } = useGroups();
 
   const router = useRouter();
 
@@ -35,9 +38,11 @@ function JoinGroupModal() {
       });
 
       setPassword("");
-
-      setMyGroups((prev) => {
-        return [...prev, joinGroupModal.group];
+      
+      updateGroupsData((prev) => {
+        const newGroups = [...prev.groups, joinGroupModal.group];
+        const newMyGroups = [...prev.my_groups, joinGroupModal.group];
+        return { groups: newGroups, my_groups: newMyGroups };
       });
 
       setTimeout(() => {

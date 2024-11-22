@@ -65,7 +65,7 @@ Router.get("/", async (req, res) => {
       async (userId) => {
         try {
           const myGroups = await userGroupsCache(connection, userId);
-          const myGroupsInfo = groups.filter((group) =>
+          const myGroupsInfo = formattedGroups.filter((group) =>
             myGroups.includes(group.group_id)
           );
 
