@@ -85,7 +85,7 @@ Router.get("/", async (req, res) => {
           res.status(200).send({
             success: true,
             status: 200,
-            data: { groups: formattedGroups },
+            data: { groups: formattedGroups, my_groups: [] },
           });
         } catch (err) {
           console.log(err);
