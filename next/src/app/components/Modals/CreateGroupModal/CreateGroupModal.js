@@ -41,12 +41,7 @@ function CreateGroupModal({ isOpen, setIsOpen }) {
 
       setIsOpen(false);
       setNewGroup(DEFAULT_GROUP);
-      updateGroupsData((prev) => {
-        const newGroups = [...prev.groups, data.group];
-        const newMyGroups = [...prev.my_groups, data.group];
-        return { groups: newGroups, my_groups: newMyGroups };
-      });
-
+      updateGroupsData((prev) => [...prev, data.group]);
       setTimeout(() => {
         MittInstance.emit("moveMyGroupsViewer");
       }, 100);

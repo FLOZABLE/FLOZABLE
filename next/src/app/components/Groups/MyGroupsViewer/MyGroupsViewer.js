@@ -1,9 +1,4 @@
-import React, {
-  useRef,
-  useState,
-  useEffect,
-  useCallback,
-} from "react";
+import React, { useRef, useState, useEffect, useCallback } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination } from "swiper/modules";
 import "swiper/css";
@@ -40,11 +35,22 @@ function MyGroupsViewer({}) {
       const response = await postGroupLeave(groupId);
       if (!response.success) return;
 
+      updateUserInfo((prev) => ({
+        ...prev,
+        groups: prev.groups.filter((group) => group !== groupId),
+      }));
+
       updateGroupsData((prev) => {
-        const newMyGroups = prev.my_groups.filter(
-          (group) => group.group_id !== groupId
+        const newGroups = [...prev];
+        const groupIndex = newGroups.findIndex(
+          (group) => group.group_id === groupId
         );
-        return { ...prev, my_groups: newMyGroups };
+        if (groupIndex === -1) return prev;
+
+        newGroups[groupIndex].members.filter(
+          (member) => member !== accountData.user_id
+        );
+        return newGroups;
       });
     } catch (err) {
       console.log(err);
