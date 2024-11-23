@@ -7,12 +7,12 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { DEFAULT_PLAN } from "./Constant";
 import { useAccount } from "@/Hooks/accountHooks";
 import { usePlans, usePlansGoogle } from "@/Hooks/plansHooks";
-import { useGroups } from "@/Hooks/groupsHook";
 import { useThemes, useThemesUser } from "@/Hooks/themesHooks";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { mediaSocket } from "./mediaSocket";
 import { toast } from "react-toastify";
 import { useNotifications } from "@/Hooks/notificationsHooks";
+import { useGroups } from "@/Hooks/groupsHook";
 
 const googleClientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
 
@@ -67,7 +67,7 @@ function AppProvider({ children }) {
   const router = useRouter();
   const { accountData, isError } = useAccount();
   const { updateNotificationsData } = useNotifications();
-  const { groups } = useGroups();
+  const { groups, updateGroupsData } = useGroups();
 
   const success = searchParams.get("success");
   const message = searchParams.get("message");
@@ -132,7 +132,12 @@ function AppProvider({ children }) {
     }, 100);
   }, [accountData, isError]);
 
-  useEffect(() => {}, [grou]);
+  useEffect(() => {
+    const myGroups = groups.filter((group) =>
+      accountData.groups.includes(group.group_id)
+    );
+    updateGroupsData(myGroups, "my_groups");
+  }, [accountData, groups]);
 
   return (
     <PlansProvider>

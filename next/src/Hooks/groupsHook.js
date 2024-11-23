@@ -1,4 +1,5 @@
 import { getGroupMembers, getGroups } from "@/Api/groupsApi";
+import { updateQueryData } from "@/app/utils/Tool";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useCallback } from "react";
 
@@ -24,12 +25,9 @@ function useGroups() {
 
   const { groups, my_groups: myGroups } = groupsData;
 
-  const updateGroupsData = useCallback(async (newData) => {
+  const updateGroupsData = useCallback(async (newData, type = "groups") => {
     await queryClient.setQueryData(["useGroups"], (oldData) => {
-      if (!oldData) return newData;
-      return typeof newData === "function"
-        ? newData(oldData)
-        : { ...oldData, ...newData };
+      return updateQueryData(oldData, newData, type);
     });
   }, []);
 

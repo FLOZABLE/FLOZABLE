@@ -42,20 +42,21 @@ function EditGroupModal() {
       if (!response.success) return;
 
       setEditGroupModal({ group_id: null, opened: false });
-      const newGroups = [...groups];
-      const groupIndex = newGroups.findIndex(
-        (group) => group.group_id === newGroup.group_id
-      );
-      if (groupIndex === -1) return;
-      newGroups[groupIndex] = newGroup;
+
       updateGroupsData((prev) => {
-        const newMyGroups = [...prev.my_groups, newGroup];
-        return { groups: newGroups, my_groups: newMyGroups };
+        const newGroups = [...prev];
+        const groupIndex = newGroups.findIndex(
+          (group) => group.group_id === newGroup.group_id
+        );
+        if (groupIndex === -1) return prev;
+
+        newGroups[groupIndex] = newGroup;
+        return newGroups;
       });
     } catch (err) {
       console.log(err);
     }
-  }, [newGroup, groups]);
+  }, [newGroup]);
 
   const onDelete = useCallback(async () => {
     try {
@@ -64,17 +65,15 @@ function EditGroupModal() {
       if (!response.success) return;
 
       setEditGroupModal({ group_id: null, opened: false });
-      const newGroups = groups.filter((group) => group.group_id !== groupId);
+
       updateGroupsData((prev) => {
-        const newMyGroups = prev.my_groups.filter(
-          (group) => group.group_id !== groupId
-        );
-        return { groups: newGroups, my_groups: newMyGroups };
+        const newGroups = prev.filter((group) => group.group_id !== groupId);
+        return newGroups;
       });
     } catch (err) {
       console.log(err);
     }
-  }, [newGroup, groups]);
+  }, [newGroup]);
 
   useEffect(() => {
     if (!editGroupModal.group_id) return;

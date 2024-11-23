@@ -24,7 +24,7 @@ import { postAuthVerify } from "@/Api/authApi";
 import Image from "next/image";
 
 function Account() {
-  const { accountData, updateAccountUserInfo } = useAccount();
+  const { accountData, updateUserInfo } = useAccount();
 
   const { googleInfo } = useAccountGoogle();
   const { spotifyInfo } = useSpotifyInfo();
@@ -84,7 +84,7 @@ function Account() {
       const response = await patchAccountInfo(profile);
       if (!response.success) return;
 
-      updateAccountUserInfo((prev) => ({
+      updateUserInfo((prev) => ({
         ...prev,
         name,
         email,

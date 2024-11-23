@@ -28,7 +28,7 @@ function useAccount() {
     queryClient.removeQueries({ queryKey: "useAccount" });
   }, []);
 
-  const updateAccountUserInfo = useCallback(async (newData) => {
+  const updateUserInfo = useCallback(async (newData) => {
     await queryClient.setQueryData(["useAccount"], (oldData) => {
       return updateQueryData(oldData, newData, "userInfo");
     });
@@ -39,7 +39,7 @@ function useAccount() {
     accountRefetch,
     accountIsLoading,
     clearAccountData,
-    updateAccountUserInfo,
+    updateUserInfo,
     ...queryResult,
   };
 }

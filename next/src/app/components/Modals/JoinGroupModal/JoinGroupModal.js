@@ -13,12 +13,14 @@ import { postGroupJoin } from "@/Api/groupsApi";
 import { toast } from "react-toastify";
 import { MittInstance } from "@/app/utils/mittInstance";
 import { useGroups } from "@/Hooks/groupsHook";
+import { useAccount } from "@/Hooks/accountHooks";
 
 function JoinGroupModal() {
   const { joinGroupModal, setJoinGroupModal } = useContext(
     JoinGroupModalContext
   );
   const { updateGroupsData, groups } = useGroups();
+  const { accountData, updateUserInfo } = useAccount();
 
   const router = useRouter();
 
@@ -38,11 +40,21 @@ function JoinGroupModal() {
       });
 
       setPassword("");
-      
+
+      updateUserInfo((prev) => ({
+        ...prev,
+        groups: [...prev.groups, groupId],
+      }));
+
       updateGroupsData((prev) => {
-        const newGroups = [...prev.groups, joinGroupModal.group];
-        const newMyGroups = [...prev.my_groups, joinGroupModal.group];
-        return { groups: newGroups, my_groups: newMyGroups };
+        const newGroups = [...prev];
+        const groupIndex = newGroups.findIndex(
+          (group) => group.group_id === joinGroupModal.group
+        );
+        if (groupIndex === -1) return prev;
+
+        newGroups[groupIndex].members.push(accountData.user_id);
+        return newGroups;
       });
 
       setTimeout(() => {
@@ -55,7 +67,7 @@ function JoinGroupModal() {
     } catch (err) {
       console.log(err);
     }
-  }, [password, joinGroupModal]);
+  }, [password, joinGroupModal, accountData]);
 
   useEffect(() => {
     const searchParams = new URLSearchParams(window.location.search);
