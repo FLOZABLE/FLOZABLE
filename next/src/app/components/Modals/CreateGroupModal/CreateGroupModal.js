@@ -24,9 +24,11 @@ import { DEFAULT_GROUP } from "@/app/utils/Constant";
 import ModalLayer from "../ModalLayer/ModalLayer";
 import { MittInstance } from "@/app/utils/mittInstance";
 import { useGroups } from "@/Hooks/groupsHook";
+import { useAccount } from "@/Hooks/accountHooks";
 
 function CreateGroupModal({ isOpen, setIsOpen }) {
   const { updateGroupsData } = useGroups();
+  const { updateUserInfo } = useAccount();
 
   const [newGroup, setNewGroup] = useState(DEFAULT_GROUP);
 
@@ -41,10 +43,19 @@ function CreateGroupModal({ isOpen, setIsOpen }) {
 
       setIsOpen(false);
       setNewGroup(DEFAULT_GROUP);
+
+      const groupId = data.group.group_id;
+      updateUserInfo((prev) => ({
+        ...prev,
+        groups: [...prev.groups, groupId],
+      }));
       updateGroupsData((prev) => [...prev, data.group]);
       setTimeout(() => {
-        MittInstance.emit("moveMyGroupsViewer");
+        MittInstance.emit("moveMyGroupsViewer", {
+          groupId,
+        });
       }, 100);
+      document.body.scrollIntoView({ behavior: "smooth", block: "start" });
     } catch (err) {
       console.log(err);
     }

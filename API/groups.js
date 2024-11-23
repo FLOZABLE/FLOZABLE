@@ -271,6 +271,19 @@ Router.put("/group", async (req, res) => {
         action: { code: 1, group_id },
         data: { group: groupInfo },
       });
+
+      const chatroom = {
+        chatroom_id: group_id,
+        name: groupInfo.name,
+        type: 0,
+        members: groupInfo.members,
+        lastMsg: null,
+        lastRead: null,
+        unreads: 0,
+      };
+
+      mainIo.to(userId).emit("new-chatroom", { chatroom });
+      mainIo.in(userId).socketsJoin(`chatroom:${group.group_id}`);
     } catch (err) {
       console.log(err);
       const response = RESPONSE_MESSAGES.error();
@@ -615,7 +628,6 @@ Router.post("/group/join", async (req, res) => {
       });
 
       cacheChatroomMembers(connection, groupId, userId, false);
-      mainIo.in(userId).socketsJoin(`chatroom:${groupId}`);
 
       const chatroom = {
         chatroom_id: groupId,

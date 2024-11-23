@@ -46,7 +46,6 @@ function ChatModal({}) {
   const chatsContainerRef = useRef(null);
   //const messageRefs = useRef({});
   const lastReadMessageRef = useRef(null);
-  const [scrollBottom, setScrollBottom] = useState(0);
   //const debouncedScrollBottom = useDebounce(scrollBottom, 300);
 
   const { chatrooms, updateChatrooms } = useChatRooms();
@@ -84,15 +83,6 @@ function ChatModal({}) {
 
     setChatroomName(chatroom.name);
   }, [chatrooms, chatModal.chatroom_id]);
-
-  const onScroll = useCallback((event) => {
-    const scrollBottom =
-      event.target.scrollHeight -
-      event.target.scrollTop -
-      event.target.clientHeight;
-
-    setScrollBottom(scrollBottom);
-  }, []);
 
   useEffect(() => {
     if (!chatroomMembersData?.success) return;
@@ -334,7 +324,6 @@ function ChatModal({}) {
         <ul
           className={`${styles.chatsContainer} customScroll`}
           ref={chatsContainerRef}
-          onScroll={onScroll}
         >
           {messages.map((msg, index) => {
             const { user_id, message, sent_at, message_id } = msg;
