@@ -18,6 +18,7 @@ import { secondConverter } from "@/app/utils/Tool";
 import { postGroupLike } from "@/Api/groupsApi";
 import SocketCounter from "../../Others/SocketCounter/SocketCounter";
 import { useAccount } from "@/Hooks/accountHooks";
+import { useGroups } from "@/Hooks/groupsHook";
 
 function GroupContainer({
   groupInfo,
@@ -26,6 +27,7 @@ function GroupContainer({
   style = {},
 }) {
   const { accountData } = useAccount();
+  const { updateGroupsData } = useGroups();
 
   const [members, setMembers] = useState([]);
   const [likes, setLikes] = useState([]);
@@ -38,6 +40,23 @@ function GroupContainer({
     const groupId = groupInfo.group_id;
     const response = await postGroupLike({ groupId, like });
     if (!response.success) return;
+
+    updateGroupsData((prev) => {
+      const newGroups = [...prev];
+      const groupIndex = newGroups.findIndex(
+        (group) => group.group_id === groupId
+      );
+      if (groupIndex === -1) return prev;
+
+      if (like) {
+        newGroups[groupIndex].likes.push(accountData.user_id);
+      } else {
+        newGroups[groupIndex].likesfilter(
+          (like) => like !== accountData.user_id
+        );
+      }
+      return newGroups;
+    });
 
     if (like) {
       setLikes([...new Set([...likes, accountData.user_id])]);
