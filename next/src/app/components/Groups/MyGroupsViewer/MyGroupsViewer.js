@@ -18,7 +18,7 @@ import { useGroups } from "@/Hooks/groupsHook";
 
 function MyGroupsViewer({}) {
   const { myGroups, updateGroupsData } = useGroups();
-  const { accountData } = useAccount();
+  const { accountData, updateUserInfo } = useAccount();
 
   const [activeIndex, setActiveIndex] = useState(-1);
 
@@ -76,8 +76,12 @@ function MyGroupsViewer({}) {
   }, [debouncedIndex, myGroups.length]);
 
   useEffect(() => {
-    const onMessage = () => {
-      SwiperRef.current.swiper.slideTo(myGroups.length - 1);
+    const onMessage = ({ groupId }) => {
+      const groupIndex = myGroups.findIndex(
+        (group) => group.group_id === groupId
+      );
+      if (groupIndex === -1) return;
+      SwiperRef.current.swiper.slideTo(groupIndex);
     };
     MittInstance.on("moveMyGroupsViewer", onMessage);
     return () => {
