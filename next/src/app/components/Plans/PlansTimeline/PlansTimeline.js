@@ -2,11 +2,7 @@
 
 import React, { useContext, useEffect, useRef, useState } from "react";
 import styles from "./PlansTimeline.module.css";
-import {
-  PlanModalContext,
-  PlansContext,
-  TutorialsContext,
-} from "@/app/utils/Contexts";
+import { PlanModalContext, PlansContext } from "@/app/utils/Contexts";
 import { DateTime } from "luxon";
 import { DEFAULT_PLAN } from "@/app/utils/Constant";
 import Plan from "../Plan/Plan";
@@ -15,6 +11,7 @@ import { faCirclePlus } from "@fortawesome/free-solid-svg-icons";
 import SubjectsLabels from "../../Charts/SubjectsLabels/SubjectsLabels";
 import DateSelectorBtn from "../../Buttons/DateSelectorBtn/DateSelectorBtn";
 import { useSubjects } from "@/Hooks/subjectsHooks";
+import { useTour } from "@reactour/tour";
 
 export default function PlansTimeline({
   viewer,
@@ -23,11 +20,11 @@ export default function PlansTimeline({
   setViewDate,
   maxHeight = "50rem",
 }) {
-  const { tutorialBoxRef, tutorialTextRef, tutorial, setTutorial } =
-    useContext(TutorialsContext);
   const { subjects } = useSubjects();
   const { planModal, setPlanModal } = useContext(PlanModalContext);
   const { plans, setPlans, setPlansDate } = useContext(PlansContext);
+
+  const { currentStep, setCurrentStep } = useTour();
 
   const [filteredSubjects, setFilteredSubjects] = useState([]);
   const [donePlans, setDonePlans] = useState([]);
@@ -93,28 +90,6 @@ export default function PlansTimeline({
     setTodoPlans(todoPlans);
   }, [plans, viewer, viewDate, subjects]);
 
-  useEffect(() => {
-    if (tutorial === 1) {
-      containerRef.current.scroll({
-        bottom: 200000,
-        behavior: "smooth",
-      });
-      setTimeout(() => {
-        const { width, top, left, height } =
-          addBtnRef.current.getBoundingClientRect();
-        tutorialBoxRef.current.style.left = left - 20 + "px";
-        tutorialBoxRef.current.style.top = top - 18 + "px";
-        tutorialBoxRef.current.style.width = width + 40 + "px";
-        tutorialBoxRef.current.style.height = height + 40 + "px";
-
-        tutorialTextRef.current.textContent =
-          "First, add an event to your planner!";
-        tutorialTextRef.current.style.left = left - 15 + "px";
-        tutorialTextRef.current.style.top = top + 80 + "px";
-      }, 1000);
-    }
-  }, [tutorial]);
-
   return (
     <div
       className={`hiddenScroll ${styles.PlansTimeline} ${
@@ -131,18 +106,18 @@ export default function PlansTimeline({
               viewDate={viewDate}
               setViewDate={setViewDate}
               viewer={viewer}
-              style={{color: "var(--gray2)"}}
+              style={{ color: "var(--gray2)" }}
             />
           </div>
           <div className={styles.buttons}>
             <div
               id={styles.addPlan}
-              data-tutorial={1}
+              className=""
+              data-tutorial={0}
               onClick={() => {
-                if (tutorial === 1) {
-                  setTimeout(() => {
-                    setTutorial(2);
-                  }, 1500);
+                console.log(currentStep, 'gd')
+                if (currentStep === 0) {
+                  setCurrentStep(1);
                 }
 
                 if (planModal.plan_id === "0000000000") {

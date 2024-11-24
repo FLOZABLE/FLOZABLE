@@ -240,6 +240,18 @@ const STUDY_TREND_COLORS = [
 
 const ACTIVE_GROUP_DEBOUNCE = 1000;
 
+const tutorialSteps = [
+  "First, add an event to your planner!",
+  "Create your first plan!",
+  "Create your first subject!",
+  "Enter the subject details!",
+  "Save your plan!",
+  "Choose a subject to study!",
+  "Click this button to start/stop studying!",
+  "Click this button to switch to pomodoro mode!",
+  "You can select which tools to display!",
+].map((content, i) => ({ content, selector: `[data-tutorial='${i}']` }));
+
 export {
   colorsList,
   subjectIcons,
@@ -253,4 +265,5 @@ export {
   SUBJECTS_PIE_COLORS,
   STUDY_TREND_COLORS,
   ACTIVE_GROUP_DEBOUNCE,
+  tutorialSteps,
 };

@@ -8,6 +8,7 @@ import { TutorialsContext } from "@/app/utils/Contexts";
 import { useWindowSize } from "@/Hooks/otherHooks";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAccount } from "@/Hooks/accountHooks";
+import { useTour } from "@reactour/tour";
 
 function WelcomeModal({}) {
   const { width, height } = useWindowSize();
@@ -16,6 +17,7 @@ function WelcomeModal({}) {
 
   const { accountData } = useAccount();
   const { setTutorial } = useContext(TutorialsContext);
+  const { setIsOpen } = useTour();
 
   const [isModal, setIsModal] = useState(false);
   const [isConfetti, setIsConfetti] = useState(false);
@@ -66,7 +68,8 @@ function WelcomeModal({}) {
             <BlobBtn
               onClick={() => {
                 setIsModal(false);
-                setTutorial(1);
+                setIsOpen(true);
+                //setTutorial(1);
                 //navigate("/dashboard?tutorial=1");
               }}
             >
