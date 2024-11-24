@@ -4,7 +4,7 @@ import { createContext, useEffect, useRef, useState } from "react";
 import { socket } from "./socket";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { DEFAULT_PLAN } from "./Constant";
+import { DEFAULT_PLAN, tutorialSteps } from "./Constant";
 import { useAccount } from "@/Hooks/accountHooks";
 import { usePlans, usePlansGoogle } from "@/Hooks/plansHooks";
 import { useThemes, useThemesUser } from "@/Hooks/themesHooks";
@@ -13,6 +13,7 @@ import { mediaSocket } from "./mediaSocket";
 import { toast } from "react-toastify";
 import { useNotifications } from "@/Hooks/notificationsHooks";
 import { useGroups } from "@/Hooks/groupsHook";
+import { TourProvider } from "@reactour/tour";
 
 const googleClientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
 
@@ -154,7 +155,17 @@ function AppProvider({ children }) {
                           <AddSubjectsModalProvider>
                             <ChatModalProvider>
                               <SearchUsersModalProvider>
-                                {children}
+                                <TourProvider
+                                  onClickMask={() => {
+                                    console.log("mask");
+                                  }}
+                                  onClickHighlighted={(gd) => {
+                                    console.log("gd", gd);
+                                  }}
+                                  steps={tutorialSteps}
+                                >
+                                  {children}
+                                </TourProvider>
                               </SearchUsersModalProvider>
                             </ChatModalProvider>
                           </AddSubjectsModalProvider>
