@@ -115,9 +115,11 @@ export default function PlansTimeline({
               className=""
               data-tutorial={0}
               onClick={() => {
-                console.log(currentStep, 'gd')
+                console.log(currentStep, "gd");
                 if (currentStep === 0) {
-                  setCurrentStep(1);
+                  setTimeout(() => {
+                    setCurrentStep(1);
+                  }, 300);
                 }
 
                 if (planModal.plan_id === "0000000000") {

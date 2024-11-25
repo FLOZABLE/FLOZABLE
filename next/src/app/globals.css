@@ -249,8 +249,7 @@ button:hover {
 }
 
 svg,
-svg > *,
-[data-tutorial] > * {
+svg > * {
   pointer-events: none;
 }
 
