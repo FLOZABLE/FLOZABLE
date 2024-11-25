@@ -4,7 +4,6 @@ import AddSubjectModal from "@/app/components/Modals/AddSubjectModal/AddSubjectM
 import JoinGroupModal from "@/app/components/Modals/JoinGroupModal/JoinGroupModal";
 import ChatModal from "@/app/components/Modals/ChatModal/ChatModal";
 import AccountModal from "@/app/components/Modals/AccountModal/AccountModal";
-import Tutorial from "./components/Others/Tutorial/Tutorial";
 import { GoogleAnalytics } from "@next/third-parties/google";
 import SubjectsModal from "./components/Modals/SubjectsModal/SubjectsModal";
 import SearchUsersModal from "./components/Modals/SearchUsersModal/SearchUsersModal";
@@ -86,7 +85,6 @@ export default function RootLayout({ children }) {
             <SubjectsModal />
             <SearchUsersModal />
             <EditGroupModal />
-            <Tutorial />
             {children}
             <ToastContainer
               position="top-right"

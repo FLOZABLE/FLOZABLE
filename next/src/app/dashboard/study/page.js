@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useContext, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import styles from "./page.module.css";
 import SubjectTimer from "@/app/components/Study/SubjectTimer/SubjectTimer";
 import MyGroupsViewer from "@/app/components/Groups/MyGroupsViewer/MyGroupsViewer";
@@ -25,7 +25,6 @@ import PlaylistModal from "@/app/components/Modals/PlaylistModal/PlaylistModal";
 import ThemeSelector from "@/app/components/Themes/ThemeSelector/ThemeSelector";
 import { useRouter } from "next/navigation";
 import { exitFullscreen } from "@/app/utils/Tool";
-import { ChatModalContext, TutorialsContext } from "@/app/utils/Contexts";
 import ChatModalBtn from "@/app/components/Buttons/ChatModalBtn/ChatModalBtn";
 
 function StudyOption({ onClick, children, hoverText }) {
@@ -43,9 +42,6 @@ function StudyOption({ onClick, children, hoverText }) {
 
 function Study() {
   const router = useRouter();
-  const { tutorialBoxRef, tutorialTextRef, tutorial, setTutorial } =
-    useContext(TutorialsContext);
-  const { setChatModal } = useContext(ChatModalContext);
 
   const selectSubjectRef = useRef();
   const switchPomodoroRef = useRef();
@@ -88,64 +84,6 @@ function Study() {
       exitFullscreen();
     };
   }, [studyOptions.zoom]);
-
-  useEffect(() => {
-    if (tutorial === 6) {
-      const { width, top, left, height } =
-        selectSubjectRef.current.getBoundingClientRect();
-      tutorialBoxRef.current.style.left = left - 20 + "px";
-      tutorialBoxRef.current.style.top = top - 20 + "px";
-      tutorialBoxRef.current.style.width = width + 40 + "px";
-      tutorialBoxRef.current.style.height = height + 40 + "px";
-
-      tutorialTextRef.current.textContent = "Choose a subject to study!";
-      tutorialTextRef.current.style.left = left - 15 + "px";
-      tutorialTextRef.current.style.top = 0 + "px";
-    } else if (tutorial === 7) {
-      const { width, top, left, height } =
-        startTimerRef.current.getBoundingClientRect();
-      tutorialBoxRef.current.style.left = left - 20 + "px";
-      tutorialBoxRef.current.style.top = top - 20 + "px";
-      tutorialBoxRef.current.style.width = width + 40 + "px";
-      tutorialBoxRef.current.style.height = height + 40 + "px";
-
-      tutorialTextRef.current.textContent =
-        "Click this button to start/stop studying!";
-      tutorialTextRef.current.style.left = left - 15 + "px";
-      tutorialTextRef.current.style.top = 0 + "px";
-    } else if (tutorial === 8) {
-      const { width, top, left, height } =
-        switchPomodoroRef.current.getBoundingClientRect();
-      tutorialBoxRef.current.style.left = left - 20 + "px";
-      tutorialBoxRef.current.style.top = top - 20 + "px";
-      tutorialBoxRef.current.style.width = width + 40 + "px";
-      tutorialBoxRef.current.style.height = height + 40 + "px";
-
-      tutorialTextRef.current.textContent =
-        "Click this button to switch to pomodoro mode!";
-      tutorialTextRef.current.style.left = left + "px";
-      tutorialTextRef.current.style.top = 0 + "px";
-      setTimeout(() => {
-        setTutorial(9);
-      }, 3500);
-    } else if (tutorial === 9) {
-      const { width, top, left, height } =
-        studyOptionsHeader.current.getBoundingClientRect();
-      tutorialBoxRef.current.style.left = left - 20 + "px";
-      tutorialBoxRef.current.style.top = top - 20 + "px";
-      tutorialBoxRef.current.style.width = width + 40 + "px";
-      tutorialBoxRef.current.style.height = height + 40 + "px";
-
-      tutorialTextRef.current.textContent =
-        "You can select which tools to display!";
-      tutorialTextRef.current.style.left = left + "px";
-      tutorialTextRef.current.style.top = top + 100 + "px";
-      setTimeout(() => {
-        setTutorial(10);
-        router.push("/dashboard");
-      }, 2500);
-    }
-  }, [tutorial]);
 
   return (
     <div className={styles.Study}>
