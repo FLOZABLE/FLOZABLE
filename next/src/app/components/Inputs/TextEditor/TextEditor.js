@@ -39,7 +39,7 @@ function TextEditor({ value, setValue }) {
   return (
     <div className={styles.TextEditor}>
       <StyleWrapper>
-        <ReactQuill theme="snow" onChange={setValue} value={value} />
+        {/* <ReactQuill theme="snow" onChange={setValue} value={value} /> */}
       </StyleWrapper>
     </div>
   );

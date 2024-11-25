@@ -82,6 +82,7 @@ export default function SubjectsTimeline({ viewDate }) {
                   iconStyle={{ background: data.color, color: "#fff" }}
                   icon={<IconBook />}
                   visible={inView}
+                  key={i}
                 >
                   <div
                     className={styles.element}

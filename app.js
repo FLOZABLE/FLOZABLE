@@ -230,3 +230,13 @@ servicesManager();
 server.listen(port, process.env.IP, () => {
   console.log(`Server running ${port}`);
 });
+
+process.on('uncaughtException', (err) => {
+  console.error('Uncaught Exception:', err);
+  // Potential connection cleanup logic
+});
+
+// Monitor open handles
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+});

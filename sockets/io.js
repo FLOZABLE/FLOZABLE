@@ -8,6 +8,9 @@ const io = new Server(server, {
     methods: ["GET", "POST", "OPTIONS"],
   },
   allowEIO3: true,
+  pingTimeout: 60000, // 60 seconds
+  pingInterval: 25000, // 25 seconds
+  connectTimeout: 45000, // Connection timeout
 });
 
 const wrap = (middleware) => (socket, next) =>
@@ -21,6 +24,6 @@ const extensionIo = io.of("/extension");
 
 module.exports = { io, mainIo, mediaIo, extensionIo };
 
-require("./mainIo")
-require("./mediaIo")
-require("./extensionIo")
+require("./mainIo");
+require("./mediaIo");
+require("./extensionIo");
