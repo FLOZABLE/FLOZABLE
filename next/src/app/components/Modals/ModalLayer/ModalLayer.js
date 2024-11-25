@@ -1,8 +1,8 @@
 import styles from "./ModalLayer.module.css";
 
-export default function ModalLayer({ children, icon, hoverText }) {
+export default function ModalLayer({ children, icon, hoverText, tutorial }) {
   return (
-    <div className={styles.ModalLayer}>
+    <div className={styles.ModalLayer} data-tutorial={tutorial}>
       <div className={styles.iconWrapper}>
         {icon}
         {hoverText ? (

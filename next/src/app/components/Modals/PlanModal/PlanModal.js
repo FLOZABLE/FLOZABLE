@@ -5,10 +5,9 @@ import {
   PlanModalContext,
   PlansContext,
   SearchUsersModalContext,
-  TutorialsContext,
 } from "@/app/utils/Contexts";
 import styles from "./PlanModal.module.css";
-import { useCallback, useContext, useEffect, useRef, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import DraggableModal from "../DraggableModal/DraggableModal";
 import CustomInput from "../../Inputs/CustomInput/CustomInput";
 import DateSelector from "../../Plans/DateSelector/DateSelector";
@@ -44,23 +43,23 @@ import { requestNotification, unsubscribeFromPush } from "@/app/utils/Tool";
 import { useVapidKeys } from "@/Hooks/notificationsHooks";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useSubjects } from "@/Hooks/subjectsHooks";
+import { useTour } from "@reactour/tour";
+import { useDebounce } from "use-debounce";
 
 export default function PlanModal() {
   const { subjects } = useSubjects();
+  const { currentStep, setCurrentStep } = useTour();
 
   const { planModal, setPlanModal } = useContext(PlanModalContext);
   const { setIsAddSubjectModal } = useContext(AddSubjectsModalContext);
   const { setSearchUsersModal } = useContext(SearchUsersModalContext);
-  const { tutorialBoxRef, tutorialTextRef, tutorial, setTutorial } =
-    useContext(TutorialsContext);
+
+  const [debouncedTitle] = useDebounce(planModal.title, 1000);
+  const [debouncedDescription] = useDebounce(planModal.description, 1000);
 
   const { plans, setPlans } = useContext(PlansContext);
 
   const [newShare, setNewShare] = useState([]);
-
-  const modalRef = useRef();
-  const addSubjectBtnRef = useRef();
-  const submitBtnRef = useRef();
 
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -72,6 +71,23 @@ export default function PlanModal() {
   const [planModalss, setPlanModalss] = useState(null);
 
   const planId = searchParams.get("plan");
+
+  useEffect(() => {
+    if (!debouncedTitle || debouncedTitle === "" || currentStep !== 1) return;
+
+    setCurrentStep(2);
+  }, [debouncedTitle]);
+
+  useEffect(() => {
+    if (
+      !debouncedDescription ||
+      debouncedDescription === "" ||
+      currentStep !== 2
+    )
+      return;
+
+    setCurrentStep(3);
+  }, [debouncedDescription]);
 
   useEffect(() => {
     if (!planId) return;
@@ -90,62 +106,6 @@ export default function PlanModal() {
       );
     }, 1000);
   }, [planId, searchParams, plans]);
-
-  useEffect(() => {
-    if (tutorial === 2) {
-      modalRef.current.scroll({
-        bottom: 200000,
-        behavior: "smooth",
-      });
-      const { width, top, left, height } =
-        modalRef.current.getBoundingClientRect();
-      tutorialBoxRef.current.style.left = left - 20 + "px";
-      tutorialBoxRef.current.style.top = top - 40 + "px";
-      tutorialBoxRef.current.style.width = width + 40 + "px";
-      tutorialBoxRef.current.style.height = height + 60 + "px";
-
-      tutorialTextRef.current.textContent = "Create your first plan!";
-      tutorialTextRef.current.style.left = left - 15 + "px";
-      tutorialTextRef.current.style.top = top - 100 + "px";
-      setTimeout(() => {
-        setTutorial(3);
-      }, 5000);
-    } else if (tutorial === 3) {
-      modalRef.current.scroll({
-        top: 200000,
-        behavior: "smooth",
-      });
-      setTimeout(() => {
-        const { width, top, left, height } =
-          addSubjectBtnRef.current.getBoundingClientRect();
-        tutorialBoxRef.current.style.left = left - 20 + "px";
-        tutorialBoxRef.current.style.top = top - 20 + "px";
-        tutorialBoxRef.current.style.width = width + 40 + "px";
-        tutorialBoxRef.current.style.height = height + 40 + "px";
-
-        tutorialTextRef.current.textContent = "Create your first subject!";
-        tutorialTextRef.current.style.left = left - 15 + "px";
-        tutorialTextRef.current.style.top = top - 100 + "px";
-      }, 500);
-    } else if (tutorial === 5) {
-      modalRef.current.scroll({
-        top: 200000,
-        behavior: "smooth",
-      });
-      setTimeout(() => {
-        const { width, top, left, height } =
-          submitBtnRef.current.getBoundingClientRect();
-        tutorialBoxRef.current.style.left = left - 20 + "px";
-        tutorialBoxRef.current.style.top = top - 20 + "px";
-        tutorialBoxRef.current.style.width = width + 40 + "px";
-        tutorialBoxRef.current.style.height = height + 40 + "px";
-
-        tutorialTextRef.current.textContent = "Save your plan!";
-        tutorialTextRef.current.style.left = left - 15 + "px";
-        tutorialTextRef.current.style.top = top - 100 + "px";
-      }, 500);
-    }
-  }, [tutorial]);
 
   useEffect(() => {
     if (planModal.plan_id === "0000000000") return;
@@ -245,14 +205,10 @@ export default function PlanModal() {
           clearPlanUsers(planId);
         }
       }
-      if (tutorial === 5) {
-        router.push("/dashboard/study");
-        setTutorial(6);
-      }
     } catch (err) {
       console.log(err);
     }
-  }, [planModal, tutorial, newShare]);
+  }, [planModal, newShare]);
 
   const onDeletePlan = useCallback(async () => {
     if (planModal.plan_id === "0000000000") {
@@ -302,8 +258,8 @@ export default function PlanModal() {
           setPlanModal(DEFAULT_PLAN);
         }}
       >
-        <div className={`customScroll ${styles.inner}`} ref={modalRef}>
-          <ModalLayer>
+        <div className={`customScroll ${styles.inner}`}>
+          <ModalLayer tutorial={1}>
             <CustomInput
               input={planModal.title}
               handleInput={(e) => {
@@ -328,7 +284,7 @@ export default function PlanModal() {
               }}
             />
           </ModalLayer>
-          <ModalLayer>
+          <ModalLayer tutorial={2}>
             <TextEditor
               setValue={(description) => {
                 handleInput({ description });
@@ -362,15 +318,17 @@ export default function PlanModal() {
                 value={planModal.subject_id}
               />
               <p>OR</p>
-              <div ref={addSubjectBtnRef}>
+              <div data-tutorial={3}>
                 <BlobBtn
                   onClick={() => {
                     setIsAddSubjectModal(true);
-                    if (tutorial === 3) {
-                      setTutorial(4);
+                    if (currentStep === 3) {
+                      setTimeout(() => {
+                        setCurrentStep(4);
+                      }, 300);
                     }
                   }}
-                  data-tutorial={3}
+                  data-tutorial={2}
                 >
                   Add Subject
                 </BlobBtn>
@@ -482,12 +440,11 @@ export default function PlanModal() {
             ) : (
               <div> </div>
             )}
-            <div ref={submitBtnRef}>
+            <div>
               <BlobBtn
                 onClick={() => {
                   submit();
                 }}
-                data-tutorial={5}
               >
                 SAVE
               </BlobBtn>

@@ -242,9 +242,12 @@ const ACTIVE_GROUP_DEBOUNCE = 1000;
 
 const tutorialSteps = [
   "First, add an event to your planner!",
-  "Create your first plan!",
+  "Name your first plan!",
+  "Give a brief description of your plan!",
   "Create your first subject!",
-  "Enter the subject details!",
+  "Name your first subject!",
+  "Choose color for your first subject!",
+  "Now save your subject!",
   "Save your plan!",
   "Choose a subject to study!",
   "Click this button to start/stop studying!",

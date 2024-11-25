@@ -1,10 +1,9 @@
 "use client";
 
-import React, { useContext, useEffect, useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import styles from "./Sidebar.module.css";
 import Link from "next/link";
 import {
-  Gear,
   IconBxHome,
   IconClipboardOutline,
   IconFriend,
@@ -15,8 +14,6 @@ import {
   IconStatsChart,
 } from "@/app/utils/Svg";
 import Image from "next/image";
-import { TutorialsContext } from "@/app/utils/Contexts";
-import TutorialBtn from "../../Buttons/TutorialBtn/TutorialBtn";
 import { usePathname } from "next/navigation";
 import { useWindowSize } from "@/Hooks/otherHooks";
 import AccountBtn from "../../Buttons/AccountBtn/AccountBtn";
@@ -36,9 +33,6 @@ function SidebarEl({ pathname, href, children }) {
 }
 
 function Sidebar({}) {
-  const { tutorialBoxRef, tutorialTextRef, tutorial } =
-    useContext(TutorialsContext);
-
   const toStatsRef = useRef(null);
   const toGroupsRef = useRef(null);
 
@@ -47,24 +41,6 @@ function Sidebar({}) {
   const pathname = usePathname();
 
   const windowSize = useWindowSize();
-
-  useEffect(() => {
-    if (tutorial === 11) {
-      setTimeout(() => {
-        const { width, top, left, height } =
-          toStatsRef.current.getBoundingClientRect();
-        tutorialBoxRef.current.style.left = left - 20 + "px";
-        tutorialBoxRef.current.style.top = top - 20 + "px";
-        tutorialBoxRef.current.style.width = width + 40 + "px";
-        tutorialBoxRef.current.style.height = height + 40 + "px";
-
-        tutorialTextRef.current.style.top = top + height + 30 + "px";
-        tutorialTextRef.current.style.left = left - 20 + "px";
-        tutorialTextRef.current.innerText =
-          "Navigate to your stats with the sidebar";
-      }, 500);
-    }
-  }, [tutorial]);
 
   useEffect(() => {
     const activeItem = document.getElementById("activeSidebar");
@@ -100,7 +76,7 @@ function Sidebar({}) {
       </SidebarEl>
       <SidebarEl pathname={pathname} href={"/dashboard/stats"}>
         <i ref={toStatsRef}>
-          <IconStatsChart />  
+          <IconStatsChart />
         </i>
         <h3>Statistics</h3>
       </SidebarEl>
@@ -125,7 +101,7 @@ function Sidebar({}) {
       <SidebarEl pathname={pathname} href={"/dashboard/friends"}>
         <i>
           <IconFriend />
-        </i> 
+        </i>
         <h3>Friends</h3>
       </SidebarEl>
       <SidebarEl pathname={pathname} href={"/dashboard/themes"}>

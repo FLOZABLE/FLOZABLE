@@ -14,7 +14,6 @@ import {
   HeaderMeteor,
   HeaderTarget,
 } from "@/app/utils/Svg";
-import { TutorialsContext } from "@/app/utils/Contexts";
 import { useExtensionUsage } from "@/Hooks/extensionHooks";
 import ProfileImage from "../../Users/ProfileImage/ProfileImage";
 import Link from "next/link";
@@ -38,31 +37,12 @@ function Header({}) {
   const { accountData } = useAccount();
   const { groupedSubjects } = useSubjects();
 
-  const { tutorialBoxRef, tutorialTextRef, tutorial } =
-    useContext(TutorialsContext);
-
   const [totalStudied, setTotalStudied] = useState("0 minutes"); // string
   const [appUsage, setAppUsage] = useState("0 minutes");
   const [longestSession, setLongestSession] = useState("0 seconds");
   const [studyStreak, setStudyStreak] = useState("0 day"); //days of consecutive study
 
   const studyBtnRef = useRef(null);
-
-  /* useEffect(() => {
-    if (tutorial === 6) {
-      const { width, top, left, height } =
-        studyBtnRef.current.getBoundingClientRect();
-      tutorialBoxRef.current.style.left = left - 10 + "px";
-      tutorialBoxRef.current.style.top = top - 10 + "px";
-      tutorialBoxRef.current.style.width = width + 20 + "px";
-      tutorialBoxRef.current.style.height = height + 20 + "px";
-
-      tutorialTextRef.current.style.top = top + height + 30 + "px";
-      tutorialTextRef.current.style.right = 30 + "px";
-      tutorialTextRef.current.innerText =
-        "Click here to start a study session!";
-    }
-  }, [tutorial]); */
 
   const { extensionUsageData } = useExtensionUsage(
     new Date(new Date().setHours(0, 0, 0, 0)),

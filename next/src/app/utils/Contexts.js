@@ -19,7 +19,6 @@ const googleClientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
 
 const PlanModalContext = createContext({});
 const PlansContext = createContext({});
-const TutorialsContext = createContext({});
 const CallOptionsContext = createContext({});
 const ThemesContext = createContext({});
 const WorkersContext = createContext({});
@@ -62,6 +61,8 @@ function AppContainer({ children }) {
     </QueryClientProvider>
   );
 }
+
+const tourRadius = 10;
 
 function AppProvider({ children }) {
   const searchParams = useSearchParams();
@@ -134,6 +135,8 @@ function AppProvider({ children }) {
   }, [accountData, isError]);
 
   useEffect(() => {
+    if (!accountData) return;
+
     const myGroups = groups.filter((group) =>
       accountData.groups.includes(group.group_id)
     );
@@ -143,41 +146,69 @@ function AppProvider({ children }) {
   return (
     <PlansProvider>
       <PlanModalProvider>
-        <TutorialsProvider>
-          <CallOptionsProvider>
-            <ThemesProvider>
-              <WorkersProvider>
-                <GoogleOAuthProvider clientId={googleClientId}>
-                  <AccountModalProvider>
-                    <JoinGroupModalProvider>
-                      <EditGroupModalProvider>
-                        <SubjectsModalProvider>
-                          <AddSubjectsModalProvider>
-                            <ChatModalProvider>
-                              <SearchUsersModalProvider>
-                                <TourProvider
-                                  onClickMask={() => {
-                                    console.log("mask");
-                                  }}
-                                  onClickHighlighted={(gd) => {
-                                    console.log("gd", gd);
-                                  }}
-                                  steps={tutorialSteps}
-                                >
-                                  {children}
-                                </TourProvider>
-                              </SearchUsersModalProvider>
-                            </ChatModalProvider>
-                          </AddSubjectsModalProvider>
-                        </SubjectsModalProvider>
-                      </EditGroupModalProvider>
-                    </JoinGroupModalProvider>
-                  </AccountModalProvider>
-                </GoogleOAuthProvider>
-              </WorkersProvider>
-            </ThemesProvider>
-          </CallOptionsProvider>
-        </TutorialsProvider>
+        <CallOptionsProvider>
+          <ThemesProvider>
+            <WorkersProvider>
+              <GoogleOAuthProvider clientId={googleClientId}>
+                <AccountModalProvider>
+                  <JoinGroupModalProvider>
+                    <EditGroupModalProvider>
+                      <SubjectsModalProvider>
+                        <AddSubjectsModalProvider>
+                          <ChatModalProvider>
+                            <SearchUsersModalProvider>
+                              <TourProvider
+                                onClickMask={() => {
+                                  console.log("mask");
+                                }}
+                                onClickHighlighted={(gd) => {
+                                  console.log("gd", gd);
+                                }}
+                                disableFocusLock={true}
+                                disableInteraction={false}
+                                steps={tutorialSteps}
+                                styles={{
+                                  popover: (base) => ({
+                                    ...base,
+                                    borderRadius: tourRadius,
+                                  }),
+                                  maskArea: (base) => ({
+                                    ...base,
+                                    rx: tourRadius,
+                                  }),
+                                  maskWrapper: (base) => ({
+                                    ...base,
+                                  }),
+                                  badge: (base) => ({
+                                    ...base,
+                                    left: "auto",
+                                    right: "-0.8125em",
+                                  }),
+                                  controls: (base) => ({
+                                    ...base,
+                                    marginTop: 100,
+                                  }),
+                                  close: (base) => ({
+                                    ...base,
+                                    right: "auto",
+                                    left: 8,
+                                    top: 8,
+                                  }),
+                                }}
+                              >
+                                {children}
+                              </TourProvider>
+                            </SearchUsersModalProvider>
+                          </ChatModalProvider>
+                        </AddSubjectsModalProvider>
+                      </SubjectsModalProvider>
+                    </EditGroupModalProvider>
+                  </JoinGroupModalProvider>
+                </AccountModalProvider>
+              </GoogleOAuthProvider>
+            </WorkersProvider>
+          </ThemesProvider>
+        </CallOptionsProvider>
       </PlanModalProvider>
     </PlansProvider>
   );
@@ -411,35 +442,6 @@ function SearchUsersModalProvider({ children }) {
   );
 }
 
-function TutorialsProvider({ children }) {
-  const tutorialBoxRef = useRef(null);
-  const tutorialTextRef = useRef(null);
-
-  const [tutorial, setTutorial] = useState(false);
-
-  useEffect(() => {
-    const searchParams = new URLSearchParams(document.location.search);
-    const tutorial = searchParams.get("tutorial");
-
-    if (tutorial) {
-      setTutorial(1);
-    }
-  }, []);
-
-  return (
-    <TutorialsContext.Provider
-      value={{
-        tutorialBoxRef,
-        tutorialTextRef,
-        tutorial,
-        setTutorial,
-      }}
-    >
-      {children}
-    </TutorialsContext.Provider>
-  );
-}
-
 function CallOptionsProvider({ children }) {
   const [isCam, setIsCam] = useState(false);
   const [isMic, setIsMic] = useState(false);
@@ -520,7 +522,6 @@ export {
   AppContainer,
   PlanModalContext,
   PlansContext,
-  TutorialsContext,
   CallOptionsContext,
   ThemesContext,
   WorkersContext,

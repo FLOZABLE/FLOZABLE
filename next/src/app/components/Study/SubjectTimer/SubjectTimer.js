@@ -6,11 +6,7 @@ import {
   faPause,
   faPlay,
 } from "@fortawesome/free-solid-svg-icons";
-import {
-  AddSubjectsModalContext,
-  TutorialsContext,
-  WorkersContext,
-} from "@/app/utils/Contexts";
+import { AddSubjectsModalContext, WorkersContext } from "@/app/utils/Contexts";
 import { socket } from "@/app/utils/socket";
 import SimpleToggleBtn from "../../Buttons/SimpleToggleBtn/SimpleToggleBtn";
 import PomodoroTimer from "../PomodoroTimer/PomodoroTimer";
@@ -25,8 +21,6 @@ function SubjecTimer({
   switchPomodoroRef,
   startTimerRef,
 }) {
-  const { tutorialBoxRef, tutorialTextRef, tutorial, setTutorial } =
-    useContext(TutorialsContext);
   const { subjectsTimerWorkerRef } = useContext(WorkersContext);
   const { setIsAddSubjectModal } = useContext(AddSubjectsModalContext);
 
@@ -257,12 +251,6 @@ function SubjecTimer({
               } else {
                 socket.emit("start", selectedSubject.subject_id);
               }
-
-              if (tutorial === 7) {
-                setTimeout(() => {
-                  setTutorial(8);
-                }, 3000);
-              }
             }}
             ref={startTimerRef}
             data-tutorial={7}
@@ -296,9 +284,6 @@ function SubjecTimer({
                   }, 300);
                 } else {
                   setSelectedSubject(subject);
-                }
-                if (tutorial === 6) {
-                  setTutorial(7);
                 }
               }}
             >

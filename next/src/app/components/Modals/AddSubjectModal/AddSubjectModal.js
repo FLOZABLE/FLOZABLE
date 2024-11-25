@@ -9,11 +9,7 @@ import React, {
 } from "react";
 import styles from "./AddSubjectModal.module.css";
 import { faBook } from "@fortawesome/free-solid-svg-icons";
-import {
-  AddSubjectsModalContext,
-  TutorialsContext,
-  WorkersContext,
-} from "@/app/utils/Contexts";
+import { AddSubjectsModalContext, WorkersContext } from "@/app/utils/Contexts";
 import CustomInput from "@/app/components/Inputs/CustomInput/CustomInput";
 import ColorPalette from "@/app/components/Inputs/ColorPalette/ColorPalette";
 import BlobBtn from "@/app/components/Buttons/BlobBtn/BlobBtn";
@@ -24,15 +20,16 @@ import { sortNewSubject } from "@/app/utils/timelineSorting";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { putSubjectsSubject } from "@/Api/subjectsApi";
 import { useSubjects } from "@/Hooks/subjectsHooks";
+import { useDebounce } from "use-debounce";
+import { useTour } from "@reactour/tour";
 
 function AddSubjectModal({}) {
+  const { currentStep, setCurrentStep } = useTour();
   const { subjects, updateSubjects } = useSubjects();
 
   const { isAddSubjectModal, setIsAddSubjectModal } = useContext(
     AddSubjectsModalContext
   );
-  const { tutorialBoxRef, tutorialTextRef, tutorial, setTutorial } =
-    useContext(TutorialsContext);
   const { subjectsTimerWorkerRef } = useContext(WorkersContext);
 
   const [subject, setSubject] = useState({
@@ -41,7 +38,27 @@ function AddSubjectModal({}) {
   });
   const [isSelectColor, setIsSelectColor] = useState(false);
 
-  const addSubjectModalRef = useRef(null);
+  const [debouncedName] = useDebounce(subject.name, 1000);
+  const [debouncedColor] = useDebounce(subject.color, 1000);
+
+  useEffect(() => {
+    if (debouncedName === "") return;
+
+    if (currentStep === 4) {
+      setIsSelectColor(true);
+      setTimeout(() => {
+        setCurrentStep(5);
+      }, 500);
+    }
+  }, [debouncedName]);
+
+  useEffect(() => {
+    if (!debouncedColor) return;
+
+    if (currentStep === 5) {
+      setCurrentStep(6);
+    }
+  }, [debouncedColor]);
 
   useEffect(() => {
     if (isAddSubjectModal) {
@@ -54,23 +71,6 @@ function AddSubjectModal({}) {
       }
     }
   }, [isAddSubjectModal]);
-
-  useEffect(() => {
-    if (tutorial === 4) {
-      setTimeout(() => {
-        const { top, left, height, width } =
-          addSubjectModalRef.current.getBoundingClientRect();
-        tutorialBoxRef.current.style.left = left - 20 + "px";
-        tutorialBoxRef.current.style.top = top - 40 + "px";
-        tutorialBoxRef.current.style.width = width + 40 + "px";
-        tutorialBoxRef.current.style.height = height + 60 + "px";
-
-        tutorialTextRef.current.style.top = top - 100 + "px";
-        tutorialTextRef.current.style.left = left + "px";
-        tutorialTextRef.current.innerText = "Enter the subject details!";
-      }, 500);
-    }
-  }, [tutorial]);
 
   const onSubmit = useCallback(
     async (subject) => {
@@ -86,14 +86,11 @@ function AddSubjectModal({}) {
         setIsSelectColor(false);
         setIsAddSubjectModal(false);
         setSubject({ name: "", color: null });
-        if (tutorial === 4) {
-          setTutorial(5);
-        }
       } catch (err) {
         console.log(err);
       }
     },
-    [tutorial, subjects]
+    [subjects]
   );
 
   return (
@@ -103,8 +100,8 @@ function AddSubjectModal({}) {
         setIsOpen={setIsAddSubjectModal}
         top="15rem"
       >
-        <div className={styles.inner} ref={addSubjectModalRef}>
-          <div className={styles.inputWrapper}>
+        <div className={styles.inner}>
+          <div className={styles.inputWrapper} data-tutorial={4}>
             <CustomInput
               input={subject.name}
               handleInput={(e) =>
@@ -123,14 +120,13 @@ function AddSubjectModal({}) {
             selectedColor={subject.color}
             isSelectColor={isSelectColor}
             setIsSelectColor={setIsSelectColor}
-            tutorial={4}
+            tutorial={5}
           />
           <div className={styles.submit}>
             <BlobBtn
               onClick={() => {
                 onSubmit(subject);
               }}
-              data-tutorial="4"
             >
               SAVE
             </BlobBtn>

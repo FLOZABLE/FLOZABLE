@@ -16,10 +16,9 @@ function ColorPalette({
   }, []);
 
   return (
-    <div className={styles.ColorPalette}>
+    <div className={styles.ColorPalette} data-tutorial={tutorial}>
       <div className={styles.header}>
         <button
-          data-tutorial={tutorial}
           onClick={() => {
             setIsSelectColor(!isSelectColor);
             if (setIsSelectIcon) {
@@ -32,7 +31,6 @@ function ColorPalette({
           </div>
         </button>
         <div
-          data-tutorial={tutorial}
           onClick={() => {
             setIsSelectColor(!isSelectColor);
             if (setIsSelectIcon) {
@@ -51,7 +49,6 @@ function ColorPalette({
             <div className={styles.palette} key={i}>
               <div className={styles.paletteColors}>
                 <div
-                  data-tutorial={tutorial}
                   className={styles.paletteColor}
                   onClick={() => {
                     selectColor(colorOption.colors[0]);
@@ -60,7 +57,6 @@ function ColorPalette({
                 ></div>
                 <div className={styles.paletteShades}>
                   <div
-                    data-tutorial={tutorial}
                     className={styles.paletteShadesItem}
                     onClick={() => {
                       selectColor(colorOption.colors[1]);
@@ -70,7 +66,6 @@ function ColorPalette({
                     {colorOption.colors[1]}
                   </div>
                   <div
-                    data-tutorial={tutorial}
                     className={styles.paletteShadesItem}
                     onClick={() => {
                       selectColor(colorOption.colors[2]);
@@ -80,7 +75,6 @@ function ColorPalette({
                     {colorOption.colors[2]}
                   </div>
                   <div
-                    data-tutorial={tutorial}
                     className={styles.paletteShadesItem}
                     onClick={() => {
                       selectColor(colorOption.colors[3]);
@@ -94,7 +88,6 @@ function ColorPalette({
               <div className={styles.paletteInfo}>
                 <div className={styles.paletteInfoName}>{colorOption.name}</div>
                 <div
-                  data-tutorial={tutorial}
                   className={styles.palletteInfoHexcode}
                   onClick={() => {
                     setSelectedColor(colorOption.colors[0]);

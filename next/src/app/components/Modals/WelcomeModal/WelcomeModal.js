@@ -1,10 +1,9 @@
 "use client";
 
-import React, { useState, useEffect, useContext, useCallback } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import styles from "./WelcomeModal.module.css";
 import BlobBtn from "../../Buttons/BlobBtn/BlobBtn";
 import Confetti from "react-confetti";
-import { TutorialsContext } from "@/app/utils/Contexts";
 import { useWindowSize } from "@/Hooks/otherHooks";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAccount } from "@/Hooks/accountHooks";
@@ -16,7 +15,6 @@ function WelcomeModal({}) {
   const router = useRouter();
 
   const { accountData } = useAccount();
-  const { setTutorial } = useContext(TutorialsContext);
   const { setIsOpen } = useTour();
 
   const [isModal, setIsModal] = useState(false);
