@@ -11,6 +11,7 @@ const pool = mysql.createPool({
   waitForConnections: true,
   debug: false,
   charset: "utf8mb4",
+  idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
 });
 
 /* pool.on("connection", (conn) => {
