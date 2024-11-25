@@ -14,22 +14,7 @@
 .SimpleToggleBtn .tgl + .tglBtn {
   box-sizing: border-box;
 }
-.SimpleToggleBtn .tgl::-moz-selection,
-.SimpleToggleBtn .tgl:after::-moz-selection,
-.SimpleToggleBtn .tgl:before::-moz-selection,
-.SimpleToggleBtn .tgl *::-moz-selection,
-.SimpleToggleBtn .tgl *:after::-moz-selection,
-.SimpleToggleBtn .tgl *:before::-moz-selection,
-.SimpleToggleBtn .tgl + .tglBtn::-moz-selection,
-.SimpleToggleBtn .tgl::selection,
-.SimpleToggleBtn .tgl:after::selection,
-.SimpleToggleBtn .tgl:before::selection,
-.SimpleToggleBtn .tgl *::selection,
-.SimpleToggleBtn .tgl *:after::selection,
-.SimpleToggleBtn .tgl *:before::selection,
-.SimpleToggleBtn .tgl + .tglBtn::selection {
-  background: none;
-}
+
 .SimpleToggleBtn .tgl + .tglBtn {
   outline: 0;
   display: block;

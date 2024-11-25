@@ -270,7 +270,7 @@ export default function PlanModal() {
             ></CustomInput>
           </ModalLayer>
           <ModalLayer>
-            <DateSelector
+            {/* <DateSelector
               start={planModal.start}
               setStart={(start) => {
                 handleInput({ start });
@@ -282,7 +282,7 @@ export default function PlanModal() {
               setDate={({ start, end }) => {
                 handleInput({ start, end });
               }}
-            />
+            /> */}
           </ModalLayer>
           <ModalLayer tutorial={2}>
             <TextEditor

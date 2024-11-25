@@ -17,23 +17,6 @@
   box-sizing: border-box;
 }
 
-.OptionToggleBtn .tgl::-moz-selection,
-.OptionToggleBtn .tgl:after::-moz-selection,
-.OptionToggleBtn .tgl:before::-moz-selection,
-.OptionToggleBtn .tgl *::-moz-selection,
-.OptionToggleBtn .tgl *:after::-moz-selection,
-.OptionToggleBtn .tgl *:before::-moz-selection,
-.OptionToggleBtn .tgl+.tglBtn::-moz-selection,
-.OptionToggleBtn .tgl::selection,
-.OptionToggleBtn .tgl:after::selection,
-.OptionToggleBtn .tgl:before::selection,
-.OptionToggleBtn .tgl *::selection,
-.OptionToggleBtn .tgl *:after::selection,
-.OptionToggleBtn .tgl *:before::selection,
-.OptionToggleBtn .tgl+.tglBtn::selection {
-  background: none;
-}
-
 .OptionToggleBtn .tgl+.tglBtn {
   outline: 0;
   display: block;

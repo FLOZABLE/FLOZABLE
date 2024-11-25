@@ -489,9 +489,11 @@ function WorkersProvider({ children }) {
   const subjectsTimerWorkerRef = useRef(null);
 
   useEffect(() => {
-    membersTimerWorkerRef.current = new Worker("/workers/timerWorker.js");
+    membersTimerWorkerRef.current = new Worker(
+      new URL("./workers/timerWorker.js", import.meta.url)
+    );
     subjectsTimerWorkerRef.current = new Worker(
-      "/workers/subjectTimerWorker.js"
+      new URL("./workers/subjectTimerWorker.js", import.meta.url)
     );
 
     if ("serviceWorker" in navigator) {
