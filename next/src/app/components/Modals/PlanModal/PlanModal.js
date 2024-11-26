@@ -182,7 +182,12 @@ export default function PlanModal() {
       } else {
         response = await patchPlan(planModal);
       }
-      if (!response.success) return;
+      if (!response.success) {
+        if (currentStep === 7) {
+          setCurrentStep(1);
+        }
+        return;
+      }
 
       const data = response.data;
 
@@ -205,10 +210,14 @@ export default function PlanModal() {
           clearPlanUsers(planId);
         }
       }
+
+      if (currentStep === 7) {
+        setCurrentStep(8);
+      }
     } catch (err) {
       console.log(err);
     }
-  }, [planModal, newShare]);
+  }, [planModal, newShare, currentStep]);
 
   const onDeletePlan = useCallback(async () => {
     if (planModal.plan_id === "0000000000") {
@@ -270,7 +279,7 @@ export default function PlanModal() {
             ></CustomInput>
           </ModalLayer>
           <ModalLayer>
-            {/* <DateSelector
+            <DateSelector
               start={planModal.start}
               setStart={(start) => {
                 handleInput({ start });
@@ -282,7 +291,7 @@ export default function PlanModal() {
               setDate={({ start, end }) => {
                 handleInput({ start, end });
               }}
-            /> */}
+            />
           </ModalLayer>
           <ModalLayer tutorial={2}>
             <TextEditor
@@ -440,7 +449,7 @@ export default function PlanModal() {
             ) : (
               <div> </div>
             )}
-            <div>
+            <div data-tutorial={7}>
               <BlobBtn
                 onClick={() => {
                   submit();

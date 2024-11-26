@@ -31,6 +31,16 @@
   overflow-x: hidden;
 }
 
+.Plan .description ol li {
+  list-style: decimal;
+  margin-inline-start: 1.5rem;
+}
+
+.Plan .description ul li {
+  list-style: circle;
+  margin-inline-start: 1.5rem;
+}
+
 @keyframes showScroll {
   to {
     overflow-y: auto;

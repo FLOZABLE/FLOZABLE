@@ -76,7 +76,11 @@ function AddSubjectModal({}) {
     async (subject) => {
       try {
         const response = await putSubjectsSubject(subject);
-        if (!response.success) return;
+
+        if (!response.success) {
+          setCurrentStep(4);
+          return;
+        }
 
         const newSubjects = sortNewSubject(
           structuredClone(subjects),
@@ -86,11 +90,15 @@ function AddSubjectModal({}) {
         setIsSelectColor(false);
         setIsAddSubjectModal(false);
         setSubject({ name: "", color: null });
+
+        if (currentStep === 6) {
+          setCurrentStep(7);
+        }
       } catch (err) {
         console.log(err);
       }
     },
-    [subjects]
+    [subjects, currentStep]
   );
 
   return (
@@ -122,7 +130,7 @@ function AddSubjectModal({}) {
             setIsSelectColor={setIsSelectColor}
             tutorial={5}
           />
-          <div className={styles.submit}>
+          <div className={styles.submit} data-tutorial={6}>
             <BlobBtn
               onClick={() => {
                 onSubmit(subject);

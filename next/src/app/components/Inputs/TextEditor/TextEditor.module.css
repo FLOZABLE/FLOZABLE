@@ -6,22 +6,35 @@
 
 .TextEditor .MenuBar {
   border-bottom: 0.1rem solid var(--gray0);
+  display: flex;
 }
 
 .TextEditor .EditorContent {
-  padding: 1rem;
+  margin: 1rem;
+  position: relative;
 }
 
 .TextEditor .EditorContent > div {
   outline: none;
 }
 
-.TextEditor .EditorContent li {
+.TextEditor .EditorContent ol li {
+  list-style: decimal;
+  margin-inline-start: 1rem;
+}
+
+.TextEditor .EditorContent ul li {
   list-style: circle;
+  margin-inline-start: 1rem;
 }
 
 .MenuOption {
   width: 2rem;
   height: 2rem;
-  background-color: red;
+  margin: 0rem 0.2rem;
+  font-size: 1.5rem;
+}
+
+.MenuOption.active {
+  color: rgb(66, 66, 239);
 }
