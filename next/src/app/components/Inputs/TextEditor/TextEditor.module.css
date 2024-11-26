@@ -1,7 +1,27 @@
 .TextEditor {
   width: 100%;
+  border: 0.1rem solid var(--gray0);
+  border-radius: 1rem;
 }
 
-.TextEditor li {
-  justify-content: unset;
+.TextEditor .MenuBar {
+  border-bottom: 0.1rem solid var(--gray0);
+}
+
+.TextEditor .EditorContent {
+  padding: 1rem;
+}
+
+.TextEditor .EditorContent > div {
+  outline: none;
+}
+
+.TextEditor .EditorContent li {
+  list-style: circle;
+}
+
+.MenuOption {
+  width: 2rem;
+  height: 2rem;
+  background-color: red;
 }
