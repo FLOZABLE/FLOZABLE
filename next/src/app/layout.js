@@ -13,6 +13,7 @@ import EditGroupModal from "./components/Modals/EditGroupModal/EditGroupModal";
 import "react-loading-skeleton/dist/skeleton.css";
 import { Bounce, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 /* import { loadStripe } from "@stripe/stripe-js";
 import { Elements } from "@stripe/react-stripe-js"; */
 
