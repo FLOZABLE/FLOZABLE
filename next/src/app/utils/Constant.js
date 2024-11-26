@@ -249,6 +249,7 @@ const tutorialSteps = [
   "Choose color for your first subject!",
   "Now save your subject!",
   "Save your plan!",
+  "Click here to start studying!",
   "Choose a subject to study!",
   "Click this button to start/stop studying!",
   "Click this button to switch to pomodoro mode!",

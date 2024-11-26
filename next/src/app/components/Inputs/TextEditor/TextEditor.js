@@ -12,11 +12,18 @@ import {
   faItalic,
   faListOl,
   faListUl,
+  faUnderline,
 } from "@fortawesome/free-solid-svg-icons";
+import Underline from "@tiptap/extension-underline";
 
-const MenuOption = ({ onClick, children }) => {
+const MenuOption = ({ onClick, children, mode, editor }) => {
   return (
-    <button className={styles.MenuOption} onClick={onClick}>
+    <button
+      className={`${styles.MenuOption} ${
+        editor.isActive(mode) ? styles.active : ""
+      }`}
+      onClick={onClick}
+    >
       {children}
     </button>
   );
@@ -55,6 +62,8 @@ const MenuBar = ({ editor }) => {
         onClick={() => {
           editor.chain().focus().toggleItalic().run();
         }}
+        editor={editor}
+        mode={"italic"}
       >
         <FontAwesomeIcon icon={faItalic} />
       </MenuOption>
@@ -62,6 +71,8 @@ const MenuBar = ({ editor }) => {
         onClick={() => {
           editor.chain().focus().toggleBold().run();
         }}
+        editor={editor}
+        mode={"bold"}
       >
         <FontAwesomeIcon icon={faBold} />
       </MenuOption>
@@ -69,13 +80,26 @@ const MenuBar = ({ editor }) => {
         onClick={() => {
           editor.chain().focus().toggleOrderedList().run();
         }}
+        editor={editor}
+        mode={"italic"}
       >
         <FontAwesomeIcon icon={faListOl} />
       </MenuOption>
       <MenuOption
         onClick={() => {
+          editor.chain().focus().toggleUnderline().run();
+        }}
+        editor={editor}
+        mode={"orderedList"}
+      >
+        <FontAwesomeIcon icon={faUnderline} />
+      </MenuOption>
+      <MenuOption
+        onClick={() => {
           editor.chain().focus().toggleBulletList().run();
         }}
+        editor={editor}
+        mode={"bulletList"}
       >
         <FontAwesomeIcon icon={faListUl} />
       </MenuOption>
@@ -83,22 +107,30 @@ const MenuBar = ({ editor }) => {
   );
 };
 
-export default function TextEditor() {
+export default function TextEditor({ value, setValue }) {
   const editor = useEditor({
-    extensions: [
-      StarterKit,
-      /* Document, // Top-level 'doc' node
-      Paragraph, // Default 'p' tag for paragraphs
-      Text, // Basic text node */
-    ],
-    content: "<p>Hello World! 🌎️</p>",
+    extensions: [StarterKit, Underline],
     immediatelyRender: false,
+    onUpdate: ({ editor }) => {
+      setValue(editor.getHTML());
+    },
+    content: value,
   });
+
+  useEffect(() => {
+    if (editor && editor.getHTML() !== value) {
+      editor.commands.setContent(value);
+    }
+  }, [value, editor]);
 
   return (
     <div className={styles.TextEditor}>
       <MenuBar editor={editor} />
-      <EditorContent editor={editor} className={styles.EditorContent} />
+      <EditorContent
+        editor={editor}
+        className={styles.EditorContent}
+        content={value}
+      />
     </div>
   );
 }
