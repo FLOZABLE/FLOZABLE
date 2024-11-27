@@ -1,37 +1,55 @@
-import React, {
-  useState,
-  useEffect,
-  useRef,
-  useCallback,
-  useContext,
-} from "react";
+import React, { useState, useCallback, useContext } from "react";
 import styles from "./StudyTimelineBar.module.css";
-import { DateTime } from "luxon";
 import styled from "@emotion/styled";
 import { PlanModalContext, PlansContext } from "@/app/utils/Contexts";
 import FullCalendar from "@fullcalendar/react";
-import resourceTimelinePlugin from "@fullcalendar/resource-timeline";
 import timelinePlugin from "@fullcalendar/timeline";
 
 const StyleWrapper = styled.div`
-  table {
+  .fc-scroller.fc-scroller-liquid-absolute::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 0.375rem gray;
+    border-radius: 0.625rem;
+    position: absolute;
+  }
+
+  .fc-scroller.fc-scroller-liquid-absolute::-webkit-scrollbar {
+    width: 0.75rem;
+    height: 1rem;
+    position: absolute;
+  }
+
+  .fc-scroller.fc-scroller-liquid-absolute::-webkit-scrollbar-thumb {
+    border-radius: 0.625rem;
+    -webkit-box-shadow: inset 0 0 0.375rem gray;
+    background-color: gray;
+    position: absolute;
   }
 `;
 
 function StudyTimelineBar() {
-  const { setPlanModal } = useContext(PlanModalContext);
-  const { plans } = useContext(PlansContext);
-  useEffect(() => {}, [plans]);
+  const { planModal, setPlanModal } = useContext(PlanModalContext);
+  const { plans, setPlans, setPlansDate } = useContext(PlansContext);
+
+  const [viewDate, setViewDate] = useState(
+    new Date(new Date().setHours(0, 0, 0, 0))
+  );
+
+  const onEventClick = useCallback((clickInfo) => {
+    const { start, end, title } = clickInfo.event;
+    const editable = clickInfo.event._def.extendedProps.isEditable;
+    const planInfo = {
+      ...clickInfo.event._def.extendedProps,
+      start,
+      end: end ? end : start,
+      title,
+      editable,
+    };
+    console.log(planInfo, clickInfo.event);
+    setPlanModal((prev) => ({ ...prev, ...planInfo, opened: true }));
+  }, []);
 
   return (
     <StyleWrapper className={styles.StudyTimelineBar}>
-      {/* {[...Array(24)].map((_, i) => {
-        return (
-          <div className={styles.hour} key={i}>
-            {i}
-          </div>
-        );
-      })} */}
       <FullCalendar
         schedulerLicenseKey="CC-Attribution-NonCommercial-NoDerivatives"
         height={"100%"}
@@ -41,8 +59,11 @@ function StudyTimelineBar() {
         headerToolbar={false}
         initialView="timelineDay"
         slotDuration="01:00:00" // 1-hour slots
-        initialDate="2024-11-26" //
-        over
+        initialDate={viewDate} //
+        dragScroll={true}
+        eventClick={onEventClick}
+        selectAllow={true}
+        selectable={true}
       />
     </StyleWrapper>
   );

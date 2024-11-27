@@ -10,7 +10,6 @@ import styles from "./PlanModal.module.css";
 import { useCallback, useContext, useEffect, useState } from "react";
 import DraggableModal from "../DraggableModal/DraggableModal";
 import CustomInput from "../../Inputs/CustomInput/CustomInput";
-import DateSelector from "../../Plans/DateSelector/DateSelector";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faBell,
@@ -45,6 +44,12 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useSubjects } from "@/Hooks/subjectsHooks";
 import { useTour } from "@reactour/tour";
 import { useDebounce } from "use-debounce";
+import dynamic from "next/dynamic";
+
+const DynamicDateSelector = dynamic(
+  () => import("../../Plans/DateSelector/DateSelector"),
+  { ssr: false }
+);
 
 export default function PlanModal() {
   const { subjects } = useSubjects();
@@ -278,8 +283,8 @@ export default function PlanModal() {
               placeHolder={"Enter title"}
             ></CustomInput>
           </ModalLayer>
-          {/* <ModalLayer>
-            <DateSelector
+          <ModalLayer>
+            <DynamicDateSelector
               start={planModal.start}
               setStart={(start) => {
                 handleInput({ start });
@@ -292,7 +297,7 @@ export default function PlanModal() {
                 handleInput({ start, end });
               }}
             />
-          </ModalLayer> */}
+          </ModalLayer>
           <ModalLayer tutorial={2}>
             <TextEditor
               setValue={(description) => {
