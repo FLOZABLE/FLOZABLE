@@ -6,210 +6,44 @@ import React, {
   useContext,
 } from "react";
 import styles from "./StudyTimelineBar.module.css";
-import Timeline, {
-  TimelineMarkers,
-  TodayMarker,
-  TimelineHeaders,
-  CustomHeader,
-} from "react-calendar-timeline";
-import "react-calendar-timeline/lib/Timeline.css";
 import { DateTime } from "luxon";
 import styled from "@emotion/styled";
 import { PlanModalContext, PlansContext } from "@/app/utils/Contexts";
+import FullCalendar from "@fullcalendar/react";
+import resourceTimelinePlugin from "@fullcalendar/resource-timeline";
+import timelinePlugin from "@fullcalendar/timeline";
 
 const StyleWrapper = styled.div`
-  .react-calendar-timeline .rct-horizontal-lines .rct-hl-even,
-  .react-calendar-timeline .rct-horizontal-lines .rct-hl-odd {
-    border: 1px solid #bbb;
-    background-color: #ffffffd0;
-  }
-
-  .react-calendar-timeline .rct-outer {
-    border-bottom-left-radius: 2rem;
-    border-bottom-right-radius: 2rem;
-  }
-
-  .react-calendar-timeline .rct-header-root {
-    transform: translate(0px, 200%);
-  }
-
-  .react-calendar-timeline .rct-items .rct-item {
-    top: 0px !important;
-    height: 3rem !important;
-    border: transparent !important;
-    line-height: 1.5rem !important;
-    color: black !important;
-  }
-
-  .react-calendar-timeline .rct-vertical-lines {
-    border: 0.125rem rgb(63, 61, 61) !important;
+  table {
   }
 `;
 
 function StudyTimelineBar() {
   const { setPlanModal } = useContext(PlanModalContext);
   const { plans } = useContext(PlansContext);
-
-  const [lineHeight, setLineHeight] = useState(0);
-
-  useEffect(() => {
-    setLineHeight(
-      parseFloat(getComputedStyle(document.documentElement).fontSize) * 3
-    );
-  }, []);
-
-  const groups = [{ id: 1, title: "Plans" }];
-  const [items, setItems] = useState([]);
-  const timelineRef = useRef();
-
-  function openModal(eventObj) {
-    eventObj.opened = true;
-    setPlanModal({ ...eventObj });
-  }
-
-  useEffect(() => {
-    const tempItems = plans.map((event, i) => {
-      return {
-        id: i,
-        group: 1,
-        canResize: false,
-        canMove: false,
-        title: (
-          <div>
-            {event.title}
-            <br />
-            {DateTime.fromMillis(event.start.getTime()).toFormat(
-              "hh:mm"
-            )} - {DateTime.fromMillis(event.end.getTime()).toFormat("hh:mm")}
-          </div>
-        ),
-        start_time: event.start.getTime(),
-        end_time: event.end.getTime(),
-        height: 100,
-        itemProps: {
-          onDoubleClick: () => {
-            openModal(event);
-          },
-          style: {
-            background: event.color || "#fff",
-            textAlign: "center",
-            fontSize: "1rem",
-            zIndex: event.completed
-              ? 0
-              : event.priority
-              ? event.priority + 100
-              : 99,
-            textDecoration: event.completed ? "line-through" : "",
-          },
-        },
-      };
-    });
-    setItems(tempItems);
-  }, [plans]);
-
-  const zoomTimeline = useCallback(
-    (e) => {
-      const movement = e.nativeEvent.deltaY;
-      if (movement > 5) {
-        timelineRef.current.changeZoom(1.2);
-      } else if (movement < -5) {
-        timelineRef.current.changeZoom(0.8);
-      }
-    },
-    [timelineRef]
-  );
+  useEffect(() => {}, [plans]);
 
   return (
-    <StyleWrapper
-      className={styles.StudyTimelineBar}
-      onWheel={(e) => {
-        zoomTimeline(e);
-      }}
-    >
-      <Timeline
-        ref={timelineRef}
-        groups={groups}
-        items={items}
-        timeSteps={{
-          day: 1,
-          hour: 1,
-          minute: 60,
-          second: 1,
-        }}
-        defaultTimeStart={DateTime.now().minus({ hours: 1 })}
-        defaultTimeEnd={DateTime.now().plus({ hours: 1 })}
-        minZoom={60 * 1000}
-        maxZoom={24 * 60 * 60 * 1000}
-        sidebarWidth={0}
-        lineHeight={lineHeight}
-      >
-        <TimelineHeaders
-          style={{ background: "rgba(0,0,0,0)", border: "0px solid black" }}
-          className={styles.timeView}
-        >
-          <CustomHeader
-            height={lineHeight}
-            headerData={{ someData: "data" }}
-            unit="hour"
-          >
-            {({
-              headerContext: { intervals },
-              getRootProps,
-              getIntervalProps,
-              showPeriod,
-              data,
-            }) => {
-              return (
-                <div {...getRootProps()}>
-                  {intervals.map((interval, i) => {
-                    if (intervals.length > 70) {
-                      if (interval.startTime.format("mm") !== "00") {
-                        return <div key={i} />;
-                      }
-                    }
-                    const intervalStyle = {
-                      lineHeight: "30px",
-                      textAlign: "center",
-                      color: "white",
-                      transform: "translate(-50%)",
-                    };
-                    return (
-                      <div
-                        key={i}
-                        {...getIntervalProps({
-                          interval,
-                          style: intervalStyle,
-                        })}
-                      >
-                        <div className="sticky">
-                          {interval.startTime.format("h A")}
-                          {interval.intervalText}
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              );
-            }}
-          </CustomHeader>
-        </TimelineHeaders>
-        <TimelineMarkers>
-          <TodayMarker interval={5000}>
-            {({ styles, date }) => {
-              return (
-                <div
-                  style={{
-                    ...styles,
-                    zIndex: 250,
-                    width: "0.2rem",
-                    backgroundColor: "brown",
-                  }}
-                />
-              );
-            }}
-          </TodayMarker>
-        </TimelineMarkers>
-      </Timeline>
+    <StyleWrapper className={styles.StudyTimelineBar}>
+      {/* {[...Array(24)].map((_, i) => {
+        return (
+          <div className={styles.hour} key={i}>
+            {i}
+          </div>
+        );
+      })} */}
+      <FullCalendar
+        schedulerLicenseKey="CC-Attribution-NonCommercial-NoDerivatives"
+        height={"100%"}
+        slotMinWidth={200}
+        plugins={[timelinePlugin]}
+        events={plans}
+        headerToolbar={false}
+        initialView="timelineDay"
+        slotDuration="01:00:00" // 1-hour slots
+        initialDate="2024-11-26" //
+        over
+      />
     </StyleWrapper>
   );
 }

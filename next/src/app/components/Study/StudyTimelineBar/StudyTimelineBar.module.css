@@ -1,9 +1,18 @@
-.StudyTimelineBar {
-    width: 80%;
-    position: relative; 
-    left: 10%;
+/* .StudyTimelineBar {
+  width: 80%;
+  position: relative;
+  left: 10%;
+  background-color: #fff;
 }
 
 .StudyTimelineBar .timeView div {
-    border: 0px solid black !important;
+  border: 0px solid black !important;
+}
+ */
+
+.StudyTimelineBar {
+  background-color: green;
+  height: 5rem;
+  width: 70vw;
+  left: 15vw;
 }
