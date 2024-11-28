@@ -45,6 +45,7 @@ import { useSubjects } from "@/Hooks/subjectsHooks";
 import { useTour } from "@reactour/tour";
 import { useDebounce } from "use-debounce";
 import dynamic from "next/dynamic";
+import { toast } from "react-toastify";
 
 const DynamicDateSelector = dynamic(
   () => import("../../Plans/DateSelector/DateSelector"),
@@ -59,8 +60,8 @@ export default function PlanModal() {
   const { setIsAddSubjectModal } = useContext(AddSubjectsModalContext);
   const { setSearchUsersModal } = useContext(SearchUsersModalContext);
 
-  const [debouncedTitle] = useDebounce(planModal.title, 1000);
-  const [debouncedDescription] = useDebounce(planModal.description, 1000);
+  const [debouncedTitle] = useDebounce(planModal.title, 2000);
+  const [debouncedDescription] = useDebounce(planModal.description, 2000);
 
   const { plans, setPlans } = useContext(PlansContext);
 
@@ -80,6 +81,11 @@ export default function PlanModal() {
   useEffect(() => {
     if (!debouncedTitle || debouncedTitle === "" || currentStep !== 1) return;
 
+    if (!/^[a-zA-Z0-9!?#@&()<>'[\],~".,/\p{Emoji}\s]+$/u.test(debouncedTitle)) {
+      toast.error("Invalid Characters");
+      return;
+    }
+
     setCurrentStep(2);
   }, [debouncedTitle]);
 
@@ -90,6 +96,10 @@ export default function PlanModal() {
       currentStep !== 2
     )
       return;
+
+    /* if (!/^[a-zA-Z0-9]+$/.test(debouncedDescription)) {
+      return toast.error("Invalid Characters");
+    } */
 
     setCurrentStep(3);
   }, [debouncedDescription]);

@@ -4,7 +4,7 @@
     position: fixed;
     top: 0rem;
     left: 0rem;
-    z-index: 6;
+    z-index: 11;
     background-color: #00000050;
     display: none;
   }

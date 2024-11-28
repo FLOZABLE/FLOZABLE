@@ -241,20 +241,59 @@ const STUDY_TREND_COLORS = [
 const ACTIVE_GROUP_DEBOUNCE = 1000;
 
 const tutorialSteps = [
-  "First, add an event to your planner!",
-  "Name your first plan!",
-  "Give a brief description of your plan!",
-  "Create your first subject!",
-  "Name your first subject!",
-  "Choose color for your first subject!",
-  "Now save your subject!",
-  "Save your plan!",
-  "Click here to start studying!",
-  "Choose a subject to study!",
-  "Click this button to start/stop studying!",
-  "Click this button to switch to pomodoro mode!",
-  "You can select which tools to display!",
-].map((content, i) => ({ content, selector: `[data-tutorial='${i}']` }));
+  { content: "First, add an event to your planner!", disableActions: true },
+  { content: "Name your first plan!" },
+  { content: "Give a brief description of your plan!" },
+  { content: "Create your first subject!", disableActions: true },
+  { content: "Name your first subject!" },
+  { content: "Choose color for your first subject!" },
+  { content: "Now save your subject!", disableActions: true },
+  { content: "Save your plan!", disableActions: true },
+  { content: "Click here to start studying!", disableActions: true },
+  { content: "Choose a subject to study!", disableActions: true },
+  { content: "Click this button to start/stop studying!" },
+  { content: "Click this button to switch to pomodoro mode!" },
+  { content: "Stay focused with timed study sessions!" },
+  { content: "You can select which tools to display!" },
+  { content: "Click here to return to dashboard!", disableActions: true },
+  {
+    content:
+      "Study trend chart shows study time trend of each subjects past few days/weeks/months",
+    disableActions: true,
+  },
+  {
+    content:
+      "Ranking trend chart shows ranking trend of yourself past few days/weeks/months",
+  },
+  {
+    content: "You can also click here to change the date/range of stats",
+    style: { padding: "50px", margin: "50px", height: "200px" },
+    padding: {
+      mask: [0, 0, 80, 0], // Horizontal: 10, Vertical: 20
+      popover: [0, 0, 100, 0],
+    },
+  },
+  { content: "Study heatmap shows how consistent you have studied each days!" },
+  {
+    content: "This timeline basically shows you how you have studied that day",
+  },
+  {
+    content:
+      "If you download our chrome extension, this will show website usage of selected website!",
+  },
+  { content: "Now click here to go to groups page", disableActions: true },
+  {
+    content: "You can choose ANY group you want to join from here!",
+    disableActions: true,
+    position: [10, 10],
+  },
+  { content: "Or create your own private group to study with your friends!" },
+  { content: "Start your journy" },
+].map((step, i) => ({
+  selector: `[data-tutorial='${i}']`,
+  disableActions: false,
+  ...step,
+}));
 
 export {
   colorsList,
