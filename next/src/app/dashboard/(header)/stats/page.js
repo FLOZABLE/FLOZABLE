@@ -2,7 +2,7 @@
 
 import SubjectsPie from "@/app/components/Charts/SubjectsPie/SubjectsPie";
 import styles from "./page.module.css";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import StudyTrendChart from "@/app/components/Charts/StudyTrendChart/StudyTrendChart";
 import RankingsTrendsChart from "@/app/components/Charts/RankingsTrendsChart/RankingsTrendsChart";
 import WebsiteUsageChart from "@/app/components/Charts/WebsiteUsageChart/WebsiteUsageChart";
@@ -10,15 +10,30 @@ import { useAccount } from "@/Hooks/accountHooks";
 import { useSubjects } from "@/Hooks/subjectsHooks";
 import StudyHeatMap from "@/app/components/Charts/StudyHeatMap/StudyHeatMap";
 import SubjectsTimeline from "@/app/components/Charts/SubjectsTimeline/SubjectsTimeline";
+import { useTour } from "@reactour/tour";
 
 function Stats({}) {
   const { accountData } = useAccount();
   const { subjects } = useSubjects();
 
+  const { currentStep, setCurrentStep, setIsOpen } = useTour();
+
   const [viewDate, setViewDate] = useState(
     new Date(new Date().setHours(0, 0, 0, 0))
   );
   const [viewer, setViewer] = useState("day");
+
+  useEffect(() => {
+    if (currentStep === 14) {
+      setTimeout(() => {
+        setCurrentStep(15);
+      }, 1000);
+    } else if (currentStep === 15) {
+      setTimeout(() => {
+        setCurrentStep(16);
+      }, 3000);
+    }
+  }, [currentStep]);
 
   return (
     <div className="Main">
@@ -27,6 +42,7 @@ function Stats({}) {
           <div
             className={`BoxContainer ${styles.boxContainer}`}
             id={styles.StudyTrendChart}
+            data-tutorial={15}
           >
             <StudyTrendChart
               viewDate={viewDate}
@@ -39,6 +55,7 @@ function Stats({}) {
           <div
             className={`BoxContainer ${styles.boxContainer}`}
             id={styles.RankingsTrendsChart}
+            data-tutorial={16}
           >
             <RankingsTrendsChart
               viewDate={viewDate}
@@ -50,12 +67,14 @@ function Stats({}) {
           <div
             className={`BoxContainer ${styles.boxContainer}`}
             id={styles.StudyHeatMap}
+            data-tutorial={18}
           >
             <StudyHeatMap viewDate={viewDate} setViewDate={setViewDate} />
           </div>
           <div
             className={`BoxContainer ${styles.boxContainer}`}
             id={styles.RankingsTrendsChart}
+            data-tutorial={19}
           >
             <SubjectsTimeline viewDate={viewDate} />
           </div>
@@ -68,6 +87,7 @@ function Stats({}) {
           <div
             className={`BoxContainer ${styles.boxContainer}`}
             id={styles.WebsiteUsageChart}
+            data-tutorial={20}
           >
             <WebsiteUsageChart viewDate={viewDate} viewer={viewer} />
           </div>

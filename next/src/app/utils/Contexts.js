@@ -32,6 +32,7 @@ const SubjectsModalContext = createContext({});
 const AddSubjectsModalContext = createContext({});
 const ChatModalContext = createContext({});
 const SearchUsersModalContext = createContext({});
+const WelcomeModalContext = createContext({});
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -157,47 +158,50 @@ function AppProvider({ children }) {
                         <AddSubjectsModalProvider>
                           <ChatModalProvider>
                             <SearchUsersModalProvider>
-                              <TourProvider
-                                onClickMask={() => {
-                                  console.log("mask");
-                                }}
-                                onClickHighlighted={(gd) => {
-                                  console.log("gd", gd);
-                                }}
-                                disableFocusLock={true}
-                                disableInteraction={false}
-                                steps={tutorialSteps}
-                                styles={{
-                                  popover: (base) => ({
-                                    ...base,
-                                    borderRadius: tourRadius,
-                                  }),
-                                  maskArea: (base) => ({
-                                    ...base,
-                                    rx: tourRadius,
-                                  }),
-                                  maskWrapper: (base) => ({
-                                    ...base,
-                                  }),
-                                  badge: (base) => ({
-                                    ...base,
-                                    left: "auto",
-                                    right: "-0.8125em",
-                                  }),
-                                  controls: (base) => ({
-                                    ...base,
-                                    marginTop: 100,
-                                  }),
-                                  close: (base) => ({
-                                    ...base,
-                                    right: "auto",
-                                    left: 8,
-                                    top: 8,
-                                  }),
-                                }}
-                              >
-                                {children}
-                              </TourProvider>
+                              <WelcomeModalProvider>
+                                <TourProvider
+                                  onClickMask={() => {
+                                    console.log("mask");
+                                  }}
+                                  onClickHighlighted={(gd) => {
+                                    console.log("gd", gd);
+                                  }}
+                                  disableFocusLock={true}
+                                  steps={tutorialSteps}
+                                  styles={{
+                                    popover: (base) => ({
+                                      ...base,
+                                      borderRadius: tourRadius,
+                                    }),
+                                    maskArea: (base) => ({
+                                      ...base,
+                                      rx: tourRadius,
+                                    }),
+                                    maskWrapper: (base) => ({
+                                      ...base,
+                                    }),
+                                    badge: (base) => ({
+                                      ...base,
+                                      left: "auto",
+                                      right: "-0.8125em",
+                                    }),
+                                    controls: (base) => ({
+                                      ...base,
+                                      marginTop: 100,
+                                    }),
+                                    close: (base) => ({
+                                      ...base,
+                                      right: "auto",
+                                      left: 8,
+                                      top: 8,
+                                    }),
+                                  }}
+                                  scrollSmooth={true}
+                                  showDots={false}
+                                >
+                                  {children}
+                                </TourProvider>
+                              </WelcomeModalProvider>
                             </SearchUsersModalProvider>
                           </ChatModalProvider>
                         </AddSubjectsModalProvider>
@@ -442,6 +446,16 @@ function SearchUsersModalProvider({ children }) {
   );
 }
 
+function WelcomeModalProvider({ children }) {
+  const [isWelcomeModal, setIsWelcomeModal] = useState(false);
+
+  return (
+    <WelcomeModalContext.Provider value={{ isWelcomeModal, setIsWelcomeModal }}>
+      {children}
+    </WelcomeModalContext.Provider>
+  );
+}
+
 function CallOptionsProvider({ children }) {
   const [isCam, setIsCam] = useState(false);
   const [isMic, setIsMic] = useState(false);
@@ -534,4 +548,5 @@ export {
   AddSubjectsModalContext,
   ChatModalContext,
   SearchUsersModalContext,
+  WelcomeModalContext,
 };

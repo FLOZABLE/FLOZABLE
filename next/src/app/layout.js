@@ -14,6 +14,7 @@ import "react-loading-skeleton/dist/skeleton.css";
 import { Bounce, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
+import WelcomeModal from "./components/Modals/WelcomeModal/WelcomeModal";
 /* import { loadStripe } from "@stripe/stripe-js";
 import { Elements } from "@stripe/react-stripe-js"; */
 
@@ -86,21 +87,23 @@ export default function RootLayout({ children }) {
             <SubjectsModal />
             <SearchUsersModal />
             <EditGroupModal />
+            <WelcomeModal />
             {children}
-            <ToastContainer
-              position="top-right"
-              autoClose={5000}
-              hideProgressBar={false}
-              newestOnTop={false}
-              closeOnClick
-              rtl={false}
-              pauseOnFocusLoss
-              draggable
-              pauseOnHover
-              theme="light"
-              transition={Bounce}
-            />
           </AppContainer>
+          <ToastContainer
+            position="top-right"
+            autoClose={5000}
+            hideProgressBar={false}
+            newestOnTop={false}
+            closeOnClick
+            rtl={false}
+            pauseOnFocusLoss
+            draggable
+            pauseOnHover
+            theme="light"
+            transition={Bounce}
+            style={{ zIndex: 10000000 }}
+          />
         </Suspense>
       </body>
       {gaId ? <GoogleAnalytics gaId={gaId} /> : null}

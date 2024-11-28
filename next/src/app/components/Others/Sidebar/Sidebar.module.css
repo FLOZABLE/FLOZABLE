@@ -91,6 +91,10 @@
   width: calc(100% - 1rem);
 }
 
+.Sidebar .buttons > div{
+  margin: 0rem 0.5rem;
+}
+
 @media (max-height: 500px) {
   .Sidebar .SidebarEl i {
     font-size: 1.4rem;

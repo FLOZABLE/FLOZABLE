@@ -17,8 +17,10 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useWindowSize } from "@/Hooks/otherHooks";
 import AccountBtn from "../../Buttons/AccountBtn/AccountBtn";
+import { useTour } from "@reactour/tour";
+import TutorialBtn from "../../Buttons/TutorialBtn/TutorialBtn";
 
-function SidebarEl({ pathname, href, children }) {
+function SidebarEl({ pathname, href, children, tutorial, onClick }) {
   return (
     <Link
       href={href}
@@ -26,6 +28,8 @@ function SidebarEl({ pathname, href, children }) {
         href === pathname ? styles.activeSidebar : ""
       }`}
       id={href === pathname ? "activeSidebar" : ""}
+      data-tutorial={tutorial}
+      onClick={onClick ?? onClick}
     >
       {children}
     </Link>
@@ -33,8 +37,7 @@ function SidebarEl({ pathname, href, children }) {
 }
 
 function Sidebar({}) {
-  const toStatsRef = useRef(null);
-  const toGroupsRef = useRef(null);
+  const { currentStep, setCurrentStep } = useTour();
 
   const focusBackgroundRef = useRef(null);
 
@@ -75,7 +78,7 @@ function Sidebar({}) {
         <h3>Dashboard</h3>
       </SidebarEl>
       <SidebarEl pathname={pathname} href={"/dashboard/stats"}>
-        <i ref={toStatsRef}>
+        <i>
           <IconStatsChart />
         </i>
         <h3>Statistics</h3>
@@ -92,8 +95,8 @@ function Sidebar({}) {
         </i>
         <h3>Leaderboard</h3>
       </SidebarEl>
-      <SidebarEl pathname={pathname} href={"/dashboard/groups"}>
-        <i ref={toGroupsRef}>
+      <SidebarEl pathname={pathname} href={"/dashboard/groups"} tutorial={21}>
+        <i>
           <IconPeople16 />
         </i>
         <h3>Groups</h3>
@@ -118,6 +121,7 @@ function Sidebar({}) {
       </SidebarEl>
       <div className={styles.buttons}>
         <AccountBtn />
+        <TutorialBtn />
       </div>
     </aside>
   );

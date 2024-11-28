@@ -38,7 +38,7 @@ function SubjectsPie({ viewDate, setViewDate, viewer, setViewer }) {
   return (
     <div className={`Box ${styles.SubjectsPie}`}>
       <div className="header">Subjects</div>
-      <div className={styles.options}>
+      <div className={styles.options} data-tutorial={17}>
         <div className={styles.DateSelectorBtn}>
           <DateSelectorBtn
             viewDate={viewDate}

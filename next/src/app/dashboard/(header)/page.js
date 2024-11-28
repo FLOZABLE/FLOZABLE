@@ -1,6 +1,5 @@
 "use client";
 
-import WelcomeModal from "@/app/components/Modals/WelcomeModal/WelcomeModal";
 import styles from "./page.module.css";
 import PlansTimeline from "@/app/components/Plans/PlansTimeline/PlansTimeline";
 import FriendsActivityViewer from "@/app/components/Friends/FriendsActivityViewer/FriendsActivityViewer";
@@ -37,7 +36,6 @@ export default function Dashboard() {
 
   return (
     <div className={`Main`}>
-      <WelcomeModal />
       <div className={styles.Main}>
         <div className={styles.layer}>
           {/* <div className={`BoxContainer ${styles.box}`} id={styles.calendar}>

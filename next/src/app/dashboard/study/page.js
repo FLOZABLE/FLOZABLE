@@ -26,13 +26,14 @@ import ThemeSelector from "@/app/components/Themes/ThemeSelector/ThemeSelector";
 import { useRouter } from "next/navigation";
 import { exitFullscreen } from "@/app/utils/Tool";
 import ChatModalBtn from "@/app/components/Buttons/ChatModalBtn/ChatModalBtn";
+import { useTour } from "@reactour/tour";
 
-function StudyOption({ onClick, children, hoverText }) {
+function StudyOption({ onClick, children, hoverText, tutorial }) {
   return (
     <div
       className={styles.studyOption}
       onClick={onClick ?? onClick}
-      data-tutorial={9}
+      data-tutorial={tutorial}
     >
       {children}
       <div className={`HoverText ${styles.hoverText}`}>{hoverText}</div>
@@ -42,11 +43,7 @@ function StudyOption({ onClick, children, hoverText }) {
 
 function Study() {
   const router = useRouter();
-
-  const selectSubjectRef = useRef();
-  const switchPomodoroRef = useRef();
-  const startTimerRef = useRef();
-  const studyOptionsHeader = useRef();
+  const { currentStep, setCurrentStep, isOpen } = useTour();
 
   const [selectedSubject, setSelectedSubject] = useState(null);
 
@@ -85,6 +82,14 @@ function Study() {
     };
   }, [studyOptions.zoom]);
 
+  useEffect(() => {
+    if (currentStep === 13) {
+      setTimeout(() => {
+        setCurrentStep(14);
+      }, 5000);
+    }
+  }, [currentStep]);
+
   return (
     <div className={styles.Study}>
       <div className={styles.ytBg}>
@@ -95,7 +100,7 @@ function Study() {
           volume={volume}
         />
       </div>
-      <div className={styles.studyOptions} ref={studyOptionsHeader}>
+      <div className={styles.studyOptions} data-tutorial={13}>
         <StudyOption
           onClick={() => {
             toggleStudyOption("timer");
@@ -185,9 +190,11 @@ function Study() {
         </StudyOption>
         <StudyOption
           onClick={() => {
+            if (isOpen && currentStep === 13) return;
             router.push("/dashboard");
           }}
           hoverText={"Home"}
+          tutorial={14}
         >
           <i>
             <IconBxHome />
@@ -203,9 +210,6 @@ function Study() {
         <SubjectTimer
           selectedSubject={selectedSubject}
           setSelectedSubject={setSelectedSubject}
-          selectSubjectRef={selectSubjectRef}
-          switchPomodoroRef={switchPomodoroRef}
-          startTimerRef={startTimerRef}
         />
       </div>
       <div
