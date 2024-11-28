@@ -40,6 +40,7 @@ mainIo.on("connection", (socket) => {
     };
   }
   const userId = session.user_id;
+  console.log("socket joined");
 
   if (userId) {
     (async () => {
