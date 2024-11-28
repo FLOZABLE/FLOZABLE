@@ -86,7 +86,7 @@ function WelcomeModal({}) {
         </div>
       ) : (
         <div className={styles.modal}>
-          <p>Finsih Tutorial!</p>
+          <p>You're all set to start your study journey!</p>
           <div className={styles.buttons}>
             <div className={styles.blobWrapper}>
               <BlobBtn

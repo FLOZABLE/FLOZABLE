@@ -241,54 +241,77 @@ const STUDY_TREND_COLORS = [
 const ACTIVE_GROUP_DEBOUNCE = 1000;
 
 const tutorialSteps = [
-  { content: "First, add an event to your planner!", disableActions: true },
-  { content: "Name your first plan!" },
-  { content: "Give a brief description of your plan!" },
-  { content: "Create your first subject!", disableActions: true },
-  { content: "Name your first subject!" },
-  { content: "Choose color for your first subject!" },
-  { content: "Now save your subject!", disableActions: true },
-  { content: "Save your plan!", disableActions: true },
-  { content: "Click here to start studying!", disableActions: true },
-  { content: "Choose a subject to study!", disableActions: true },
-  { content: "Click this button to start/stop studying!" },
-  { content: "Click this button to switch to pomodoro mode!" },
-  { content: "Stay focused with timed study sessions!" },
-  { content: "You can select which tools to display!" },
-  { content: "Click here to return to dashboard!", disableActions: true },
+  {
+    content: "Start by adding your first event to the planner!",
+    disableActions: true,
+  },
+  { content: "Give your plan a name!" },
+  { content: "Provide a brief description of your plan!" },
+  {
+    content: "Create your first subject to organize your study material!",
+    disableActions: true,
+  },
+  { content: "Name your subject!" },
+  { content: "Pick a color for your subject to help you identify it easily!" },
+  { content: "Now save your subject to proceed!", disableActions: true },
+  { content: "Don't forget to save your plan!" },
+  { content: "Click here to begin your study session!" },
+  { content: "Select a subject to start studying!" },
+  { content: "Press this button to start/stop your study session!" },
+  { content: "Switch to Pomodoro mode to focus in short bursts!" },
+  { content: "Stay focused with structured, timed study sessions!" },
   {
     content:
-      "Study trend chart shows study time trend of each subjects past few days/weeks/months",
+      "Select the tools you want to display for a customized experience!",
+  },
+  {
+    content: "Click here to return to your dashboard at any time!",
     disableActions: true,
   },
   {
     content:
-      "Ranking trend chart shows ranking trend of yourself past few days/weeks/months",
+      "The study trend chart shows your study time trends across different subjects over the past days, weeks, and months.",
+    disableActions: true,
   },
   {
-    content: "You can also click here to change the date/range of stats",
-    style: { padding: "50px", margin: "50px", height: "200px" },
+    content:
+      "The ranking trend chart shows your performance ranking over time, helping you track your progress.",
+  },
+  {
+    content:
+      "Click here to adjust the date or range for your stats and see trends!",
     padding: {
       mask: [0, 0, 80, 0], // Horizontal: 10, Vertical: 20
       popover: [0, 0, 100, 0],
     },
   },
-  { content: "Study heatmap shows how consistent you have studied each days!" },
   {
-    content: "This timeline basically shows you how you have studied that day",
+    content:
+      "The study heatmap helps you see how consistently you’ve studied each day!",
   },
   {
     content:
-      "If you download our chrome extension, this will show website usage of selected website!",
+      "Check the timeline to get a clear overview of how you’ve studied throughout the day!",
   },
-  { content: "Now click here to go to groups page", disableActions: true },
   {
-    content: "You can choose ANY group you want to join from here!",
+    content:
+      "If you have our Chrome extension, this section will show how much time you’ve spent on selected websites!",
+  },
+  {
+    content: "Click here to visit your groups page and join your study group!",
+    disableActions: true,
+  },
+  {
+    content:
+      "Browse through available groups and join the one that suits your needs!",
     disableActions: true,
     position: [10, 10],
   },
-  { content: "Or create your own private group to study with your friends!" },
-  { content: "Start your journy" },
+  {
+    content:
+      "You can also create your own private group to study with friends!",
+  },
+  { content: "You're all set to start your study journey!" },
 ].map((step, i) => ({
   selector: `[data-tutorial='${i}']`,
   disableActions: false,
