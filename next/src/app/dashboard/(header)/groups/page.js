@@ -8,8 +8,11 @@ import GroupsContainer from "@/app/components/Groups/GroupsContainer/GroupsConta
 import BlobBtn from "@/app/components/Buttons/BlobBtn/BlobBtn";
 import MyGroupsViewer from "@/app/components/Groups/MyGroupsViewer/MyGroupsViewer";
 import TagsGenerator from "@/app/components/Inputs/TagsGenerator/TagsGenerator";
+import { useTour } from "@reactour/tour";
 
 function Groups() {
+  const { currentStep, setCurrentStep } = useTour();
+
   const [tags, setTags] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [isCreateNewGroup, setIsCreateNewGroup] = useState(false);
@@ -41,10 +44,17 @@ function Groups() {
                   setSearchQuery={setSearchQuery}
                 />
               </div>
-              <div className={styles.headerItem} id={styles.CreateGroup}>
+              <div
+                className={styles.headerItem}
+                id={styles.CreateGroup}
+                data-tutorial={23}
+              >
                 <BlobBtn
                   onClick={() => {
                     setIsCreateNewGroup(!isCreateNewGroup);
+                    if (currentStep === 23) {
+                      setCurrentStep(24);
+                    }
                   }}
                 >
                   + Create new group

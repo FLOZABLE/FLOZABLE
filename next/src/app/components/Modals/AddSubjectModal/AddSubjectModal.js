@@ -22,6 +22,7 @@ import { putSubjectsSubject } from "@/Api/subjectsApi";
 import { useSubjects } from "@/Hooks/subjectsHooks";
 import { useDebounce } from "use-debounce";
 import { useTour } from "@reactour/tour";
+import { toast } from "react-toastify";
 
 function AddSubjectModal({}) {
   const { currentStep, setCurrentStep } = useTour();
@@ -42,14 +43,18 @@ function AddSubjectModal({}) {
   const [debouncedColor] = useDebounce(subject.color, 1000);
 
   useEffect(() => {
-    if (debouncedName === "") return;
+    if (debouncedName === "" || currentStep !== 4) return;
 
-    if (currentStep === 4) {
+    if (!/^[a-zA-Z0-9!?#@&()<>'[\],~".,/\p{Emoji}\s]+$/u.test(debouncedName)) {
       setIsSelectColor(true);
-      setTimeout(() => {
-        setCurrentStep(5);
-      }, 500);
+      toast.error("Invalid Characters");
+      return;
     }
+
+    setIsSelectColor(true);
+    setTimeout(() => {
+      setCurrentStep(5);
+    }, 500);
   }, [debouncedName]);
 
   useEffect(() => {
