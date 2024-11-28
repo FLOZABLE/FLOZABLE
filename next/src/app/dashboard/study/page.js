@@ -191,6 +191,10 @@ function Study() {
         <StudyOption
           onClick={() => {
             if (isOpen && currentStep === 13) return;
+            if (currentStep === 14) {
+              router.push("/dashboard/stats");
+              return;
+            }
             router.push("/dashboard");
           }}
           hoverText={"Home"}
