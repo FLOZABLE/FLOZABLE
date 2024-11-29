@@ -16,7 +16,7 @@ const {
 const RESPONSE_MESSAGES = require("../utils/responses");
 const { mainIo } = require("../sockets/io");
 const { autoSignin } = require("./auth");
-const { timelineSort } = require("../utils/timelineSorting");
+const { timelineSorter } = require("../utils/timelineSorting");
 
 Router.get("/", async (req, res) => {
   autoSignin(req, res, async (userId) => {
@@ -25,7 +25,7 @@ Router.get("/", async (req, res) => {
       const connection = pool.promise();
       const subjectsTimeline = await subjectsTimelineCache(connection, userId);
 
-      const { subjects, groupedSubjects } = timelineSort(
+      const { subjects, groupedSubjects } = timelineSorter(
         subjectsTimeline,
         timezone
       );

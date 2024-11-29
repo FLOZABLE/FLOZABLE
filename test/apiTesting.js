@@ -60,11 +60,13 @@ async function setDuration() {
     const data = await setData();
     const connections = await setConnections();
     const duration = await setDuration();
-    
+
     autocannon({
       url: process.env.SERVER + path,
       connections: connections !== "" ? connections : 1000,
       duration: duration !== "" ? duration : 10,
+      timeout: 20000,
+      excludeErrorStats: true,
     })
       .on("tick", (count) => {
         console.log(`Requests made so far: ${count.counter}`);
