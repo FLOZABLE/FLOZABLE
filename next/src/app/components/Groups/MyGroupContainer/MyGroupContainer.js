@@ -4,16 +4,10 @@ import config from "@/app/utils/config";
 import Link from "next/link";
 import {
   CallOptionsContext,
-  ChatModalContext,
   EditGroupModalContext,
 } from "@/app/utils/Contexts";
 import GroupUrlBtn from "@/app/components/Buttons/GroupUrlBtn/GroupUrlBtn";
-import {
-  IconMessage,
-  IconTimerOutline,
-  IconPen,
-  IconLeave,
-} from "@/app/utils/Svg";
+import { IconTimerOutline, IconPen, IconLeave } from "@/app/utils/Svg";
 import MembersContainer from "../MembersContainer/MembersContainer";
 import { mediaSocket } from "@/app/utils/mediaSocket";
 import { Device } from "mediasoup-client";
@@ -56,32 +50,24 @@ const audioParams = {
 
 function MyGroupContainer({ group, isAdmin, isActive, leaveGroup }) {
   const { isCam, isMic } = useContext(CallOptionsContext);
-  const { setChatModal } = useContext(ChatModalContext);
   const { setEditGroupModal } = useContext(EditGroupModalContext);
 
-  const { groupMembersData, groupMembersIsLoading, clearGroupMembersData } =
+  const { groupMembersData, groupMembersIsLoading, updateGroupMembers } =
     useGroupMembers(group?.group_id, isActive);
 
-  const [members, setMembers] = useState([]);
   const [totalTime, setTotalTime] = useState("0 h");
 
   useEffect(() => {
-    if (!groupMembersData?.success) return;
-
-    setMembers(groupMembersData.data.members);
-  }, [groupMembersData]);
-
-  useEffect(() => {
-    if (!members.length) return;
-    const totalTime = members.reduce(
+    if (!groupMembersData.length) return;
+    const totalTime = groupMembersData.reduce(
       (partialTime, a) => partialTime + a.study_time,
       0
     );
     const { value, type } = secondConverter(
-      (totalTime / members.length).toFixed(2)
+      (totalTime / groupMembersData.length).toFixed(2)
     );
     setTotalTime(`${value} ${type}`);
-  }, [members]);
+  }, [groupMembersData]);
 
   const [rtpCapabilities, setRtpCapabilities] = useState(null);
   const [videoStream, setVideoStream] = useState(null);
@@ -186,7 +172,6 @@ function MyGroupContainer({ group, isAdmin, isActive, leaveGroup }) {
 
   useEffect(() => {
     if (!isActive) {
-      //clearGroupMembersData();
       return;
     }
 
@@ -412,20 +397,61 @@ function MyGroupContainer({ group, isAdmin, isActive, leaveGroup }) {
       console.log("newMember", groupId, userInfo);
       if (group.group_id !== groupId) return;
 
-      setMembers((prev) => [...prev, userInfo]);
+      updateGroupMembers((prev) => [...prev, userInfo], groupId);
     };
 
     const onRemoveMember = ({ groupId, userId }) => {
       if (!group.group_id === groupId) return;
 
-      setMembers((prev) => prev.filter((member) => member.user_id !== userId));
+      updateGroupMembers(
+        (prev) => prev.filter((member) => member.user_id !== userId),
+        groupId
+      );
+    };
+
+    const onStudying = ({ userId, subject }) => {
+      updateGroupMembers((prev) => {
+        const memberIndex = prev.findIndex(
+          (member) => member.user_id === userId
+        );
+        if (memberIndex === -1) return prev;
+
+        const newGroupMembers = [...prev];
+        newGroupMembers[memberIndex] = {
+          ...newGroupMembers[memberIndex],
+          activeSubject: subject,
+        };
+
+        return newGroupMembers;
+      }, group.group_id);
+    };
+
+    const onStopStudying = ({ userId, subject }) => {
+      updateGroupMembers((prev) => {
+        const memberIndex = prev.findIndex(
+          (member) => member.user_id === userId
+        );
+        if (memberIndex === -1) return prev;
+
+        const newGroupMembers = [...prev];
+        newGroupMembers[memberIndex] = {
+          ...newGroupMembers[memberIndex],
+          activeSubject: subject,
+        };
+
+        return newGroupMembers;
+      }, group.group_id);
     };
 
     socket.on("newMember", onNewMember);
     socket.on("removeMember", onRemoveMember);
+    socket.on("studying", onStudying);
+    socket.on("stopStudying", onStopStudying);
     return () => {
       socket.off("newMember", onNewMember);
       socket.off("removeMember", onRemoveMember);
+      socket.off("studying", onStudying);
+      socket.off("stopStudying", onStopStudying);
     };
   }, [group]);
 
@@ -438,7 +464,11 @@ function MyGroupContainer({ group, isAdmin, isActive, leaveGroup }) {
             <i>
               <FontAwesomeIcon icon={faPeopleGroup} />
             </i>
-            <p>{members.length}</p>
+            <p>
+              {groupMembersIsLoading
+                ? group.members.length
+                : groupMembersData.length}
+            </p>
           </div>
           <div>
             <i>
@@ -473,16 +503,12 @@ function MyGroupContainer({ group, isAdmin, isActive, leaveGroup }) {
         </div>
       </div>
       <div className={styles.MembersStatus}>
-        <MembersStatus
-          groupId={group.group_id}
-          members={members}
-          setMembers={setMembers}
-        />
+        <MembersStatus groupId={group.group_id} members={groupMembersData} />
       </div>
       <div className={`hiddenScroll ${styles.MembersContainer}`}>
         {isActive && !groupMembersIsLoading ? (
           <MembersContainer
-            members={members}
+            members={groupMembersData}
             group={group}
             videoStream={videoStream}
             device={device}

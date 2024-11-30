@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import styles from "./MyEl.module.css";
 import { DateTime } from "luxon";
 import { RestPerson, StudyPerson } from "@/app/utils/Svg";
-import { socket } from "@/app/utils/socket";
 import MyCamDisp from "../MyCamDisp/MyCamDisp";
 import MyTimer from "../MyTimer/MyTimer";
 
@@ -25,26 +24,6 @@ function MyEl({ videoStream, userInfo }) {
     } else {
       setTotal(parseInt(study_time));
     }
-
-    const onStudying = ({ userId, subject }) => {
-      if (userId === userInfo.user_id && subject.subject_id !== "0") {
-        setRun(true);
-      }
-    };
-
-    const onStopStudying = ({ userId }) => {
-      if (userId === userInfo.user_id) {
-        setRun(false);
-      }
-    };
-
-    socket.on(`studying`, onStudying);
-    socket.on(`stopStudying`, onStopStudying);
-
-    return () => {
-      socket.off(`studying`, onStudying);
-      socket.off(`stopStudying`, onStopStudying);
-    };
   }, [userInfo]);
 
   return (
