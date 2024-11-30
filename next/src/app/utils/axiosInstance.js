@@ -7,6 +7,10 @@ import axiosRetry from "axios-retry";
 const AxiosInstance = axios.create({
   baseURL: config.server,
   withCredentials: true,
+  headers: {
+    Accept: "application/json",
+    "Content-Type": "application/json",
+  },
 });
 
 axiosRetry(AxiosInstance, {

@@ -48,21 +48,26 @@ function useGroupMembers(groupId, isActive) {
   const queryResult = useQuery({
     queryKey: [`useGroupMembers`, groupId],
     queryFn: () => getGroupMembers(groupId),
-    staleTime: 1000 * 5,
+    staleTime: 1000 * 10,
     enabled: !!groupId && !!isActive,
+    select: (response) => response?.data?.members ?? [],
+    placeholderData: [],
   });
 
   const { data: groupMembersData, isLoading: groupMembersIsLoading } =
     queryResult;
 
-  const clearGroupMembersData = () => {
-    queryClient.removeQueries({ queryKey: ["useGroupMembers", groupId] });
-  };
+  const updateGroupMembers = useCallback(async (newData, groupId) => {
+    console.log(groupId);
+    await queryClient.setQueryData(["useGroupMembers", groupId], (oldData) => {
+      return updateQueryData(oldData, newData, "members");
+    });
+  }, []);
 
   return {
     groupMembersData,
     groupMembersIsLoading,
-    clearGroupMembersData,
+    updateGroupMembers,
     ...queryResult,
   };
 }
