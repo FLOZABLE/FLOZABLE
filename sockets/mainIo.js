@@ -331,9 +331,13 @@ async function stopStudying(connection, userId, status) {
 
     if (!userInfo) return;
 
+    const subject =
+      status !== "disconnect"
+        ? { subject_id: "0", name: "break", time: now }
+        : null;
     mainIo
       .to([...groups, ...friends, userId])
-      .emit(`stopStudying`, { userId, status });
+      .emit("stopStudying", { userId, status, subject });
 
     if (!activeSubject || activeSubject.subject_id === "0") {
       return await redisClient.del(`user:${userId}:activeSubject`);
@@ -355,9 +359,8 @@ async function stopStudying(connection, userId, status) {
 
     console.log(duration);
 
-    if (status === "disconnect") {
-    } else {
-      cacheActiveSubject(userId, { subject_id: "0", name: "break" }, now);
+    if (subject) {
+      cacheActiveSubject(userId, subject, now);
     }
 
     if (duration > MAX_STUDY_TIME) {
