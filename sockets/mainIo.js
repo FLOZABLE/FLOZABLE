@@ -335,12 +335,18 @@ async function stopStudying(connection, userId, status) {
       status !== "disconnect"
         ? { subject_id: "0", name: "break", time: now }
         : null;
-    mainIo
-      .to([...groups, ...friends, userId])
-      .emit("stopStudying", { userId, status, subject });
+
+    extensionIo.to(userId).emit("stopStudying");
+
+    if (subject) {
+      cacheActiveSubject(userId, subject, now);
+    } else {
+      redisClient.del(`user:${userId}:activeSubject`);
+    }
 
     if (!activeSubject || activeSubject.subject_id === "0") {
-      return await redisClient.del(`user:${userId}:activeSubject`);
+      emitStopStudying({ groups, friends, userId, subject, activeSubject });
+      return;
     }
 
     const activity = JSON.parse(
@@ -349,9 +355,10 @@ async function stopStudying(connection, userId, status) {
       )
     );
 
-    extensionIo.to(userId).emit("stopStudying");
-
-    if (!activity) return;
+    if (!activity) {
+      emitStopStudying({ groups, friends, userId, subject, activeSubject });
+      return;
+    }
 
     const start = activity[0];
 
@@ -359,16 +366,18 @@ async function stopStudying(connection, userId, status) {
 
     console.log(duration);
 
-    if (subject) {
-      cacheActiveSubject(userId, subject, now);
-    }
-
-    if (duration > MAX_STUDY_TIME) {
-      console.log("max study exceeded: ", duration);
+    if (duration > MAX_STUDY_TIME || typeof duration !== "number") {
+      emitStopStudying({ groups, friends, userId, subject, activeSubject });
       return;
     }
-
-    if (typeof duration !== "number") return;
+    emitStopStudying({
+      groups,
+      friends,
+      userId,
+      subject,
+      duration,
+      activeSubject,
+    });
 
     for (let i = -12; i < 12; i++) {
       redisClient.zincrby(`users:${i}:dayTotal`, duration, userId);
@@ -380,6 +389,28 @@ async function stopStudying(connection, userId, status) {
       `user:${userId}:subject:${activeSubject.subject_id}`,
       `[${start},${duration}]`
     );
+  } catch (err) {
+    console.log(err);
+  }
+}
+
+async function emitStopStudying({
+  groups,
+  friends,
+  userId,
+  subject,
+  duration = 0,
+  activeSubject,
+}) {
+  try {
+    const receivers = [...groups, ...friends, userId];
+
+    mainIo.to(receivers).emit("stopStudying", {
+      userId,
+      subject,
+      duration,
+      stopped_subject: activeSubject,
+    });
   } catch (err) {
     console.log(err);
   }
