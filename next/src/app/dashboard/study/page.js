@@ -45,8 +45,6 @@ function Study() {
   const router = useRouter();
   const { currentStep, setCurrentStep, isOpen } = useTour();
 
-  const [selectedSubject, setSelectedSubject] = useState(null);
-
   const [studyOptions, setStudyOptions] = useState({
     planner: true,
     timer: true,
@@ -211,10 +209,7 @@ function Study() {
         }`}
         id={styles.timer}
       >
-        <SubjectTimer
-          selectedSubject={selectedSubject}
-          setSelectedSubject={setSelectedSubject}
-        />
+        <SubjectTimer />
       </div>
       <div
         className={`${styles.StudyModalContainer} ${

@@ -58,7 +58,6 @@ function useGroupMembers(groupId, isActive) {
     queryResult;
 
   const updateGroupMembers = useCallback(async (newData, groupId) => {
-    console.log(groupId);
     await queryClient.setQueryData(["useGroupMembers", groupId], (oldData) => {
       return updateQueryData(oldData, newData, "members");
     });
