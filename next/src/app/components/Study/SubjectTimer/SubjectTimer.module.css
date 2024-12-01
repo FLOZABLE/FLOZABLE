@@ -128,3 +128,17 @@
 .SubjectTimer .subjects .subject .time {
   margin: 0rem 1rem 0rem auto;
 }
+
+.SubjectTimer .pomodoroTimer {
+  opacity: 0;
+  visibility: hidden;
+  transition: 0.3s ease-in-out opacity, 0.3s ease-in-out visibility;
+  height: 0;
+  overflow: hidden;
+}
+
+.SubjectTimer .pomodoroTimer.active {
+  opacity: 1;
+  visibility: visible;
+  height: unset;
+}
