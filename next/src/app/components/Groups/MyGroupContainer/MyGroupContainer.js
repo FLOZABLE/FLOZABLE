@@ -20,6 +20,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { ACTIVE_GROUP_DEBOUNCE } from "@/app/utils/Constant";
 import Skeleton from "react-loading-skeleton";
 import ChatModalBtn from "../../Buttons/ChatModalBtn/ChatModalBtn";
+import { DateTime } from "luxon";
 
 const videoParams = {
   encodings: [
@@ -426,7 +427,7 @@ function MyGroupContainer({ group, isAdmin, isActive, leaveGroup }) {
       }, group.group_id);
     };
 
-    const onStopStudying = ({ userId, subject }) => {
+    const onStopStudying = ({ userId, subject, duration }) => {
       updateGroupMembers((prev) => {
         const memberIndex = prev.findIndex(
           (member) => member.user_id === userId
@@ -434,9 +435,11 @@ function MyGroupContainer({ group, isAdmin, isActive, leaveGroup }) {
         if (memberIndex === -1) return prev;
 
         const newGroupMembers = [...prev];
+        const study_time = newGroupMembers[memberIndex].study_time + duration;
         newGroupMembers[memberIndex] = {
           ...newGroupMembers[memberIndex],
           activeSubject: subject,
+          study_time,
         };
 
         return newGroupMembers;

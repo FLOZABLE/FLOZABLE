@@ -15,7 +15,7 @@ import { useAccount } from "@/Hooks/accountHooks";
 import { useSubjects } from "@/Hooks/subjectsHooks";
 import { useTour } from "@reactour/tour";
 
-function SubjecTimer({ selectedSubject, setSelectedSubject }) {
+function SubjecTimer({}) {
   const { currentStep, setCurrentStep } = useTour();
 
   const { subjectsTimerWorkerRef } = useContext(WorkersContext);
@@ -25,69 +25,114 @@ function SubjecTimer({ selectedSubject, setSelectedSubject }) {
   const { subjects, updateSubjects, subjectsRefetch } = useSubjects();
 
   const [subjectOptions, setSubjectOptions] = useState([]);
-  const [selectNewSubject, setSelectNewSubject] = useState(false);
-  const [pomodoro, setPomodoro] = useState({
-    mode: -1,
+  const [isSelectNewSubject, setIsSelectNewSubject] = useState(false);
+  const [selectedSubject, setSelectedSubject] = useState({
+    subject_id: null,
+    name: "",
+    value: 0,
     active: false,
+    disp: "",
   });
 
   useEffect(() => {
-    if (currentStep === 8) {
-      setSelectNewSubject(true);
-      setTimeout(() => {
-        setCurrentStep(9);
-      }, 1000);
-    }
-  }, [currentStep]);
-
-  useEffect(() => {
-    return () => {
-      console.log("unhook");
-      socket.emit("stop");
-      setTimeout(() => {
-        subjectsRefetch();
-      }, 500);
-      subjectsTimerWorkerRef?.current?.postMessage({
-        command: "stopSubjectTimer",
-      });
-    };
-  }, []);
-
-  useEffect(() => {
-    if (!subjects || !subjects.length) return;
+    if (!subjects?.length) return;
     const subjectOptions = subjects.map((subject) => {
       const value = subject.day.total[subject.day.total.length - 1].data;
-      const { subject_id, name } = subject;
-      return { subject_id, name, value, active: false };
+      const disp = toTimer(value);
+      return {
+        name: subject.name,
+        subject_id: subject.subject_id,
+        disp,
+        value,
+      };
     });
-
+    console.log(subjectOptions);
     subjectOptions.sort((a, b) => b.value - a.value);
-
-    setSelectedSubject((prev) => {
-      if (!prev) {
-        return subjectOptions[0];
-      }
-      return prev;
-    });
+    const firestSubjectOption = subjectOptions.splice(0, 1)[0];
     setSubjectOptions(subjectOptions);
-  }, [subjects, accountData]);
+    if (!selectedSubject.subject_id) {
+      const newSelectedSubject = firestSubjectOption;
+      setSelectedSubject({ ...newSelectedSubject, active: false });
+    }
+  }, [subjects]);
+
+  const toggleTimer = useCallback(() => {
+    console.log("toggle timer", selectedSubject);
+    if (selectedSubject.active) {
+      socket.emit("stop");
+    } else {
+      socket.emit("start", selectedSubject.subject_id);
+    }
+  }, [selectedSubject]);
 
   useEffect(() => {
     const onStudying = ({ userId, subject }) => {
-      if (!accountData.user_id === userId || !subject) return;
+      console.log(userId, subject);
+      if (
+        userId !== accountData?.user_id ||
+        !subject ||
+        subject.subject_id === "0"
+      )
+        return;
+      if (subject.subject_id !== selectedSubject.subject_id) return;
 
-      const selectedSubject = subjectOptions.find(
-        (subjectOption) => subjectOption.subject_id === subject.subject_id
-      );
-      if (!selectedSubject) return;
-
-      toggleTimer({ ...selectedSubject, active: false });
+      setSelectedSubject((prev) => ({ ...prev, active: true }));
+      console.log("start", subjectsTimerWorkerRef);
+      subjectsTimerWorkerRef?.current?.postMessage({
+        command: "startSubjectTimer",
+      });
     };
+    const onStopStudying = ({ userId, duration, stopped_subject }) => {
+      console.log("stop");
+      if (
+        userId !== accountData?.user_id ||
+        !stopped_subject ||
+        stopped_subject.subject_id === "0"
+      ) {
+        return setSelectedSubject((prev) => ({ ...prev, active: false }));
+      }
 
-    const onStopStudying = ({ userId, status }) => {
-      if (userId !== accountData?.user_id) return;
+      if (stopped_subject.subject_id !== selectedSubject.subject_id) {
+        return setSelectedSubject((prev) => ({ ...prev, active: false }));
+      }
 
-      toggleTimer({ ...selectedSubject, active: true });
+      //setSelectedSubject((prev) => ({ ...prev, active: false }));
+      updateSubjects((prev) => {
+        const subjectIndex = prev.findIndex(
+          (subject) => subject.subject_id === stopped_subject.subject_id
+        );
+
+        if (subjectIndex === -1) {
+          return prev;
+        }
+
+        const newSubjects = [...prev];
+        const day = newSubjects[subjectIndex].day;
+        day.total[day.total.length - 1].data += duration;
+
+        // Store the updated value before returning
+        const updatedValue = day.total[day.total.length - 1].data;
+
+        newSubjects[subjectIndex] = {
+          ...newSubjects[subjectIndex],
+          day,
+        };
+
+        const disp = toTimer(updatedValue);
+        // Use a callback to update selectedSubject with the computed value
+        setSelectedSubject((prev) => ({
+          ...prev,
+          active: false,
+          value: updatedValue,
+          disp,
+        }));
+
+        return newSubjects;
+      });
+
+      subjectsTimerWorkerRef?.current?.postMessage({
+        command: "stopSubjectTimer",
+      });
     };
 
     socket.on("studying", onStudying);
@@ -97,99 +142,40 @@ function SubjecTimer({ selectedSubject, setSelectedSubject }) {
       socket.off("studying", onStudying);
       socket.off("stopStudying", onStopStudying);
     };
-  }, [accountData, subjectOptions, selectedSubject]);
-
-  const toggleTimer = useCallback(
-    (selectedSubject) => {
-      console.log("toggle");
-      if (pomodoro.mode === 1 || pomodoro.mode === 2) {
-        setPomodoro((prev) => ({ ...prev, active: !prev.active }));
-        return;
-      }
-
-      if (!selectedSubject) return;
-
-      const active = !selectedSubject.active;
-      setSelectedSubject({
-        ...selectedSubject,
-        active,
-      });
-
-      if (active) {
-        //socket.emit("start", selectedSubject.subject_id);
-        subjectsTimerWorkerRef?.current?.postMessage({
-          command: "startSubjectTimer",
-        });
-      } else {
-        //socket.emit("stop", selectedSubject.subject_id);
-        const newSubjects = [...subjects];
-        const selectedSubjectIndex = newSubjects.findIndex(
-          (subject) => subject.subject_id === selectedSubject.subject_id
-        );
-
-        subjectsTimerWorkerRef?.current?.postMessage({
-          command: "stopSubjectTimer",
-        });
-
-        if (!selectedSubjectIndex !== -1) {
-          const day = newSubjects[selectedSubjectIndex].day;
-          day.total[day.total.length - 1].data = selectedSubject.value;
-          newSubjects[selectedSubjectIndex] = {
-            ...newSubjects[selectedSubjectIndex],
-            day,
-          };
-          updateSubjects(newSubjects);
-        }
-      }
-    },
-    [subjects, pomodoro]
-  );
+  }, [accountData, selectedSubject, updateSubjects]);
 
   useEffect(() => {
-    const messageHandler = (e) => {
-      if (e.data.command === "updateSubjectTimer") {
-        if (!selectedSubject) return;
+    const onMessage = (e) => {
+      if (e.data.command !== "updateSubjectTimer") return;
 
-        const subjectIndex = subjectOptions.findIndex(
-          (subject) => subject.subject_id === selectedSubject.subject_id
-        );
-        if (subjectIndex === -1) return;
+      setSelectedSubject((prev) => {
+        const value = prev.value + 1;
+        const disp = toTimer(value);
 
-        subjectOptions[subjectIndex].value += 1;
+        let slicedName = prev.name.slice(0, 7);
 
-        let slicedName = selectedSubject.name.slice(0, 7);
-
-        if (slicedName.length !== selectedSubject.name.length) {
+        if (slicedName.length !== prev.name.length) {
           slicedName += "...";
         }
 
-        const timer = toTimer(subjectOptions[subjectIndex].value);
+        document.title = `${disp} ${slicedName}`;
 
-        document.title = `${timer} ${slicedName}`;
-
-        setSelectedSubject({
-          ...selectedSubject,
-          value: selectedSubject.value + 1,
-        });
-        setSubjectOptions(subjectOptions);
-      }
+        return { ...prev, value, disp };
+      });
     };
-    subjectsTimerWorkerRef?.current?.addEventListener(
-      "message",
-      messageHandler
-    );
+    subjectsTimerWorkerRef?.current?.addEventListener("message", onMessage);
     return () => {
       subjectsTimerWorkerRef?.current?.removeEventListener(
         "message",
-        messageHandler
+        onMessage
       );
     };
-  }, [selectedSubject, subjectsTimerWorkerRef, subjectOptions]);
+  }, [selectedSubject, subjectsTimerWorkerRef]);
 
   return (
     <div className={styles.SubjectTimer}>
       <div className={styles.header}>
-        <div
+        {/* <div
           className={`${styles.pomodoroToggle} ${
             pomodoro.mode !== -1 ? styles.active : null
           }`}
@@ -213,7 +199,7 @@ function SubjecTimer({ selectedSubject, setSelectedSubject }) {
             id="subjectimer"
           />
           <p>Pomodoro</p>
-        </div>
+        </div> */}
         <div
           className={styles.button}
           id={styles.addSubject}
@@ -223,32 +209,21 @@ function SubjecTimer({ selectedSubject, setSelectedSubject }) {
         </div>
       </div>
       <div className={styles.mainDisplay}>
-        {selectedSubject ? (
-          <div
-            className={`${styles.subject} ${
-              selectNewSubject ? styles.active : null
-            }`}
-            onClick={() => setSelectNewSubject(!selectNewSubject)}
+        <div
+          className={`${styles.subject} ${
+            isSelectNewSubject ? styles.active : null
+          }`}
+          onClick={() => setIsSelectNewSubject((prev) => !prev)}
+        >
+          <p className={styles.name}>{selectedSubject.name}</p>
+          <p className={styles.time}>{selectedSubject.disp}</p>
+          <i
+            id={styles.caret}
+            className={`${isSelectNewSubject ? styles.active : null}`}
           >
-            <p className={styles.name}>{selectedSubject.name}</p>
-            <p className={styles.time}>
-              {Math.floor(selectedSubject.value / (60 * 60))}:
-              {Math.floor((selectedSubject.value / 60) % 60)
-                .toString()
-                .padStart(2, "0")}
-              :
-              {Math.floor(selectedSubject.value % 60)
-                .toString()
-                .padStart(2, "0")}
-            </p>
-            <i
-              id={styles.caret}
-              className={`${selectNewSubject ? styles.active : null}`}
-            >
-              <FontAwesomeIcon icon={faCaretDown} />
-            </i>
-          </div>
-        ) : null}
+            <FontAwesomeIcon icon={faCaretDown} />
+          </i>
+        </div>
         <div className={styles.buttons}>
           <div
             className={styles.button}
@@ -259,16 +234,10 @@ function SubjecTimer({ selectedSubject, setSelectedSubject }) {
                 setCurrentStep(11);
               }
 
-              if (!selectedSubject) return;
-
-              if (selectedSubject.active) {
-                socket.emit("stop");
-              } else {
-                socket.emit("start", selectedSubject.subject_id);
-              }
+              toggleTimer();
             }}
           >
-            {selectedSubject?.active || pomodoro.active ? (
+            {selectedSubject.active ? (
               <FontAwesomeIcon icon={faPause} />
             ) : (
               <FontAwesomeIcon icon={faPlay} />
@@ -277,7 +246,7 @@ function SubjecTimer({ selectedSubject, setSelectedSubject }) {
         </div>
       </div>
       <div
-        className={`customScroll ${selectNewSubject ? styles.active : null} ${
+        className={`customScroll ${isSelectNewSubject ? styles.active : null} ${
           styles.subjects
         }`}
         data-tutorial={9}
@@ -291,40 +260,23 @@ function SubjecTimer({ selectedSubject, setSelectedSubject }) {
                 if (currentStep === 9) {
                   setCurrentStep(10);
                 }
-                setSelectNewSubject(false);
-                if (selectedSubject?.active) {
-                  //toggleTimer();
-                  socket.emit("stop");
-                  setTimeout(() => {
-                    setSelectedSubject(subject);
-                  }, 300);
-                } else {
-                  setSelectedSubject(subject);
-                }
+                setIsSelectNewSubject(false);
+                setSelectedSubject({ ...subject, active: false });
               }}
             >
               <p className={styles.name}>{subject.name}</p>
-              <p className={styles.time}>
-                {Math.floor(subject.value / (60 * 60))}:
-                {Math.floor((subject.value / 60) % 60)
-                  .toString()
-                  .padStart(2, "0")}
-                :
-                {Math.floor(subject.value % 60)
-                  .toString()
-                  .padStart(2, "0")}
-              </p>
+              <p className={styles.time}>{subject.disp}</p>
             </div>
           );
         })}
       </div>
       <div className={styles.pomodoroTimer} data-tutorial={12}>
-        <PomodoroTimer
+        {/* <PomodoroTimer
           pomodoro={pomodoro}
           setPomodoro={setPomodoro}
           selectedSubject={selectedSubject}
           toggleTimer={toggleTimer}
-        />
+        /> */}
       </div>
     </div>
   );

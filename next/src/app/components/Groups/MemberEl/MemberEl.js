@@ -3,7 +3,6 @@ import styles from "./MemberEl.module.css";
 import { DateTime } from "luxon";
 import { RestPerson, StudyPerson } from "@/app/utils/Svg";
 import MemberCamDisp from "../MemberCamDisp.js/MemberCamDisp";
-import { socket } from "@/app/utils/socket";
 import Link from "next/link";
 import MemberTimer from "../MemberTimer/MemberTimer";
 import ProfileImage from "../../Users/ProfileImage/ProfileImage";
@@ -27,26 +26,6 @@ function MemberEl({ memberInfo, device, recvTransport }) {
     } else {
       setTotal(parseInt(study_time));
     }
-
-    /* const onStudying = ({ userId, subject }) => {
-      if (userId === memberInfo.user_id && subject.subject_id !== "0") {
-        setRun(true);
-      }
-    };
-
-    const onStopStudying = ({ userId }) => {
-      if (userId === memberInfo.user_id) {
-        setRun(false);
-      }
-    };
-
-    socket.on(`studying`, onStudying);
-    socket.on(`stopStudying`, onStopStudying);
-
-    return () => {
-      socket.off(`studying`, onStudying);
-      socket.off(`stopStudying`, onStopStudying);
-    }; */
   }, [memberInfo]);
 
   return (
