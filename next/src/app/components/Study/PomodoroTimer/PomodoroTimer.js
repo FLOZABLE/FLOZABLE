@@ -17,26 +17,30 @@ function PomodoroTimer({
   const [duration, setDuration] = useState(STUDY_DURATION);
 
   useEffect(() => {
-    if (!pomodoro) return;
-
     if (pomodoro.mode === 0) {
       setDuration(STUDY_DURATION);
     } else if (pomodoro.mode === 1) {
       setDuration(SHORT_BREAK_DURATION);
+
+      if (selectedSubject.active) {
+        toggleTimer();
+      }
     } else {
       setDuration(LONG_BREAK_DURATION);
+
+      if (selectedSubject.active) {
+        toggleTimer();
+      }
     }
-  }, [selectedSubject, pomodoro]);
+  }, [pomodoro, selectedSubject]);
 
   useEffect(() => {
-    if (!selectedSubject || !pomodoro) return;
-
     if (pomodoro.mode === 0) {
-      setPomodoro((prev) => ({ ...prev, active: selectedSubject.active }));
+      setPomodoro((prev) => ({ ...prev, running: selectedSubject.active }));
     }
   }, [selectedSubject]);
 
-  if (pomodoro?.mode === -1) {
+  if (!pomodoro.active) {
     return null;
   }
 
@@ -58,28 +62,25 @@ function PomodoroTimer({
               value: 2,
             },
           ]}
-          value={pomodoro?.mode}
+          value={pomodoro.mode}
           setValue={(mode) => {
-            setPomodoro({ active: false, mode });
-            if (mode !== 0 && selectedSubject.active) {
-              toggleTimer();
-            }
+            setPomodoro((prev) => ({ ...prev, running: false, mode }));
           }}
           isCheck={false}
         />
       </div>
       <div className={styles.timer}>
         <CountdownCircleTimer
-          isPlaying={pomodoro?.active}
+          isPlaying={pomodoro.running}
           duration={duration}
-          key={pomodoro?.mode}
+          key={pomodoro.mode}
           colors={["#004777", "#F7B801", "#A30000", "#A30000"]}
           colorsTime={[7, 5, 2, 0]}
           size={300}
           strokeWidth={15}
           onUpdate={(sec) => {
             const timer = toTimer(sec);
-            if (!pomodoro.active) return;
+            if (!pomodoro.running) return;
 
             if (pomodoro.mode === 0) {
               let slicedName = selectedSubject.name.slice(0, 7);
@@ -95,10 +96,12 @@ function PomodoroTimer({
           }}
           onComplete={() => {
             if (pomodoro.mode === 0) {
-              toggleTimer();
-              setPomodoro({ active: false, mode: 1 });
+              if (selectedSubject.active) {
+                toggleTimer();
+              }
+              setPomodoro((prev) => ({ ...prev, running: false, mode: 1 }));
             } else {
-              setPomodoro({ active: false, mode: 0 });
+              setPomodoro((prev) => ({ ...prev, running: false, mode: 0 }));
             }
           }}
         >
