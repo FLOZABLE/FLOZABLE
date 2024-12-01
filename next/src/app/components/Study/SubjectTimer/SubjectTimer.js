@@ -33,6 +33,26 @@ function SubjecTimer({}) {
     active: false,
     disp: "",
   });
+  const [pomodoro, setPomodoro] = useState({
+    active: false,
+    mode: 0,
+    running: false,
+  });
+
+  useEffect(() => {
+    return () => {
+      console.log("unhook");
+      if (selectedSubject.active) {
+        socket.emit("stop");
+      }
+      setTimeout(() => {
+        subjectsRefetch();
+      }, 500);
+      subjectsTimerWorkerRef?.current?.postMessage({
+        command: "stopSubjectTimer",
+      });
+    };
+  }, []);
 
   useEffect(() => {
     if (!subjects?.length) return;
@@ -46,14 +66,13 @@ function SubjecTimer({}) {
         value,
       };
     });
-    console.log(subjectOptions);
+    console.log(subjectOptions, "subject opt");
     subjectOptions.sort((a, b) => b.value - a.value);
-    const firestSubjectOption = subjectOptions.splice(0, 1)[0];
-    setSubjectOptions(subjectOptions);
     if (!selectedSubject.subject_id) {
-      const newSelectedSubject = firestSubjectOption;
-      setSelectedSubject({ ...newSelectedSubject, active: false });
+      //const newSelectedSubject = subjectOptions.splice(0, 1)[0];
+      setSelectedSubject({ ...subjectOptions[0], active: false });
     }
+    setSubjectOptions(subjectOptions);
   }, [subjects]);
 
   const toggleTimer = useCallback(() => {
@@ -107,15 +126,27 @@ function SubjecTimer({}) {
         }
 
         const newSubjects = [...prev];
-        const day = newSubjects[subjectIndex].day;
-        day.total[day.total.length - 1].data += duration;
+        const currentSubject = newSubjects[subjectIndex];
+
+        // Create a new day object with updated total
+        const updatedDay = {
+          ...currentSubject.day,
+          total: currentSubject.day.total.map((totalItem, index) =>
+            index === currentSubject.day.total.length - 1
+              ? { ...totalItem, data: totalItem.data + duration }
+              : totalItem
+          ),
+        };
 
         // Store the updated value before returning
-        const updatedValue = day.total[day.total.length - 1].data;
+        const updatedValue = updatedDay.total[updatedDay.total.length - 1].data;
 
+        console.log("updated", updatedValue);
+
+        // Update the subject with the new day object
         newSubjects[subjectIndex] = {
-          ...newSubjects[subjectIndex],
-          day,
+          ...currentSubject,
+          day: updatedDay,
         };
 
         const disp = toTimer(updatedValue);
@@ -175,31 +206,31 @@ function SubjecTimer({}) {
   return (
     <div className={styles.SubjectTimer}>
       <div className={styles.header}>
-        {/* <div
+        <div
           className={`${styles.pomodoroToggle} ${
-            pomodoro.mode !== -1 ? styles.active : null
+            pomodoro.active ? styles.active : null
           }`}
           data-tutorial={11}
         >
           <SimpleToggleBtn
-            checked={pomodoro.mode !== -1}
+            checked={pomodoro.active}
             onToggle={() => {
-              if (pomodoro.mode) {
-                setPomodoro({ mode: 0, active: selectedSubject.active });
+              if (pomodoro.active) {
+                setPomodoro({ active: false, mode: 0 });
                 if (currentStep === 11) {
                   setTimeout(() => {
                     setCurrentStep(12);
                   }, 2000);
                 }
               } else {
-                setPomodoro({ mode: -1, active: false });
+                setPomodoro({ active: true, mode: 0 });
               }
             }}
             tutorial={8}
             id="subjectimer"
           />
           <p>Pomodoro</p>
-        </div> */}
+        </div>
         <div
           className={styles.button}
           id={styles.addSubject}
@@ -234,10 +265,18 @@ function SubjecTimer({}) {
                 setCurrentStep(11);
               }
 
+              //if pomodoro is active  & mode is short/long break, intead of toggling the timer, take a break
+              if (
+                pomodoro.active &&
+                (pomodoro.mode === 1 || pomodoro.mode === 2)
+              ) {
+                setPomodoro((prev) => ({ ...prev, running: !prev.running }));
+                return;
+              }
               toggleTimer();
             }}
           >
-            {selectedSubject.active ? (
+            {selectedSubject.active || pomodoro.running ? (
               <FontAwesomeIcon icon={faPause} />
             ) : (
               <FontAwesomeIcon icon={faPlay} />
@@ -252,6 +291,10 @@ function SubjecTimer({}) {
         data-tutorial={9}
       >
         {subjectOptions.map((subject, i) => {
+          const liveDisp =
+            subject.subject_id === selectedSubject.subject_id
+              ? selectedSubject.disp
+              : subject.disp;
           return (
             <div
               className={styles.subject}
@@ -261,22 +304,33 @@ function SubjecTimer({}) {
                   setCurrentStep(10);
                 }
                 setIsSelectNewSubject(false);
-                setSelectedSubject({ ...subject, active: false });
+
+                if (selectedSubject.active) {
+                  toggleTimer();
+                }
+                setTimeout(() => {
+                  setSelectedSubject({ ...subject, active: false });
+                }, 500);
               }}
             >
               <p className={styles.name}>{subject.name}</p>
-              <p className={styles.time}>{subject.disp}</p>
+              <p className={styles.time}>{liveDisp}</p>
             </div>
           );
         })}
       </div>
-      <div className={styles.pomodoroTimer} data-tutorial={12}>
-        {/* <PomodoroTimer
+      <div
+        className={`${styles.pomodoroTimer} ${
+          pomodoro.active ? styles.active : ""
+        }`}
+        data-tutorial={12}
+      >
+        <PomodoroTimer
           pomodoro={pomodoro}
           setPomodoro={setPomodoro}
           selectedSubject={selectedSubject}
           toggleTimer={toggleTimer}
-        /> */}
+        />
       </div>
     </div>
   );

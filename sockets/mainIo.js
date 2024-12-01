@@ -45,8 +45,6 @@ mainIo.on("connection", (socket) => {
   if (userId) {
     (async () => {
       try {
-        const now = Math.floor(new Date().getTime() / 1000);
-        cacheActiveSubject(userId, { subject_id: "0", name: "break" }, now);
         //join my socket server
         socket.join(userId);
 
@@ -64,9 +62,14 @@ mainIo.on("connection", (socket) => {
           userGroupsCache(connection, userId),
         ]);
 
-        mainIo
-          .to([...friends, ...groups, userId])
-          .emit(`studying`, { userId, subject: { subject_id: "0" } });
+        const activeSubject = await activeSubjectCache(userId);
+        if (!activeSubject) {
+          const now = Math.floor(new Date().getTime() / 1000);
+          cacheActiveSubject(userId, { subject_id: "0", name: "break" }, now);
+          mainIo
+            .to([...friends, ...groups, userId])
+            .emit(`studying`, { userId, subject: { subject_id: "0" } });
+        }
 
         const chatroomIds = chatrooms.map(
           (chatroom) => "chatroom:" + chatroom.chatroom_id
