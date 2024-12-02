@@ -3,8 +3,8 @@ import styles from "./BlobBtn.module.css";
 
 function BlobBtn({
   onClick,
-  color1 = "#fff",
-  color2 = "var(--gray2)",
+  color1 = "#ffffff",
+  color2 = "var(--blue1)",
   id,
   children,
   style = {},

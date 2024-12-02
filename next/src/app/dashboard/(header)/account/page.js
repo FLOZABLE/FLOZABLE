@@ -22,6 +22,7 @@ import {
 } from "@/Api/accountApi";
 import { postAuthVerify } from "@/Api/authApi";
 import Image from "next/image";
+import { Line } from "recharts";
 
 function Account() {
   const { accountData, updateUserInfo } = useAccount();
@@ -136,7 +137,7 @@ function Account() {
               }}
             >
               <i className={styles.uploadBtn}>
-                <FontAwesomeIcon icon={faCamera} />
+                 <FontAwesomeIcon icon={faCamera} />
               </i>
               <form>
                 <input
@@ -191,7 +192,7 @@ function Account() {
                 />
               </div>
               <div className={styles.buttons}>
-                <BlobBtn onClick={submitProfile}>SUBMIT</BlobBtn>
+                <BlobBtn onClick={submitProfile}>Submit</BlobBtn>
                 <div
                   id={styles.verifyBtn}
                   className={profile.verified ? styles.hidden : ""}
@@ -204,31 +205,33 @@ function Account() {
           <div className={`BoxContainer ${styles.boxContainer}`}>
             <div className="Box">
               <div className="header">Password</div>
-              <LabelMovingInput
-                title={"Password"}
-                value={password.password}
-                setValue={(password) => {
-                  setPassword((prev) => ({ ...prev, password }));
-                }}
-                type={"password"}
-              />
-              <LabelMovingInput
-                title={"Confirm Password"}
-                value={password.confirmPassword}
-                setValue={(confirmPassword) => {
-                  setPassword((prev) => ({ ...prev, confirmPassword }));
-                }}
-                type={"password"}
-              />
-              <div>
-                <h3>Password requirements</h3>
-                <ul>
-                  <li> One special characters</li>
-                  <li> Minimum 6 characters</li>
-                </ul>
+              <div className={styles.Passwords}>
+                <LineInput
+                  title={"Password"}
+                  value={password.password}
+                  setValue={(password) => {
+                    setPassword((prev) => ({ ...prev, password }));
+                  }}
+                  type={"password"}
+                />
+                <LineInput
+                    title={"Confirm Password"}
+                    value={password.confirmPassword}
+                    setValue={(confirmPassword) => {
+                      setPassword((prev) => ({ ...prev, confirmPassword }));
+                    }}
+                    type={"password"}
+                  />
+                <div className={styles.passwordDescription}>
+                  <h3>Password requirements</h3>
+                  <ul>
+                    <li> One special characters</li>
+                    <li> Minimum 6 characters</li>
+                  </ul>
+                </div>
               </div>
               <div className={styles.buttons}>
-                <BlobBtn onClick={submitPassword}>SUBMIT</BlobBtn>
+                <BlobBtn onClick={submitPassword}>Submit</BlobBtn>
               </div>
             </div>
           </div>
@@ -244,11 +247,12 @@ function Account() {
         <div className={styles.layer}>
           <div className={`BoxContainer ${styles.boxContainer}`}>
             <div className="Box">
-              <div className="header">Chrome Extension</div>
-              <p>
-                Here you can setup and manage your chrome extension&apos;s
-                tracking option (Default option for all websites is all enabled)
-              </p>
+              <div className={styles.chromeContainer}>
+                <div className="header">Chrome Extension</div>
+                <p>
+                  Set up and manage your chrome extension
+                </p>
+              </div>
               <ExtensionSetting websites={websites} setWebsites={setWebsites} />
             </div>
           </div>
@@ -257,82 +261,86 @@ function Account() {
           <div className={`BoxContainer ${styles.boxContainer}`}>
             <div className="Box">
               <div className="header">Accounts</div>
-              <p>Here you can setup and manage your integration settings</p>
-              <div className={styles.app}>
-                <div className={styles.icon}>
-                  <GoogleCalendar />
-                </div>
-                <div className={styles.description}>
-                  {!googleInfo?.scopes?.some((scope) =>
-                    scope.includes("calendar")
-                  ) ? (
-                    <p>
-                      You haven&apos;t connected your Google Calendar yet or you
-                      aren&apos;t authorized. Please authorize our application
-                      to access your Google Calendar by signing in with your
-                      Google account here.
-                    </p>
-                  ) : (
-                    <p>
-                      {`You've successfully connected your Google Calendar! Our app now has access to your calendar events, allowing you to seamlessly integrate your schedule with our platform.`}
-                    </p>
-                  )}
-                </div>
-                <div className={styles.authBtn}>
-                  <GoogleLoginBtn
-                    scope={
-                      "email profile https://www.googleapis.com/auth/calendar"
-                    }
-                    required="calendar"
-                  />
-                </div>
+              <div className={styles.AccountExplain}>
+                <p>Manage your integration settings</p>
               </div>
-              <div className={styles.app}>
-                <div className={styles.icon}>
-                  <YouTubeIcon />
+              <div className={styles.appWrapper}>
+                <div className={styles.app} id="googleCalendar">
+                  <div className={styles.icon}>
+                    <GoogleCalendar/>
+                  </div>
+                  <div className={styles.description}>
+                    {!googleInfo?.scopes?.some((scope) =>
+                      scope.includes("calendar")
+                    ) ? (
+                      <p>
+                        You haven&apos;t connected your Google Calendar yet or you
+                        aren&apos;t authorized. Please authorize our application
+                        to access your Google Calendar by signing in with your
+                        Google account here.
+                      </p>
+                    ) : (
+                      <p>
+                        {`You've successfully connected your Google Calendar! Our app now has access to your calendar events, allowing you to seamlessly integrate your schedule with our platform.`}
+                      </p>
+                    )}
+                  </div>
+                  <div className={styles.authBtn}>
+                    <GoogleLoginBtn
+                      scope={
+                        "email profile https://www.googleapis.com/auth/calendar"
+                      }
+                      required="calendar"
+                    />
+                  </div>
                 </div>
-                <div className={styles.description}>
-                  {!googleInfo?.scopes?.some((scope) =>
-                    scope.includes("youtube")
-                  ) ? (
-                    <p>
-                      You haven&apos;t connected your YouTube Account yet or you
-                      aren&apos;t authorized. Please authorize our application
-                      to access your YouTube Playlists here.
-                    </p>
-                  ) : (
-                    <p>
-                      {`Your YouTube account is now connected! You can now access your playlists directly within our app to enhance your experience with personalized content.`}
-                    </p>
-                  )}
+                <div className={styles.app} id="Youtube">
+                  <div className={styles.icon}>
+                    <YouTubeIcon />
+                  </div>
+                  <div className={styles.description}>
+                    {!googleInfo?.scopes?.some((scope) =>
+                      scope.includes("youtube")
+                    ) ? (
+                      <p>
+                        You haven&apos;t connected your YouTube Account yet or you
+                        aren&apos;t authorized. Please authorize our application
+                        to access your YouTube Playlists here.
+                      </p>
+                    ) : (
+                      <p>
+                        {`Your YouTube account is now connected! You can now access your playlists directly within our app to enhance your experience with personalized content.`}
+                      </p>
+                    )}
+                  </div>
+                  <div className={styles.authBtn}>
+                    <GoogleLoginBtn
+                      scope="https://www.googleapis.com/auth/youtube.readonly"
+                      required="youtube"
+                    />
+                  </div>
                 </div>
-                <div className={styles.authBtn}>
-                  <GoogleLoginBtn
-                    scope="https://www.googleapis.com/auth/youtube.readonly"
-                    required="youtube"
-                  />
-                </div>
-              </div>
-              <div className={styles.app}>
-                <div className={styles.icon}>
-                  <SpotifyLogo />
-                </div>
-                <div className={styles.description}>
-                  {!spotifyInfo ? (
-                    <p>
-                      You haven&apos;t connected your Spotify Account yet or you
-                      aren&apos;t authorized. Please authorize our application
-                      to access your Spotify Playlists here.
-                    </p>
-                  ) : (
-                    <p>
-                      Spotify is successfully connected! Enjoy your playlists
-                      within our app and set the perfect mood for your tasks.
-                    </p>
-                  )}
-                </div>
-                <div className={styles.authBtn}>
-                  <SpotifyAuthBtn />
+                <div className={styles.app}>
+                  <div className={styles.icon}>
+                    <SpotifyLogo />
+                  </div>
+                  <div className={styles.description}>
+                    {!spotifyInfo ? (
+                      <p>
+                        You haven&apos;t connected your Spotify Account yet or you
+                        aren&apos;t authorized. Please authorize our application
+                        to access your Spotify Playlists here.
+                      </p>
+                    ) : (
+                      <p>
+                        Spotify is successfully connected! Enjoy your playlists
+                        within our app and set the perfect mood for your tasks.
+                      </p>
+                    )}
+                  </div>
+                  <div className={styles.authBtn}>
+                    <SpotifyAuthBtn />
+                  </div>
                 </div>
               </div>
             </div>

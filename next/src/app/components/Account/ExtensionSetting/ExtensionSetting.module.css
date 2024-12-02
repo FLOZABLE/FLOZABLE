@@ -5,6 +5,7 @@
   padding-bottom: 0.625rem;
   border-bottom: 0.0625rem solid rgb(99, 99, 99);
   margin-top: 1.25rem;
+  margin-bottom: 1.5rem;
 }
 
 .ExtensionSetting .extensionHeader > div {
@@ -24,8 +25,16 @@
 }
 
 .ExtensionSetting .BtnPos {
-  margin-left: 85%;
+  position: absolute;
+  top: 7.7rem;
+  right: 6.6rem;
 }
+
+.ExtensionSetting .BtnPos > * {
+  width: 0rem;
+  height: 1rem
+}
+
 .ExtensionSetting .websiteOptions > div{
   display: flex;
   justify-content: center;

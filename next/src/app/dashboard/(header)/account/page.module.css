@@ -4,10 +4,15 @@
 
 .Account .layer {
   display: flex;
+  width: 80%;
+  align-content: center;
+  justify-content: center;
+  margin-left: 11rem;
 }
 
 .Account .layer .boxContainer {
   flex: 1;
+  width: 90%;
 }
 
 .Account .layer:nth-child(1) {
@@ -25,6 +30,9 @@
   object-fit: cover;
 }
 
+.Account .imgSelector .uploadBtn {
+  color: rgb(66, 66, 66);
+}
 .Account .imgSelector .fileUpload {
   display: none;
 }
@@ -32,8 +40,8 @@
 .Account .imgSelector .circle {
   border-radius: 100% !important;
   overflow: hidden;
-  width: 12.5rem;
-  height: 12.5rem;
+  width: 9.5rem;
+  height: 9.5rem;
   border: 0.125rem solid rgba(255, 255, 255, 0.2);
   position: relative;
   box-shadow: rgba(0, 0, 0, 0.24) 0em 0.1875rem 0.5rem;
@@ -44,39 +52,47 @@
 
 .Account .imgSelector .pImage {
   position: absolute;
-  top: 10.625rem;
-  left: 10.625rem;
+  top: 0.14rem;
+  left: 0.1rem;
   color: #666666;
-  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  background-color: #fff;
-  width: 1.875rem;
-  height: 1.875rem;
+  background-color: #acacac;
+  width: 9.5rem;
+  height: 9.5rem;
   display: flex;
   justify-content: center;
   align-items: center;
   border-radius: 100%;
+  opacity: 0;
+}
+
+@keyframes fadeIn {
+	0% {
+		opacity: 0;
+	}
+
+	100% {
+		opacity: 0.6;
+	}
 }
 
 .Account .imgSelector .pImage:hover {
-  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  animation-name : fadeIn;
+	animation-duration : 0.4s;
+  animation-fill-mode: both;
 }
 
 .Account .imgSelector .uploadBtn {
-  font-size: 1.2em;
-}
-
-.Account .imgSelector .uploadBtn:hover {
-  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  color: #999;
+  font-size: 2em;
 }
 
 .Account div#welcome {
-  font-size: 1.875rem;
-  margin-top: 2.5rem;
+  font-size: 1.35rem;
+  margin-top: 1rem;
 }
 
 .Account .boxContainer#profile .name {
-  margin: 0.5rem;
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
 }
 
 .Account .boxContainer#profile .emails {
@@ -86,7 +102,11 @@
 
 .Account .boxContainer#profile .emails > * {
   flex: 1;
-  margin: 0.5rem;
+  margin-top: 0.5rem;
+} 
+
+.Account .boxContainer#profile .emails > :first-child {
+  margin-right: 1rem;
 }
 
 .Account .boxContainer .buttons {
@@ -94,6 +114,13 @@
   justify-content: space-between;
   flex-direction: row-reverse;
   margin-top: auto;
+}
+
+.chromeContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 .Account .buttons div#verifyBtn {
@@ -105,8 +132,52 @@
   opacity: 0;
 }
 
+.Account .AccountExplain {
+  font-size: 1.5rem;
+  margin-bottom: .7rem;
+}
+
+.Account .Passwords {
+  display: flex;
+  flex-direction: column;
+}
+
+.Account .Passwords > *{
+  margin-bottom: 0.5rem;
+}
+
+.Account .Passwords > :nth-child(1) {
+  margin-top: 0.5rem;
+}
+
+.Account .Passwords > :nth-child(2){
+  margin-top: 0.5rem;
+}
+
+.passwordDescription {
+  color: rgb(211, 211, 211);
+  font-size: 70%;
+  font-weight: 400;
+  margin-top: 8.4rem;
+  position: absolute;
+}
+
+.passwordDescription h3 {
+  font-weight: 500;
+}
+
 .Account .app {
   display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+.Account#Youtube {
+  margin-left: 1rem;
+}
+.Account .app#googleCalendar {
+  margin-left: 1rem;
 }
 
 .Account .app .icon {
@@ -116,16 +187,20 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-right: 0.3rem;
+  margin-right: .8rem;
 }
 
 
 .Account .app .description p {
-  word-break: break-all;
+  word-break: keep-all;
   overflow-wrap: break-word;
   white-space: pre-wrap;
+  width: 90%;
 }
 
 .Account .app .authBtn {
   margin-left: auto;
+  display: flex;  
+  margin-bottom: 1rem;
 }
+
