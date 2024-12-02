@@ -5,73 +5,33 @@ import MemberTimer from "@/app/components/Groups/MemberTimer/MemberTimer";
 import { socket } from "@/app/utils/socket";
 
 function UserSubjectViewer({ userInfo }) {
-  const [isStudying, setIsStudying] = useState(false);
   const [subjectName, setSubjectName] = useState("Offline");
-  const [subjectTotal, setSubjectTotal] = useState(0);
-  const [subjectStart, setSubjectStart] = useState("");
+  const [run, setRun] = useState(false);
+  const [total, setTotal] = useState(0);
 
   useEffect(() => {
-    if (!userInfo) return;
-    const { activeSubject } = userInfo;
-
-    if (activeSubject) {
-      const { name, subject_id, time } = activeSubject;
-      if (subject_id !== "0") {
-        setSubjectName(`Studying ${name}`);
-      } else {
-        setSubjectName(`Taking break`);
-      }
-      const liveTotal = DateTime.now().toSeconds().toFixed() - time;
-      setIsStudying(true);
-      setSubjectTotal(liveTotal);
-    }
-
-    const onStudying = ({ userId, subject }) => {
-      if (userId !== userInfo.user_id) return;
-
-      const { name, subject_id } = subject;
-      if (subject_id !== "0") {
-        setSubjectName(`Studying ${name}`);
-      } else {
-        setSubjectName(`Taking break`);
-      }
-      setSubjectTotal(Math.random());
-      setIsStudying(true);
-      setSubjectStart(DateTime.now().toFormat(DateTime.TIME_SIMPLE));
-    };
-
-    const onStopStudying = ({ userId, status }) => {
-      if (userId !== userInfo.user_id) return;
-
-      if (status === "disconnect") {
-        setIsStudying(false);
-        setSubjectName("Offline");
-        setSubjectStart("");
-        return;
-      }
-
-      //rest
-      setSubjectTotal(Math.random());
+    const { study_time, activeSubject } = userInfo;
+    if (!activeSubject) {
+      setSubjectName("Offline");
+    } else if (activeSubject.subject_id === "0") {
       setSubjectName(`Taking break`);
-      setSubjectStart(DateTime.now().toFormat(DateTime.TIME_SIMPLE));
-    };
-
-    socket.on(`studying`, onStudying);
-    socket.on(`stopStudying`, onStopStudying);
-
-    return () => {
-      socket.off(`studying`, onStudying);
-      socket.off(`stopStudying`, onStopStudying);
-    };
+    } else {
+      setSubjectName(`Studying ${activeSubject.name}`);
+    }
+    if (activeSubject) {
+      setRun(true);
+      const liveTotal = DateTime.now().toSeconds() - activeSubject.time;
+      setTotal(liveTotal);
+    } else {
+      setTotal(0);
+      setRun(false);
+    }
   }, [userInfo]);
 
   return (
     <div className={styles.UserSubjectViewer}>
       <p>{subjectName}</p>
-      {subjectStart}
-      {isStudying ? (
-        <MemberTimer initialSec={subjectTotal} run={isStudying} />
-      ) : null}
+      {run ? <MemberTimer initialSec={total} run={run} /> : null}
     </div>
   );
 }
