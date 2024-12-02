@@ -74,7 +74,7 @@ i {
 
 button * {
   pointer-events: none;
-}s
+}
 
 div,
 button,
@@ -137,7 +137,6 @@ button:hover {
   width: 100%;
   height: 100%;
 }
-
 
 .Box .header {
   display: flex;
