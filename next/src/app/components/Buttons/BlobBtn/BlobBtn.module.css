@@ -1,20 +1,19 @@
 .BlobBtn {
   position: relative;
-  display: flex;
-  justify-content: center;
-  align-content: center;
-  padding: 0.3rem 1.4rem;
+  display: table;
+  padding: 0.8125rem 2.125rem;
   text-align: center;
   vertical-align: middle;
-  color: var(--gray2);
-  font-size: 0.75rem;
-  font-weight: 500;
+  text-transform: uppercase;
+  color: var(--color2);
+  font-size: 0.813em;
+  font-weight: bold;
   background-color: transparent;
   outline: none;
   border: none;
   transition: color 0.5s;
   cursor: pointer;
-  border-radius: 0.7rem;
+  border-radius: 1.875rem;
   z-index: 1;
 }
 
@@ -22,38 +21,36 @@
   content: "";
   z-index: 1;
   position: absolute;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  top: -0.05rem;
-  width: 100%;
-  height: 100%;
-  border: 0.05rem solid var(--gray2);
-  border-radius: 0.7rem;
+  left: 0;
+  top: 0;
+  width: calc(100% - 0.125rem);
+  height: calc(100% - 0.125rem);
+  border: 0.125rem solid var(--color2);
+  border-radius: 1.875rem;
 }
 
 .BlobBtn:after {
   content: "";
   z-index: -2;
   position: absolute;
-  left: 0rem;
-  top: 0rem;
+  left: 0.1875rem;
+  top: 0.1875rem;
   width: 100%;
   height: 100%;
   transition: all 0.3s 0.2s;
-  border-radius: 0.6rem;
+  border-radius: 1.875rem;
 }
 
 .BlobBtn:hover {
   color: var(--color1);
-  border-radius: 0.6rem;
+  border-radius: 1.875rem;
 }
 
 .BlobBtn:hover:after {
   transition: all 0.3s;
   left: 0;
   top: 0;
-  border-radius: 0.6rem;
+  border-radius: 1.875rem;
 }
 
 .blobBtnInner {
@@ -62,9 +59,9 @@
   position: absolute;
   left: 0;
   top: 0;
-  width: 100%;
-  height: 100%;
-  border-radius: 0.6rem;
+  width: calc(100% + 0.1rem);
+  height: calc(100% + 0.1rem);
+  border-radius: 1.875rem;
   background: var(--color1);
 }
 
@@ -81,7 +78,7 @@
   width: 25%;
   height: 100%;
   background: var(--color2);
-  border-radius: 0.6rem;
+  border-radius: 100%;
   transform: translate3d(0, 150%, 0) scale(1.7);
   transition: transform 0.45s;
 }
