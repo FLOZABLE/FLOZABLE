@@ -26,7 +26,7 @@
 .LineInput .line {
   width: 0%;
   transition: 0.3s ease-in-out width;
-  background-color: #e91e63;
+  background-color: var(--blue1);
   position: absolute;
   height: 3px;
 }
@@ -47,5 +47,5 @@
 }
 
 .LineInput input:focus ~ .title {
-  color: #e91e63;
+  color: var(--blue1);
 }

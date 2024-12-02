@@ -1,6 +1,5 @@
 .SpotifyAuthBtn {
   background-color: #fff;
-  border-radius: 1.875rem;
   height: 3.125rem;
   width: fit-content;
   display: flex;
@@ -26,5 +25,5 @@
 
 .SpotifyAuthBtn .LogoSize {
   margin-top: 0.313rem;
-  font-size: 2rem;
+  font-size: 1.6rem;
 }

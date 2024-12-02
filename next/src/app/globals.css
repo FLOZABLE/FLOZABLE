@@ -74,7 +74,7 @@ i {
 
 button * {
   pointer-events: none;
-}
+}s
 
 div,
 button,
@@ -138,10 +138,11 @@ button:hover {
   height: 100%;
 }
 
+
 .Box .header {
   display: flex;
-  font-size: 2.2rem;
-  font-weight: 800;
+  font-size: 1.8rem;
+  font-weight: 700;
   justify-content: center;
 }
 

@@ -1,7 +1,7 @@
 import React from "react";
-import styles from "./BlobBtn.module.css";
-
-function BlobBtn({
+import styles from "./ArrowBtn.module.css";
+        
+function ArrowBtn({
   onClick,
   color1 = "#ffffff",
   color2 = "var(--blue1)",
@@ -37,4 +37,4 @@ function BlobBtn({
   );
 }
 
-export default BlobBtn;
+export default ArrowBtn;
