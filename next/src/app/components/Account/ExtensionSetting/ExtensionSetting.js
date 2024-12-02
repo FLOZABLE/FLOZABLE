@@ -6,6 +6,8 @@ import styles from "./ExtensionSetting.module.css";
 import { useExtensionSettings } from "@/Hooks/extensionHooks";
 import CircularLoading from "../../LoadingScreen/CircularLoading/CircularLoading";
 import { patchExtensionSetting, putExtensionSetting } from "@/Api/extensionApi";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { IconGear } from "@/app/utils/Svg";
 
 function ExtensionSetting() {
   const { useExtensionSettingsData, useExtensionSettingsIsLoading } =
@@ -71,15 +73,15 @@ function ExtensionSetting() {
             setValue={setUrl}
             type={"text"}
           />
+           <div className={styles.BtnPos}>
+            <BlobBtn
+              onClick={() => {
+                onSubmitUrl(url);
+              }}
+            >
+              Add
+            </BlobBtn>
         </div>
-        <div className={styles.BtnPos}>
-          <BlobBtn
-            onClick={() => {
-              onSubmitUrl(url);
-            }}
-          >
-            SUBMIT
-          </BlobBtn>
         </div>
       </div>
       <div>
