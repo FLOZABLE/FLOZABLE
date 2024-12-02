@@ -2,7 +2,6 @@ import styles from "./UserSubjectViewer.module.css";
 import React, { useEffect, useState } from "react";
 import { DateTime } from "luxon";
 import MemberTimer from "@/app/components/Groups/MemberTimer/MemberTimer";
-import { socket } from "@/app/utils/socket";
 
 function UserSubjectViewer({ userInfo }) {
   const [subjectName, setSubjectName] = useState("Offline");
@@ -10,7 +9,7 @@ function UserSubjectViewer({ userInfo }) {
   const [total, setTotal] = useState(0);
 
   useEffect(() => {
-    const { study_time, activeSubject } = userInfo;
+    const { activeSubject } = userInfo;
     if (!activeSubject) {
       setSubjectName("Offline");
     } else if (activeSubject.subject_id === "0") {
