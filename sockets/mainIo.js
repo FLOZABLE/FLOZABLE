@@ -68,7 +68,10 @@ mainIo.on("connection", (socket) => {
           cacheActiveSubject(userId, { subject_id: "0", name: "break" }, now);
           mainIo
             .to([...friends, ...groups, userId])
-            .emit(`studying`, { userId, subject: { subject_id: "0" } });
+            .emit("studying", {
+              userId,
+              subject: { subject_id: "0", time: now },
+            });
         }
 
         const chatroomIds = chatrooms.map(
@@ -113,7 +116,7 @@ mainIo.on("connection", (socket) => {
 
       mainIo
         .to([...friends, ...groups, userId])
-        .emit(`studying`, { userId, subject });
+        .emit("studying", { userId, subject: { ...subject, time: now } });
 
       redisClient.rpush(`user:${userId}:subject:${subjectId}`, `[${now},0]`);
       cacheActiveSubject(userId, subject, now);
@@ -314,6 +317,7 @@ async function deActiveGroup(connection, userId, socket) {
       socket.leave(group);
     });
     redisClient.del(`user:${userId}:activeGroup`);
+    console.log('gdddd')
     if (!friends.length) return;
     mainIo.to(friends).emit(`deActiveGroup`, { userId });
   } catch (err) {
@@ -382,16 +386,16 @@ async function stopStudying(connection, userId, status) {
       activeSubject,
     });
 
+    redisClient.rpush(
+      `user:${userId}:subject:${activeSubject.subject_id}`,
+      `[${start},${duration}]`
+    );
+
     for (let i = -12; i < 12; i++) {
       redisClient.zincrby(`users:${i}:dayTotal`, duration, userId);
       redisClient.zincrby(`users:${i}:weekTotal`, duration, userId);
       redisClient.zincrby(`users:${i}:monthTotal`, duration, userId);
     }
-
-    redisClient.rpush(
-      `user:${userId}:subject:${activeSubject.subject_id}`,
-      `[${start},${duration}]`
-    );
   } catch (err) {
     console.log(err);
   }

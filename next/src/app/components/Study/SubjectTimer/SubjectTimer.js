@@ -42,15 +42,13 @@ function SubjecTimer({}) {
   useEffect(() => {
     return () => {
       console.log("unhook");
-      if (selectedSubject.active) {
-        socket.emit("stop");
-      }
-      setTimeout(() => {
-        subjectsRefetch();
-      }, 500);
+      socket.emit("stop");
       subjectsTimerWorkerRef?.current?.postMessage({
         command: "stopSubjectTimer",
       });
+      setTimeout(() => {
+        subjectsRefetch();
+      }, 500);
     };
   }, []);
 
@@ -103,15 +101,18 @@ function SubjecTimer({}) {
     };
     const onStopStudying = ({ userId, duration, stopped_subject }) => {
       console.log("stop");
-      if (
-        userId !== accountData?.user_id ||
-        !stopped_subject ||
-        stopped_subject.subject_id === "0"
-      ) {
+      if (userId !== accountData?.user_id) return;
+      if (!stopped_subject || stopped_subject.subject_id === "0") {
+        subjectsTimerWorkerRef?.current?.postMessage({
+          command: "stopSubjectTimer",
+        });
         return setSelectedSubject((prev) => ({ ...prev, active: false }));
       }
 
       if (stopped_subject.subject_id !== selectedSubject.subject_id) {
+        subjectsTimerWorkerRef?.current?.postMessage({
+          command: "stopSubjectTimer",
+        });
         return setSelectedSubject((prev) => ({ ...prev, active: false }));
       }
 

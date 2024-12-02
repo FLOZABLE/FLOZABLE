@@ -6,7 +6,7 @@ import MyCamDisp from "../MyCamDisp/MyCamDisp";
 import MyTimer from "../MyTimer/MyTimer";
 
 function MyEl({ videoStream, userInfo }) {
-  const [run, setRun] = useState(0);
+  const [run, setRun] = useState(false);
   const [total, setTotal] = useState(0);
 
   useEffect(() => {
@@ -14,15 +14,15 @@ function MyEl({ videoStream, userInfo }) {
 
     const { study_time, activeSubject } = userInfo;
 
+    console.log("user", userInfo);
     if (activeSubject && activeSubject.subject_id !== "0") {
       setRun(true);
       const liveTotal =
-        parseInt(study_time) +
-        parseInt(DateTime.now().toSeconds()) -
-        parseInt(activeSubject.time);
+        study_time + DateTime.now().toSeconds() - activeSubject.time;
       setTotal(liveTotal);
     } else {
-      setTotal(parseInt(study_time));
+      setTotal(study_time);
+      setRun(false);
     }
   }, [userInfo]);
 
