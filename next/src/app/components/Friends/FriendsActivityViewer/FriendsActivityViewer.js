@@ -25,12 +25,9 @@ function FriendsActivityViewer() {
     updateFriendsStatus,
   } = useFriendsStatus();
 
-  console.log("status", friendsStatus);
-
   useEffect(() => {
     const onStudying = ({ userId, subject }) => {
       updateFriendsStatus((prev) => {
-        console.log(subject, "gd");
         const friendIndex = prev.findIndex(
           (friend) => friend.user_id === userId
         );
