@@ -94,24 +94,37 @@ function useFriendsRecommended() {
 }
 
 function useFriendsStatus() {
+  const queryClient = useQueryClient();
   const { accountData } = useAccount();
 
   const queryResult = useQuery({
-    queryKey: [`getFriendsStatus`],
+    queryKey: [`useFriendsStatus`],
     queryFn: getFriendsStatus,
+    staleTime: 60 * 30,
     enabled: !!accountData,
+    select: (response) => response?.data?.friends ?? [],
+    placeholderData: [],
   });
 
   const {
-    data: friendsStatusData,
+    data: friendsStatus,
     isLoading: friendsStatusIsLoading,
+    error: friendsStatusError,
     refetch: friendsStatusRefetch,
   } = queryResult;
 
+  const updateFriendsStatus = useCallback(async (newData) => {
+    await queryClient.setQueryData(["useFriendsStatus"], (oldData) => {
+      return updateQueryData(oldData, newData, "friends");
+    });
+  }, []);
+
   return {
     ...queryResult,
-    friendsStatusData,
+    friendsStatus,
+    friendsStatusError,
     friendsStatusIsLoading,
+    updateFriendsStatus,
     friendsStatusRefetch,
   };
 }

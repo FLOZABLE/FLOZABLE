@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import styles from "./FriendsActivityViewer.module.css";
 import UserSubjectViewer from "@/app/components/Users/UserSubjectViewer/UserSubjectViewer";
 import UserGroupViewer from "@/app/components/Users/UserGroupViewer/UserGroupViewer";
@@ -11,15 +11,107 @@ import { useFriendsStatus } from "@/Hooks/friendsHooks";
 import CircularLoading from "../../LoadingScreen/CircularLoading/CircularLoading";
 import { SearchUsersModalContext } from "@/app/utils/Contexts";
 import ChatBtn from "../../Buttons/ChatBtn/ChatBtn";
+import { socket } from "@/app/utils/socket";
 
 function FriendsActivityViewer() {
   const { setSearchUsersModal } = useContext(SearchUsersModalContext);
 
   const router = useRouter();
 
-  const { friendsStatusData, friendsStatusIsLoading } = useFriendsStatus();
+  const {
+    friendsStatus,
+    friendsStatusIsLoading,
+    friendsStatusError,
+    updateFriendsStatus,
+  } = useFriendsStatus();
 
-  if (!friendsStatusIsLoading && !friendsStatusData?.success) {
+  console.log("status", friendsStatus);
+
+  useEffect(() => {
+    const onStudying = ({ userId, subject }) => {
+      updateFriendsStatus((prev) => {
+        console.log(subject, "gd");
+        const friendIndex = prev.findIndex(
+          (friend) => friend.user_id === userId
+        );
+        if (friendIndex === -1) return prev;
+
+        const newFriends = [...prev];
+        newFriends[friendIndex] = {
+          ...newFriends[friendIndex],
+          activeSubject: subject,
+        };
+
+        return newFriends;
+      });
+    };
+
+    const onStopStudying = ({ userId, subject, duration }) => {
+      updateFriendsStatus((prev) => {
+        const friendIndex = prev.findIndex(
+          (friend) => friend.user_id === userId
+        );
+        if (friendIndex === -1) return prev;
+
+        const newFriends = [...prev];
+        const study_time = newFriends[friendIndex].study_time + duration;
+        newFriends[friendIndex] = {
+          ...newFriends[friendIndex],
+          activeSubject: subject,
+          study_time,
+        };
+
+        return newFriends;
+      });
+    };
+
+    const onDeActiveGroup = ({ userId }) => {
+      updateFriendsStatus((prev) => {
+        const friendIndex = prev.findIndex(
+          (friend) => friend.user_id === userId
+        );
+        if (friendIndex === -1) return prev;
+
+        const newFriends = [...prev];
+        newFriends[friendIndex] = {
+          ...newFriends[friendIndex],
+          activeGroup: null,
+        };
+
+        return newFriends;
+      });
+    };
+
+    const onActiveGroup = ({ userId, group }) => {
+      updateFriendsStatus((prev) => {
+        const friendIndex = prev.findIndex(
+          (friend) => friend.user_id === userId
+        );
+        if (friendIndex === -1) return prev;
+
+        const newFriends = [...prev];
+        newFriends[friendIndex] = {
+          ...newFriends[friendIndex],
+          activeGroup: group,
+        };
+
+        return newFriends;
+      });
+    };
+
+    socket.on("studying", onStudying);
+    socket.on("stopStudying", onStopStudying);
+    socket.on(`deActiveGroup`, onDeActiveGroup);
+    socket.on(`activeGroup`, onActiveGroup);
+    return () => {
+      socket.off("studying", onStudying);
+      socket.off("stopStudying", onStopStudying);
+      socket.off(`deActiveGroup`, onDeActiveGroup);
+      socket.off(`activeGroup`, onActiveGroup);
+    };
+  }, []);
+
+  if (friendsStatusError) {
     return <RecommendedFriendsViewer />;
   }
 
@@ -45,12 +137,12 @@ function FriendsActivityViewer() {
         {friendsStatusIsLoading ? (
           <CircularLoading />
         ) : (
-          friendsStatusData?.data?.friends?.map((friend, i) => {
+          friendsStatus.map((friend, i) => {
             return (
               <div
                 className={styles.friend}
                 key={i}
-                style={{ zIndex: friendsStatusData.data.friends.length - i }}
+                style={{ zIndex: friendsStatus.length - i }}
               >
                 <div className={styles.info}>
                   <UserContainer

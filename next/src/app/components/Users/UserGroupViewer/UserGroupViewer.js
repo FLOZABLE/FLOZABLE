@@ -1,54 +1,23 @@
 import styles from "./UserGroupViewer.module.css";
-import React, { useEffect, useState } from "react";
-import { socket } from "@/app/utils/socket";
+import React from "react";
 import GroupContainer from "@/app/components/Groups/GroupContainer/GroupContainer";
 
 function UserGroupViewer({ userInfo }) {
-  const [activeGroup, setActiveGroup] = useState(null);
-
-  useEffect(() => {
-    if (!userInfo) return;
-
-    const { activeGroup } = userInfo;
-    console.log(activeGroup, "activegroup");
-    if (activeGroup) {
-      setActiveGroup(activeGroup);
-    }
-
-    const onDeActiveGroup = ({ userId }) => {
-      if (userId !== userInfo.usre_id) return;
-
-      setActiveGroup(null);
-    };
-
-    const onActiveGroup = ({ userId, group }) => {
-      if (userId !== userInfo.user_id) return;
-
-      console.log(group);
-      setActiveGroup(group);
-    };
-
-    socket.on(`deActiveGroup`, onDeActiveGroup);
-    socket.on(`activeGroup`, onActiveGroup);
-
-    return () => {
-      socket.off(`deActiveGroup`, onDeActiveGroup);
-      socket.off(`activeGroup`, onActiveGroup);
-    };
-  }, [userInfo]);
-
   return (
     <div
       className={`${styles.UserGroupViewer} ${
-        activeGroup ? styles.visible : null
+        userInfo.activeGroup ? styles.visible : null
       }`}
     >
       <p className={"overflowDot"}>
-        inside <strong>{activeGroup?.name}</strong>
+        inside <strong>{userInfo.activeGroup?.name}</strong>
       </p>
       <div className={styles.hoverEl}>
-        {activeGroup ? (
-          <GroupContainer groupInfo={activeGroup} style={{ height: "15rem" }} />
+        {userInfo.activeGroup ? (
+          <GroupContainer
+            groupInfo={userInfo.activeGroup}
+            style={{ height: "15rem" }}
+          />
         ) : null}
       </div>
     </div>
