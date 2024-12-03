@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import styles from "./page.module.css";
 import ProfileImage from "@/app/components/Users/ProfileImage/ProfileImage";
 import { useAccountProfile } from "@/Hooks/accountHooks";
@@ -14,7 +14,7 @@ import FriendRequestBtn from "@/app/components/Buttons/FriendRequestBtn/FriendRe
 import { useGroups } from "@/Hooks/groupsHook";
 
 function User({ params }) {
-  const { userId } = params;
+  const { userId } = React.use(params);
 
   const { useAccountProfileData } = useAccountProfile(userId);
   const { groups } = useGroups();
