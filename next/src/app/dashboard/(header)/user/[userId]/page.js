@@ -34,7 +34,6 @@ function User({ params }) {
 
     const { userInfo, friends, subjects } = useAccountProfileData.data;
 
-    console.log(useAccountProfileData, "test");
     const sortedSubjects = timelineSort(subjects);
 
     setSubjects(sortedSubjects.subjects);

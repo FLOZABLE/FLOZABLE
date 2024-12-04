@@ -44,7 +44,7 @@ function RecommendedFriendsViewer({}) {
         {friendsRecommendedIsLoading ? (
           <CircularLoading />
         ) : (
-          friendsRecommendedData?.data?.users.map((user, i) => {
+          friendsRecommendedData.map((user, i) => {
             return (
               <div className={styles.user} key={i}>
                 <UserContainer

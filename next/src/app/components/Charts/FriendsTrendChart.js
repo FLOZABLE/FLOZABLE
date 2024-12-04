@@ -1,6 +1,6 @@
 "use client";
 
-import { coldColorsList } from "@/app/utils/Constant";
+import { SUBJECTS_PIE_COLORS } from "@/app/utils/Constant";
 import { secondConverter } from "@/app/utils/Tool";
 import { useFriendsTrends } from "@/Hooks/friendsHooks";
 import {
@@ -21,7 +21,8 @@ import { useAccount } from "@/Hooks/accountHooks";
 function FriendsTrendChart() {
   const { accountData } = useAccount();
 
-  const { friendsTrendData, friendsTrendsIsLoading } = useFriendsTrends();
+  const { friendsTrendData, friendsTrendsIsLoading, friendsTrendError } =
+    useFriendsTrends();
 
   if (friendsTrendsIsLoading) {
     return <CircularLoading />;
@@ -31,7 +32,7 @@ function FriendsTrendChart() {
     return <AccountWall />;
   }
 
-  if (!friendsTrendData?.success) {
+  if (friendsTrendError) {
     return null;
   }
 
@@ -40,7 +41,7 @@ function FriendsTrendChart() {
       <BarChart
         width={500}
         height={300}
-        data={friendsTrendData.data.trends.map((trend) => {
+        data={friendsTrendData.map((trend) => {
           const date = DateTime.fromSeconds(trend.date).toFormat("M/d");
           const friendsData = { date };
 
@@ -71,13 +72,13 @@ function FriendsTrendChart() {
           }}
         />
         <Legend />
-        {friendsTrendData.data.trends[0].friends.map((friend, i) => {
+        {friendsTrendData[0].friends.map((friend, i) => {
           return (
             <Bar
               key={i}
               dataKey={friend.user_id}
               name={friend.name}
-              fill={coldColorsList[i % coldColorsList.length]}
+              fill={SUBJECTS_PIE_COLORS[i % SUBJECTS_PIE_COLORS.length]}
               barSize={40}
             />
           );
