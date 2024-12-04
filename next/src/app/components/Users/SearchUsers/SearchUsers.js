@@ -10,19 +10,20 @@ import ChatBtn from "../../Buttons/ChatBtn/ChatBtn";
 function SearchUsers({ searchQuery, onClick }) {
   const [debouncedQuery] = useDebounce(searchQuery, 500);
 
-  const { friendsSearchData, isLoading } = useFriendsSearch(debouncedQuery);
-  
-  if (isLoading) {
+  const { friendsSearchData, friendsSearchIsLoading, friendsSearchError } =
+    useFriendsSearch(debouncedQuery);
+
+  if (friendsSearchIsLoading) {
     return <CircularLoading />;
   }
 
-  if (!friendsSearchData?.success) {
+  if (friendsSearchError) {
     return null;
   }
 
   return (
     <div className={`customScroll ${styles.SearchUsers}`}>
-      {friendsSearchData?.data?.users?.map((userInfo, i) => {
+      {friendsSearchData.map((userInfo, i) => {
         return (
           <UserContainer
             key={i}

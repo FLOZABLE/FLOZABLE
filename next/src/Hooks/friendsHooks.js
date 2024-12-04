@@ -42,11 +42,22 @@ function useFriendsSearch(searchQuery) {
     staleTime: 1000 * 10,
     retryDelay: 1000 * 3,
     enabled: searchQuery?.length >= 2,
+    select: (response) => response?.data?.users || [],
+    placeholderData: [],
   });
 
-  const { data: friendsSearchData } = queryResult;
+  const {
+    data: friendsSearchData,
+    isLoading: friendsSearchIsLoading,
+    error: friendsSearchError,
+  } = queryResult;
 
-  return { friendsSearchData, ...queryResult };
+  return {
+    friendsSearchData,
+    friendsSearchIsLoading,
+    friendsSearchError,
+    ...queryResult,
+  };
 }
 
 function useFriendsTrends() {
@@ -57,18 +68,22 @@ function useFriendsTrends() {
     queryFn: () => getFriendsTrends(),
     staleTime: 1000 * 60,
     enabled: !!accountData,
+    select: (response) => response?.data?.trends || [],
+    placeholderData: [],
   });
 
   const {
     data: friendsTrendData,
     isLoading: friendsTrendsIsLoading,
     refetch: friendsTrendRefetch,
+    error: friendsTrendError,
   } = queryResult;
 
   return {
     ...queryResult,
     friendsTrendData,
     friendsTrendsIsLoading,
+    friendsTrendError,
     friendsTrendRefetch,
   };
 }
@@ -77,6 +92,8 @@ function useFriendsRecommended() {
   const queryResult = useQuery({
     queryKey: [`friendsRecommended`],
     queryFn: getFriendsRecommended,
+    select: (response) => response?.data?.users || [],
+    placeholderData: [],
   });
 
   const {
