@@ -7,21 +7,11 @@ import {
   SearchUsersModalContext,
 } from "@/app/utils/Contexts";
 import styles from "./PlanModal.module.css";
-import { useCallback, useContext, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import DraggableModal from "../DraggableModal/DraggableModal";
 import CustomInput from "../../Inputs/CustomInput/CustomInput";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faBell,
-  faBook,
-  faCircleExclamation,
-  faClock,
-  faFileLines,
-  faRepeat,
-  faShare,
-  faTrashCan,
-  faUserGroup,
-} from "@fortawesome/free-solid-svg-icons";
+import { faShare, faTrashCan } from "@fortawesome/free-solid-svg-icons";
 import SliderAnimation from "../../Inputs/SliderAnimation/SliderAnimation";
 import CircularLoading from "../../LoadingScreen/CircularLoading/CircularLoading";
 import TextEditor from "../../Inputs/TextEditor/TextEditor";
@@ -70,6 +60,8 @@ export default function PlanModal() {
   const searchParams = useSearchParams();
   const router = useRouter();
 
+  const saveBtnRef = useRef();
+
   const { vapidKeysData } = useVapidKeys();
   const { planUsers, planUsersIsLoading, updatePlanUsers, clearPlanUsers } =
     usePlanUsers(planModal);
@@ -103,6 +95,12 @@ export default function PlanModal() {
 
     setCurrentStep(3);
   }, [debouncedDescription]);
+
+  useEffect(() => {
+    if (currentStep === 6) {
+      saveBtnRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [currentStep]);
 
   useEffect(() => {
     if (!planId) return;
@@ -464,7 +462,7 @@ export default function PlanModal() {
             ) : (
               <div> </div>
             )}
-            <div data-tutorial={7}>
+            <div data-tutorial={7} ref={saveBtnRef}>
               <BlobBtn
                 onClick={() => {
                   submit();
