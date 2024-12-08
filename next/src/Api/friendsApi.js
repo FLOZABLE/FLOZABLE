@@ -38,11 +38,11 @@ async function getFriendsTrends() {
 
 async function getFriendsStatus() {
   const timezone = getTimezone();
-  const response = await AxiosInstance.get(`/friends/status`, {
-    params: { timezone },
-  });
-
-  return response.data;
+  return requestHandler(
+    AxiosInstance.get(`/friends/status`, {
+      params: { timezone },
+    })
+  );
 }
 
 async function postFriendsRequest({ targetId }) {
