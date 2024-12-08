@@ -2,7 +2,6 @@ import {
   getAccount,
   getAccountGoogle,
   getAccountProfile,
-  getAccountProfileSubjects,
 } from "@/Api/accountApi";
 import { updateQueryData } from "@/app/utils/Tool";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -52,20 +51,20 @@ function useAccountGoogle() {
     queryFn: getAccountGoogle,
     staleTime: 1000 * 60 * 10,
     enabled: !!accountData,
+    select: (response) => response?.data?.googleInfo ?? false,
   });
 
   const {
     data: accountGoogleData,
     refetch: accountGoogleRefetch,
+    error: accountGoogleError,
     isLoading: accountGoogleIsLoading,
   } = queryResult;
 
-  const googleInfo = accountGoogleData?.data?.googleInfo;
-
   return {
-    googleInfo,
     accountGoogleData,
     accountGoogleRefetch,
+    accountGoogleError,
     accountGoogleIsLoading,
     ...queryResult,
   };
@@ -77,42 +76,21 @@ function useAccountProfile(userId) {
     queryFn: () => getAccountProfile(userId),
     staleTime: 1000 * 60 * 10,
     enabled: !!userId,
+    select: (response) => response?.data ?? false,
   });
 
   const {
-    data: useAccountProfileData,
-    isLoading: useAccountProfileDataIsLoading,
+    data: accountProfileData,
+    isLoading: accountProfileIsLoading,
+    error: accountProfileError,
   } = queryResult;
 
   return {
-    useAccountProfileData,
-    useAccountProfileDataIsLoading,
+    accountProfileData,
+    accountProfileIsLoading,
+    accountProfileError,
     ...queryResult,
   };
 }
 
-function useAccountProfileSubjects(userId) {
-  const queryResult = useQuery({
-    queryKey: [`useAccountProfileSubjects`, userId],
-    queryFn: () => getAccountProfileSubjects(userId),
-    staleTime: 1000 * 60 * 10,
-  });
-
-  const {
-    data: useAccountProfileSubjectsData,
-    isLoading: useAccountProfileSubjectsIsLoading,
-  } = queryResult;
-
-  return {
-    useAccountProfileSubjectsData,
-    useAccountProfileSubjectsIsLoading,
-    ...queryResult,
-  };
-}
-
-export {
-  useAccount,
-  useAccountGoogle,
-  useAccountProfile,
-  useAccountProfileSubjects,
-};
+export { useAccount, useAccountGoogle, useAccountProfile };
