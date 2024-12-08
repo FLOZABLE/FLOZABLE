@@ -40,6 +40,15 @@ function SubjecTimer({}) {
   });
 
   useEffect(() => {
+    if (currentStep === 8) {
+      setIsSelectNewSubject(true);
+      setTimeout(() => {
+        setCurrentStep(9);
+      }, 2000);
+    }
+  }, [currentStep]);
+
+  useEffect(() => {
     return () => {
       console.log("unhook");
       socket.emit("stop");
