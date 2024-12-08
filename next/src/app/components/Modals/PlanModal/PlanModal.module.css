@@ -6,8 +6,9 @@
   width: var(--modalWidth);
   display: flex;
   flex-direction: column;
-  max-height: 60vh;
+  max-height: 50vh;
   overflow-y: auto;
+  scroll-behavior: smooth;
 }
 
 .PlanModal .buttons {

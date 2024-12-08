@@ -51,6 +51,7 @@ const queryClient = new QueryClient({
       retryDelay: (retryCount) => {
         return Math.pow(2, retryCount) * 1000; // 1s, 2s, 4s, etc.
       },
+      gcTime: 1000 * 60 * 10,
     },
   },
 });
