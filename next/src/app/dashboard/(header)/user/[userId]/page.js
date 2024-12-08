@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import styles from "./page.module.css";
 import ProfileImage from "@/app/components/Users/ProfileImage/ProfileImage";
 import { useAccountProfile } from "@/Hooks/accountHooks";
-import { timelineSort } from "@/app/utils/timelineSorting";
+import { timelineSorter } from "@/app/utils/timelineSorting";
 import StudyTrendChart from "@/app/components/Charts/StudyTrendChart/StudyTrendChart";
 import RankingsTrendsChart from "@/app/components/Charts/RankingsTrendsChart/RankingsTrendsChart";
 import GroupContainer from "@/app/components/Groups/GroupContainer/GroupContainer";
@@ -16,7 +16,7 @@ import { useGroups } from "@/Hooks/groupsHook";
 function User({ params }) {
   const { userId } = React.use(params);
 
-  const { useAccountProfileData } = useAccountProfile(userId);
+  const { accountProfileData } = useAccountProfile(userId);
   const { groups } = useGroups();
 
   const [subjects, setSubjects] = useState([]);
@@ -30,16 +30,16 @@ function User({ params }) {
   const [viewer, setViewer] = useState("day");
 
   useEffect(() => {
-    if (!useAccountProfileData?.success) return;
+    if (!accountProfileData) return;
 
-    const { userInfo, friends, subjects } = useAccountProfileData.data;
+    const { userInfo, friends, subjects } = accountProfileData;
 
-    const sortedSubjects = timelineSort(subjects);
+    const sortedSubjects = timelineSorter(subjects);
 
     setSubjects(sortedSubjects.subjects);
     setUserInfo(userInfo);
     setFriends(friends);
-  }, [useAccountProfileData]);
+  }, [accountProfileData]);
 
   useEffect(() => {
     if (!userInfo || !groups) return;

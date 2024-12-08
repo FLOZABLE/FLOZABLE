@@ -27,7 +27,7 @@ import { Line } from "recharts";
 function Account() {
   const { accountData, updateUserInfo } = useAccount();
 
-  const { googleInfo } = useAccountGoogle();
+  const { accountGoogleData } = useAccountGoogle();
   const { spotifyInfo } = useSpotifyInfo();
 
   const [imageSrc, setImageSrc] = useState(null);
@@ -270,7 +270,7 @@ function Account() {
                     <GoogleCalendar/>
                   </div>
                   <div className={styles.description}>
-                    {!googleInfo?.scopes?.some((scope) =>
+                    {!accountGoogleData?.scopes?.some((scope) =>
                       scope.includes("calendar")
                     ) ? (
                       <p>
@@ -299,7 +299,7 @@ function Account() {
                     <YouTubeIcon />
                   </div>
                   <div className={styles.description}>
-                    {!googleInfo?.scopes?.some((scope) =>
+                    {!accountGoogleData?.scopes?.some((scope) =>
                       scope.includes("youtube")
                     ) ? (
                       <p>

@@ -10,7 +10,7 @@ import { getTimezone } from "@/app/utils/Tool";
 const redirect_uri = config.server + "/auth/signin/google";
 
 function GoogleLoginBtn({ scope, required }) {
-  const { googleInfo, accountGoogleIsLoading } = useAccountGoogle();
+  const { accountGoogleData, accountGoogleIsLoading } = useAccountGoogle();
 
   const timezone = getTimezone();
 
@@ -27,11 +27,11 @@ function GoogleLoginBtn({ scope, required }) {
     <div className={styles.GoogleLoginBtn} onClick={login}>
       {accountGoogleIsLoading ? (
         <CircularLoading />
-      ) : !googleInfo ||
-        !googleInfo?.scopes?.some((scope) => scope.includes(required)) ? (
+      ) : !accountGoogleData ||
+        !accountGoogleData?.scopes?.some((scope) => scope.includes(required)) ? (
         <p>Login with Google</p>
       ) : (
-        <p>Logged in as {googleInfo.name}</p>
+        <p>Logged in as {accountGoogleData.name}</p>
       )}
       <Google />
     </div>

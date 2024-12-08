@@ -13,14 +13,6 @@ async function getAccountProfile(userId) {
   );
 }
 
-async function getAccountProfileSubjects(userId) {
-  return requestHandler(
-    AxiosInstance.get(`/account/profile/subjects`, {
-      params: { user_id: userId },
-    })
-  );
-}
-
 async function getAccountGoogle() {
   return requestHandler(AxiosInstance.get(`/account/google`));
 }
@@ -51,7 +43,6 @@ async function patchAccountPassword({ password, confirmPassword }) {
 export {
   getAccount,
   getAccountProfile,
-  getAccountProfileSubjects,
   getAccountGoogle,
   patchAccountInfo,
   patchAccountImage,

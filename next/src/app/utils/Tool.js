@@ -291,7 +291,7 @@ function getDatesDisplay({
 function exitFullscreen() {
   try {
     if (document.fullscreenElement === null) return;
-    
+
     if (document.exitFullscreen) {
       document.exitFullscreen();
     } else if (document.mozCancelFullScreen) {
@@ -307,6 +307,12 @@ function exitFullscreen() {
 }
 
 async function requestHandler(request) {
+  //no catching when request is get to trigger react query error
+  if (request.method === "get") {
+    const response = await axiosRequest;
+    return response.data;
+  }
+
   try {
     const response = await request;
     return response.data;
