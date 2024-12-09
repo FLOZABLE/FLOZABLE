@@ -264,7 +264,7 @@ function ChatModal({}) {
     socket.on("new-chatroom", onNewChatroom);
 
     return () => {
-      socket.on("new-chatroom", onNewChatroom);
+      socket.off("new-chatroom", onNewChatroom);
     };
   }, [chatrooms]);
 

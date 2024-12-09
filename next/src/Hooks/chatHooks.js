@@ -21,7 +21,7 @@ function useChatRooms() {
     placeholderData: [],
   });
 
-  const { data: chatrooms, refetch: chatRoomsRefetch } = queryResult;
+  const { data: chatrooms, refetch: chatroomsRefetch } = queryResult;
 
   const updateChatrooms = useCallback(async (newData) => {
     await queryClient.setQueryData(["useChatRooms"], (oldData) => {
@@ -29,7 +29,7 @@ function useChatRooms() {
     });
   }, []);
 
-  return { chatrooms, chatRoomsRefetch, updateChatrooms, ...queryResult };
+  return { chatrooms, chatroomsRefetch, updateChatrooms, ...queryResult };
 }
 
 function useChatMessages({ chatroomId, length, lastMsgId }) {
