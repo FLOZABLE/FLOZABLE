@@ -18,7 +18,7 @@ function useRankings(mode, viewDate) {
   return { rankingsData, rankingsIsLoading, ...queryResult };
 }
 
-function useRankingsUser(userId, mode, viewDate) {
+function useRankingsUser({ userId, mode, viewDate }) {
   const queryResult = useQuery({
     queryKey: [`getRankingsUser`, userId, mode, viewDate],
     queryFn: () => getRankingsUser(userId, mode, viewDate),

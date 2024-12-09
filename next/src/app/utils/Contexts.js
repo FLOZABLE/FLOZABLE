@@ -98,17 +98,9 @@ function AppProvider({ children }) {
   useEffect(() => {
     const onNotification = (notification) => {
       updateNotificationsData((prev) => {
-        if (!prev?.data?.notifications) return prev;
+        const updatedNotifications = [...prev, notification];
 
-        const updatedNotifications = [...prev.data.notifications, notification];
-
-        return {
-          ...prev,
-          data: {
-            ...prev.data,
-            notifications: updatedNotifications,
-          },
-        };
+        return updatedNotifications;
       });
       toast.info(notification.message?.title);
     };

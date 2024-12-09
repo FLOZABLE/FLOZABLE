@@ -543,6 +543,158 @@ Router.post("/app/signin", async (req, res) => {
   }
 });
 
+//for native app
+Router.post("/app/signin/google", async (req, res) => {
+  try {
+    const { code, state } = req.body;
+    let timezone = "UTC";
+
+    const auth = googleOauth2client();
+    const response = await auth.getToken(code);
+    if (response.res.status !== 200) {
+      console.log("err");
+      const response = RESPONSE_MESSAGES.error();
+      return res.status(response.status).send(response);
+    }
+    const connection = pool.promise();
+    const { refresh_token, access_token, expiry_date } = response.tokens;
+
+    try {
+      if (state?.timezone && isValidTimeZone(state.timezone)) {
+        timezone = state.timezone;
+        console.log("timezone:", timezone);
+      }
+    } catch (err) {
+      console.error("Error parsing state or validating timezone: ", err);
+    }
+
+    console.log("code", code, state);
+
+    await autoSignin(
+      req,
+      res,
+      async (userId) => {
+        setGoogleAccessToken(userId, access_token, expiry_date);
+
+        connection.query(
+          `UPDATE users SET google_refresh_token = ? WHERE user_id = ?`,
+          [refresh_token, userId]
+        );
+
+        const token = await appTokenCache(userId, true);
+
+        return res.status(200).send({
+          success: true,
+          status: 200,
+          message: "Authed",
+          data: {
+            token,
+            user_id: userId,
+          },
+        });
+      },
+      async () => {
+        //if not logged in = create acc
+        auth.setCredentials(response.tokens);
+        const oauth2 = google.oauth2({
+          auth,
+          version: "v2",
+        });
+        const userInfoResponse = await oauth2.userinfo.get();
+        const data = userInfoResponse.data;
+        data.name = data.name.replace(/ /g, "");
+
+        const { name, email } = data;
+
+        const [[userInfo]] = await connection.query(
+          `SELECT user_id FROM users WHERE email = ?`,
+          [email]
+        );
+
+        if (!userInfo) {
+          //new user
+          const accountResponse = await createAccount(name, email, timezone);
+
+          const { success, data } = accountResponse;
+
+          if (!success) {
+            const response = RESPONSE_MESSAGES.error();
+            return res.status(response.status).send(response);
+          }
+
+          const { user_id } = data;
+
+          req.session.regenerate((err) => {
+            if (err) {
+              console.log("Error regenerating session ID:", err);
+              const response = RESPONSE_MESSAGES.error();
+              return res.status(response.status).send(response);
+            }
+
+            req.session.user_id = user_id;
+          });
+
+          res.cookie("userId", user_id, USER_ID_COOKIE_OPTIONS);
+
+          setGoogleAccessToken(user_id, access_token, expiry_date);
+
+          connection.query(
+            `UPDATE users SET google_refresh_token = ? WHERE user_id = ?`,
+            [refresh_token, user_id]
+          );
+
+          const token = await appTokenCache(user_id, true);
+
+          return res.status(200).send({
+            success: true,
+            status: 200,
+            message: "Account Created!",
+            data: { token, user_id },
+          });
+        }
+
+        const { user_id } = userInfo;
+
+        req.session.regenerate((err) => {
+          if (err) {
+            console.log("Error regenerating session ID:", err);
+            const response = RESPONSE_MESSAGES.error();
+            return res.status(response.status).send(response);
+            return;
+          }
+
+          req.session.user_id = user_id;
+        });
+
+        res.cookie("userId", user_id, USER_ID_COOKIE_OPTIONS);
+
+        setGoogleAccessToken(user_id, access_token, expiry_date);
+
+        connection.query(
+          `UPDATE users SET google_refresh_token = ? WHERE user_id = ?`,
+          [refresh_token, user_id]
+        );
+
+        const token = await appTokenCache(user_id, true);
+
+        return res.status(200).send({
+          success: true,
+          status: 200,
+          message: "Authed",
+          data: {
+            token,
+            user_id: user_id,
+          },
+        });
+      }
+    );
+  } catch (err) {
+    console.log(err);
+    const response = RESPONSE_MESSAGES.error();
+    return res.status(response.status).send(response);
+  }
+});
+
 Router.post("app/signup", async (req, res) => {
   try {
     const { email, name, password, timezone } = req.body;
