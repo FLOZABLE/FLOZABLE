@@ -24,7 +24,7 @@ function RankingsTrendsChart({
 }) {
   const [rankingsTrend, setRankingsTrend] = useState([]);
 
-  const { rankingsUserData } = useRankingsUser(userId, viewer, viewDate);
+  const { rankingsUserData } = useRankingsUser({ userId, viewer, viewDate });
 
   useEffect(() => {
     if (!rankingsUserData?.success || !viewer || !viewDate) return;

@@ -1,6 +1,7 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { getNotifications, getVapidKeys } from "@/Api/notificationsApi";
 import { useCallback } from "react";
+import { updateQueryData } from "@/app/utils/Tool";
 
 function useNotifications() {
   const queryClient = useQueryClient();
@@ -17,28 +18,15 @@ function useNotifications() {
 
   const updateNotificationsData = useCallback(async (newData) => {
     await queryClient.setQueryData(["useNotifications"], (oldData) => {
-      if (!oldData) return newData;
-      return typeof newData === "function"
-        ? newData(oldData)
-        : { ...oldData, ...newData };
+      return updateQueryData(oldData, newData, "notifications");
     });
   }, []);
 
   const filterNotification = useCallback((notificationId) => {
     updateNotificationsData((prev) => {
-      if (!prev?.data?.notifications) return prev;
-
-      const updatedNotifications = prev.data.notifications.filter(
+      return prev.filter(
         (notification) => notification.notification_id !== notificationId
       );
-
-      return {
-        ...prev,
-        data: {
-          ...prev.data,
-          notifications: updatedNotifications,
-        },
-      };
     });
   }, []);
 
