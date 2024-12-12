@@ -695,7 +695,7 @@ Router.post("/app/signin/google", async (req, res) => {
   }
 });
 
-Router.post("app/signup", async (req, res) => {
+Router.post("/app/signup", async (req, res) => {
   try {
     const { email, name, password, timezone } = req.body;
 
