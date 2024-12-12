@@ -105,20 +105,20 @@ Router.get("/user", async (req, res) => {
       [userId, mode, dates.map((date) => date.toSeconds())]
     );
 
-    const today = DateTime.now().setZone(timezone).startOf("day");
+    const today = DateTime.now().setZone(timezone).startOf("day").startOf(mode);
     const timezoneOffset = Math.floor(today.offset / 60).toString();
 
-    const todayRanking = await redisClient.zrevrank(
-      `users:${timezoneOffset}:dayTotal`,
+    const currentRanking = await redisClient.zrevrank(
+      `users:${timezoneOffset}:${mode}Total`,
       userId
     );
 
     const rankings = dates.map((date) => {
       if (
         date.toSeconds() === today.toSeconds() &&
-        typeof todayRanking === "number"
+        typeof currentRanking === "number"
       ) {
-        return { date: date.toSeconds(), ranking: todayRanking + 1 };
+        return { date: date.toSeconds(), ranking: currentRanking + 1 };
       }
 
       const rankingInfo = searchedRankings.find(
