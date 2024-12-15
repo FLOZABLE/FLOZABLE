@@ -50,8 +50,6 @@ function FriendDeleteBtn({ userInfo, friendData, padding }) {
 function FriendRequestBtn({ userInfo, padding }) {
   const { friendsData } = useFriends();
 
-  console.log(friendsData, "gd");
-
   const requestFriend = useCallback(async () => {
     try {
       const targetId = userInfo.user_id;

@@ -21,6 +21,7 @@ function useAccount() {
     data: accountData,
     refetch: accountRefetch,
     isLoading: accountIsLoading,
+    error: accountError,
   } = queryResult;
 
   const clearAccountData = useCallback(() => {
@@ -36,6 +37,7 @@ function useAccount() {
   return {
     accountData,
     accountRefetch,
+    accountError,
     accountIsLoading,
     clearAccountData,
     updateUserInfo,

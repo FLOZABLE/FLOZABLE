@@ -488,7 +488,7 @@ Router.get("/recommended", async (req, res) => {
       try {
         const connection = pool.promise();
         const users = await getRecommendedFriends(connection);
-        return res.status(400).send({ success: true, data: { users } });
+        return res.status(200).send({ success: true, data: { users } });
       } catch (err) {
         console.log(err);
         const response = RESPONSE_MESSAGES.error();
