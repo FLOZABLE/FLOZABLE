@@ -2,8 +2,11 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { getNotifications, getVapidKeys } from "@/Api/notificationsApi";
 import { useCallback } from "react";
 import { updateQueryData } from "@/app/utils/Tool";
+import { useAccount } from "./accountHooks";
 
 function useNotifications() {
+  const { accountData } = useAccount();
+
   const queryClient = useQueryClient();
 
   const queryResult = useQuery({
@@ -12,6 +15,7 @@ function useNotifications() {
     staleTime: 1000 * 60 * 60,
     select: (response) => response?.data?.notifications || [],
     placeholderData: [],
+    enabled: !!accountData,
   });
 
   const { data: notifications } = queryResult;
