@@ -92,7 +92,7 @@ function useFriendsRecommended() {
   const queryResult = useQuery({
     queryKey: [`friendsRecommended`],
     queryFn: getFriendsRecommended,
-    select: (response) => response?.data?.users || [],
+    select: (response) => response?.data?.users ?? [],
     placeholderData: [],
   });
 
@@ -139,7 +139,7 @@ function useFriendsStatus() {
   return {
     ...queryResult,
     friendsStatus,
-    friendsStatusError,
+    friendsStatusError: accountData ? true : true,
     friendsStatusIsLoading,
     updateFriendsStatus,
     friendsStatusRefetch,

@@ -115,7 +115,6 @@ export default function PlansTimeline({
               className=""
               data-tutorial={0}
               onClick={() => {
-                console.log(currentStep, "gd");
                 if (currentStep === 0) {
                   setTimeout(() => {
                     setCurrentStep(1);
