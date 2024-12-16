@@ -139,7 +139,7 @@ function useFriendsStatus() {
   return {
     ...queryResult,
     friendsStatus,
-    friendsStatusError: accountData ? true : true,
+    friendsStatusError: accountData ? friendsStatusError : true,
     friendsStatusIsLoading,
     updateFriendsStatus,
     friendsStatusRefetch,
