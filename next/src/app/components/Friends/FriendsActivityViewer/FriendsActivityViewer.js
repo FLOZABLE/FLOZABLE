@@ -108,6 +108,8 @@ function FriendsActivityViewer() {
     };
   }, []);
 
+  console.log("friends err", friendsStatusError)
+
   if (friendsStatusError) {
     return <RecommendedFriendsViewer />;
   }
