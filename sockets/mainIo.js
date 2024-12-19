@@ -66,12 +66,10 @@ mainIo.on("connection", (socket) => {
         if (!activeSubject) {
           const now = Math.floor(new Date().getTime() / 1000);
           cacheActiveSubject(userId, { subject_id: "0", name: "break" }, now);
-          mainIo
-            .to([...friends, ...groups, userId])
-            .emit("studying", {
-              userId,
-              subject: { subject_id: "0", time: now },
-            });
+          mainIo.to([...friends, ...groups, userId]).emit("studying", {
+            userId,
+            subject: { subject_id: "0", time: now },
+          });
         }
 
         const chatroomIds = chatrooms.map(
@@ -92,7 +90,12 @@ mainIo.on("connection", (socket) => {
   socket.on("disconnect", async (reason) => {
     try {
       const connection = pool.promise();
-      console.log("disconnection");
+      const device = socket.handshake.query?.device;
+      console.log("disconnection", device);
+
+      //won't terminate if it's mobile
+      if (device === "mobile") return;
+
       stopStudying(connection, userId, "disconnect");
       deActiveGroup(connection, userId, socket);
     } catch (err) {
@@ -317,7 +320,7 @@ async function deActiveGroup(connection, userId, socket) {
       socket.leave(group);
     });
     redisClient.del(`user:${userId}:activeGroup`);
-    console.log('gdddd')
+    console.log("gdddd");
     if (!friends.length) return;
     mainIo.to(friends).emit(`deActiveGroup`, { userId });
   } catch (err) {
