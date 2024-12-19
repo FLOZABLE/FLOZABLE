@@ -1,88 +1,111 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-  <%- include("./elements/head");%>
-    <title>
-      FLOZABLE
-    </title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500&family=Jost:wght@500;600;700&display=swap"
-      rel="stylesheet">
-    <link rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+  <head>
+    <%- include("./elements/head");%>
+    <title>FLOZABLE</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500&family=Jost:wght@500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
+    />
 
     <!-- Icon Font Stylesheet -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css"
+      rel="stylesheet"
+    />
 
     <!-- Libraries Stylesheet -->
-    <link href="lib/animate/animate.min.css" rel="stylesheet">
-    <link href="lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
+    <link href="lib/animate/animate.min.css" rel="stylesheet" />
+    <link href="lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet" />
 
     <!-- Customized Bootstrap Stylesheet -->
-    <link href="css/bootstrap.min.css" rel="stylesheet">
-    <link href="css/account.css" rel="stylesheet">
+    <link href="css/bootstrap.min.css" rel="stylesheet" />
+    <link href="css/account.css" rel="stylesheet" />
 
     <!-- Template Stylesheet -->
-    <link href="css/main.css" rel="stylesheet">
+    <link href="css/main.css" rel="stylesheet" />
     <script defer src="/js/account.js" crossorigin="anonymous"></script>
-</head>
+  </head>
 
-<body data-bs-spy="scroll" data-bs-target=".navbar" data-bs-offset="51">
-  <div id="dispBlock">
+  <body data-bs-spy="scroll" data-bs-target=".navbar" data-bs-offset="51">
+    <div id="dispBlock"></div>
 
-  </div>
-
-  <%- include("./elements/accountModal");%>
+    <%- include("./elements/accountModal");%>
     <div class="container-xxl bg-white p-0">
       <!-- Spinner Start -->
-      <div id="spinner"
-        class="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
-        <div class="spinner-grow text-primary" style="width: 3rem; height: 3rem;" role="status">
+      <div
+        id="spinner"
+        class="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center"
+      >
+        <div
+          class="spinner-grow text-primary"
+          style="width: 3rem; height: 3rem"
+          role="status"
+        >
           <span class="sr-only">Loading...</span>
         </div>
       </div>
       <!-- Spinner End -->
 
-
       <!-- Navbar & Hero Start -->
       <div class="container-xxl position-relative p-0" id="home">
         <%- include("./elements/header");%>
 
-          <div class="container-xxl bg-primary hero-header">
-            <div class="container px-lg-5">
-              <div class="row g-5">
-                <div class="col-lg-8 text-center text-lg-start">
-                  <h1 class="text-white mb-4 animated slideInDown">Unlock Your Focus, Unleash Your Potential with
-                    FLOZABLE
-                  </h1>
-                  <p class="text-white pb-3 animated slideInDown">Ignite your focus, conquer distractions, and achieve
-                    greatness with FLOZABLE. Join our dynamic community, leverage our powerful timer, and unleash your
-                    full
-                    potential today.</p>
-                  <a href="/dashboard"
-                    class="btn btn-primary-gradient py-sm-3 px-4 px-sm-5 rounded-pill me-3 animated slideInLeft">Try
-                    it!</a>
-                  <a href=""
-                    class="btn btn-secondary-gradient py-sm-3 px-4 px-sm-5 rounded-pill animated slideInRight">Contact
-                    Us</a>
-                </div>
-                <div class="col-lg-4 d-flex justify-content-center justify-content-lg-end wow fadeInUp"
-                  data-wow-delay="0.3s">
-                  <div class="owl-carousel screenshot-carousel">
-                    <img class="img-fluid" src="img/mobile/screenshot-1.png" alt="">
-                    <img class="img-fluid" src="img/mobile/screenshot-2.png" alt="">
-
-                  </div>
+        <div class="container-xxl bg-primary hero-header">
+          <div class="container px-lg-5">
+            <div class="row g-5">
+              <div class="col-lg-8 text-center text-lg-start">
+                <h1 class="text-white mb-4 animated slideInDown">
+                  Unlock Your Focus, Unleash Your Potential with FLOZABLE
+                </h1>
+                <p class="text-white pb-3 animated slideInDown">
+                  Ignite your focus, conquer distractions, and achieve greatness
+                  with FLOZABLE. Join our dynamic community, leverage our
+                  powerful timer, and unleash your full potential today.
+                </p>
+                <a
+                  href="/dashboard"
+                  class="btn btn-primary-gradient py-sm-3 px-4 px-sm-5 rounded-pill me-3 animated slideInLeft"
+                  >Try it!</a
+                >
+                <a
+                  href=""
+                  class="btn btn-secondary-gradient py-sm-3 px-4 px-sm-5 rounded-pill animated slideInRight"
+                  >Contact Us</a
+                >
+              </div>
+              <div
+                class="col-lg-4 d-flex justify-content-center justify-content-lg-end wow fadeInUp"
+                data-wow-delay="0.3s"
+              >
+                <div class="owl-carousel screenshot-carousel">
+                  <img
+                    class="img-fluid"
+                    src="img/mobile/screenshot-1.png"
+                    alt=""
+                  />
+                  <img
+                    class="img-fluid"
+                    src="img/mobile/screenshot-2.png"
+                    alt=""
+                  />
                 </div>
               </div>
             </div>
           </div>
+        </div>
       </div>
       <!-- Navbar & Hero End -->
-
 
       <!-- About Start -->
       <div class="container-xxl py-5" id="about">
@@ -90,31 +113,38 @@
           <div class="row g-5 align-items-center">
             <div class="col-lg-6 wow fadeInUp" data-wow-delay="0.1s">
               <h5 class="text-primary-gradient fw-medium">About App</h5>
-              <h1 class="mb-4">#1 App for Empowering Your Focus and Productivity</h1>
+              <h1 class="mb-4">
+                #1 App for Empowering Your Focus and Productivity
+              </h1>
               <p class="mb-4">
-                Flozable is the #1 app that empowers you to regain control of your time and boost productivity. With
-                innovative features and an interactive community, Flozable is your ultimate tool for studying, learning,
-                and connecting with like-minded individuals.<br><br>
+                Flozable is the #1 app that empowers you to regain control of
+                your time and boost productivity. With innovative features and
+                an interactive community, Flozable is your ultimate tool for
+                studying, learning, and connecting with like-minded
+                individuals.<br /><br />
 
-                Experience the power of our advanced timer function, designed to challenge you and keep you focused on
-                your tasks. Our AI-based study suggestions provide personalized course recommendations tailored to your
-                interests and weaknesses. Engage in group study sessions, communicate with peers, and tap into the
-                active
-                community for motivation and support.<br><br>
+                Experience the power of our advanced timer function, designed to
+                challenge you and keep you focused on your tasks. Our AI-based
+                study suggestions provide personalized course recommendations
+                tailored to your interests and weaknesses. Engage in group study
+                sessions, communicate with peers, and tap into the active
+                community for motivation and support.<br /><br />
 
-                Benefit from integrated school platform authorization, webcam support, and microphone compatibility.
-                Achieve your goals, track your progress with detailed study analytics, and compete for the top spot on
-                our
-                dynamic leaderboard.<br><br>
+                Benefit from integrated school platform authorization, webcam
+                support, and microphone compatibility. Achieve your goals, track
+                your progress with detailed study analytics, and compete for the
+                top spot on our dynamic leaderboard.<br /><br />
 
-                Join the millions of users who have unlocked their full potential with Flozable. Start today and become
-                #1
-                in maximizing your focus and productivity.
+                Join the millions of users who have unlocked their full
+                potential with Flozable. Start today and become #1 in maximizing
+                your focus and productivity.
               </p>
               <div class="row g-4 mb-4">
                 <div class="col-sm-6 wow fadeIn" data-wow-delay="0.5s">
                   <div class="d-flex">
-                    <i class="fa fa-cogs fa-2x text-primary-gradient flex-shrink-0 mt-1"></i>
+                    <i
+                      class="fa fa-cogs fa-2x text-primary-gradient flex-shrink-0 mt-1"
+                    ></i>
                     <div class="ms-3">
                       <h2 class="mb-0" data-toggle="counter-up">1014</h2>
                       <p class="text-primary-gradient mb-0">Active Install</p>
@@ -123,24 +153,35 @@
                 </div>
                 <div class="col-sm-6 wow fadeIn" data-wow-delay="0.7s">
                   <div class="d-flex">
-                    <i class="fa fa-comments fa-2x text-secondary-gradient flex-shrink-0 mt-1"></i>
+                    <i
+                      class="fa fa-comments fa-2x text-secondary-gradient flex-shrink-0 mt-1"
+                    ></i>
                     <div class="ms-3">
                       <h2 class="mb-0" data-toggle="counter-up">203</h2>
-                      <p class="text-secondary-gradient mb-0">Clients Reviews</p>
+                      <p class="text-secondary-gradient mb-0">
+                        Clients Reviews
+                      </p>
                     </div>
                   </div>
                 </div>
               </div>
-              <a href="/dashboard" class="btn btn-primary-gradient py-sm-3 px-4 px-sm-5 rounded-pill mt-3">Try it!</a>
+              <a
+                href="/dashboard"
+                class="btn btn-primary-gradient py-sm-3 px-4 px-sm-5 rounded-pill mt-3"
+                >Try it!</a
+              >
             </div>
             <div class="col-lg-6">
-              <img class="img-fluid wow fadeInUp" data-wow-delay="0.5s" src="img/mobile/3.png">
+              <img
+                class="img-fluid wow fadeInUp"
+                data-wow-delay="0.5s"
+                src="img/mobile/3.png"
+              />
             </div>
           </div>
         </div>
       </div>
       <!-- About End -->
-
 
       <!-- Features Start -->
       <div class="container-xxl py-5" id="feature">
@@ -154,69 +195,104 @@
               <div class="feature-item bg-light rounded p-4">
                 <div
                   class="d-inline-flex align-items-center justify-content-center bg-primary-gradient rounded-circle mb-4"
-                  style="width: 60px; height: 60px;">
+                  style="width: 60px; height: 60px"
+                >
                   <i class="fa fa-hourglass text-white fs-4"></i>
                 </div>
                 <h5 class="mb-3">Timer and Study Tracker</h5>
-                <p class="m-0">Efficiently manage your time and track your study progress with our intuitive timer and
-                  study tracker features.</p>
+                <p class="m-0">
+                  Efficiently manage your time and track your study progress
+                  with our intuitive timer and study tracker features.
+                </p>
               </div>
             </div>
             <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.3s">
               <div class="feature-item bg-light rounded p-4">
                 <div
                   class="d-inline-flex align-items-center justify-content-center bg-secondary-gradient rounded-circle mb-4"
-                  style="width: 60px; height: 60px;">
-                  <i><svg fill="#ffffff" width="36px" height="36px" viewBox="-3 0 32 32" version="1.1"
-                      xmlns="http://www.w3.org/2000/svg" stroke="#ffffff">
+                  style="width: 60px; height: 60px"
+                >
+                  <i
+                    ><svg
+                      fill="#ffffff"
+                      width="36px"
+                      height="36px"
+                      viewBox="-3 0 32 32"
+                      version="1.1"
+                      xmlns="http://www.w3.org/2000/svg"
+                      stroke="#ffffff"
+                    >
                       <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
-                      <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                      <g
+                        id="SVGRepo_tracerCarrier"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      ></g>
                       <g id="SVGRepo_iconCarrier">
                         <title>group</title>
                         <path
-                          d="M20.906 20.75c1.313 0.719 2.063 2 1.969 3.281-0.063 0.781-0.094 0.813-1.094 0.938-0.625 0.094-4.563 0.125-8.625 0.125-4.594 0-9.406-0.094-9.75-0.188-1.375-0.344-0.625-2.844 1.188-4.031 1.406-0.906 4.281-2.281 5.063-2.438 1.063-0.219 1.188-0.875 0-3-0.281-0.469-0.594-1.906-0.625-3.406-0.031-2.438 0.438-4.094 2.563-4.906 0.438-0.156 0.875-0.219 1.281-0.219 1.406 0 2.719 0.781 3.25 1.938 0.781 1.531 0.469 5.625-0.344 7.094-0.938 1.656-0.844 2.188 0.188 2.469 0.688 0.188 2.813 1.188 4.938 2.344zM3.906 19.813c-0.5 0.344-0.969 0.781-1.344 1.219-1.188 0-2.094-0.031-2.188-0.063-0.781-0.188-0.344-1.625 0.688-2.25 0.781-0.5 2.375-1.281 2.813-1.375 0.563-0.125 0.688-0.469 0-1.656-0.156-0.25-0.344-1.063-0.344-1.906-0.031-1.375 0.25-2.313 1.438-2.719 1-0.375 2.125 0.094 2.531 0.938 0.406 0.875 0.188 3.125-0.25 3.938-0.5 0.969-0.406 1.219 0.156 1.375 0.125 0.031 0.375 0.156 0.719 0.313-1.375 0.563-3.25 1.594-4.219 2.188zM24.469 18.625c0.75 0.406 1.156 1.094 1.094 1.813-0.031 0.438-0.031 0.469-0.594 0.531-0.156 0.031-0.875 0.063-1.813 0.063-0.406-0.531-0.969-1.031-1.656-1.375-1.281-0.75-2.844-1.563-4-2.063 0.313-0.125 0.594-0.219 0.719-0.25 0.594-0.125 0.688-0.469 0-1.656-0.125-0.25-0.344-1.063-0.344-1.906-0.031-1.375 0.219-2.313 1.406-2.719 1.031-0.375 2.156 0.094 2.531 0.938 0.406 0.875 0.25 3.125-0.188 3.938-0.5 0.969-0.438 1.219 0.094 1.375 0.375 0.125 1.563 0.688 2.75 1.313z">
-                        </path>
-                      </g>
-                    </svg></i>
+                          d="M20.906 20.75c1.313 0.719 2.063 2 1.969 3.281-0.063 0.781-0.094 0.813-1.094 0.938-0.625 0.094-4.563 0.125-8.625 0.125-4.594 0-9.406-0.094-9.75-0.188-1.375-0.344-0.625-2.844 1.188-4.031 1.406-0.906 4.281-2.281 5.063-2.438 1.063-0.219 1.188-0.875 0-3-0.281-0.469-0.594-1.906-0.625-3.406-0.031-2.438 0.438-4.094 2.563-4.906 0.438-0.156 0.875-0.219 1.281-0.219 1.406 0 2.719 0.781 3.25 1.938 0.781 1.531 0.469 5.625-0.344 7.094-0.938 1.656-0.844 2.188 0.188 2.469 0.688 0.188 2.813 1.188 4.938 2.344zM3.906 19.813c-0.5 0.344-0.969 0.781-1.344 1.219-1.188 0-2.094-0.031-2.188-0.063-0.781-0.188-0.344-1.625 0.688-2.25 0.781-0.5 2.375-1.281 2.813-1.375 0.563-0.125 0.688-0.469 0-1.656-0.156-0.25-0.344-1.063-0.344-1.906-0.031-1.375 0.25-2.313 1.438-2.719 1-0.375 2.125 0.094 2.531 0.938 0.406 0.875 0.188 3.125-0.25 3.938-0.5 0.969-0.406 1.219 0.156 1.375 0.125 0.031 0.375 0.156 0.719 0.313-1.375 0.563-3.25 1.594-4.219 2.188zM24.469 18.625c0.75 0.406 1.156 1.094 1.094 1.813-0.031 0.438-0.031 0.469-0.594 0.531-0.156 0.031-0.875 0.063-1.813 0.063-0.406-0.531-0.969-1.031-1.656-1.375-1.281-0.75-2.844-1.563-4-2.063 0.313-0.125 0.594-0.219 0.719-0.25 0.594-0.125 0.688-0.469 0-1.656-0.125-0.25-0.344-1.063-0.344-1.906-0.031-1.375 0.219-2.313 1.406-2.719 1.031-0.375 2.156 0.094 2.531 0.938 0.406 0.875 0.25 3.125-0.188 3.938-0.5 0.969-0.438 1.219 0.094 1.375 0.375 0.125 1.563 0.688 2.75 1.313z"
+                        ></path>
+                      </g></svg
+                  ></i>
                 </div>
                 <h5 class="mb-3">Collaborative Study Groups</h5>
-                <p class="m-0">Connect with like-minded individuals, form study groups, and share ideas to enhance your
-                  learning experience.</p>
+                <p class="m-0">
+                  Connect with like-minded individuals, form study groups, and
+                  share ideas to enhance your learning experience.
+                </p>
               </div>
             </div>
             <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.5s">
               <div class="feature-item bg-light rounded p-4">
                 <div
                   class="d-inline-flex align-items-center justify-content-center bg-primary-gradient rounded-circle mb-4"
-                  style="width: 60px; height: 60px;">
+                  style="width: 60px; height: 60px"
+                >
                   <i class="fa fa-robot text-white fs-4"></i>
                 </div>
                 <h5 class="mb-3">AI-Based Study Suggestions</h5>
-                <p class="m-0">Receive personalized study suggestions tailored to your interests and goals, powered by
-                  our
-                  advanced AI model.</p>
+                <p class="m-0">
+                  Receive personalized study suggestions tailored to your
+                  interests and goals, powered by our advanced AI model.
+                </p>
               </div>
             </div>
             <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
               <div class="feature-item bg-light rounded p-4">
                 <div
                   class="d-inline-flex align-items-center justify-content-center bg-secondary-gradient rounded-circle mb-4"
-                  style="width: 60px; height: 60px;">
+                  style="width: 60px; height: 60px"
+                >
                   <i class="fa fa-comments text-white fs-4"></i>
                 </div>
                 <h5 class="mb-3">Active Community</h5>
-                <p class="m-0">Engage with a vibrant community of learners, exchange knowledge, and receive support to
-                  stay motivated and inspired.</p>
+                <p class="m-0">
+                  Engage with a vibrant community of learners, exchange
+                  knowledge, and receive support to stay motivated and inspired.
+                </p>
               </div>
             </div>
             <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.3s">
               <div class="feature-item bg-light rounded p-4">
                 <div
                   class="d-inline-flex align-items-center justify-content-center bg-primary-gradient rounded-circle mb-4"
-                  style="width: 60px; height: 60px;">
-                  <i><svg width="36px" height="36px" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg" fill="">
+                  style="width: 60px; height: 60px"
+                >
+                  <i
+                    ><svg
+                      width="36px"
+                      height="36px"
+                      viewBox="0 0 60 60"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill=""
+                    >
                       <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
-                      <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                      <g
+                        id="SVGRepo_tracerCarrier"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      ></g>
                       <g id="SVGRepo_iconCarrier">
                         <defs>
                           <style>
@@ -234,45 +310,68 @@
                           <g id="Icons">
                             <g data-name="Data Analysis" id="Data_Analysis">
                               <rect class="cls-1" height="60" width="60"></rect>
-                              <path class="cls-2"
-                                d="M49.1,10.44,47,10V9.68a3,3,0,0,0-3-3H32.78L21.85,4.14A3,3,0,0,0,18.23,6.4l-.06.27H16a3,3,0,0,0-3,3V29.06L8.64,48a3,3,0,0,0,2.26,3.61l2.1.49v.27a3,3,0,0,0,3,3H27.32l.11.05,10.72,2.48a3,3,0,0,0,3.62-2.26l.06-.27H44a3,3,0,0,0,3-3V32.94l4.36-18.89A3,3,0,0,0,49.1,10.44ZM13,50l-1.65-.39a1,1,0,0,1-.76-1.21L13,38ZM21.4,6.09l2.49.58H20.26A1,1,0,0,1,21.4,6.09ZM38.6,55.91l-2.48-.58h3.62A1,1,0,0,1,38.6,55.91ZM45,52.32a1,1,0,0,1-1,1H16a1,1,0,0,1-1-1V9.68a1,1,0,0,1,1-1H44a1,1,0,0,1,1,1ZM49.41,13.6,47,24.05V12l1.65.38A1,1,0,0,1,49.41,13.6Z">
-                              </path>
-                              <path class="cls-2"
-                                d="M40,47.83H21V39.7a1,1,0,0,0-2,0v9.13a1,1,0,0,0,1,1H40a1,1,0,0,0,0-2Z"></path>
-                              <path class="cls-2"
-                                d="M23.33,22.22a4.34,4.34,0,0,0,4.34-4.33A4.29,4.29,0,0,0,27,15.62l1.82-1.81a1,1,0,0,0-1.42-1.42l-4.08,4.08L21.05,14.2a1,1,0,0,0-1.41,0,1,1,0,0,0,0,1.41h0A4.28,4.28,0,0,0,19,17.89,4.33,4.33,0,0,0,23.33,22.22Zm-2.19-5.11,1.49,1.49a1,1,0,0,0,.7.29A1,1,0,0,0,24,18.6l1.49-1.49a2.56,2.56,0,0,1,.14.78,2.34,2.34,0,0,1-4.67,0A2.29,2.29,0,0,1,21.14,17.11Z">
-                              </path>
-                              <path class="cls-2"
-                                d="M23.33,33.18A4.34,4.34,0,1,0,19,28.84,4.35,4.35,0,0,0,23.33,33.18Zm0-6.67A2.34,2.34,0,1,1,21,28.84,2.34,2.34,0,0,1,23.33,26.51Z">
-                              </path>
-                              <path class="cls-2"
-                                d="M40,35.38H36.08a1,1,0,0,0,0,2h1.51L32,43,28.07,39a1,1,0,0,0-1.41,0l-3.58,3.59A1,1,0,1,0,24.49,44l2.88-2.88,3.92,3.93a1,1,0,0,0,1.42,0L39,38.8v1.5a1,1,0,0,0,2,0V36.38A1,1,0,0,0,40,35.38Z">
-                              </path>
-                              <path class="cls-2" d="M31.33,27.84h4.29a1,1,0,0,0,0-2H31.33a1,1,0,0,0,0,2Z"></path>
-                              <path class="cls-2" d="M31.33,31.85h8.23a1,1,0,0,0,0-2H31.33a1,1,0,0,0,0,2Z"></path>
-                              <path class="cls-2" d="M31.33,16.89h4.29a1,1,0,0,0,0-2H31.33a1,1,0,0,0,0,2Z"></path>
-                              <path class="cls-2" d="M31.33,20.89h8.23a1,1,0,0,0,0-2H31.33a1,1,0,0,0,0,2Z"></path>
+                              <path
+                                class="cls-2"
+                                d="M49.1,10.44,47,10V9.68a3,3,0,0,0-3-3H32.78L21.85,4.14A3,3,0,0,0,18.23,6.4l-.06.27H16a3,3,0,0,0-3,3V29.06L8.64,48a3,3,0,0,0,2.26,3.61l2.1.49v.27a3,3,0,0,0,3,3H27.32l.11.05,10.72,2.48a3,3,0,0,0,3.62-2.26l.06-.27H44a3,3,0,0,0,3-3V32.94l4.36-18.89A3,3,0,0,0,49.1,10.44ZM13,50l-1.65-.39a1,1,0,0,1-.76-1.21L13,38ZM21.4,6.09l2.49.58H20.26A1,1,0,0,1,21.4,6.09ZM38.6,55.91l-2.48-.58h3.62A1,1,0,0,1,38.6,55.91ZM45,52.32a1,1,0,0,1-1,1H16a1,1,0,0,1-1-1V9.68a1,1,0,0,1,1-1H44a1,1,0,0,1,1,1ZM49.41,13.6,47,24.05V12l1.65.38A1,1,0,0,1,49.41,13.6Z"
+                              ></path>
+                              <path
+                                class="cls-2"
+                                d="M40,47.83H21V39.7a1,1,0,0,0-2,0v9.13a1,1,0,0,0,1,1H40a1,1,0,0,0,0-2Z"
+                              ></path>
+                              <path
+                                class="cls-2"
+                                d="M23.33,22.22a4.34,4.34,0,0,0,4.34-4.33A4.29,4.29,0,0,0,27,15.62l1.82-1.81a1,1,0,0,0-1.42-1.42l-4.08,4.08L21.05,14.2a1,1,0,0,0-1.41,0,1,1,0,0,0,0,1.41h0A4.28,4.28,0,0,0,19,17.89,4.33,4.33,0,0,0,23.33,22.22Zm-2.19-5.11,1.49,1.49a1,1,0,0,0,.7.29A1,1,0,0,0,24,18.6l1.49-1.49a2.56,2.56,0,0,1,.14.78,2.34,2.34,0,0,1-4.67,0A2.29,2.29,0,0,1,21.14,17.11Z"
+                              ></path>
+                              <path
+                                class="cls-2"
+                                d="M23.33,33.18A4.34,4.34,0,1,0,19,28.84,4.35,4.35,0,0,0,23.33,33.18Zm0-6.67A2.34,2.34,0,1,1,21,28.84,2.34,2.34,0,0,1,23.33,26.51Z"
+                              ></path>
+                              <path
+                                class="cls-2"
+                                d="M40,35.38H36.08a1,1,0,0,0,0,2h1.51L32,43,28.07,39a1,1,0,0,0-1.41,0l-3.58,3.59A1,1,0,1,0,24.49,44l2.88-2.88,3.92,3.93a1,1,0,0,0,1.42,0L39,38.8v1.5a1,1,0,0,0,2,0V36.38A1,1,0,0,0,40,35.38Z"
+                              ></path>
+                              <path
+                                class="cls-2"
+                                d="M31.33,27.84h4.29a1,1,0,0,0,0-2H31.33a1,1,0,0,0,0,2Z"
+                              ></path>
+                              <path
+                                class="cls-2"
+                                d="M31.33,31.85h8.23a1,1,0,0,0,0-2H31.33a1,1,0,0,0,0,2Z"
+                              ></path>
+                              <path
+                                class="cls-2"
+                                d="M31.33,16.89h4.29a1,1,0,0,0,0-2H31.33a1,1,0,0,0,0,2Z"
+                              ></path>
+                              <path
+                                class="cls-2"
+                                d="M31.33,20.89h8.23a1,1,0,0,0,0-2H31.33a1,1,0,0,0,0,2Z"
+                              ></path>
                             </g>
                           </g>
                         </g>
-                      </g>
-                    </svg></i>
+                      </g></svg
+                  ></i>
                 </div>
                 <h5 class="mb-3">Study Analytics</h5>
-                <p class="m-0">Gain insights into your study habits with detailed statistics and trends to improve your
-                  productivity.</p>
+                <p class="m-0">
+                  Gain insights into your study habits with detailed statistics
+                  and trends to improve your productivity.
+                </p>
               </div>
             </div>
             <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.5s">
               <div class="feature-item bg-light rounded p-4">
                 <div
                   class="d-inline-flex align-items-center justify-content-center bg-secondary-gradient rounded-circle mb-4"
-                  style="width: 60px; height: 60px;">
+                  style="width: 60px; height: 60px"
+                >
                   <i class="fa fa-trophy text-white fs-4"></i>
                 </div>
                 <h5 class="mb-3">Competitive Leaderboard</h5>
-                <p class="m-0">Challenge yourself and others by competing on the leaderboard, fostering a sense of
-                  achievement and accountability.</p>
+                <p class="m-0">
+                  Challenge yourself and others by competing on the leaderboard,
+                  fostering a sense of achievement and accountability.
+                </p>
               </div>
             </div>
           </div>
@@ -280,30 +379,56 @@
       </div>
       <!-- Features End -->
 
-
       <!-- Screenshot Start -->
       <div class="container-xxl py-5">
         <div class="container py-5 px-lg-5">
           <div class="row g-5 align-items-center">
             <div class="col-lg-8 wow fadeInUp" data-wow-delay="0.1s">
               <h5 class="text-primary-gradient fw-medium">Screenshot</h5>
-              <h1 class="mb-4">User Friendly interface And Very Easy To Use FLOZABLE App</h1>
-              <p class="mb-4">Flozable strives to continuously improve the user experience and welcomes feedback to
-                address any concerns or limitations users may encounter.</p>
-              <p><i class="fa fa-check text-primary-gradient me-3"></i>Enhanced Focus: Stay on track and boost
-                productivity with Flozable's distraction-free environment.</p>
-              <p><i class="fa fa-check text-primary-gradient me-3"></i>Personalized Recommendations: Get customized
-                study
-                suggestions to maximize your learning potential.</p>
-              <p class="mb-4"><i class="fa fa-check text-primary-gradient me-3"></i>Active Community: Connect with
-                like-minded individuals, collaborate, and stay motivated together.</p>
-              <a href="/dashboard" class="btn btn-primary-gradient py-sm-3 px-4 px-sm-5 rounded-pill mt-3">Try it!</a>
+              <h1 class="mb-4">
+                User Friendly interface And Very Easy To Use FLOZABLE App
+              </h1>
+              <p class="mb-4">
+                Flozable strives to continuously improve the user experience and
+                welcomes feedback to address any concerns or limitations users
+                may encounter.
+              </p>
+              <p>
+                <i class="fa fa-check text-primary-gradient me-3"></i>Enhanced
+                Focus: Stay on track and boost productivity with Flozable's
+                distraction-free environment.
+              </p>
+              <p>
+                <i class="fa fa-check text-primary-gradient me-3"></i
+                >Personalized Recommendations: Get customized study suggestions
+                to maximize your learning potential.
+              </p>
+              <p class="mb-4">
+                <i class="fa fa-check text-primary-gradient me-3"></i>Active
+                Community: Connect with like-minded individuals, collaborate,
+                and stay motivated together.
+              </p>
+              <a
+                href="/dashboard"
+                class="btn btn-primary-gradient py-sm-3 px-4 px-sm-5 rounded-pill mt-3"
+                >Try it!</a
+              >
             </div>
-            <div class="col-lg-4 d-flex justify-content-center justify-content-lg-end wow fadeInUp"
-              data-wow-delay="0.3s">
+            <div
+              class="col-lg-4 d-flex justify-content-center justify-content-lg-end wow fadeInUp"
+              data-wow-delay="0.3s"
+            >
               <div class="owl-carousel screenshot-carousel">
-                <img class="img-fluid" src="img/mobile/screenshot-1.png" alt="">
-                <img class="img-fluid" src="img/mobile/screenshot-2.png" alt="">
+                <img
+                  class="img-fluid"
+                  src="img/mobile/screenshot-1.png"
+                  alt=""
+                />
+                <img
+                  class="img-fluid"
+                  src="img/mobile/screenshot-2.png"
+                  alt=""
+                />
               </div>
             </div>
           </div>
@@ -311,167 +436,267 @@
       </div>
       <!-- Screenshot End -->
 
-
       <!-- Process Start -->
       <div class="container-xxl py-5 steps">
         <div class="container py-5 px-lg-5">
           <div class="text-center pb-4 wow fadeInUp" data-wow-delay="0.1s">
             <h5 class="text-primary-gradient fw-medium">How It Works</h5>
             <h1 class="mb-5">3 Easy Steps</h1>
-            <ul class="nav nav-pills d-inline-flex justify-content-center bg-primary-gradient rounded-pill mb-5">
+            <ul
+              class="nav nav-pills d-inline-flex justify-content-center bg-primary-gradient rounded-pill mb-5"
+            >
               <li class="nav-item">
-                <button class="nav-link active btn-1" data-bs-toggle="pill" href="#tab-1">PC</button>
+                <button
+                  class="nav-link active btn-1"
+                  data-bs-toggle="pill"
+                  href="#tab-1"
+                >
+                  PC
+                </button>
               </li>
               <li class="nav-item">
-                <button class="nav-link btn-2" data-bs-toggle="pill" href="#tab-2">Mobile</button>
+                <button
+                  class="nav-link btn-2"
+                  data-bs-toggle="pill"
+                  href="#tab-2"
+                >
+                  Mobile
+                </button>
               </li>
             </ul>
             <div class="tab-content text-start" id="deviceTab">
               <div id="tab-1" class="tab-pane fade show p-0 active">
                 <div class="row gy-5 gx-4 justify-content-center">
-                  <div class="col-lg-4 col-sm-6 text-center pt-4 wow fadeInUp" data-wow-delay="0.1s">
-                    <div class="position-relative bg-light rounded pt-5 pb-4 px-4">
+                  <div
+                    class="col-lg-4 col-sm-6 text-center pt-4 wow fadeInUp"
+                    data-wow-delay="0.1s"
+                  >
+                    <div
+                      class="position-relative bg-light rounded pt-5 pb-4 px-4"
+                    >
                       <div
                         class="d-inline-flex align-items-center justify-content-center bg-primary-gradient rounded-circle position-absolute top-0 start-50 translate-middle shadow"
-                        style="width: 100px; height: 100px;">
+                        style="width: 100px; height: 100px"
+                      >
                         <i class="fa fa-address-card fa-3x text-white"></i>
                       </div>
                       <h5 class="mt-4 mb-3">Setup Your Profile</h5>
-                      <p class="mb-0">Tempor erat elitr rebum clita dolor diam ipsum sit diam amet diam eos erat ipsum
-                        et
-                        lorem
-                        et sit sed stet</p>
+                      <p class="mb-0">
+                        Tempor erat elitr rebum clita dolor diam ipsum sit diam
+                        amet diam eos erat ipsum et lorem et sit sed stet
+                      </p>
                     </div>
                   </div>
-                  <div class="col-lg-4 col-sm-6 text-center pt-4 wow fadeInUp" data-wow-delay="0.3s">
-                    <div class="position-relative bg-light rounded pt-5 pb-4 px-4">
+                  <div
+                    class="col-lg-4 col-sm-6 text-center pt-4 wow fadeInUp"
+                    data-wow-delay="0.3s"
+                  >
+                    <div
+                      class="position-relative bg-light rounded pt-5 pb-4 px-4"
+                    >
                       <div
                         class="d-inline-flex align-items-center justify-content-center bg-secondary-gradient rounded-circle position-absolute top-0 start-50 translate-middle shadow"
-                        style="width: 100px; height: 100px;">
-                        <i><svg width="44px" height="44px" viewBox="0 0 48 48" fill="none"
-                            xmlns="http://www.w3.org/2000/svg" stroke="#ffffff">
+                        style="width: 100px; height: 100px"
+                      >
+                        <i
+                          ><svg
+                            width="44px"
+                            height="44px"
+                            viewBox="0 0 48 48"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
+                            stroke="#ffffff"
+                          >
                             <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
-                            <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                            <g
+                              id="SVGRepo_tracerCarrier"
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                            ></g>
                             <g id="SVGRepo_iconCarrier">
                               <path
                                 d="M24 15C28.9706 15 33 19.0294 33 24C33 28.9706 28.9706 33 24 33C19.0294 33 15 28.9706 15 24C15 19.0294 19.0294 15 24 15ZM24 15H41.8654M17 42.7408L29.6439 31M6 15.2717L16.8751 29.552M24 44C35.0457 44 44 35.0457 44 24C44 12.9543 35.0457 4 24 4C12.9543 4 4 12.9543 4 24C4 35.0457 12.9543 44 24 44Z"
-                                stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"></path>
-                            </g>
-                          </svg></i>
+                                stroke="#fff"
+                                stroke-width="4"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                              ></path>
+                            </g></svg
+                        ></i>
                       </div>
                       <h5 class="mt-4 mb-3">Install Chrome Extension</h5>
-                      <p class="mb-0">Tempor erat elitr rebum clita dolor diam ipsum sit diam amet diam eos erat ipsum
-                        et
-                        lorem
-                        et sit sed stet</p>
+                      <p class="mb-0">
+                        Tempor erat elitr rebum clita dolor diam ipsum sit diam
+                        amet diam eos erat ipsum et lorem et sit sed stet
+                      </p>
                     </div>
                   </div>
-                  <div class="col-lg-4 col-sm-6 text-center pt-4 wow fadeInUp" data-wow-delay="0.5s">
-                    <div class="position-relative bg-light rounded pt-5 pb-4 px-4">
+                  <div
+                    class="col-lg-4 col-sm-6 text-center pt-4 wow fadeInUp"
+                    data-wow-delay="0.5s"
+                  >
+                    <div
+                      class="position-relative bg-light rounded pt-5 pb-4 px-4"
+                    >
                       <div
                         class="d-inline-flex align-items-center justify-content-center bg-primary-gradient rounded-circle position-absolute top-0 start-50 translate-middle shadow"
-                        style="width: 100px; height: 100px;">
-                        <i><svg fill="#ffffff" width="44px" height="44px" viewBox="-3 0 32 32" version="1.1"
-                            xmlns="http://www.w3.org/2000/svg" stroke="#ffffff">
+                        style="width: 100px; height: 100px"
+                      >
+                        <i
+                          ><svg
+                            fill="#ffffff"
+                            width="44px"
+                            height="44px"
+                            viewBox="-3 0 32 32"
+                            version="1.1"
+                            xmlns="http://www.w3.org/2000/svg"
+                            stroke="#ffffff"
+                          >
                             <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
-                            <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                            <g
+                              id="SVGRepo_tracerCarrier"
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                            ></g>
                             <g id="SVGRepo_iconCarrier">
                               <title>group</title>
                               <path
-                                d="M20.906 20.75c1.313 0.719 2.063 2 1.969 3.281-0.063 0.781-0.094 0.813-1.094 0.938-0.625 0.094-4.563 0.125-8.625 0.125-4.594 0-9.406-0.094-9.75-0.188-1.375-0.344-0.625-2.844 1.188-4.031 1.406-0.906 4.281-2.281 5.063-2.438 1.063-0.219 1.188-0.875 0-3-0.281-0.469-0.594-1.906-0.625-3.406-0.031-2.438 0.438-4.094 2.563-4.906 0.438-0.156 0.875-0.219 1.281-0.219 1.406 0 2.719 0.781 3.25 1.938 0.781 1.531 0.469 5.625-0.344 7.094-0.938 1.656-0.844 2.188 0.188 2.469 0.688 0.188 2.813 1.188 4.938 2.344zM3.906 19.813c-0.5 0.344-0.969 0.781-1.344 1.219-1.188 0-2.094-0.031-2.188-0.063-0.781-0.188-0.344-1.625 0.688-2.25 0.781-0.5 2.375-1.281 2.813-1.375 0.563-0.125 0.688-0.469 0-1.656-0.156-0.25-0.344-1.063-0.344-1.906-0.031-1.375 0.25-2.313 1.438-2.719 1-0.375 2.125 0.094 2.531 0.938 0.406 0.875 0.188 3.125-0.25 3.938-0.5 0.969-0.406 1.219 0.156 1.375 0.125 0.031 0.375 0.156 0.719 0.313-1.375 0.563-3.25 1.594-4.219 2.188zM24.469 18.625c0.75 0.406 1.156 1.094 1.094 1.813-0.031 0.438-0.031 0.469-0.594 0.531-0.156 0.031-0.875 0.063-1.813 0.063-0.406-0.531-0.969-1.031-1.656-1.375-1.281-0.75-2.844-1.563-4-2.063 0.313-0.125 0.594-0.219 0.719-0.25 0.594-0.125 0.688-0.469 0-1.656-0.125-0.25-0.344-1.063-0.344-1.906-0.031-1.375 0.219-2.313 1.406-2.719 1.031-0.375 2.156 0.094 2.531 0.938 0.406 0.875 0.25 3.125-0.188 3.938-0.5 0.969-0.438 1.219 0.094 1.375 0.375 0.125 1.563 0.688 2.75 1.313z">
-                              </path>
-                            </g>
-                          </svg></i>
+                                d="M20.906 20.75c1.313 0.719 2.063 2 1.969 3.281-0.063 0.781-0.094 0.813-1.094 0.938-0.625 0.094-4.563 0.125-8.625 0.125-4.594 0-9.406-0.094-9.75-0.188-1.375-0.344-0.625-2.844 1.188-4.031 1.406-0.906 4.281-2.281 5.063-2.438 1.063-0.219 1.188-0.875 0-3-0.281-0.469-0.594-1.906-0.625-3.406-0.031-2.438 0.438-4.094 2.563-4.906 0.438-0.156 0.875-0.219 1.281-0.219 1.406 0 2.719 0.781 3.25 1.938 0.781 1.531 0.469 5.625-0.344 7.094-0.938 1.656-0.844 2.188 0.188 2.469 0.688 0.188 2.813 1.188 4.938 2.344zM3.906 19.813c-0.5 0.344-0.969 0.781-1.344 1.219-1.188 0-2.094-0.031-2.188-0.063-0.781-0.188-0.344-1.625 0.688-2.25 0.781-0.5 2.375-1.281 2.813-1.375 0.563-0.125 0.688-0.469 0-1.656-0.156-0.25-0.344-1.063-0.344-1.906-0.031-1.375 0.25-2.313 1.438-2.719 1-0.375 2.125 0.094 2.531 0.938 0.406 0.875 0.188 3.125-0.25 3.938-0.5 0.969-0.406 1.219 0.156 1.375 0.125 0.031 0.375 0.156 0.719 0.313-1.375 0.563-3.25 1.594-4.219 2.188zM24.469 18.625c0.75 0.406 1.156 1.094 1.094 1.813-0.031 0.438-0.031 0.469-0.594 0.531-0.156 0.031-0.875 0.063-1.813 0.063-0.406-0.531-0.969-1.031-1.656-1.375-1.281-0.75-2.844-1.563-4-2.063 0.313-0.125 0.594-0.219 0.719-0.25 0.594-0.125 0.688-0.469 0-1.656-0.125-0.25-0.344-1.063-0.344-1.906-0.031-1.375 0.219-2.313 1.406-2.719 1.031-0.375 2.156 0.094 2.531 0.938 0.406 0.875 0.25 3.125-0.188 3.938-0.5 0.969-0.438 1.219 0.094 1.375 0.375 0.125 1.563 0.688 2.75 1.313z"
+                              ></path>
+                            </g></svg
+                        ></i>
                       </div>
                       <h5 class="mt-4 mb-3">Join/Create Groups</h5>
-                      <p class="mb-0">Tempor erat elitr rebum clita dolor diam ipsum sit diam amet diam eos erat ipsum
-                        et
-                        lorem
-                        et sit sed stet</p>
+                      <p class="mb-0">
+                        Tempor erat elitr rebum clita dolor diam ipsum sit diam
+                        amet diam eos erat ipsum et lorem et sit sed stet
+                      </p>
                     </div>
                   </div>
-                  <div class="col-lg-4 col-sm-6 text-center pt-4 wow fadeInUp" data-wow-delay="0.5s">
-                    <div class="position-relative bg-light rounded pt-5 pb-4 px-4">
+                  <div
+                    class="col-lg-4 col-sm-6 text-center pt-4 wow fadeInUp"
+                    data-wow-delay="0.5s"
+                  >
+                    <div
+                      class="position-relative bg-light rounded pt-5 pb-4 px-4"
+                    >
                       <div
                         class="d-inline-flex align-items-center justify-content-center bg-primary-gradient rounded-circle position-absolute top-0 start-50 translate-middle shadow"
-                        style="width: 100px; height: 100px;">
+                        style="width: 100px; height: 100px"
+                      >
                         <i class="fa fa-check fa-3x text-white"></i>
                       </div>
                       <h5 class="mt-4 mb-3">Enjoy The Features</h5>
-                      <p class="mb-0">Tempor erat elitr rebum clita dolor diam ipsum sit diam amet diam eos erat ipsum
-                        et
-                        lorem
-                        et sit sed stet</p>
+                      <p class="mb-0">
+                        Tempor erat elitr rebum clita dolor diam ipsum sit diam
+                        amet diam eos erat ipsum et lorem et sit sed stet
+                      </p>
                     </div>
                   </div>
                 </div>
               </div>
               <div id="tab-2" class="tab-pane fade show p-0">
                 <div class="row gy-5 gx-4 justify-content-center">
-                  <div class="col-lg-4 col-sm-6 text-center pt-4" data-wow-delay="0.1s">
-                    <div class="position-relative bg-light rounded pt-5 pb-4 px-4">
+                  <div
+                    class="col-lg-4 col-sm-6 text-center pt-4"
+                    data-wow-delay="0.1s"
+                  >
+                    <div
+                      class="position-relative bg-light rounded pt-5 pb-4 px-4"
+                    >
                       <div
                         class="d-inline-flex align-items-center justify-content-center bg-primary-gradient rounded-circle position-absolute top-0 start-50 translate-middle shadow"
-                        style="width: 100px; height: 100px;">
+                        style="width: 100px; height: 100px"
+                      >
                         <i class="fa fa-cog fa-3x text-white"></i>
                       </div>
                       <h5 class="mt-4 mb-3">Install the App Mobile</h5>
-                      <p class="mb-0">Tempor erat elitr rebum clita dolor diam ipsum sit diam amet diam eos erat ipsum
-                        et
-                        lorem
-                        et sit sed stet</p>
+                      <p class="mb-0">
+                        Tempor erat elitr rebum clita dolor diam ipsum sit diam
+                        amet diam eos erat ipsum et lorem et sit sed stet
+                      </p>
                     </div>
                   </div>
-                  <div class="col-lg-4 col-sm-6 text-center pt-4" data-wow-delay="0.3s">
-                    <div class="position-relative bg-light rounded pt-5 pb-4 px-4">
+                  <div
+                    class="col-lg-4 col-sm-6 text-center pt-4"
+                    data-wow-delay="0.3s"
+                  >
+                    <div
+                      class="position-relative bg-light rounded pt-5 pb-4 px-4"
+                    >
                       <div
                         class="d-inline-flex align-items-center justify-content-center bg-secondary-gradient rounded-circle position-absolute top-0 start-50 translate-middle shadow"
-                        style="width: 100px; height: 100px;">
+                        style="width: 100px; height: 100px"
+                      >
                         <i class="fa fa-address-card fa-3x text-white"></i>
                       </div>
                       <h5 class="mt-4 mb-3">Setup Your Profile</h5>
-                      <p class="mb-0">Tempor erat elitr rebum clita dolor diam ipsum sit diam amet diam eos erat ipsum
-                        et
-                        lorem
-                        et sit sed stet</p>
+                      <p class="mb-0">
+                        Tempor erat elitr rebum clita dolor diam ipsum sit diam
+                        amet diam eos erat ipsum et lorem et sit sed stet
+                      </p>
                     </div>
                   </div>
-                  <div class="col-lg-4 col-sm-6 text-center pt-4" data-wow-delay="0.5s">
-                    <div class="position-relative bg-light rounded pt-5 pb-4 px-4">
+                  <div
+                    class="col-lg-4 col-sm-6 text-center pt-4"
+                    data-wow-delay="0.5s"
+                  >
+                    <div
+                      class="position-relative bg-light rounded pt-5 pb-4 px-4"
+                    >
                       <div
                         class="d-inline-flex align-items-center justify-content-center bg-primary-gradient rounded-circle position-absolute top-0 start-50 translate-middle shadow"
-                        style="width: 100px; height: 100px;">
-                        <i><svg fill="#ffffff" width="44px" height="44px" viewBox="-3 0 32 32" version="1.1"
-                            xmlns="http://www.w3.org/2000/svg" stroke="#ffffff">
+                        style="width: 100px; height: 100px"
+                      >
+                        <i
+                          ><svg
+                            fill="#ffffff"
+                            width="44px"
+                            height="44px"
+                            viewBox="-3 0 32 32"
+                            version="1.1"
+                            xmlns="http://www.w3.org/2000/svg"
+                            stroke="#ffffff"
+                          >
                             <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
-                            <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                            <g
+                              id="SVGRepo_tracerCarrier"
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                            ></g>
                             <g id="SVGRepo_iconCarrier">
                               <title>group</title>
                               <path
-                                d="M20.906 20.75c1.313 0.719 2.063 2 1.969 3.281-0.063 0.781-0.094 0.813-1.094 0.938-0.625 0.094-4.563 0.125-8.625 0.125-4.594 0-9.406-0.094-9.75-0.188-1.375-0.344-0.625-2.844 1.188-4.031 1.406-0.906 4.281-2.281 5.063-2.438 1.063-0.219 1.188-0.875 0-3-0.281-0.469-0.594-1.906-0.625-3.406-0.031-2.438 0.438-4.094 2.563-4.906 0.438-0.156 0.875-0.219 1.281-0.219 1.406 0 2.719 0.781 3.25 1.938 0.781 1.531 0.469 5.625-0.344 7.094-0.938 1.656-0.844 2.188 0.188 2.469 0.688 0.188 2.813 1.188 4.938 2.344zM3.906 19.813c-0.5 0.344-0.969 0.781-1.344 1.219-1.188 0-2.094-0.031-2.188-0.063-0.781-0.188-0.344-1.625 0.688-2.25 0.781-0.5 2.375-1.281 2.813-1.375 0.563-0.125 0.688-0.469 0-1.656-0.156-0.25-0.344-1.063-0.344-1.906-0.031-1.375 0.25-2.313 1.438-2.719 1-0.375 2.125 0.094 2.531 0.938 0.406 0.875 0.188 3.125-0.25 3.938-0.5 0.969-0.406 1.219 0.156 1.375 0.125 0.031 0.375 0.156 0.719 0.313-1.375 0.563-3.25 1.594-4.219 2.188zM24.469 18.625c0.75 0.406 1.156 1.094 1.094 1.813-0.031 0.438-0.031 0.469-0.594 0.531-0.156 0.031-0.875 0.063-1.813 0.063-0.406-0.531-0.969-1.031-1.656-1.375-1.281-0.75-2.844-1.563-4-2.063 0.313-0.125 0.594-0.219 0.719-0.25 0.594-0.125 0.688-0.469 0-1.656-0.125-0.25-0.344-1.063-0.344-1.906-0.031-1.375 0.219-2.313 1.406-2.719 1.031-0.375 2.156 0.094 2.531 0.938 0.406 0.875 0.25 3.125-0.188 3.938-0.5 0.969-0.438 1.219 0.094 1.375 0.375 0.125 1.563 0.688 2.75 1.313z">
-                              </path>
-                            </g>
-                          </svg></i>
+                                d="M20.906 20.75c1.313 0.719 2.063 2 1.969 3.281-0.063 0.781-0.094 0.813-1.094 0.938-0.625 0.094-4.563 0.125-8.625 0.125-4.594 0-9.406-0.094-9.75-0.188-1.375-0.344-0.625-2.844 1.188-4.031 1.406-0.906 4.281-2.281 5.063-2.438 1.063-0.219 1.188-0.875 0-3-0.281-0.469-0.594-1.906-0.625-3.406-0.031-2.438 0.438-4.094 2.563-4.906 0.438-0.156 0.875-0.219 1.281-0.219 1.406 0 2.719 0.781 3.25 1.938 0.781 1.531 0.469 5.625-0.344 7.094-0.938 1.656-0.844 2.188 0.188 2.469 0.688 0.188 2.813 1.188 4.938 2.344zM3.906 19.813c-0.5 0.344-0.969 0.781-1.344 1.219-1.188 0-2.094-0.031-2.188-0.063-0.781-0.188-0.344-1.625 0.688-2.25 0.781-0.5 2.375-1.281 2.813-1.375 0.563-0.125 0.688-0.469 0-1.656-0.156-0.25-0.344-1.063-0.344-1.906-0.031-1.375 0.25-2.313 1.438-2.719 1-0.375 2.125 0.094 2.531 0.938 0.406 0.875 0.188 3.125-0.25 3.938-0.5 0.969-0.406 1.219 0.156 1.375 0.125 0.031 0.375 0.156 0.719 0.313-1.375 0.563-3.25 1.594-4.219 2.188zM24.469 18.625c0.75 0.406 1.156 1.094 1.094 1.813-0.031 0.438-0.031 0.469-0.594 0.531-0.156 0.031-0.875 0.063-1.813 0.063-0.406-0.531-0.969-1.031-1.656-1.375-1.281-0.75-2.844-1.563-4-2.063 0.313-0.125 0.594-0.219 0.719-0.25 0.594-0.125 0.688-0.469 0-1.656-0.125-0.25-0.344-1.063-0.344-1.906-0.031-1.375 0.219-2.313 1.406-2.719 1.031-0.375 2.156 0.094 2.531 0.938 0.406 0.875 0.25 3.125-0.188 3.938-0.5 0.969-0.438 1.219 0.094 1.375 0.375 0.125 1.563 0.688 2.75 1.313z"
+                              ></path>
+                            </g></svg
+                        ></i>
                       </div>
                       <h5 class="mt-4 mb-3">Join/Create Groups</h5>
-                      <p class="mb-0">Tempor erat elitr rebum clita dolor diam ipsum sit diam amet diam eos erat ipsum
-                        et
-                        lorem
-                        et sit sed stet</p>
+                      <p class="mb-0">
+                        Tempor erat elitr rebum clita dolor diam ipsum sit diam
+                        amet diam eos erat ipsum et lorem et sit sed stet
+                      </p>
                     </div>
                   </div>
-                  <div class="col-lg-4 col-sm-6 text-center pt-4" data-wow-delay="0.5s">
-                    <div class="position-relative bg-light rounded pt-5 pb-4 px-4">
+                  <div
+                    class="col-lg-4 col-sm-6 text-center pt-4"
+                    data-wow-delay="0.5s"
+                  >
+                    <div
+                      class="position-relative bg-light rounded pt-5 pb-4 px-4"
+                    >
                       <div
                         class="d-inline-flex align-items-center justify-content-center bg-primary-gradient rounded-circle position-absolute top-0 start-50 translate-middle shadow"
-                        style="width: 100px; height: 100px;">
+                        style="width: 100px; height: 100px"
+                      >
                         <i class="fa fa-check fa-3x text-white"></i>
                       </div>
                       <h5 class="mt-4 mb-3">Enjoy The Features</h5>
-                      <p class="mb-0">Tempor erat elitr rebum clita dolor diam ipsum sit diam amet diam eos erat ipsum
-                        et
-                        lorem
-                        et sit sed stet</p>
+                      <p class="mb-0">
+                        Tempor erat elitr rebum clita dolor diam ipsum sit diam
+                        amet diam eos erat ipsum et lorem et sit sed stet
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -481,7 +706,6 @@
         </div>
       </div>
       <!-- Process Start -->
-
 
       <!-- Download Start -->
       <!-- <div class="container-xxl py-5">
@@ -522,7 +746,6 @@
     </div> -->
       <!-- Download End -->
 
-
       <!-- Pricing Start -->
       <div class="container-xxl py-5" id="pricing">
         <div class="container py-5 px-lg-5">
@@ -530,13 +753,30 @@
             <h5 class="text-primary-gradient fw-medium">Pricing Plan</h5>
             <h1 class="mb-5">Choose Your Plan</h1>
           </div>
-          <div class="tab-class text-center pricing wow fadeInUp" data-wow-delay="0.1s">
-            <ul class="nav nav-pills d-inline-flex justify-content-center bg-primary-gradient rounded-pill mb-5">
+          <div
+            class="tab-class text-center pricing wow fadeInUp"
+            data-wow-delay="0.1s"
+          >
+            <ul
+              class="nav nav-pills d-inline-flex justify-content-center bg-primary-gradient rounded-pill mb-5"
+            >
               <li class="nav-item">
-                <button class="nav-link active btn-1" data-bs-toggle="pill" href="#tab-1">Monthly</button>
+                <button
+                  class="nav-link active btn-1"
+                  data-bs-toggle="pill"
+                  href="#tab-1"
+                >
+                  Monthly
+                </button>
               </li>
               <li class="nav-item">
-                <button class="nav-link btn-2" data-bs-toggle="pill" href="#tab-2">Yearly</button>
+                <button
+                  class="nav-link btn-2"
+                  data-bs-toggle="pill"
+                  href="#tab-2"
+                >
+                  Yearly
+                </button>
               </li>
             </ul>
             <div class="tab-content text-start">
@@ -550,15 +790,23 @@
                       </div>
                       <div class="p-4 pt-0">
                         <h1 class="mb-3">
-                          <small class="align-top" style="font-size: 22px; line-height: 45px;">FREE</small><small
-                            class="align-bottom" style="font-size: 16px; line-height: 40px;"></small>
+                          <small
+                            class="align-top"
+                            style="font-size: 22px; line-height: 45px"
+                            >FREE</small
+                          ><small
+                            class="align-bottom"
+                            style="font-size: 16px; line-height: 40px"
+                          ></small>
                         </h1>
                         <div class="d-flex justify-content-between mb-3">
                           <span>Study with friends(maximum group of 10)</span>
                           <i class="fa fa-check text-primary-gradient pt-1"></i>
                         </div>
                         <div class="d-flex justify-content-between mb-3">
-                          <span>Change study session background to YouTube</span>
+                          <span
+                            >Change study session background to YouTube</span
+                          >
                           <i class="fa fa-check text-primary-gradient pt-1"></i>
                         </div>
                         <div class="d-flex justify-content-between mb-3">
@@ -569,8 +817,11 @@
                           <span>Default study icon</span>
                           <i class="fa fa-check text-primary-gradient pt-1"></i>
                         </div>
-                        <a href="/dashboard" class="btn btn-primary-gradient rounded-pill py-2 px-4 mt-4">Get
-                          Started</a>
+                        <a
+                          href="/dashboard"
+                          class="btn btn-primary-gradient rounded-pill py-2 px-4 mt-4"
+                          >Get Started</a
+                        >
                       </div>
                     </div>
                   </div>
@@ -582,8 +833,15 @@
                       </div>
                       <div class="p-4 pt-0">
                         <h1 class="mb-3">
-                          <small class="align-top" style="font-size: 22px; line-height: 45px;">$</small>2.99<small
-                            class="align-bottom" style="font-size: 16px; line-height: 40px;">/ Month</small>
+                          <small
+                            class="align-top"
+                            style="font-size: 22px; line-height: 45px"
+                            >$</small
+                          >2.99<small
+                            class="align-bottom"
+                            style="font-size: 16px; line-height: 40px"
+                            >/ Month</small
+                          >
                         </h1>
                         <div class="d-flex justify-content-between mb-3">
                           <span>All features from the Basic plan</span>
@@ -601,8 +859,11 @@
                           <span>No ADS</span>
                           <i class="fa fa-check text-primary-gradient pt-1"></i>
                         </div>
-                        <a href="/dashboard" class="btn btn-secondary-gradient rounded-pill py-2 px-4 mt-4">Get
-                          Started</a>
+                        <a
+                          href="/dashboard"
+                          class="btn btn-secondary-gradient rounded-pill py-2 px-4 mt-4"
+                          >Get Started</a
+                        >
                       </div>
                     </div>
                   </div>
@@ -614,8 +875,15 @@
                       </div>
                       <div class="p-4 pt-0">
                         <h1 class="mb-3">
-                          <small class="align-top" style="font-size: 22px; line-height: 45px;">$</small>3.99<small
-                            class="align-bottom" style="font-size: 16px; line-height: 40px;">/ Month</small>
+                          <small
+                            class="align-top"
+                            style="font-size: 22px; line-height: 45px"
+                            >$</small
+                          >3.99<small
+                            class="align-bottom"
+                            style="font-size: 16px; line-height: 40px"
+                            >/ Month</small
+                          >
                         </h1>
                         <div class="d-flex justify-content-between mb-3">
                           <span>All features from the Advanced Plan</span>
@@ -626,11 +894,16 @@
                           <i class="fa fa-check text-primary-gradient pt-1"></i>
                         </div>
                         <div class="d-flex justify-content-between mb-3">
-                          <span>Advanced study insights and recommendations</span>
+                          <span
+                            >Advanced study insights and recommendations</span
+                          >
                           <i class="fa fa-check text-primary-gradient pt-1"></i>
                         </div>
-                        <a href="/dashboard" class="btn btn-primary-gradient rounded-pill py-2 px-4 mt-4">Get
-                          Started</a>
+                        <a
+                          href="/dashboard"
+                          class="btn btn-primary-gradient rounded-pill py-2 px-4 mt-4"
+                          >Get Started</a
+                        >
                       </div>
                     </div>
                   </div>
@@ -646,15 +919,23 @@
                       </div>
                       <div class="p-4 pt-0">
                         <h1 class="mb-3">
-                          <small class="align-top" style="font-size: 22px; line-height: 45px;">FREE</small><small
-                            class="align-bottom" style="font-size: 16px; line-height: 40px;"></small>
+                          <small
+                            class="align-top"
+                            style="font-size: 22px; line-height: 45px"
+                            >FREE</small
+                          ><small
+                            class="align-bottom"
+                            style="font-size: 16px; line-height: 40px"
+                          ></small>
                         </h1>
                         <div class="d-flex justify-content-between mb-3">
                           <span>Study with friends(maximum group of 10)</span>
                           <i class="fa fa-check text-primary-gradient pt-1"></i>
                         </div>
                         <div class="d-flex justify-content-between mb-3">
-                          <span>Change study session background to YouTube</span>
+                          <span
+                            >Change study session background to YouTube</span
+                          >
                           <i class="fa fa-check text-primary-gradient pt-1"></i>
                         </div>
                         <div class="d-flex justify-content-between mb-3">
@@ -665,8 +946,11 @@
                           <span>Default study icon</span>
                           <i class="fa fa-check text-primary-gradient pt-1"></i>
                         </div>
-                        <a href="/dashboard" class="btn btn-primary-gradient rounded-pill py-2 px-4 mt-4">Get
-                          Started</a>
+                        <a
+                          href="/dashboard"
+                          class="btn btn-primary-gradient rounded-pill py-2 px-4 mt-4"
+                          >Get Started</a
+                        >
                       </div>
                     </div>
                   </div>
@@ -678,8 +962,15 @@
                       </div>
                       <div class="p-4 pt-0">
                         <h1 class="mb-3">
-                          <small class="align-top" style="font-size: 22px; line-height: 45px;">$</small>30.99<small
-                            class="align-bottom" style="font-size: 16px; line-height: 40px;">/ Year</small>
+                          <small
+                            class="align-top"
+                            style="font-size: 22px; line-height: 45px"
+                            >$</small
+                          >30.99<small
+                            class="align-bottom"
+                            style="font-size: 16px; line-height: 40px"
+                            >/ Year</small
+                          >
                         </h1>
                         <div class="d-flex justify-content-between mb-3">
                           <span>All features from the Basic plan</span>
@@ -697,7 +988,11 @@
                           <span>No ADS</span>
                           <i class="fa fa-check text-primary-gradient pt-1"></i>
                         </div>
-                        <a href="" class="btn btn-secondary-gradient rounded-pill py-2 px-4 mt-4">Get Started</a>
+                        <a
+                          href=""
+                          class="btn btn-secondary-gradient rounded-pill py-2 px-4 mt-4"
+                          >Get Started</a
+                        >
                       </div>
                     </div>
                   </div>
@@ -709,8 +1004,15 @@
                       </div>
                       <div class="p-4 pt-0">
                         <h1 class="mb-3">
-                          <small class="align-top" style="font-size: 22px; line-height: 45px;">$</small>40.99<small
-                            class="align-bottom" style="font-size: 16px; line-height: 40px;">/ Year</small>
+                          <small
+                            class="align-top"
+                            style="font-size: 22px; line-height: 45px"
+                            >$</small
+                          >40.99<small
+                            class="align-bottom"
+                            style="font-size: 16px; line-height: 40px"
+                            >/ Year</small
+                          >
                         </h1>
                         <div class="d-flex justify-content-between mb-3">
                           <span>All features from the Advanced Plan</span>
@@ -721,10 +1023,16 @@
                           <i class="fa fa-check text-primary-gradient pt-1"></i>
                         </div>
                         <div class="d-flex justify-content-between mb-3">
-                          <span>Advanced study insights and recommendations</span>
+                          <span
+                            >Advanced study insights and recommendations</span
+                          >
                           <i class="fa fa-check text-primary-gradient pt-1"></i>
                         </div>
-                        <a href="" class="btn btn-primary-gradient rounded-pill py-2 px-4 mt-4">Get Started</a>
+                        <a
+                          href=""
+                          class="btn btn-primary-gradient rounded-pill py-2 px-4 mt-4"
+                          >Get Started</a
+                        >
                       </div>
                     </div>
                   </div>
@@ -736,7 +1044,6 @@
       </div>
       <!-- Pricing End -->
 
-
       <!-- Testimonial Start -->
       <div class="container-xxl py-5" id="review">
         <div class="container py-5 px-lg-5">
@@ -744,11 +1051,17 @@
             <h5 class="text-primary-gradient fw-medium">Testimonial</h5>
             <h1 class="mb-5">What Our Clients Say!</h1>
           </div>
-          <div class="owl-carousel testimonial-carousel wow fadeInUp" data-wow-delay="0.1s">
+          <div
+            class="owl-carousel testimonial-carousel wow fadeInUp"
+            data-wow-delay="0.1s"
+          >
             <div class="testimonial-item rounded p-4">
               <div class="d-flex align-items-center mb-4">
-                <img class="img-fluid bg-white rounded flex-shrink-0 p-1" src="img/main/testimonial-1.jpg"
-                  style="width: 85px; height: 85px;">
+                <img
+                  class="img-fluid bg-white rounded flex-shrink-0 p-1"
+                  src="img/main/testimonial-1.jpg"
+                  style="width: 85px; height: 85px"
+                />
                 <div class="ms-4">
                   <h5 class="mb-1">Jason Lee</h5>
                   <p class="mb-1">Future Zuck</p>
@@ -761,14 +1074,20 @@
                   </div>
                 </div>
               </div>
-              <p class="mb-0">"FLOZABLE is a total game-changer for studying! I can finally connect with my friends and
-                study together, even when we're not in the same place. It's like having a virtual study group that
-                actually keeps me focused and motivated."</p>
+              <p class="mb-0">
+                "FLOZABLE is a total game-changer for studying! I can finally
+                connect with my friends and study together, even when we're not
+                in the same place. It's like having a virtual study group that
+                actually keeps me focused and motivated."
+              </p>
             </div>
             <div class="testimonial-item rounded p-4">
               <div class="d-flex align-items-center mb-4">
-                <img class="img-fluid bg-white rounded flex-shrink-0 p-1" src="img/main/testimonial-2.jpg"
-                  style="width: 85px; height: 85px;">
+                <img
+                  class="img-fluid bg-white rounded flex-shrink-0 p-1"
+                  src="img/main/testimonial-2.jpg"
+                  style="width: 85px; height: 85px"
+                />
                 <div class="ms-4">
                   <h5 class="mb-1">Cameron Jiang</h5>
                   <p class="mb-1">Stanford Student</p>
@@ -781,14 +1100,20 @@
                   </div>
                 </div>
               </div>
-              <p class="mb-0">"OMG, FLOZABLE is my new study BFF! The AI study suggestions are surprisingly helpful, and
-                the timer keeps me on track without feeling too strict. Plus, the study icon is super cute and makes
-                studying feel a little less boring."</p>
+              <p class="mb-0">
+                "OMG, FLOZABLE is my new study BFF! The AI study suggestions are
+                surprisingly helpful, and the timer keeps me on track without
+                feeling too strict. Plus, the study icon is super cute and makes
+                studying feel a little less boring."
+              </p>
             </div>
             <div class="testimonial-item rounded p-4">
               <div class="d-flex align-items-center mb-4">
-                <img class="img-fluid bg-white rounded flex-shrink-0 p-1" src="img/main/testimonial-3.jpg"
-                  style="width: 85px; height: 85px;">
+                <img
+                  class="img-fluid bg-white rounded flex-shrink-0 p-1"
+                  src="img/main/testimonial-3.jpg"
+                  style="width: 85px; height: 85px"
+                />
                 <div class="ms-4">
                   <h5 class="mb-1">Kunlin Zheng</h5>
                   <p class="mb-1">TFT Player</p>
@@ -801,15 +1126,20 @@
                   </div>
                 </div>
               </div>
-              <p class="mb-0">"FLOZABLE is a lifesaver during exams! The study planner helps me stay organized and on
-                top
-                of my assignments, while the chat feature lets me get quick answers to my questions. It's like having a
-                study support group right in my pocket!"</p>
+              <p class="mb-0">
+                "FLOZABLE is a lifesaver during exams! The study planner helps
+                me stay organized and on top of my assignments, while the chat
+                feature lets me get quick answers to my questions. It's like
+                having a study support group right in my pocket!"
+              </p>
             </div>
             <div class="testimonial-item rounded p-4">
               <div class="d-flex align-items-center mb-4">
-                <img class="img-fluid bg-white rounded flex-shrink-0 p-1" src="img/main/testimonial-4.jpg"
-                  style="width: 85px; height: 85px;">
+                <img
+                  class="img-fluid bg-white rounded flex-shrink-0 p-1"
+                  src="img/main/testimonial-4.jpg"
+                  style="width: 85px; height: 85px"
+                />
                 <div class="ms-4">
                   <h5 class="mb-1">Jinting Jing</h5>
                   <p class="mb-1">Chinese</p>
@@ -822,14 +1152,20 @@
                   </div>
                 </div>
               </div>
-              <p class="mb-0">"I can't get enough of FLOZABLE's YouTube background feature! I love setting up my study
-                sessions with my favorite study playlists in the background. It's such a vibe and helps me stay in the
-                zone."</p>
+              <p class="mb-0">
+                "I can't get enough of FLOZABLE's YouTube background feature! I
+                love setting up my study sessions with my favorite study
+                playlists in the background. It's such a vibe and helps me stay
+                in the zone."
+              </p>
             </div>
             <div class="testimonial-item rounded p-4">
               <div class="d-flex align-items-center mb-4">
-                <img class="img-fluid bg-white rounded flex-shrink-0 p-1" src="img/main/testimonial-5.jpg"
-                  style="width: 85px; height: 85px;">
+                <img
+                  class="img-fluid bg-white rounded flex-shrink-0 p-1"
+                  src="img/main/testimonial-5.jpg"
+                  style="width: 85px; height: 85px"
+                />
                 <div class="ms-4">
                   <h5 class="mb-1">Zihang Yu</h5>
                   <p class="mb-1">Academic Weapon</p>
@@ -842,13 +1178,16 @@
                   </div>
                 </div>
               </div>
-              <p class="mb-0">"FLOZABLE's YouTube background feature is a game-changer! I can play my go-to focus playlists while working, and it keeps me productive and in the flow."</p>
+              <p class="mb-0">
+                "FLOZABLE's YouTube background feature is a game-changer! I can
+                play my go-to focus playlists while working, and it keeps me
+                productive and in the flow."
+              </p>
             </div>
           </div>
         </div>
       </div>
       <!-- Testimonial End -->
-
 
       <!-- Contact Start -->
       <!-- <div class="container-xxl py-5" id="contact">
@@ -899,14 +1238,14 @@
     </div> -->
       <!-- Contact End -->
 
-
       <!-- Footer Start -->
       <%- include("./elements/footer");%>
-        <!-- Footer End -->
+      <!-- Footer End -->
 
-
-        <!-- Back to Top -->
-        <a href="#" class="btn btn-lg btn-lg-square back-to-top pt-2"><i class="bi bi-arrow-up text-white"></i></a>
+      <!-- Back to Top -->
+      <a href="#" class="btn btn-lg btn-lg-square back-to-top pt-2"
+        ><i class="bi bi-arrow-up text-white"></i
+      ></a>
     </div>
 
     <!-- JavaScript Libraries -->
@@ -920,6 +1259,5 @@
 
     <!-- Template Javascript -->
     <script src="js/main.js"></script>
-</body>
-
+  </body>
 </html>
