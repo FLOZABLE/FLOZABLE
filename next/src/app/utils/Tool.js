@@ -313,7 +313,7 @@ async function requestHandler(request) {
     return response.data;
   } catch (error) {
     if (error.config.method === "get") {
-      throw error;
+      //throw error;
     }
 
     if (error.response) {
