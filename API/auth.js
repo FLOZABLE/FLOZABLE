@@ -480,7 +480,13 @@ Router.get("/signin/spotify/callback", async (req, res) => {
 
 Router.post("/app/signin", async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const {
+      email,
+      password,
+      device_id: deviceId,
+      brand,
+      device_name: deviceName,
+    } = req.body;
 
     const connection = pool.promise();
 
@@ -522,9 +528,29 @@ Router.post("/app/signin", async (req, res) => {
       return res.status(response.status).send(response);
     }
 
-    const token = await appTokenCache(userInfo.user_id, true);
+    if (deviceId) {
+      await connection.query(
+        "DELETE FROM devices WHERE user_id = ? AND device_id = ?",
+        [userInfo.user_id, deviceId]
+      );
+      redisClient.del(`user:${userId}:device:${deviceId}:auth_token`);
+    }
+
+    const token = generateRandomId(20);
+
+    const now = DateTime.now().toSeconds();
+    const newDeviceId = generateRandomId(10);
+
+    const newDevice = {
+      device_id: newDeviceId,
+      user_id: userInfo.user_id,
+      created_at: now,
+      brand,
+      token,
+    };
+    connection.query("INSERT INTO devices SET ?", [newDevice]);
+
     req.session.user_id = userInfo.user_id;
-    const deviceId = generateRandomId(10);
     console.log(token, "token");
     return res.status(200).send({
       success: true,
@@ -532,7 +558,7 @@ Router.post("/app/signin", async (req, res) => {
       message: "Authed",
       data: {
         token,
-        device_id: deviceId,
+        device_id: newDeviceId,
         user_id: userInfo.user_id,
       },
     });
