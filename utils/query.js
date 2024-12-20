@@ -254,10 +254,10 @@ async function createDevicesTable() {
   CREATE TABLE IF NOT EXISTS devices (
     device_id varchar(10),
     user_id varchar(10),
-    last_auth INT(11), 
+    created_at INT(11), 
     name varchar(30), 
     brand varchar(30), 
-    auth_key varchar(20), 
+    token varchar(20), 
     PRIMARY KEY (device_id),
     FOREIGN KEY (user_id) REFERENCES users(user_id)
     );
