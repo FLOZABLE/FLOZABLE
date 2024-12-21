@@ -861,6 +861,36 @@ async function appTokenCache(userId, refresh) {
   }
 }
 
+async function getDeviceToken(userId, deviceId) {
+  try {
+    if (!userId || !deviceId) return;
+
+    const token = await redisClient.get(
+      `user:${userId}:device:${deviceId}:token`
+    );
+
+    if (token) return token;
+
+    const connection = pool.promise();
+    const [[device]] = await connection.query(
+      `SELECT token FROM devices WHERE user_id = ? AND device_id = ?`,
+      [userId, deviceId]
+    );
+
+    console.log(device);
+    if (!device) return;
+
+    redisClient.setex(
+      `user:${userId}:device:${deviceId}:token`,
+      REDIS_EXP.APP_AUTH,
+      device.token
+    );
+    return device.token;
+  } catch (err) {
+    console.log(err);
+  }
+}
+
 module.exports = {
   cacheManager,
   subjectsCache,
@@ -893,4 +923,5 @@ module.exports = {
   spotifyAccessTokenCache,
   cacheExtensionToken,
   appTokenCache,
+  getDeviceToken,
 };
