@@ -877,7 +877,6 @@ async function getDeviceToken(userId, deviceId) {
       [userId, deviceId]
     );
 
-    console.log(device);
     if (!device) return;
 
     redisClient.setex(

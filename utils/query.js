@@ -258,7 +258,7 @@ async function createDevicesTable() {
     name varchar(30), 
     brand varchar(30), 
     token varchar(20), 
-    PRIMARY KEY (device_id),
+    PRIMARY KEY (device_id, user_id),
     FOREIGN KEY (user_id) REFERENCES users(user_id)
     );
   `);

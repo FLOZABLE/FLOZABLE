@@ -64,7 +64,6 @@ async function autoSignin(
     if (!token) return fail();
 
     const savedToken = await getDeviceToken(userId, deviceId);
-    console.log(savedToken, "gd");
     if (savedToken !== token) return fail(); // Token mismatch
 
     success(userId);
@@ -497,8 +496,6 @@ Router.post("/app/signin", async (req, res) => {
       device_name: deviceName,
     } = req.body;
 
-    const connection = pool.promise();
-
     const isValidEmail = validateEmail(email);
 
     if (!isValidEmail.isValid) {
@@ -527,6 +524,8 @@ Router.post("/app/signin", async (req, res) => {
         error: { reason: "Device id Missing" },
       });
     }
+
+    const connection = pool.promise();
 
     const [[userInfo]] = await connection.query(
       "SELECT user_id, salt, hashed_password, email, hashed_password FROM users WHERE email = ?",
@@ -560,9 +559,10 @@ Router.post("/app/signin", async (req, res) => {
       token,
     };
 
-    await connection.query("DELETE FROM devices WHERE device_id = ?", [
-      deviceId,
-    ]);
+    await connection.query(
+      "DELETE FROM devices WHERE device_id = ? AND user_id = ?",
+      [deviceId, userInfo.user_id]
+    );
     await redisClient.del(
       `user:${userInfo.user_id}:device:${deviceId}:auth_token`
     );
@@ -596,148 +596,130 @@ Router.post("/app/signin", async (req, res) => {
 //for native app
 Router.post("/app/signin/google", async (req, res) => {
   try {
-    const { code, state } = req.body;
-    let timezone = "UTC";
+    const {
+      code,
+      device_id: deviceId,
+      brand,
+      device_name: deviceName,
+    } = req.body;
+
+    if (!deviceId) {
+      return res.status(400).send({
+        success: false,
+        status: 400,
+        message: "Device id Missing",
+        error: { reason: "Device id Missing" },
+      });
+    }
 
     const auth = googleOauth2client();
     const response = await auth.getToken(code);
+
     if (response.res.status !== 200) {
       console.log("err");
       const response = RESPONSE_MESSAGES.error();
       return res.status(response.status).send(response);
     }
+
+    const timezone = isValidTimeZone(req.body.timezone)
+      ? req.body.timezone
+      : "UTC";
+
+    const now = DateTime.now().toSeconds();
+    const token = generateRandomId(20);
+
+    const device = {
+      device_id: deviceId,
+      user_id: null,
+      created_at: now,
+      name: deviceName,
+      brand,
+      token,
+    };
+
     const connection = pool.promise();
     const { refresh_token, access_token, expiry_date } = response.tokens;
 
-    try {
-      if (state?.timezone && isValidTimeZone(state.timezone)) {
-        timezone = state.timezone;
-        console.log("timezone:", timezone);
+    console.log("code", code);
+
+    //if not logged in = create acc
+    auth.setCredentials(response.tokens);
+    const oauth2 = google.oauth2({
+      auth,
+      version: "v2",
+    });
+    const userInfoResponse = await oauth2.userinfo.get();
+    const data = userInfoResponse.data;
+    data.name = data.name.replace(/ /g, "");
+
+    const { name, email } = data;
+
+    const [[userInfo]] = await connection.query(
+      `SELECT user_id FROM users WHERE email = ?`,
+      [email]
+    );
+
+    let userId = userInfo?.user_id;
+
+    if (!userInfo) {
+      //new user
+      const accountResponse = await createAccount(name, email, timezone);
+
+      const { success, data } = accountResponse;
+
+      if (!success) {
+        const response = RESPONSE_MESSAGES.error();
+        return res.status(response.status).send(response);
       }
-    } catch (err) {
-      console.error("Error parsing state or validating timezone: ", err);
+
+      userId = data.user_id;
     }
 
-    console.log("code", code, state);
+    device.user_id = userId;
 
-    await autoSignin(
-      req,
-      res,
-      async (userId) => {
-        setGoogleAccessToken(userId, access_token, expiry_date);
-
-        connection.query(
-          `UPDATE users SET google_refresh_token = ? WHERE user_id = ?`,
-          [refresh_token, userId]
-        );
-
-        const token = await appTokenCache(userId, true);
-
-        return res.status(200).send({
-          success: true,
-          status: 200,
-          message: "Authed",
-          data: {
-            token,
-            user_id: userId,
-          },
-        });
-      },
-      async () => {
-        //if not logged in = create acc
-        auth.setCredentials(response.tokens);
-        const oauth2 = google.oauth2({
-          auth,
-          version: "v2",
-        });
-        const userInfoResponse = await oauth2.userinfo.get();
-        const data = userInfoResponse.data;
-        data.name = data.name.replace(/ /g, "");
-
-        const { name, email } = data;
-
-        const [[userInfo]] = await connection.query(
-          `SELECT user_id FROM users WHERE email = ?`,
-          [email]
-        );
-
-        if (!userInfo) {
-          //new user
-          const accountResponse = await createAccount(name, email, timezone);
-
-          const { success, data } = accountResponse;
-
-          if (!success) {
-            const response = RESPONSE_MESSAGES.error();
-            return res.status(response.status).send(response);
-          }
-
-          const { user_id } = data;
-
-          req.session.regenerate((err) => {
-            if (err) {
-              console.log("Error regenerating session ID:", err);
-              const response = RESPONSE_MESSAGES.error();
-              return res.status(response.status).send(response);
-            }
-
-            req.session.user_id = user_id;
-          });
-
-          res.cookie("userId", user_id, USER_ID_COOKIE_OPTIONS);
-
-          setGoogleAccessToken(user_id, access_token, expiry_date);
-
-          connection.query(
-            `UPDATE users SET google_refresh_token = ? WHERE user_id = ?`,
-            [refresh_token, user_id]
-          );
-
-          const token = await appTokenCache(user_id, true);
-
-          return res.status(200).send({
-            success: true,
-            status: 200,
-            message: "Account Created!",
-            data: { token, user_id },
-          });
-        }
-
-        const { user_id } = userInfo;
-
-        req.session.regenerate((err) => {
-          if (err) {
-            console.log("Error regenerating session ID:", err);
-            const response = RESPONSE_MESSAGES.error();
-            return res.status(response.status).send(response);
-            return;
-          }
-
-          req.session.user_id = user_id;
-        });
-
-        res.cookie("userId", user_id, USER_ID_COOKIE_OPTIONS);
-
-        setGoogleAccessToken(user_id, access_token, expiry_date);
-
-        connection.query(
-          `UPDATE users SET google_refresh_token = ? WHERE user_id = ?`,
-          [refresh_token, user_id]
-        );
-
-        const token = await appTokenCache(user_id, true);
-
-        return res.status(200).send({
-          success: true,
-          status: 200,
-          message: "Authed",
-          data: {
-            token,
-            user_id: user_id,
-          },
-        });
+    req.session.regenerate((err) => {
+      if (err) {
+        console.log("Error regenerating session ID:", err);
+        const response = RESPONSE_MESSAGES.error();
+        return res.status(response.status).send(response);
       }
+
+      req.session.user_id = userId;
+    });
+
+    res.cookie("userId", userId, USER_ID_COOKIE_OPTIONS);
+
+    setGoogleAccessToken(userId, access_token, expiry_date);
+
+    await connection.query(
+      `
+      UPDATE users SET google_refresh_token = ? WHERE user_id = ?;
+      DELETE FROM devices WHERE device_id = ? AND user_id = ?
+    `,
+      [refresh_token, userId, deviceId, userId]
     );
+
+    console.log(deviceId, userId);
+
+    await redisClient.del(`user:${userId}:device:${deviceId}:auth_token`);
+
+    connection.query("INSERT INTO devices SET ?", [device]);
+
+    redisClient.setex(
+      `user:${userId}:device:${deviceId}:auth_token`,
+      REDIS_EXP.APP_AUTH,
+      token
+    );
+
+    return res.status(200).send({
+      success: true,
+      status: 200,
+      message: "Authed",
+      data: {
+        token,
+        user_id: userId,
+      },
+    });
   } catch (err) {
     console.log(err);
     const response = RESPONSE_MESSAGES.error();
@@ -747,7 +729,15 @@ Router.post("/app/signin/google", async (req, res) => {
 
 Router.post("/app/signup", async (req, res) => {
   try {
-    const { email, name, password, timezone } = req.body;
+    const {
+      email,
+      name,
+      password,
+      timezone,
+      device_id: deviceId,
+      brand,
+      device_name: deviceName,
+    } = req.body;
 
     const isValidPassword = validatePassword(password, 30);
 
@@ -757,6 +747,15 @@ Router.post("/app/signup", async (req, res) => {
         status: 400,
         message: isValidPassword.reason,
         error: { reason: isValidPassword.reason },
+      });
+    }
+
+    if (!deviceId) {
+      return res.status(400).send({
+        success: false,
+        status: 400,
+        message: "Device id Missing",
+        error: { reason: "Device id Missing" },
       });
     }
 
@@ -775,7 +774,37 @@ Router.post("/app/signup", async (req, res) => {
 
     const { user_id } = data;
 
-    const token = await appTokenCache(user_id, true);
+    const now = DateTime.now().toSeconds();
+    const token = generateRandomId(20);
+
+    const device = {
+      device_id: deviceId,
+      user_id,
+      created_at: now,
+      name: deviceName,
+      brand,
+      token,
+    };
+
+    const connection = pool.promise();
+    await connection.query(
+      `
+      DELETE FROM devices WHERE device_id = ? AND user_id = ?
+    `,
+      [deviceId, user_id]
+    );
+
+    console.log(deviceId, user_id);
+
+    await redisClient.del(`user:${user_id}:device:${deviceId}:auth_token`);
+
+    connection.query("INSERT INTO devices SET ?", [device]);
+
+    redisClient.setex(
+      `user:${user_id}:device:${deviceId}:auth_token`,
+      REDIS_EXP.APP_AUTH,
+      token
+    );
 
     req.session.regenerate((err) => {
       if (err) {
