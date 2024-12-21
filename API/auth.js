@@ -16,6 +16,7 @@ const {
   cacheUserInfo,
   setGoogleAccessToken,
   appTokenCache,
+  getDeviceToken,
 } = require("../services/redisLoader");
 const { sendEmail } = require("../email");
 const { USER_ID_COOKIE_OPTIONS, REDIS_EXP } = require("../Constant");
@@ -36,6 +37,7 @@ async function autoSignin(
       req.session.user_id = process.env.TESTER_ID;
       return success(process.env.TESTER_ID);
     }
+
     if (req.session.user_id) {
       return success(req.session.user_id);
     }
@@ -47,15 +49,22 @@ async function autoSignin(
 
     const authHeader = req.headers.authorization;
     const userId = req.headers["user-id"];
+    const deviceId = req.headers["device-id"];
 
-    if (!authHeader || !authHeader.startsWith("Bearer ") || !userId) {
+    if (
+      !authHeader ||
+      !authHeader.startsWith("Bearer ") ||
+      !userId ||
+      !deviceId
+    ) {
       return fail();
     }
 
     const token = authHeader.split(" ")[1];
     if (!token) return fail();
 
-    const savedToken = await appTokenCache(userId, false);
+    const savedToken = await getDeviceToken(userId, deviceId);
+    console.log(savedToken, "gd");
     if (savedToken !== token) return fail(); // Token mismatch
 
     success(userId);
@@ -501,13 +510,23 @@ Router.post("/app/signin", async (req, res) => {
       });
     }
 
-    if (!password)
+    if (!password) {
       return res.status(400).send({
         success: false,
         status: 400,
         message: "Password Missing",
         error: { reason: "Password Missing" },
       });
+    }
+
+    if (!deviceId) {
+      return res.status(400).send({
+        success: false,
+        status: 400,
+        message: "Device id Missing",
+        error: { reason: "Device id Missing" },
+      });
+    }
 
     const [[userInfo]] = await connection.query(
       "SELECT user_id, salt, hashed_password, email, hashed_password FROM users WHERE email = ?",
@@ -528,27 +547,33 @@ Router.post("/app/signin", async (req, res) => {
       return res.status(response.status).send(response);
     }
 
-    if (deviceId) {
-      await connection.query(
-        "DELETE FROM devices WHERE user_id = ? AND device_id = ?",
-        [userInfo.user_id, deviceId]
-      );
-      redisClient.del(`user:${userId}:device:${deviceId}:auth_token`);
-    }
-
     const token = generateRandomId(20);
 
     const now = DateTime.now().toSeconds();
-    const newDeviceId = generateRandomId(10);
 
     const newDevice = {
-      device_id: newDeviceId,
+      device_id: deviceId,
       user_id: userInfo.user_id,
       created_at: now,
+      name: deviceName,
       brand,
       token,
     };
+
+    await connection.query("DELETE FROM devices WHERE device_id = ?", [
+      deviceId,
+    ]);
+    await redisClient.del(
+      `user:${userInfo.user_id}:device:${deviceId}:auth_token`
+    );
+
     connection.query("INSERT INTO devices SET ?", [newDevice]);
+
+    redisClient.setex(
+      `user:${userInfo.user_id}:device:${deviceId}:auth_token`,
+      REDIS_EXP.APP_AUTH,
+      token
+    );
 
     req.session.user_id = userInfo.user_id;
     console.log(token, "token");
@@ -558,7 +583,6 @@ Router.post("/app/signin", async (req, res) => {
       message: "Authed",
       data: {
         token,
-        device_id: newDeviceId,
         user_id: userInfo.user_id,
       },
     });
@@ -777,12 +801,12 @@ Router.post("/app/signup", async (req, res) => {
 
 Router.post("/verify/token", async (req, res) => {
   try {
-    const { user_id: userId, token } = req.body;
+    const { device_id: deviceId, token } = req.body;
 
-    const isValidUserId = validateStrictString(userId, "user id", 10, 10);
+    const isValidDeviceId = validateStrictString(deviceId, "user id", 32, 5);
 
-    if (!isValidUserId.isValid) {
-      const response = RESPONSE_MESSAGES.validationError(isValidUserId);
+    if (!isValidDeviceId.isValid) {
+      const response = RESPONSE_MESSAGES.validationError(isValidDeviceId);
       return res.status(response.status).send(response);
     }
 
@@ -797,16 +821,23 @@ Router.post("/verify/token", async (req, res) => {
       });
     }
 
-    const savedToken = await appTokenCache(userId, false);
-    console.log("token", savedToken, token, userId);
-    if (savedToken !== token) {
+    const connection = pool.promise();
+    const [[device]] = await connection.query(
+      `SELECT user_id, created_at FROM devices WHERE device_id = ? AND token = ?`,
+      [deviceId, token]
+    );
+    console.log(device);
+
+    if (!device) {
       const response = RESPONSE_MESSAGES.notAuthed();
       return res.status(response.status).send(response);
     }
 
-    req.session.user_id = userId;
+    req.session.user_id = device.user_id;
 
-    return res.status(200).send({ success: true, status: 200 });
+    return res
+      .status(200)
+      .send({ success: true, status: 200, data: { device } });
   } catch (err) {
     console.log(err);
   }
