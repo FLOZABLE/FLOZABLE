@@ -252,7 +252,7 @@ async function createDevicesTable() {
   const connection = pool.promise();
   await connection.query(`
   CREATE TABLE IF NOT EXISTS devices (
-    device_id varchar(10),
+    device_id varchar(32),
     user_id varchar(10),
     created_at INT(11), 
     name varchar(30), 
