@@ -770,6 +770,30 @@ async function chatroomMessagesCache(connection, roomId, offset, length) {
   }
 }
 
+async function getChatroomName(connection, roomId) {
+  try {
+    if (!roomId) return;
+
+    const chatroomName = await redisClient.get(`chatroom:${roomId}:name`);
+    if (chatroomName) return chatroomName;
+
+    const [[chatroom]] = await connection.query(
+      `SELECT name FROM chatrooms WHERE chatroom_id = ?`,
+      [roomId]
+    );
+    if (!chatroom) return;
+
+    redisClient.setex(
+      `chatroom:${roomId}:name`,
+      REDIS_EXP.CHATROOM_NAME,
+      chatroom.name
+    );
+    return chatroom.name;
+  } catch (err) {
+    console.log(err);
+  }
+}
+
 async function spotifyAccessTokenCache(connection, userId) {
   try {
     let accessToken = await redisClient.get(
@@ -952,6 +976,7 @@ module.exports = {
   chatroomMembersCache,
   cacheChatroomMembers,
   chatroomMessagesCache,
+  getChatroomName,
   spotifyAccessTokenCache,
   cacheExtensionToken,
   appTokenCache,
