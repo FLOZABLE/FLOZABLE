@@ -294,11 +294,13 @@ mainIo.on("connection", (socket) => {
               title: chatroomName,
               body: `${message}`,
               data: {
+                type: "message",
                 message: newMsg,
                 chatroom: {
                   name: chatroomName,
                   chatroom_id: roomId,
                 },
+                url: `/chat/chatroom/${roomId}`,
               },
             });
           });

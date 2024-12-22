@@ -32,7 +32,7 @@ function FriendsTrendChart() {
     return <AccountWall />;
   }
 
-  if (friendsTrendError) {
+  if (!friendsTrendData.length) {
     return null;
   }
 

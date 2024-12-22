@@ -8,12 +8,15 @@ const {
   chatroomMembersCache,
   userChatroomsCache,
   chatroomMessagesCache,
+  getDevicePushTokens,
 } = require("../services/redisLoader");
 const { validateStrictString, validateBoolean } = require("../utils/validate");
 const { mainIo } = require("../sockets/io");
 const { autoSignin } = require("./auth");
 const RESPONSE_MESSAGES = require("../utils/responses");
 const { NOTIFICATION_MESSAGES } = require("../Constant");
+const { default: Expo } = require("expo-server-sdk");
+const { sendExpoPushNotifications } = require("../services/notification");
 
 Router.get("/rooms", async (req, res) => {
   autoSignin(req, res, async (userId) => {
@@ -264,12 +267,31 @@ Router.post("/request", async (req, res) => {
       const socketNotification = {
         ...notification,
         userinfo: userInfo,
+        message: NOTIFICATION_MESSAGES.chatRequest(userInfo.name),
       };
-      socketNotification.message = NOTIFICATION_MESSAGES.chatRequest(
-        userInfo.name
-      );
 
       mainIo.to(targetId).emit("notification", socketNotification);
+      //since there are conditions where filtered, getting device tokens is not used on promiss.all
+      const pushTokens = await getDevicePushTokens(connection, targetId);
+      const pushMessages = [];
+
+      console.log("push tokens", pushTokens);
+
+      pushTokens.map((token) => {
+        if (!Expo.isExpoPushToken(token)) return;
+        pushMessages.push({
+          to: token,
+          sound: "default",
+          title: `Chat Request from ${userInfo.name}`,
+          body: socketNotification.message.title,
+          data: {
+            type: "friend_request",
+            url: `/notifications/notifications`,
+          },
+        });
+      });
+
+      sendExpoPushNotifications(pushMessages);
 
       return res.send({
         success: true,
