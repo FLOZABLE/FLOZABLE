@@ -496,6 +496,9 @@ Router.patch("/group", async (req, res) => {
         group,
         group_id,
       ]);
+      //delete cached chatroom name
+      redisClient.del(`chatroom:${roomId}:name`);
+      
       res.status(200).send({
         success: true,
         status: 200,
