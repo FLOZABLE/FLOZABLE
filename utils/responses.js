@@ -126,6 +126,14 @@ const RESPONSE_MESSAGES = {
       reason: error.reason,
     },
   }),
+  missingValue: (value) => ({
+    success: false,
+    message: `Please provide ${value}`,
+    status: 400,
+    error: {
+      reason: `Missing ${value}`,
+    },
+  }),
 };
 
 module.exports = RESPONSE_MESSAGES;
