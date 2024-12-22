@@ -11,6 +11,7 @@ const {
   activeGroupCache,
   userFriendsCache,
   cacheUserFriends,
+  getDevicePushTokens,
 } = require("../services/redisLoader");
 const redisClient = require("../model/redis");
 const pool = require("../model/pool");
@@ -26,6 +27,8 @@ const { FRIENDS_LIMIT, NOTIFICATION_MESSAGES } = require("../Constant");
 const Router = express.Router();
 const { autoSignin } = require("./auth");
 const RESPONSE_MESSAGES = require("../utils/responses");
+const { default: Expo } = require("expo-server-sdk");
+const { sendExpoPushNotifications } = require("../services/notification");
 
 async function sendFriendRequest(userId, targetId) {
   try {
@@ -95,9 +98,8 @@ async function sendFriendRequest(userId, targetId) {
       notification_id: friendship_id,
       userinfo: userInfo,
       type: "friend_request",
+      message: NOTIFICATION_MESSAGES.friendRequest(userInfo.name),
     };
-
-    notification.message = NOTIFICATION_MESSAGES.friendRequest(userInfo.name);
 
     const myNotification = {
       ...friendRequest,
@@ -111,6 +113,29 @@ async function sendFriendRequest(userId, targetId) {
     mainIo.to(targetId).emit("notification", notification);
 
     mainIo.to(userId).emit("notification", myNotification);
+
+    //since there are conditions where friends are filtered, getting device tokens is not used on promiss.all
+    const pushTokens = await getDevicePushTokens(connection, targetId);
+    const pushMessages = [];
+
+    console.log("push tokens", pushTokens);
+
+    pushTokens.map((token) => {
+      console.log(Expo.isExpoPushToken(token));
+      if (!Expo.isExpoPushToken(token)) return;
+      pushMessages.push({
+        to: token,
+        sound: "default",
+        title: `New Friend Request from ${userInfo.name}`,
+        body: notification.message.title,
+        data: {
+          type: "friend_request",
+          url: `/notifications/notifications`,
+        },
+      });
+    });
+
+    sendExpoPushNotifications(pushMessages);
 
     return {
       success: true,
