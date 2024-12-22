@@ -19,6 +19,7 @@ const REDIS_EXP = {
   USER_CHAT_READS: 60 * 60 * 24 * 7,
   EXTENSION_AUTH: 60,
   APP_AUTH: 60 * 60 * 24 * 7,
+  APP_PUSH_TOKEN: 60 * 60,
 };
 
 const BOT_OPTIONS = {

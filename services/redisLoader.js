@@ -890,6 +890,39 @@ async function getDeviceToken(userId, deviceId) {
   }
 }
 
+async function getDevicePushTokens(connection, userId) {
+  try {
+    if (!userId) return [];
+    const isCached = await redisClient.exists(
+      `user:${userId}:device:push_tokens`
+    );
+    if (isCached) {
+      const tokens = await redisClient.smembers(
+        `user:${userId}:device:push_tokens`
+      );
+      return tokens;
+    }
+
+    const [devices] = await connection.query(
+      `SELECT notification_token FROM devices WHERE user_id = ? AND token IS NOT NULL`,
+      [userId]
+    );
+
+    const tokens = devices.map((device) => device.notification_token);
+
+    if (!tokens.length) return [];
+    redisClient.sadd(`user:${userId}:device:push_tokens`, tokens);
+    redisClient.expire(
+      `user:${userId}:device:push_tokens`,
+      REDIS_EXP.APP_PUSH_TOKEN
+    );
+    return tokens;
+  } catch (err) {
+    console.log(err);
+    return [];
+  }
+}
+
 module.exports = {
   cacheManager,
   subjectsCache,
@@ -923,4 +956,5 @@ module.exports = {
   cacheExtensionToken,
   appTokenCache,
   getDeviceToken,
+  getDevicePushTokens,
 };

@@ -207,4 +207,33 @@ Router.delete("/notification", async (req, res) => {
   });
 });
 
+Router.put("/token", async (req, res) => {
+  autoSignin(req, res, async (userId) => {
+    try {
+      const { device_id: deviceId, token } = req.body;
+
+      console.log(deviceId, token);
+      const connection = pool.promise();
+      const [result] = await connection.query(
+        "UPDATE devices SET notification_token = ? WHERE device_id = ? AND user_id = ?",
+        [token, deviceId, userId]
+      );
+
+      if (!result.affectedRows) {
+        const response = RESPONSE_MESSAGES.error();
+        return res.status(response.status).send(response);
+      }
+
+      //delete cached value because it is mutated
+      redisClient.del(`user:${userId}:device:push_tokens`);
+
+      res.status(200).send({ success: true, status: 200 });
+    } catch (err) {
+      console.log(err);
+      const response = RESPONSE_MESSAGES.error();
+      return res.status(response.status).send(response);
+    }
+  });
+});
+
 module.exports = Router;
