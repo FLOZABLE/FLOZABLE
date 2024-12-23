@@ -175,7 +175,7 @@ function validateArray(value, type, maxLength, minLength = 0) {
   return { isValid: true };
 }
 
-function validateHEX(value, type, maxLength = 7, minLength = 7) {
+function validateHEX(value, type, maxLength = 9, minLength = 7) {
   if (!value) {
     return { isValid: false, reason: `Please provide ${type}` };
   }

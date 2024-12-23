@@ -11,6 +11,8 @@ const {
   validateEmail,
   validateStrictString,
   validatePassword,
+  validateString,
+  validateLength,
 } = require("../utils/validate");
 const {
   cacheUserInfo,
@@ -832,7 +834,7 @@ Router.post("/verify/token", async (req, res) => {
   try {
     const { device_id: deviceId, token } = req.body;
 
-    const isValidDeviceId = validateStrictString(deviceId, "user id", 32, 5);
+    const isValidDeviceId = validateLength(deviceId, "device id", 40, 5);
 
     if (!isValidDeviceId.isValid) {
       const response = RESPONSE_MESSAGES.validationError(isValidDeviceId);

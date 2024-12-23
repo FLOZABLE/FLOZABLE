@@ -28,6 +28,7 @@ import {
   SearchUsersModalContext,
   SubjectsModalContext,
 } from "@/app/utils/Contexts";
+import { deleteSubject } from "@/app/utils/timelineSorting";
 
 export default function SubjectsModal() {
   const { isSubjectsModal, setIsSubjectsModal } =
@@ -127,76 +128,15 @@ export default function SubjectsModal() {
 
   const onDelete = useCallback(
     async (subject) => {
-      try {
-        const subjectId = subject.subject_id;
+      const subjectId = subject.subject_id;
 
-        const response = await deleteSubjectsSubject(subjectId);
-        if (!response.success) return;
+      /* const response = await deleteSubjectsSubject(subjectId);
+      if (!response.success) return;
 
-        setIsSubjectsModal((prev) => ({ ...prev, subject_id: null }));
-        const subjectIndex = subjects.findIndex(
-          (subject) => subject.subject_id === subjectId
-        );
+      setIsSubjectsModal((prev) => ({ ...prev, subject_id: null })); */
 
-        if (subjectIndex === -1) return;
-        const newSubjects = JSON.parse(JSON.stringify(subjects)).filter(
-          (subject) => subject.subject_id !== subjectId
-        );
-        const deletedSubject = subjects.find(
-          (subject) => subject.subject_id === subjectId
-        );
-
-        const otherSubjectIndex = newSubjects.findIndex(
-          (subject) => subject.name === "others"
-        );
-        if (otherSubjectIndex !== -1 && deletedSubject) {
-          newSubjects[otherSubjectIndex].day.total.map(
-            (value, i) => (value.data += deletedSubject.day.total[i].data)
-          );
-          newSubjects[otherSubjectIndex].week.total.map(
-            (value, i) => (value.data += deletedSubject.week.total[i].data)
-          );
-          newSubjects[otherSubjectIndex].month.total.map(
-            (value, i) => (value.data += deletedSubject.month.total[i].data)
-          );
-
-          newSubjects[otherSubjectIndex].day.timeline.map((value, i) => {
-            value.data.push(...deletedSubject.day.timeline[i].data);
-            value.data.sort((a, b) => a[0] - b[0]);
-          });
-          newSubjects[otherSubjectIndex].week.timeline.map((value, i) => {
-            value.data.push(...deletedSubject.week.timeline[i].data);
-            value.data.sort((a, b) => a[0] - b[0]);
-          });
-          newSubjects[otherSubjectIndex].month.timeline.map((value, i) => {
-            value.data.push(...deletedSubject.month.timeline[i].data);
-            value.data.sort((a, b) => a[0] - b[0]);
-          });
-
-          newSubjects[otherSubjectIndex].week.focus.map((value, i) => {
-            const deletedSubjectFocus = deletedSubject.week.focus[i].data;
-            value.data =
-              value.data > deletedSubjectFocus
-                ? value.data
-                : deletedSubjectFocus;
-          });
-          newSubjects[otherSubjectIndex].month.focus.map((value, i) => {
-            const deletedSubjectFocus = deletedSubject.month.focus[i].data;
-            value.data =
-              value.data > deletedSubjectFocus
-                ? value.data
-                : deletedSubjectFocus;
-          });
-
-          newSubjects[otherSubjectIndex].timeline.push(
-            ...deletedSubject.timeline
-          );
-          newSubjects[otherSubjectIndex].timeline.sort((a, b) => a[0] - b[0]);
-        }
-        updateSubjects(newSubjects);
-      } catch (err) {
-        console.log(err);
-      }
+      const newSubjects = deleteSubject(subjects, subject.subject_id);
+      updateSubjects(newSubjects);
     },
     [subjects]
   );
