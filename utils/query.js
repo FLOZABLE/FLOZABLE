@@ -35,7 +35,7 @@ async function createSubjectsTable() {
     name VARCHAR(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
     user_id VARCHAR(10) NOT NULL,
     icon VARCHAR(20),
-    color VARCHAR(7),
+    color VARCHAR(9),
     created_at INT,
     FOREIGN KEY (user_id) REFERENCES users(user_id),
     PRIMARY KEY (subject_id),
@@ -87,7 +87,7 @@ async function createGroupsTable() {
     created_at INT,
     max_members SMALLINT,
     tags VARCHAR(300),
-    color VARCHAR(20),
+    color VARCHAR(9),
     goal_hr SMALLINT,
     members_length SMALLINT unsigned,
     PRIMARY KEY (group_id)
@@ -252,7 +252,7 @@ async function createDevicesTable() {
   const connection = pool.promise();
   await connection.query(`
   CREATE TABLE IF NOT EXISTS devices (
-    device_id varchar(32),
+    device_id varchar(40),
     user_id varchar(10),
     created_at INT(11), 
     name varchar(30), 

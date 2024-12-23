@@ -51,23 +51,15 @@ Router.put("/subject", async (req, res) => {
       const isValidName = validateString(name, "subject name");
 
       if (!isValidName.isValid) {
-        return res.status(400).send({
-          success: false,
-          status: 400,
-          message: isValidName.reason,
-          error: { reason: isValidName.reason },
-        });
+        const response = RESPONSE_MESSAGES.validationError(isValidName);
+        return res.status(response.status).send(response);
       }
 
       const isValidColor = validateHEX(color, "Color");
 
       if (!isValidColor.isValid) {
-        return res.status(400).send({
-          success: false,
-          status: 400,
-          message: isValidColor.reason,
-          error: { reason: isValidColor.reason },
-        });
+        const response = RESPONSE_MESSAGES.validationError(isValidColor);
+        return res.status(response.status).send(response);
       }
 
       const subject = {
@@ -107,17 +99,15 @@ Router.patch("/subject", async (req, res) => {
       const isValidName = validateString(name, "subject name");
 
       if (!isValidName.isValid) {
-        return res
-          .status(400)
-          .send({ success: false, reason: isValidName.reason });
+        const response = RESPONSE_MESSAGES.validationError(isValidName);
+        return res.status(response.status).send(response);
       }
 
       const isValidColor = validateHEX(color, "Color");
 
       if (!isValidColor.isValid) {
-        return res
-          .status(400)
-          .send({ success: false, reason: isValidColor.reason });
+        const response = RESPONSE_MESSAGES.validationError(isValidColor);
+        return res.status(response.status).send(response);
       }
 
       const isValidSubjectId = validateStrictString(
@@ -128,9 +118,8 @@ Router.patch("/subject", async (req, res) => {
       );
 
       if (!isValidSubjectId.isValid) {
-        return res
-          .status(400)
-          .send({ success: false, reason: isValidSubjectId.reason });
+        const response = RESPONSE_MESSAGES.validationError(isValidSubjectId);
+        return res.status(response.status).send(response);
       }
 
       const subject = {
@@ -139,6 +128,28 @@ Router.patch("/subject", async (req, res) => {
       };
 
       const connection = pool.promise();
+
+      const [[prevSubject]] = await connection.query(
+        `SELECT name FROM subjects WHERE subject_id = ? AND user_id = ?`,
+        [subjectId, userId]
+      );
+
+      if (!prevSubject) {
+        const response = RESPONSE_MESSAGES.noSubject();
+        return res.status(response.status).send(response);
+      }
+
+      //user is trying to change subject "others" to other name
+      if (prevSubject.name === "others" && name !== "others") {
+        return res.status(403).send({
+          status: 403,
+          message: "You can't change this subject's name",
+          success: false,
+          error: {
+            reason: "You can't change this subject's name",
+          },
+        });
+      }
 
       const [{ affectedRows }] = await connection.query(
         `UPDATE subjects SET ? WHERE subject_id = ? AND user_id = ?`,

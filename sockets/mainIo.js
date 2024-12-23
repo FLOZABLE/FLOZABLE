@@ -284,9 +284,11 @@ mainIo.on("connection", (socket) => {
       const pushMessages = [];
       await Promise.all(
         members.map(async (member) => {
+          //don't send notification to myself166
+          if (member === userId) return;
+
           const tokens = await getDevicePushTokens(connection, member);
           tokens.map((token) => {
-            console.log(Expo.isExpoPushToken(token));
             if (!Expo.isExpoPushToken(token)) return;
             pushMessages.push({
               to: token,

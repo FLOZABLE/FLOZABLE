@@ -4,7 +4,6 @@ import { DateTime } from "luxon";
  * return structure
  */
 
-
 /* const example = {
   subjects: [
     {
@@ -256,6 +255,8 @@ function sortNewSubject(subjects, subject) {
       });
     }
 
+    subject.timeline = [];
+
     subject.day = {
       timeline: structuredClone(
         dailyArray.map((val) => ({ ...val, data: [] }))
@@ -288,4 +289,66 @@ function sortNewSubject(subjects, subject) {
   }
 }
 
-export { timelineSorter, sortNewSubject };
+function deleteSubject(subjects, subject_id) {
+  try {
+    const subjectIndex = subjects.findIndex(
+      (subject) => subject.subject_id === subject_id
+    );
+    if (subjectIndex === -1) return subjects;
+    const newSubjects = structuredClone(subjects).filter(
+      (subject) => subject.subject_id !== subject_id
+    );
+    const deletedSubject = subjects.find(
+      (subject) => subject.subject_id === subject_id
+    );
+
+    const otherSubjectIndex = newSubjects.findIndex(
+      (subject) => subject.name === "others"
+    );
+    if (otherSubjectIndex !== -1 && deletedSubject) {
+      newSubjects[otherSubjectIndex].day.total.map(
+        (value, i) => (value.data += deletedSubject.day.total[i].data)
+      );
+      newSubjects[otherSubjectIndex].week.total.map(
+        (value, i) => (value.data += deletedSubject.week.total[i].data)
+      );
+      newSubjects[otherSubjectIndex].month.total.map(
+        (value, i) => (value.data += deletedSubject.month.total[i].data)
+      );
+
+      newSubjects[otherSubjectIndex].day.timeline.map((value, i) => {
+        value.data.push(...deletedSubject.day.timeline[i].data);
+        value.data.sort((a, b) => a[0] - b[0]);
+      });
+      newSubjects[otherSubjectIndex].week.timeline.map((value, i) => {
+        value.data.push(...deletedSubject.week.timeline[i].data);
+        value.data.sort((a, b) => a[0] - b[0]);
+      });
+      newSubjects[otherSubjectIndex].month.timeline.map((value, i) => {
+        value.data.push(...deletedSubject.month.timeline[i].data);
+        value.data.sort((a, b) => a[0] - b[0]);
+      });
+
+      newSubjects[otherSubjectIndex].week.focus.map((value, i) => {
+        const deletedSubjectFocus = deletedSubject.week.focus[i].data;
+        value.data =
+          value.data > deletedSubjectFocus ? value.data : deletedSubjectFocus;
+      });
+      newSubjects[otherSubjectIndex].month.focus.map((value, i) => {
+        const deletedSubjectFocus = deletedSubject.month.focus[i].data;
+        value.data =
+          value.data > deletedSubjectFocus ? value.data : deletedSubjectFocus;
+      });
+
+      newSubjects[otherSubjectIndex].timeline.push(...deletedSubject.timeline);
+      newSubjects[otherSubjectIndex].timeline.sort((a, b) => a[0] - b[0]);
+    }
+
+    return newSubjects;
+  } catch (err) {
+    console.log(err);
+    return subjects;
+  }
+}
+
+export { timelineSorter, sortNewSubject, deleteSubject };
