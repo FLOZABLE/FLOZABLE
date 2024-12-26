@@ -1,9 +1,6 @@
 import React, { useRef, useState, useEffect, useCallback } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination } from "swiper/modules";
-import "swiper/css";
-import "swiper/css/pagination";
-import "swiper/css/navigation";
 import styles from "./MyGroupsViewer.module.css";
 import MyGroupContainer from "../MyGroupContainer/MyGroupContainer";
 import { postGroupLeave } from "@/Api/groupsApi";
