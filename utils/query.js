@@ -83,7 +83,7 @@ async function createGroupsTable() {
     visibility SMALLINT DEFAULT 1,
     password VARCHAR(255) DEFAULT NULL,
     salt VARCHAR(100) DEFAULT NULL,
-    description VARCHAR(300),
+    description VARCHAR(3000),
     created_at INT,
     max_members SMALLINT,
     tags VARCHAR(300),
