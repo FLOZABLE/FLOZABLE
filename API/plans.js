@@ -278,7 +278,7 @@ Router.patch("/plan", async (req, res) => {
       const isValidDescription = validateLength(
         description,
         "Description",
-        300
+        3000
       );
       if (!isValidDescription.isValid) {
         return res.status(400).send({
