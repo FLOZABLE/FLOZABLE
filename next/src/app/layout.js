@@ -14,6 +14,9 @@ import "react-loading-skeleton/dist/skeleton.css";
 import { Bounce, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
+import "swiper/css";
+import "swiper/css/pagination";
+import "swiper/css/navigation";
 import WelcomeModal from "./components/Modals/WelcomeModal/WelcomeModal";
 /* import { loadStripe } from "@stripe/stripe-js";
 import { Elements } from "@stripe/react-stripe-js"; */
