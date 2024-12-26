@@ -63,8 +63,14 @@ readline.question(
   migrateFriendsTable
   `,
   async (command) => {
-    if (command === "maria:0") {
-      await initializeMariadb();
+    if (command.startsWith("maria:")) {
+      const [_, _version] = command.split(":");
+      const version = parseInt(_version);
+      if (version === 0) {
+        await initializeMariadb();
+      } else if (version === 1) {
+        await updateMariaV1();
+      }
     } else if (command === "syncStripeProducts") {
       await syncStripeProducts();
     } else if (command.startsWith("createBots:")) {
@@ -216,6 +222,21 @@ async function migrateFriendsTable() {
     );
 
     console.log("migration complete", rows.length);
+  } catch (err) {
+    console.log(err);
+  }
+}
+
+async function updateMariaV1() {
+  try {
+    const connection = pool.promise();
+    await connection.query(`
+      ALTER TABLE subjects MODIFY color VARCHAR(9);
+      ALTER TABLE \`groups\` MODIFY description VARCHAR(1000);
+      ALTER TABLE plans MODIFY description VARCHAR(3000) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+      ALTER TABLE themes MODIFY description VARCHAR(700) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+    `);
+    console.log("udated mariadb");
   } catch (err) {
     console.log(err);
   }
