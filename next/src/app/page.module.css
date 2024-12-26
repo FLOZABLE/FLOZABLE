@@ -1,0 +1,84 @@
+.Home {
+  --offset: 3rem;
+}
+
+.Home .left {
+}
+
+.Home header {
+  display: flex;
+  align-items: center;
+  box-shadow: var(--shadow2);
+  position: fixed;
+  z-index: 3;
+  width: calc(100vw - var(--offset) * 2);
+  padding: 1rem var(--offset);
+  background-color: #fff;
+}
+
+.Home header .pages {
+  display: flex;
+  flex: 1;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.Home header .page a {
+  padding: 1rem;
+}
+
+.Home .mainViewer {
+  width: 100vw;
+  height: 100vh;
+  background: linear-gradient(to bottom right, #517dff, rgb(66, 186, 255));
+  position: relative;
+}
+
+.Home .mainViewer .wave {
+  position: absolute;
+  bottom: -0.5rem;
+  width: 100%;
+}
+
+.Home .mainViewer .floating {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  left: var(--offset);
+  z-index: 2;
+  color: #fff;
+}
+
+.Home .mainViewer .floating h3 {
+  font-size: 2rem;
+}
+
+.Home .mainViewer .floating > p {
+  margin: 2rem 0rem;
+  font-weight: 400;
+}
+
+.Home .mainViewer .app {
+  width: 13rem;
+  height: 26rem;
+  position: absolute;
+  right: var(--offset);
+  top: 50%;
+  transform: translateY(-50%);
+  overflow: hidden;
+  border-radius: 2rem;
+}
+
+.Home .app .layout {
+  position: absolute;
+  top: 0rem;
+  z-index: 2;
+}
+
+.Home .app .swiper {
+  margin: 1.1rem 0.7rem;
+  height: 33rem;
+}
+
+.Home .app .swiper .swiperSlide {
+}
