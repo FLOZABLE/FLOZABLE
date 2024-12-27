@@ -1,0 +1,28 @@
+.AppTrial {
+  position: relative;
+}
+
+.AppTrial .phoneContainer {
+  width: 13rem;
+  height: 26rem;
+  position: relative;
+  border-radius: 2rem;
+  overflow: hidden;
+}
+
+.AppTrial .layout {
+  position: absolute;
+  top: 0rem;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.AppTrial .swiper {
+  margin: 1.1rem 0.7rem;
+  height: 25rem;
+  -webkit-user-select: none;
+  /* Safari */
+  -ms-user-select: none;
+  /* IE 10 and IE 11 */
+  user-select: none;
+}

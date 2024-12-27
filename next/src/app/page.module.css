@@ -27,20 +27,20 @@
   padding: 1rem;
 }
 
-.Home .mainViewer {
+.Home #mainViewer {
   width: 100vw;
   height: 100vh;
   background: linear-gradient(to bottom right, #517dff, rgb(66, 186, 255));
   position: relative;
 }
 
-.Home .mainViewer .wave {
+.Home #mainViewer .wave {
   position: absolute;
   bottom: -0.5rem;
   width: 100%;
 }
 
-.Home .mainViewer .floating {
+.Home #mainViewer .floating {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
@@ -49,36 +49,103 @@
   color: #fff;
 }
 
-.Home .mainViewer .floating h3 {
+.Home #mainViewer .floating h3 {
   font-size: 2rem;
 }
 
-.Home .mainViewer .floating > p {
+.Home #mainViewer .floating > p {
   margin: 2rem 0rem;
   font-weight: 400;
 }
 
-.Home .mainViewer .app {
-  width: 13rem;
-  height: 26rem;
+.Home #mainViewer .app {
   position: absolute;
   right: var(--offset);
-  top: 50%;
   transform: translateY(-50%);
-  overflow: hidden;
-  border-radius: 2rem;
+  top: 50%;
 }
 
-.Home .app .layout {
+.Home div#mainViewer .description {
+  margin: 2rem 0rem;
+}
+
+.Home .section {
+  margin: 10rem var(--offset);
+  display: flex;
+  gap: 3rem;
+}
+
+.Home .section .layer {
+  flex: 1;
+  position: relative;
+}
+
+.Home .section .title {
+  font-size: 0.9rem;
+  color: var(--blue2);
+  font-weight: 200;
+}
+
+.Home .section .title h2 {
+  font-weight: 600;
+}
+
+.Home .section .subTitle {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+.Home .section .description {
+  color: var(--gray2);
+  font-weight: 400;
+}
+
+.Home .section#about div#phone2 {
   position: absolute;
-  top: 0rem;
-  z-index: 2;
+  left: 12rem;
+  rotate: 35deg;
 }
 
-.Home .app .swiper {
-  margin: 1.1rem 0.7rem;
-  height: 33rem;
+.Home .boxes {
+  display: grid;
+  grid-template-rows: auto-fit;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.25rem;
+  margin-top: 2rem;
 }
 
-.Home .app .swiper .swiperSlide {
+.Box {
+  background-color: var(--blue0);
+  padding: 1rem;
+  border-radius: 0.5rem;
+  transition: 0.3s ease-in-out box-shadow, transform 0.3s ease-in-out;
+}
+
+.Home .Box:hover {
+  box-shadow: var(--shadow1);
+  transform: translateY(-1rem);
+}
+
+.Home .Box .icon {
+  width: 4rem;
+  height: 4rem;
+  border-radius: 2rem;
+  background-color: var(--blue2);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #fff;
+  font-size: 1.5rem;
+}
+
+.Home .Box .title {
+  color: #000;
+  font-weight: 600;
+  margin: 1rem 0rem;
+  font-size: 1.1rem;
+}
+
+.Home .section#features .layer {
+  text-align: center;
 }
