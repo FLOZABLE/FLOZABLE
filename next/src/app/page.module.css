@@ -146,12 +146,18 @@
   font-size: 1.1rem;
 }
 
-.Home .section#features .layer {
+.Home .section#features .layer > .title,
+.Home .section#features .layer .subTitle {
   text-align: center;
 }
 
 .Home .section#review {
   flex-direction: column;
+}
+
+.Home .section#review .layer > .title,
+.Home .section#review .layer .subTitle {
+  text-align: center;
 }
 
 .Home .section#review .swiper {
@@ -239,4 +245,12 @@
 
 .Review .stars {
   color: rgb(255, 208, 0);
+}
+
+.Home .section#review .buttons {
+  display: flex;
+  justify-content: center;
+  gap: 2.5rem;
+  color: #fff;
+  font-size: 1.75rem;
 }
