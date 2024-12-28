@@ -237,7 +237,13 @@ export default function Home() {
                 your focus and productivity.
               </p>
             </div>
-            <BlobBtn>
+            <BlobBtn
+              onClick={() => {
+                window.open(
+                  "https://apps.apple.com/us/app/flozable/id6739476657"
+                );
+              }}
+            >
               <p>Try it!</p>
             </BlobBtn>
           </div>
