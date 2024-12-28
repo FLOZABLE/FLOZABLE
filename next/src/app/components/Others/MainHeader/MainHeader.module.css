@@ -1,0 +1,22 @@
+.MainHeader {
+  --main-offset: 3rem;
+  display: flex;
+  align-items: center;
+  box-shadow: var(--shadow2);
+  position: fixed;
+  z-index: 3;
+  width: calc(100vw - var(--main-offset) * 2);
+  padding: 1rem var(--main-offset);
+  background-color: #fff;
+}
+
+.MainHeader .pages {
+  display: flex;
+  flex: 1;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.MainHeader .page a {
+  padding: 1rem;
+}
