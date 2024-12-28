@@ -32,6 +32,11 @@
   --filteredSubjectLabelsColor: var(--gray0);
   --planDescriptionColor: var(--gray2);
   --modalWidth: 18rem;
+  --blueGradient: linear-gradient(
+    to bottom right,
+    var(--blue2),
+    var(--blue1)
+  );
 }
 
 .title {
@@ -250,6 +255,15 @@ button:hover {
 svg,
 svg > * {
   pointer-events: none;
+}
+
+.swiper-wrapper {
+  -webkit-user-select: none;
+  /* Safari */
+  -ms-user-select: none;
+  /* IE 10 and IE 11 */
+  user-select: none;
+  /* Standard syntax */
 }
 
 @media (max-width: 2000px) {

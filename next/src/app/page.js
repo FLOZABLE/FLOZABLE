@@ -13,13 +13,72 @@ import AppTrial from "./components/Others/AppTrial/AppTrial";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faChartSimple,
-  faComment,
   faComments,
   faHourglass,
   faPeopleGroup,
   faRobot,
+  faStar,
   faTrophy,
 } from "@fortawesome/free-solid-svg-icons";
+import styled from "@emotion/styled";
+import { useState } from "react";
+
+const reviews = [
+  {
+    name: "Cameron Jiang",
+    description: "Stanford Student",
+    review: `
+      "FLOZABLE is a total game-changer for studying! I can finally
+      connect with my friends and study together, even when we're not
+      in the same place. It's like having a virtual study group that
+      actually keeps me focused and motivated."
+    `,
+    imageSrc: "/img/main/testimonial-1.jpg",
+  },
+  {
+    name: "Cameron Jiang",
+    description: "Stanford Student",
+    review: `
+      "OMG, FLOZABLE is my new study BFF! The AI study suggestions are
+      surprisingly helpful, and the timer keeps me on track without
+      feeling too strict. Plus, the study icon is super cute and makes
+      studying feel a little less boring."
+    `,
+    imageSrc: "/img/main/testimonial-2.jpg",
+  },
+  {
+    name: "Kunlin Zheng",
+    description: "TFT Player",
+    review: `
+      "FLOZABLE is a lifesaver during exams! The study planner helps
+      me stay organized and on top of my assignments, while the chat
+      feature lets me get quick answers to my questions. It's like
+      having a study support group right in my pocket!"
+    `,
+    imageSrc: "/img/main/testimonial-3.jpg",
+  },
+  {
+    name: "Jinting Jing",
+    description: "Chinese",
+    review: `
+      "I can't get enough of FLOZABLE's YouTube background feature! I
+      love setting up my study sessions with my favorite study
+      playlists in the background. It's such a vibe and helps me stay
+      in the zone."
+    `,
+    imageSrc: "/img/main/testimonial-4.jpg",
+  },
+  {
+    name: "Zihang Yu",
+    description: "Academic Weapon",
+    review: `
+      "FLOZABLE's YouTube background feature is a game-changer! I can
+      play my go-to focus playlists while working, and it keeps me
+      productive and in the flow."
+    `,
+    imageSrc: "/img/main/testimonial-5.jpg",
+  },
+];
 
 function Box({ children, title, description }) {
   return (
@@ -31,8 +90,57 @@ function Box({ children, title, description }) {
   );
 }
 
+const StyleWrapper = styled.div`
+  .swiper-pagination {
+    display: none;
+  }
+
+  /* .swiper-button-next {
+    position: absolute;
+    bottom: 0rem;
+    top: unset;
+  } */
+`;
+
+function Review({ imageSrc, name, description, feedback, isFocused }) {
+  return (
+    <div className={`${styles.Review} ${isFocused ? styles.focused : ""}`}>
+      <div className={styles.info}>
+        <div className={styles.profile}>
+          <Image
+            src={`${imageSrc}`}
+            width={0}
+            height={0}
+            sizes="100vw"
+            style={{
+              width: "100%",
+              height: "auto",
+            }}
+            alt={`background`}
+            className={styles.img}
+          />
+        </div>
+        <div>
+          <p className={styles.name}>{name}</p>
+          <p className={styles.description}>{description}</p>
+          <div className={styles.stars}>
+            <FontAwesomeIcon icon={faStar} />
+            <FontAwesomeIcon icon={faStar} />
+            <FontAwesomeIcon icon={faStar} />
+            <FontAwesomeIcon icon={faStar} />
+            <FontAwesomeIcon icon={faStar} />
+          </div>
+        </div>
+      </div>
+      <div className={styles.feedback}>{feedback}</div>
+    </div>
+  );
+}
+
 export default function Home() {
   const router = useRouter();
+
+  const [activeIndex, setActiveIndex] = useState(0);
 
   return (
     <main className={styles.Home}>
@@ -145,55 +253,91 @@ export default function Home() {
             </div>
           </div>
         </div>
-      </div>
-      <div className={styles.section} id={styles.features}>
-        <div className={styles.layer}>
-          <div className={styles.title}>
-            <h2>App Features</h2>
-          </div>
-          <div className={styles.subTitle}>
-            <p>Awesome Features</p>
-          </div>
-          <div className={styles.boxes}>
-            <Box
-              title="Timer and Study Tracker"
-              description={`Efficiently manage your time and track your study progress with
+        <div className={styles.section} id={styles.features}>
+          <div className={styles.layer}>
+            <div className={styles.title}>
+              <h2>App Features</h2>
+            </div>
+            <div className={styles.subTitle}>
+              <p>Awesome Features</p>
+            </div>
+            <div className={styles.boxes}>
+              <Box
+                title="Timer and Study Tracker"
+                description={`Efficiently manage your time and track your study progress with
                 our intuitive timer and study tracker features.`}
-            >
-              <FontAwesomeIcon icon={faHourglass} />
-            </Box>
-            <Box
-              title="Collaborative Study Groups"
-              description={`Connect with like-minded individuals, form study groups, and share ideas to enhance your learning experience.`}
-            >
-              <FontAwesomeIcon icon={faPeopleGroup} />
-            </Box>
-            <Box
-              title="AI-Based Study Suggestions"
-              description={`Receive personalized study suggestions tailored to your interests and goals, powered by our advanced AI model.`}
-            >
-              <FontAwesomeIcon icon={faRobot} />
-            </Box>
-            <Box
-              title="Active Community"
-              description={`Engage with a vibrant community of learners, exchange knowledge, and receive support to stay motivated and inspired.`}
-            >
-              <FontAwesomeIcon icon={faComments} />
-            </Box>
-            <Box
-              title="Study Analytics"
-              description={`Gain insights into your study habits with detailed statistics and trends to improve your productivity.`}
-            >
-              <FontAwesomeIcon icon={faChartSimple} />
-            </Box>
-            <Box
-              title="Competitive Leaderboard"
-              description={`Challenge yourself and others by competing on the leaderboard, fostering a sense of achievement and accountability.`}
-            >
-              <FontAwesomeIcon icon={faTrophy} />
-            </Box>
+              >
+                <FontAwesomeIcon icon={faHourglass} />
+              </Box>
+              <Box
+                title="Collaborative Study Groups"
+                description={`Connect with like-minded individuals, form study groups, and share ideas to enhance your learning experience.`}
+              >
+                <FontAwesomeIcon icon={faPeopleGroup} />
+              </Box>
+              <Box
+                title="AI-Based Study Suggestions"
+                description={`Receive personalized study suggestions tailored to your interests and goals, powered by our advanced AI model.`}
+              >
+                <FontAwesomeIcon icon={faRobot} />
+              </Box>
+              <Box
+                title="Active Community"
+                description={`Engage with a vibrant community of learners, exchange knowledge, and receive support to stay motivated and inspired.`}
+              >
+                <FontAwesomeIcon icon={faComments} />
+              </Box>
+              <Box
+                title="Study Analytics"
+                description={`Gain insights into your study habits with detailed statistics and trends to improve your productivity.`}
+              >
+                <FontAwesomeIcon icon={faChartSimple} />
+              </Box>
+              <Box
+                title="Competitive Leaderboard"
+                description={`Challenge yourself and others by competing on the leaderboard, fostering a sense of achievement and accountability.`}
+              >
+                <FontAwesomeIcon icon={faTrophy} />
+              </Box>
+            </div>
           </div>
         </div>
+        <StyleWrapper className={styles.section} id={styles.review}>
+          <div className={styles.layer}>
+            <div className={styles.subTitle}>What Our Client Say!</div>
+            <Swiper
+              slidesPerView={3}
+              loop={true}
+              pagination={{
+                clickable: true,
+                dynamicBullets: true,
+              }}
+              modules={[Pagination, Navigation, Autoplay]}
+              className={styles.swiper}
+              autoplay={{ delay: 3000, disableOnInteraction: true }}
+              navigation={true}
+              /* onSlideChange={(swiper) => setActiveIndex(swiper.activeIndex)} */
+              onSnapIndexChange={(swiperCore) => {
+                const { realIndex } = swiperCore;
+                setActiveIndex(realIndex);
+              }}
+            >
+              {reviews.map((review, i) => {
+                return (
+                  <SwiperSlide key={i} className={styles.swiperSlide}>
+                    <Review
+                      name={review.name}
+                      description={review.description}
+                      feedback={review.review}
+                      imageSrc={review.imageSrc}
+                      isFocused={i === (activeIndex + 1) % reviews.length}
+                    />
+                  </SwiperSlide>
+                );
+              })}
+            </Swiper>
+          </div>
+        </StyleWrapper>
       </div>
     </main>
   );
