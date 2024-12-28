@@ -8,11 +8,13 @@ import Image from "next/image";
 import BlobBtn from "./components/Buttons/BlobBtn/BlobBtn";
 import { useRouter } from "next/navigation";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Autoplay, Navigation, Pagination } from "swiper/modules";
+import { Autoplay, Pagination } from "swiper/modules";
 import AppTrial from "./components/Others/AppTrial/AppTrial";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faChartSimple,
+  faChevronLeft,
+  faChevronRight,
   faComments,
   faHourglass,
   faPeopleGroup,
@@ -21,7 +23,8 @@ import {
   faTrophy,
 } from "@fortawesome/free-solid-svg-icons";
 import styled from "@emotion/styled";
-import { useState } from "react";
+import { useCallback, useRef, useState } from "react";
+import GradientBtn from "./components/Buttons/GradientBtn/GradientBtn";
 
 const reviews = [
   {
@@ -142,6 +145,18 @@ export default function Home() {
 
   const [activeIndex, setActiveIndex] = useState(0);
 
+  const reviewsRef = useRef(null);
+
+  const handleReviewPrev = useCallback(() => {
+    if (!reviewsRef.current) return;
+    reviewsRef.current.swiper.slidePrev();
+  }, []);
+
+  const handleReviewNext = useCallback(() => {
+    if (!reviewsRef.current) return;
+    reviewsRef.current.swiper.slideNext();
+  }, []);
+
   return (
     <main className={styles.Home}>
       <header>
@@ -158,10 +173,10 @@ export default function Home() {
           <div className={styles.page}>
             <Link href={"/#pricing"}>Pricing</Link>
           </div>
-          <div className={styles.review}>
+          <div className={styles.page}>
             <Link href={"/#pricing"}>Review</Link>
           </div>
-          <div className={styles.review}>
+          <div className={styles.page}>
             <Link href={"/dashboard"}>Dashboard</Link>
           </div>
         </div>
@@ -312,15 +327,15 @@ export default function Home() {
                 clickable: true,
                 dynamicBullets: true,
               }}
-              modules={[Pagination, Navigation, Autoplay]}
+              modules={[Pagination, Autoplay]}
               className={styles.swiper}
               autoplay={{ delay: 3000, disableOnInteraction: true }}
-              navigation={true}
               /* onSlideChange={(swiper) => setActiveIndex(swiper.activeIndex)} */
               onSnapIndexChange={(swiperCore) => {
                 const { realIndex } = swiperCore;
                 setActiveIndex(realIndex);
               }}
+              ref={reviewsRef}
             >
               {reviews.map((review, i) => {
                 return (
@@ -336,6 +351,18 @@ export default function Home() {
                 );
               })}
             </Swiper>
+            <div className={styles.buttons}>
+              <GradientBtn onClick={handleReviewPrev}>
+                <i>
+                  <FontAwesomeIcon icon={faChevronLeft} />
+                </i>
+              </GradientBtn>
+              <GradientBtn onClick={handleReviewNext}>
+                <i>
+                  <FontAwesomeIcon icon={faChevronRight} />
+                </i>
+              </GradientBtn>
+            </div>
           </div>
         </StyleWrapper>
       </div>
