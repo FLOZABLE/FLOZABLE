@@ -2,22 +2,20 @@
   position: relative;
 }
 
-.AppTrial .phoneContainer {
+.AppTrial .swiper {
   width: 13rem;
-  height: 26rem;
   position: relative;
   border-radius: 2rem;
-  overflow: hidden;
+  height: 27.5rem;
 }
 
 .AppTrial .layout {
   position: absolute;
-  top: 0rem;
+  top: -0.5rem;
   z-index: 1;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 14rem;
+  height: 28rem;
   pointer-events: none;
-}
-
-.AppTrial .swiper {
-  margin: 1.1rem 0.7rem;
-  height: 25rem;
 }
