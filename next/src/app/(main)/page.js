@@ -1,15 +1,14 @@
 "use client";
 
-import { motion } from "framer-motion";
 import styles from "./page.module.css";
 import Link from "next/link";
-import AccountBtn from "./components/Buttons/AccountBtn/AccountBtn";
+import AccountBtn from "../components/Buttons/AccountBtn/AccountBtn";
 import Image from "next/image";
-import BlobBtn from "./components/Buttons/BlobBtn/BlobBtn";
+import BlobBtn from "../components/Buttons/BlobBtn/BlobBtn";
 import { useRouter } from "next/navigation";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, Pagination } from "swiper/modules";
-import AppTrial from "./components/Others/AppTrial/AppTrial";
+import AppTrial from "../components/Others/AppTrial/AppTrial";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faChartSimple,
@@ -24,12 +23,12 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import styled from "@emotion/styled";
 import { useCallback, useRef, useState } from "react";
-import GradientBtn from "./components/Buttons/GradientBtn/GradientBtn";
+import GradientBtn from "../components/Buttons/GradientBtn/GradientBtn";
 
 const reviews = [
   {
-    name: "Cameron Jiang",
-    description: "Stanford Student",
+    name: "Jason Lee",
+    description: "Future Zuck",
     review: `
       "FLOZABLE is a total game-changer for studying! I can finally
       connect with my friends and study together, even when we're not
@@ -80,6 +79,14 @@ const reviews = [
       productive and in the flow."
     `,
     imageSrc: "/img/main/testimonial-5.jpg",
+  },
+  {
+    name: "Changhoe Choe",
+    description: "BLM activist",
+    review: `
+      "This app makes George Floyd breathe."
+    `,
+    imageSrc: "/img/main/testimonial-6.jpg",
   },
 ];
 
@@ -159,31 +166,6 @@ export default function Home() {
 
   return (
     <main className={styles.Home}>
-      <header>
-        <div className={styles.left}>
-          <h1>FLOZABLE</h1>
-        </div>
-        <div className={styles.pages}>
-          <div className={styles.page}>
-            <Link href={"/#about"}>About</Link>
-          </div>
-          <div className={styles.page}>
-            <Link href={"/#feature"}>Feature</Link>
-          </div>
-          <div className={styles.page}>
-            <Link href={"/#pricing"}>Pricing</Link>
-          </div>
-          <div className={styles.page}>
-            <Link href={"/#pricing"}>Review</Link>
-          </div>
-          <div className={styles.page}>
-            <Link href={"/dashboard"}>Dashboard</Link>
-          </div>
-        </div>
-        <div className={styles.right}>
-          <AccountBtn />
-        </div>
-      </header>
       <div>
         <div id={styles.mainViewer}>
           <div className={styles.floating}>

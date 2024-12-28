@@ -1,32 +1,3 @@
-.Home {
-  --offset: 3rem;
-}
-
-.Home .left {
-}
-
-.Home header {
-  display: flex;
-  align-items: center;
-  box-shadow: var(--shadow2);
-  position: fixed;
-  z-index: 3;
-  width: calc(100vw - var(--offset) * 2);
-  padding: 1rem var(--offset);
-  background-color: #fff;
-}
-
-.Home header .pages {
-  display: flex;
-  flex: 1;
-  justify-content: center;
-  gap: 1rem;
-}
-
-.Home header .page a {
-  padding: 1rem;
-}
-
 .Home #mainViewer {
   width: 100vw;
   height: 100vh;
@@ -44,7 +15,7 @@
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  left: var(--offset);
+  left: var(--main-offset);
   z-index: 2;
   color: #fff;
 }
@@ -60,7 +31,7 @@
 
 .Home #mainViewer .app {
   position: absolute;
-  right: var(--offset);
+  right: var(--main-offset);
   transform: translateY(-50%);
   top: 50%;
 }
@@ -70,7 +41,7 @@
 }
 
 .Home .section {
-  margin: 10rem var(--offset);
+  margin: 10rem var(--main-offset);
   display: flex;
   gap: 3rem;
 }
