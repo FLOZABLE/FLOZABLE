@@ -149,3 +149,94 @@
 .Home .section#features .layer {
   text-align: center;
 }
+
+.Home .section#review {
+  flex-direction: column;
+}
+
+.Home .section#review .swiper {
+  position: relative;
+}
+
+.Home .section#review .swiperSlide {
+  display: flex;
+}
+
+.Review {
+  flex: 1;
+  margin: 1rem;
+  border-radius: 1rem;
+  margin-bottom: 5rem;
+  padding: 1rem;
+  position: relative;
+  transition: transform 0.3s ease-in-out;
+}
+
+.Review::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 1rem;
+  background: var(--blueGradient);
+  opacity: 0;
+  z-index: -1;
+  transition: opacity 0.3s ease-in-out, color 0.3s ease-in-out;
+}
+
+.Review.focused::before {
+  opacity: 1;
+}
+
+.Review .info {
+  display: flex;
+}
+
+.Review .profile {
+  width: 5rem;
+  height: 5rem;
+  background-color: #fff;
+  border-radius: 0.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-right: 1rem;
+}
+
+.Review .profile .img {
+  border-radius: 0.5rem;
+  width: 4.5rem !important;
+  height: 4.5rem !important;
+  overflow: hidden;
+}
+
+.Review .description {
+  transition: 0.3s ease-in-out color;
+}
+
+.Review.focused .description {
+  color: #fff;
+}
+
+.Review .feedback {
+  font-weight: 400;
+  font-size: 0.9rem;
+  color: var(--gray2);
+  transition: color 0.3s ease-in-out;
+  margin-top: 1rem;
+}
+
+.Review.focused {
+  transform: scale(1.05); /* Example to make the transition more noticeable */
+  color: #fff;
+}
+
+.Review.focused .feedback {
+  color: #fff;
+}
+
+.Review .stars {
+  color: rgb(255, 208, 0);
+}
