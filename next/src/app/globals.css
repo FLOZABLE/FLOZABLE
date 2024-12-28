@@ -32,11 +32,8 @@
   --filteredSubjectLabelsColor: var(--gray0);
   --planDescriptionColor: var(--gray2);
   --modalWidth: 18rem;
-  --blueGradient: linear-gradient(
-    to bottom right,
-    var(--blue2),
-    var(--blue1)
-  );
+  --blueGradient: linear-gradient(to bottom right, var(--blue2), var(--blue1));
+  --main-offset: 3rem;
 }
 
 .title {

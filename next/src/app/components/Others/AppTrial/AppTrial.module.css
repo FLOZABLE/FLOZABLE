@@ -20,9 +20,4 @@
 .AppTrial .swiper {
   margin: 1.1rem 0.7rem;
   height: 25rem;
-  -webkit-user-select: none;
-  /* Safari */
-  -ms-user-select: none;
-  /* IE 10 and IE 11 */
-  user-select: none;
 }
