@@ -45,7 +45,7 @@ export default function MainFooter() {
               </i>
               <p>About Us</p>
             </Link>
-            <Link href={"/privacy-policy"} className={styles.item}>
+            <Link href={"/privacy"} className={styles.item}>
               <i>
                 <FontAwesomeIcon icon={faChevronRight} />
               </i>

@@ -1,8 +1,6 @@
 "use client";
 
 import styles from "./page.module.css";
-import Link from "next/link";
-import AccountBtn from "../components/Buttons/AccountBtn/AccountBtn";
 import Image from "next/image";
 import BlobBtn from "../components/Buttons/BlobBtn/BlobBtn";
 import { useRouter } from "next/navigation";
@@ -200,6 +198,7 @@ export default function Home() {
           </div>
         </div>
         <div id={styles.about} className={styles.section}>
+          <div className={styles.scroll} id="about"></div>
           <div className={styles.layer}>
             <div className={styles.title}>
               <h2>About App</h2>
@@ -257,6 +256,7 @@ export default function Home() {
           </div>
         </div>
         <div className={styles.section} id={styles.features}>
+          <div className={styles.scroll} id="feature"></div>
           <div className={styles.layer}>
             <div className={styles.title}>
               <h2>App Features</h2>
@@ -306,6 +306,7 @@ export default function Home() {
           </div>
         </div>
         <StyleWrapper className={styles.section} id={styles.review}>
+          <div className={styles.scroll} id="review"></div>
           <div className={styles.layer}>
             <div className={styles.subTitle}>What Our Client Say!</div>
             <Swiper

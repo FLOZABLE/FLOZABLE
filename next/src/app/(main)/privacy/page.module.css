@@ -1,0 +1,21 @@
+.Privacy {
+  padding-top: 10rem;
+  margin-left: var(--main-offset);
+}
+
+.Privacy .header {
+  margin-bottom: 2rem;
+}
+
+.Privacy div#tableOfContents li {
+  margin: 0.5rem 0rem;
+}
+/* .Privacy .description {
+  color: var(--gray2);
+  font-weight: ;
+}
+
+.Privacy ul li {
+  list-style-type: disc;
+}
+ */
