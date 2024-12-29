@@ -17,11 +17,11 @@ export default function MainHeader() {
         <div className={styles.page}>
           <Link href={"/#feature"}>Feature</Link>
         </div>
-        <div className={styles.page}>
+        {/* <div className={styles.page}>
           <Link href={"/#pricing"}>Pricing</Link>
-        </div>
+        </div> */}
         <div className={styles.page}>
-          <Link href={"/#pricing"}>Review</Link>
+          <Link href={"/#review"}>Review</Link>
         </div>
         <div className={styles.page}>
           <Link href={"/dashboard"}>Dashboard</Link>

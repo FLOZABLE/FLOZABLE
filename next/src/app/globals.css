@@ -263,6 +263,52 @@ svg > * {
   /* Standard syntax */
 }
 
+.layer {
+  margin-bottom: 3rem;
+}
+
+.description {
+  color: var(--gray2);
+  font-weight: 400;
+}
+
+.description ul,
+.description ol {
+  margin-left: 2rem;
+}
+
+.description ul li {
+  list-style: disc;
+  margin: 0.5rem;
+}
+
+.description p {
+  margin-bottom: 2.5rem;
+  font-weight: 500;
+}
+
+.layer a {
+  color: var(--blue2);
+}
+
+.description p strong {
+  color: var(--gray3);
+}
+
+.heading {
+  margin-bottom: 2rem;
+}
+
+.subHeading {
+  font-weight: 600;
+  color: #000;
+}
+
+.description ol li {
+  list-style: decimal;
+  color: var(--blue2);
+}
+
 @media (max-width: 2000px) {
   html {
     font-size: 16px;

@@ -1,3 +1,7 @@
+html {
+  scroll-behavior: smooth;
+}
+
 .Home #mainViewer {
   width: 100vw;
   height: 100vh;
@@ -44,6 +48,7 @@
   margin: 10rem var(--main-offset);
   display: flex;
   gap: 3rem;
+  position: relative;
 }
 
 .Home .section .layer {
@@ -76,6 +81,13 @@
   position: absolute;
   left: 12rem;
   rotate: 35deg;
+}
+
+.Home .section .scroll {
+  width: 0rem;
+  height: 0rem;
+  position: absolute;
+  top: -10rem;
 }
 
 .Home .boxes {
