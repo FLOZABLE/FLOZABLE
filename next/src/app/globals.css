@@ -275,11 +275,21 @@ svg > * {
 .description ul,
 .description ol {
   margin-left: 2rem;
+  margin-bottom: 1rem;
+}
+
+.description ul li,
+.description ol li {
+  margin: 0.5rem;
 }
 
 .description ul li {
   list-style: disc;
-  margin: 0.5rem;
+}
+
+.description ol li {
+  list-style: decimal;
+  color: var(--blue2);
 }
 
 .description p {
@@ -303,11 +313,6 @@ svg > * {
   font-weight: 600;
   color: #000;
   margin-bottom: 1rem;
-}
-
-.description ol li {
-  list-style: decimal;
-  color: var(--blue2);
 }
 
 @media (max-width: 2000px) {
