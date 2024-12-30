@@ -1,0 +1,38 @@
+html {
+  scroll-behavior: smooth;
+}
+
+.Cookies {
+  padding-top: 10rem;
+  margin: var(--main-offset);
+}
+
+.Cookies .header {
+  margin-bottom: 2rem;
+}
+
+.Cookies div#tableOfContents li {
+  margin: 0.5rem 0rem;
+}
+
+.Cookies .cookie {
+  border: 0.1rem solid var(--gray1);
+  border-radius: 0.5rem;
+  padding: 1rem;
+  display: flex;
+  margin-bottom: 2rem;
+  width: fit-content;
+}
+
+.Cookies .cookie .left {
+  text-align: right;
+  margin-right: 1rem;
+}
+
+.Cookies .cookie p {
+  margin: 0.5rem 0rem;
+}
+
+.Cookies .cookie .left p {
+  font-weight: 700;
+}

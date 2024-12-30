@@ -57,6 +57,12 @@ export default function MainFooter() {
               </i>
               <p>Terms of Service</p>
             </Link>
+            <Link href={"/cookies"} className={styles.item}>
+              <i>
+                <FontAwesomeIcon icon={faChevronRight} />
+              </i>
+              <p>Cookies</p>
+            </Link>
           </div>
         </div>
       </div>
