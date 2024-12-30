@@ -302,6 +302,7 @@ svg > * {
 .subHeading {
   font-weight: 600;
   color: #000;
+  margin-bottom: 1rem;
 }
 
 .description ol li {

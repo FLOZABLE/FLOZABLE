@@ -18,8 +18,9 @@ export default function Privacy() {
           </p>
           <ul>
             <li>
-              Visit our website at https://flozable.com , or any website of ours
-              that links to this privacy notice
+              Visit our website at{" "}
+              <Link href="https://flozable.com">https://flozable.com</Link>, or
+              any website of ours that links to this privacy notice
             </li>
             <li>
               Engage with us in other related ways, including any sales,
@@ -42,15 +43,18 @@ export default function Privacy() {
           <p>
             This summary provides key points from our privacy notice, but you
             can find out more details about any of these topics by clicking the
-            link following each key point or by using our table of contents
+            link following each key point or by using our{" "}
+            <Link href={"#toc"}>table of contents </Link>
             below to find the section you are looking for.
           </p>
           <p>
             What personal information do we process? When you visit, use, or
             navigate our Services, we may process personal information depending
             on how you interact with us and the Services, the choices you make,
-            and the products and features you use. Learn more about personal
-            information you disclose to us.
+            and the products and features you use. Learn more about{" "}
+            <Link href={"#personalinfo"}>
+              personal information you disclose to us.
+            </Link>
           </p>
           <p>
             Do we process any sensitive personal information? We do not process
@@ -66,13 +70,17 @@ export default function Privacy() {
             for security and fraud prevention, and to comply with law. We may
             also process your information for other purposes with your consent.
             We process your information only when we have a valid legal reason
-            to do so. Learn more about how we process your information.
+            to do so. Learn more about
+            <Link href={"#infouse"}> how we process your information. </Link>
           </p>
           <p>
             In what situations and with which parties do we share personal
             information? We may share information in specific situations and
-            with specific third parties. Learn more about when and with whom we
-            share your personal information.
+            with specific third parties. Learn more about
+            <Link href={"#whosare"}>
+              {" "}
+              when and with whom we share your personal information.
+            </Link>
           </p>
           <p>
             How do we keep your information safe? We have organizational and
@@ -82,14 +90,14 @@ export default function Privacy() {
             secure, so we cannot promise or guarantee that hackers,
             cybercriminals, or other unauthorized third parties will not be able
             to defeat our security and improperly collect, access, steal, or
-            modify your information. Learn more about how we keep your
-            information safe.
+            modify your information. Learn more about
+            <Link href={"#infosafe"}> how we keep your information safe.</Link>
           </p>
           <p>
             What are your rights? Depending on where you are located
             geographically, the applicable privacy law may mean you have certain
-            rights regarding your personal information. Learn more about your
-            privacy rights.
+            rights regarding your personal information. Learn more about
+            <Link href={"#privacyrights"}> your privacy rights.</Link>
           </p>
           <div>
             <h3 className={"subHeading"}>
@@ -141,64 +149,76 @@ export default function Privacy() {
           </p>
           <p>
             Want to learn more about what we do with any information we collect?
-            Review the privacy notice in full.
+            <Link href={"#toc"}>Review the privacy notice in full.</Link>
           </p>
         </div>
       </div>
-      <div className="layer" id={styles.tableOfContents}>
+      <div className="layer" id={"toc"}>
         <h2 className="heading">TABLE OF CONTENTS</h2>
         <div className="description">
           <ol>
             <li>
-              <Link href={""}>WHAT INFORMATION DO WE COLLECT?</Link>
+              <Link href={"#personalinfo"}>
+                WHAT INFORMATION DO WE COLLECT?
+              </Link>
             </li>
             <li>
-              <Link href={""}>HOW DO WE PROCESS YOUR INFORMATION?</Link>
+              <Link href={"#infouse"}>HOW DO WE PROCESS YOUR INFORMATION?</Link>
             </li>
             <li>
-              <Link href={""}>
+              <Link href={"#legalbases"}>
                 WHAT LEGAL BASES DO WE RELY ON TO PROCESS YOUR PERSONAL
                 INFORMATION?
               </Link>
             </li>
             <li>
-              <Link href={""}>
+              <Link href={"#whoshare"}>
                 WHEN AND WITH WHOM DO WE SHARE YOUR PERSONAL INFORMATION?
               </Link>
             </li>
             <li>
-              <Link href={""}>
+              <Link href={"#cookies"}>
                 DO WE USE COOKIES AND OTHER TRACKING TECHNOLOGIES?
               </Link>
             </li>
             <li>
-              <Link href={""}>HOW DO WE HANDLE YOUR SOCIAL LOGINS?</Link>
+              <Link href={"#sociallogins"}>
+                HOW DO WE HANDLE YOUR SOCIAL LOGINS?
+              </Link>
             </li>
             <li>
-              <Link href={""}>HOW LONG DO WE KEEP YOUR INFORMATION?</Link>
+              <Link href={"#inforetain"}>
+                HOW LONG DO WE KEEP YOUR INFORMATION?
+              </Link>
             </li>
             <li>
-              <Link href={""}>HOW DO WE KEEP YOUR INFORMATION SAFE?</Link>
+              <Link href={"#infosafe"}>
+                HOW DO WE KEEP YOUR INFORMATION SAFE?
+              </Link>
             </li>
             <li>
-              <Link href={""}>WHAT ARE YOUR PRIVACY RIGHTS?</Link>
+              <Link href={"#privacyrights"}>WHAT ARE YOUR PRIVACY RIGHTS?</Link>
             </li>
             <li>
-              <Link href={""}>CONTROLS FOR DO-NOT-TRACK FEATURES</Link>
+              <Link href={"#DNT"}>CONTROLS FOR DO-NOT-TRACK FEATURES</Link>
             </li>
             <li>
-              <Link href={""}>
+              <Link href={"#uslaws"}>
                 DO UNITED STATES RESIDENTS HAVE SPECIFIC PRIVACY RIGHTS?
               </Link>
             </li>
             <li>
-              <Link href={""}>DO WE MAKE UPDATES TO THIS NOTICE?</Link>
+              <Link href={"#policyupdates"}>
+                DO WE MAKE UPDATES TO THIS NOTICE?
+              </Link>
             </li>
             <li>
-              <Link href={""}>HOW CAN YOU CONTACT US ABOUT THIS NOTICE?</Link>
+              <Link href={"#contact"}>
+                HOW CAN YOU CONTACT US ABOUT THIS NOTICE?
+              </Link>
             </li>
             <li>
-              <Link href={""}>
+              <Link href={"#request"}>
                 HOW CAN YOU REVIEW, UPDATE, OR DELETE THE DATA WE COLLECT FROM
                 YOU?
               </Link>
@@ -206,7 +226,7 @@ export default function Privacy() {
           </ol>
         </div>
       </div>
-      <div className="layer">
+      <div className="layer" id="personalinfo">
         <h2 className="heading">1. WHAT INFORMATION DO WE COLLECT?</h2>
         <h3 className="subHeading">Personal information you disclose to us</h3>
         <div className={"description"}>
@@ -244,7 +264,9 @@ export default function Privacy() {
             account details, like your Facebook, Twitter, or other social media
             account. If you choose to register in this way, we will collect the
             information described in the section called{" "}
-            <Link href={""}>"HOW DO WE HANDLE YOUR SOCIAL LOGINS? "</Link>
+            <Link href={"#sociallogins"}>
+              "HOW DO WE HANDLE YOUR SOCIAL LOGINS? "
+            </Link>
             below.
           </p>
           <p>
@@ -299,7 +321,7 @@ export default function Privacy() {
           </ul>
         </div>
       </div>
-      <div className="layer">
+      <div className="layer" id="infouse">
         <h2 className="heading">2. HOW DO WE PROCESS YOUR INFORMATION?</h2>
         <div className={"description"}>
           <p>
@@ -328,7 +350,7 @@ export default function Privacy() {
         </div>
       </div>
 
-      <div className="layer">
+      <div className="layer" id="legalbases">
         <h2 className="heading">
           3. WHAT LEGAL BASES DO WE RELY ON TO PROCESS YOUR INFORMATION?
         </h2>
@@ -355,7 +377,8 @@ export default function Privacy() {
               <strong>Consent.</strong> We may process your information if you
               have given us permission (i.e., consent) to use your personal
               information for a specific purpose. You can withdraw your consent
-              at any time. Learn more about withdrawing your consent.
+              at any time. Learn more about{" "}
+              <Link href={"#withdrawconsent"}>withdrawing your consent.</Link>
             </li>
             <li>
               <strong>Legal Obligations.</strong> We may process your
@@ -438,7 +461,7 @@ export default function Privacy() {
           </ul>
         </div>
       </div>
-      <div className="layer">
+      <div className="layer" id="whosare">
         <h2 className="heading">
           4. WHEN AND WITH WHOM DO WE SHARE YOUR PERSONAL INFORMATION?
         </h2>
@@ -462,7 +485,7 @@ export default function Privacy() {
         </div>
       </div>
 
-      <div className="layer">
+      <div className="layer" id="cookies">
         <h2 className="heading">
           5. DO WE USE COOKIES AND OTHER TRACKING TECHNOLOGIES?
         </h2>
@@ -484,7 +507,7 @@ export default function Privacy() {
         </div>
       </div>
 
-      <div className="layer">
+      <div className="layer" id="sociallogins">
         <h2 className="heading">6. HOW DO WE HANDLE YOUR SOCIAL LOGINS?</h2>
         <div className={"description"}>
           <p>
@@ -516,7 +539,7 @@ export default function Privacy() {
         </div>
       </div>
 
-      <div className="layer">
+      <div className="layer" id="inforetain">
         <h2 className="heading">7. HOW LONG DO WE KEEP YOUR INFORMATION?</h2>
         <div className={"description"}>
           <p>
@@ -543,7 +566,7 @@ export default function Privacy() {
         </div>
       </div>
 
-      <div className="layer">
+      <div className="layer" id="infosafe">
         <h2 className="heading">8. HOW DO WE KEEP YOUR INFORMATION SAFE?</h2>
         <div className={"description"}>
           <p>
@@ -567,7 +590,7 @@ export default function Privacy() {
         </div>
       </div>
 
-      <div className="layer">
+      <div className="layer" id="privacyrights">
         <h2 className="heading">9. WHAT ARE YOUR PRIVACY RIGHTS?</h2>
         <div className={"description"}>
           <p>
@@ -658,7 +681,7 @@ export default function Privacy() {
         </div>
       </div>
 
-      <div className="layer">
+      <div className="layer" id="DNT">
         <h2 className="heading">10. CONTROLS FOR DO-NOT-TRACK FEATURES</h2>
         <div className={"description"}>
           <p>
@@ -677,7 +700,7 @@ export default function Privacy() {
         </div>
       </div>
 
-      <div className="layer">
+      <div className="layer" id="uslaws">
         <h2 className="heading">
           11. DO UNITED STATES RESIDENTS HAVE SPECIFIC PRIVACY RIGHTS?
         </h2>
@@ -721,9 +744,7 @@ export default function Privacy() {
           </h3>
           <p>
             Learn about how we use your personal information in the section,{" "}
-            <Link href="#how-we-process">
-              "HOW DO WE PROCESS YOUR INFORMATION?"
-            </Link>
+            <Link href="#infouse">"HOW DO WE PROCESS YOUR INFORMATION?"</Link>
           </p>
 
           <h3 className="subHeading">
@@ -734,7 +755,7 @@ export default function Privacy() {
             pursuant to a written contract between us and each service provider.
             Learn more about how we disclose personal information in the
             section,{" "}
-            <Link href="#information-sharing">
+            <Link href="#whosare">
               "WHEN AND WITH WHOM DO WE SHARE YOUR PERSONAL INFORMATION?"
             </Link>
           </p>
@@ -1068,7 +1089,7 @@ export default function Privacy() {
         </div>
       </div>
 
-      <div className="layer">
+      <div className="layer" id="policyupdates">
         <h2 className="heading">12. DO WE MAKE UPDATES TO THIS NOTICE?</h2>
         <div className="description">
           <p>
@@ -1088,7 +1109,7 @@ export default function Privacy() {
         </div>
       </div>
 
-      <div className="layer">
+      <div className="layer" id="contact">
         <h2 className="heading">
           13. HOW CAN YOU CONTACT US ABOUT THIS NOTICE?
         </h2>
@@ -1109,7 +1130,7 @@ export default function Privacy() {
         </div>
       </div>
 
-      <div className="layer">
+      <div className="layer" id="request">
         <h2 className="heading">
           14. HOW CAN YOU REVIEW, UPDATE, OR DELETE THE DATA WE COLLECT FROM
           YOU?
