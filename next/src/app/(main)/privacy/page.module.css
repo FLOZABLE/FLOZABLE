@@ -4,7 +4,7 @@ html {
 
 .Privacy {
   padding-top: 10rem;
-  margin-left: var(--main-offset);
+  margin: var(--main-offset);
 }
 
 .Privacy .header {
