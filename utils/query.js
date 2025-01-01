@@ -22,7 +22,9 @@ async function createUsersTable() {
     notification_keys VARCHAR(150),
     stripe_id VARCHAR(25),
     spotify_refresh_token varchar(150),
-    verified TINYINT(1) DEFAULT 0
+    verified TINYINT(1) DEFAULT 0,
+    level SMALLINT UNSIGNED DEFAULT 1,
+    current_streak SMALLINT UNSIGNED DEFAULT 0
   );
   `);
 }
