@@ -83,6 +83,11 @@ html {
   rotate: 35deg;
 }
 
+.Home .section#about div#phone3 {
+  position: absolute;
+  left: 0rem;
+}
+
 .Home .section .scroll {
   width: 0rem;
   height: 0rem;

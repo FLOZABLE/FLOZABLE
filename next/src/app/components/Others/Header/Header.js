@@ -21,6 +21,8 @@ import NotificationsContainer from "../../Notifications/NotificationsContainer/N
 import { useAccount } from "@/Hooks/accountHooks";
 import { useSubjects } from "@/Hooks/subjectsHooks";
 import ChatModalBtn from "../../Buttons/ChatModalBtn/ChatModalBtn";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faBookOpen } from "@fortawesome/free-solid-svg-icons";
 
 function HeaderEl({ children, value, title }) {
   return (
@@ -93,7 +95,7 @@ function Header({}) {
       <div className={styles.left}>
         <HeaderEl title={"Today Total"} value={totalStudied}>
           <i>
-            <HeaderBook />
+            <FontAwesomeIcon icon={faBookOpen} />
           </i>
         </HeaderEl>
         <div className={styles.divider}></div>
