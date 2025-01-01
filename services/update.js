@@ -235,8 +235,10 @@ async function updateMariaV1() {
       ALTER TABLE \`groups\` MODIFY description VARCHAR(1000);
       ALTER TABLE plans MODIFY description VARCHAR(3000) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
       ALTER TABLE themes MODIFY description VARCHAR(700) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+      ALTER TABLE users ADD COLUMN IF NOT EXISTS level SMALLINT UNSIGNED DEFAULT 1;
+      ALTER TABLE users ADD COLUMN IF NOT EXISTS current_streak SMALLINT UNSIGNED DEFAULT 0;
     `);
-    console.log("udated mariadb");
+    console.log("udated mariadb v1");
   } catch (err) {
     console.log(err);
   }

@@ -287,7 +287,8 @@ async function userCache(connection, userId, query = true) {
         user_id,
         name,
         timezone,
-        created_at
+        created_at,
+        level
       FROM users
       WHERE user_id = ?
       `,
@@ -331,7 +332,8 @@ async function usersCache(connection, users, cache = false) {
         user_id,
         name,
         timezone,
-        created_at
+        created_at,
+        level
       FROM users
       WHERE user_id IN (?)
       `,
