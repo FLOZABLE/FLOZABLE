@@ -1,0 +1,79 @@
+.MovingCheckBox .checkbox {
+  --bg: #fff;
+  --brdr: #d1d6ee;
+  --brdr-actv: #1e2235;
+  --brdr-hovr: #bbc1e1;
+  --dur: calc((var(--size, 2) / 2) * 0.6s);
+  display: inline-block;
+  width: calc(var(--size, 1) * 22px);
+  position: relative;
+}
+.MovingCheckBox .checkbox:after {
+  content: "";
+  width: 100%;
+  padding-top: 100%;
+  display: block;
+}
+.MovingCheckBox .checkbox > * {
+  position: absolute;
+}
+.MovingCheckBox .checkbox input {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  -webkit-tap-highlight-color: transparent;
+  cursor: pointer;
+  background-color: var(--bg);
+  border-radius: calc(var(--size, 1) * 4px);
+  border: calc(var(--newBrdr, var(--size, 1)) * 1px) solid;
+  color: var(--newBrdrClr, var(--brdr));
+  outline: none;
+  margin: 0;
+  padding: 0;
+  transition: all calc(var(--dur) / 3) linear;
+}
+.MovingCheckBox .checkbox input:hover,
+.MovingCheckBox .checkbox input:checked {
+  --newBrdr: calc(var(--size, 1) * 2);
+}
+.MovingCheckBox .checkbox input:hover {
+  --newBrdrClr: var(--brdr-hovr);
+}
+.MovingCheckBox .checkbox input:checked {
+  --newBrdrClr: var(--brdr-actv);
+  transition-delay: calc(var(--dur) / 1.3);
+}
+.MovingCheckBox .checkbox input:checked + svg {
+  --dashArray: 16 93;
+  --dashOffset: 109;
+}
+.MovingCheckBox .checkbox svg {
+  fill: none;
+  left: 0;
+  pointer-events: none;
+  stroke: var(--stroke, var(--border-active));
+  stroke-dasharray: var(--dashArray, 93);
+  stroke-dashoffset: var(--dashOffset, 94);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 2px;
+  top: 0;
+  transition: stroke-dasharray var(--dur), stroke-dashoffset var(--dur);
+}
+.MovingCheckBox .checkbox svg,
+.MovingCheckBox .checkbox input {
+  display: block;
+  height: 100%;
+  width: 100%;
+}
+
+.MovingCheckBox.checked .checkbox input {
+  --newBrdr: calc(var(--size, 1) * 2);
+  --newBrdrClr: var(--brdr-actv);
+  transition-delay: calc(var(--dur) / 1.3);
+}
+
+.MovingCheckBox.checked .checkbox input + svg {
+  --dashArray: 16 93;
+  --dashOffset: 109;
+}
