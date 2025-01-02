@@ -6,7 +6,7 @@
   width: var(--sidebar-offset);
   display: flex;
   flex-direction: column;
-  background-color: #fff;
+  background-color: var(--gray0);
   box-shadow: var(--shadow4);
   z-index: 3;
 }
@@ -37,7 +37,7 @@
   height: 3.6rem;
   position: absolute;
   transition: 0.15s ease-in-out transform;
-  background-color: var(--blue0);
+  background-color: var(--gray1);
   border-radius: 0.5rem;
   transform: translateY(-5rem);
 }
@@ -77,11 +77,11 @@
 } */
 
 .Sidebar .SidebarEl.activeSidebar i {
-  color: var(--blue2);
+  color: var(--gray3);
 }
 
 .Sidebar .SidebarEl.activeSidebar h3 {
-  color: var(--blue2);
+  color: var(--gray3);
 }
 
 .Sidebar .buttons {
@@ -91,7 +91,7 @@
   width: calc(100% - 1rem);
 }
 
-.Sidebar .buttons > div{
+.Sidebar .buttons > div {
   margin: 0rem 0.5rem;
 }
 

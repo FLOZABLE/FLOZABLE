@@ -4,7 +4,8 @@ import { PlanModalContext, PlansContext } from "@/app/utils/Contexts";
 import parse from "html-react-parser";
 import { DEFAULT_PLAN } from "@/app/utils/Constant";
 import { patchPlanStatus } from "@/Api/plansApi";
-import BounceCheckBox from "../../Buttons/BounceCheckBox/BounceCheckBox";
+import ClearCheckBox from "../../Buttons/ClearCheckBox/ClearCheckBox";
+import MovingCheckBox from "../../Buttons/MovingCheckBox/MovingCheckBox";
 
 export default function Plan({ plan }) {
   const { setPlanModal } = useContext(PlanModalContext);
@@ -25,6 +26,7 @@ export default function Plan({ plan }) {
       };
 
       const response = await patchPlanStatus(plan.plan_id, plan.completed);
+      //console.log(response, updatedEvents)
       if (response.success) {
         setPlans(updatedEvents);
       }
@@ -47,10 +49,10 @@ export default function Plan({ plan }) {
       }}
     >
       <div className={styles.layer}>
-        {plan.type === "google" ? (
+        {/* {plan.type === "google" ? (
           <div className={`overflowDot ${styles.title}`}>{plan.title}</div>
         ) : (
-          <BounceCheckBox
+          <ClearCheckBox
             id={plan.plan_id}
             checked={plan.completed}
             onClick={(e) => {
@@ -59,9 +61,18 @@ export default function Plan({ plan }) {
             }}
           >
             <div className={`overflowDot ${styles.title}`}>{plan.title}</div>
-          </BounceCheckBox>
-        )}
+          </ClearCheckBox>
+        )} */}
+        <div className={`overflowDot ${styles.title}`}>{plan.title}</div>
         <div className={styles.date}>{plan.dispStart}</div>
+        <MovingCheckBox
+          checked={plan.completed}
+          onClick={(e) => {
+            e.stopPropagation();
+            togglePlan();
+          }}
+          id={plan.plan_id}
+        />
       </div>
       <div className={styles.layer}>
         <div className={`${styles.description} customScroll`}>

@@ -2,6 +2,8 @@ import styles from "./DateSelectorBtn.module.css";
 import React, { useState, useEffect } from "react";
 import { DateTime } from "luxon";
 import { getDatesDisplay } from "@/app/utils/Tool";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faArrowLeft, faArrowRight } from "@fortawesome/free-solid-svg-icons";
 
 function DateSelectorBtn({ viewDate, setViewDate, viewer }) {
   const [dateDisp, setDateDisp] = useState("");
@@ -43,13 +45,13 @@ function DateSelectorBtn({ viewDate, setViewDate, viewer }) {
     <div className={styles.DateSelectorBtn}>
       {setViewDate ? (
         <div className={styles.button} onClick={onDecr}>
-          {"<"}
+          <FontAwesomeIcon icon={faArrowLeft} />
         </div>
       ) : null}
       <p>{dateDisp}</p>
       {setViewDate ? (
         <div className={styles.button} onClick={onIncr}>
-          {">"}
+          <FontAwesomeIcon icon={faArrowRight} />
         </div>
       ) : null}
     </div>

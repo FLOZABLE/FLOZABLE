@@ -1,8 +1,8 @@
-import styles from "./BounceCheckBox.module.css";
+import styles from "./ClearCheckBox.module.css";
 
-export default function BounceCheckBox({ children, id, checked, onClick }) {
+export default function ClearCheckBox({ children, id, checked, onClick }) {
   return (
-    <div className={styles.BounceCheckBox}>
+    <div className={styles.ClearCheckBox}>
       <input
         className={styles.inpCbx}
         id={id}
