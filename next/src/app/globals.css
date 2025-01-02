@@ -163,12 +163,8 @@ button:hover {
 .BoxContainer {
   background-color: #ffffff;
   margin: 2rem;
-  padding-top: 2rem;
-  padding-left: 2rem;
-  padding-right: 2rem;
-  padding-bottom: 1rem;
+  /* padding: 2rem 2rem 1rem 2rem; */
   border-radius: 30px;
-  border: 1px solid #cacaca;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -221,6 +217,7 @@ button:hover {
     var(--secondary)
   );
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 

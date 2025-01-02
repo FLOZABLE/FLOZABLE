@@ -22,7 +22,12 @@ import { useAccount } from "@/Hooks/accountHooks";
 import { useSubjects } from "@/Hooks/subjectsHooks";
 import ChatModalBtn from "../../Buttons/ChatModalBtn/ChatModalBtn";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBookOpen } from "@fortawesome/free-solid-svg-icons";
+import {
+  faBookOpen,
+  faBrain,
+  faHourglassStart,
+  faRocket,
+} from "@fortawesome/free-solid-svg-icons";
 
 function HeaderEl({ children, value, title }) {
   return (
@@ -101,19 +106,19 @@ function Header({}) {
         <div className={styles.divider}></div>
         <HeaderEl title={"App Usage"} value={appUsage}>
           <i>
-            <HeaderGamepad />
+            <FontAwesomeIcon icon={faHourglassStart} />
           </i>
         </HeaderEl>
         <div className={styles.divider}></div>
         <HeaderEl title={"Streak"} value={studyStreak}>
           <i>
-            <HeaderMeteor />
+            <FontAwesomeIcon icon={faRocket} />
           </i>
         </HeaderEl>
         <div className={styles.divider}></div>
         <HeaderEl title={"Focus Time"} value={longestSession}>
           <i>
-            <HeaderTarget />
+            <FontAwesomeIcon icon={faBrain} />
           </i>
         </HeaderEl>
       </div>

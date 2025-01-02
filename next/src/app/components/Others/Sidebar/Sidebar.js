@@ -17,7 +17,6 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useWindowSize } from "@/Hooks/otherHooks";
 import AccountBtn from "../../Buttons/AccountBtn/AccountBtn";
-import { useTour } from "@reactour/tour";
 import TutorialBtn from "../../Buttons/TutorialBtn/TutorialBtn";
 
 function SidebarEl({ pathname, href, children, tutorial, onClick }) {
@@ -37,8 +36,6 @@ function SidebarEl({ pathname, href, children, tutorial, onClick }) {
 }
 
 function Sidebar({}) {
-  const { currentStep, setCurrentStep } = useTour();
-
   const focusBackgroundRef = useRef(null);
 
   const pathname = usePathname();
