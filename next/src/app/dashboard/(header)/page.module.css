@@ -7,9 +7,13 @@
   min-height: calc(100vh - 6rem);
 }
 
+.Main .layer > div {
+  display: flex;
+  flex-direction: column;
+}
+
 .Main .layer .box {
   flex: 1;
-  flex-direction: column;
 }
 
 .Main .layer .box .title {
@@ -27,13 +31,12 @@
   min-width: 23.5rem;
   height: min-content;
   overflow: hidden;
-  flex: 0;
   display: block;
   padding-top: 0.5rem;
 }
 
 .Main .box#FriendsActivityViewer {
-  max-height: 60vh;
+  max-height: calc(100vh - 10rem);
 }
 
 .Main .box#SubjectsPie {
@@ -51,7 +54,7 @@
 
 .Main .right {
   width: 30%;
-  display: flex;
+  overflow: hidden;
 }
 
 /* @media (max-width: 1800px) {
