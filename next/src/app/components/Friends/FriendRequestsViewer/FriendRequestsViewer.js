@@ -9,7 +9,11 @@ import { deleteFriendRequest, postFriendsRequestReply } from "@/Api/friendsApi";
 import { useFriendsStatus, useFriendsTrends } from "@/Hooks/friendsHooks";
 import { useNotifications } from "@/Hooks/notificationsHooks";
 
-function FriendRequestContainer({ friendRequest, children, style }) {
+function SentFriendRequestContainer({
+  friendRequest,
+  friendRequestDelete,
+  style,
+}) {
   const router = useRouter();
 
   return (
@@ -20,10 +24,61 @@ function FriendRequestContainer({ friendRequest, children, style }) {
           router.push(`/dashboard/user/${friendRequest.userinfo.user_id}`);
         }}
       />
-      {children}
+      <div className={styles.buttons}>
+        <div
+          className={styles.button}
+          onClick={() => {
+            friendRequestDelete(request.notification_id);
+          }}
+        >
+          <FontAwesomeIcon icon={faXmark} />
+          <div className={`HoverText ${styles.hoverText}`}>Abort</div>
+        </div>
+      </div>
     </div>
   );
 }
+
+function ReceivedFriendRequestContainer({
+  friendRequest,
+  friendRequestReply,
+  style,
+}) {
+  const router = useRouter();
+
+  return (
+    <div className={styles.FriendRequestContainer} style={style}>
+      <UserContainer
+        userInfo={friendRequest.userinfo}
+        onClick={() => {
+          router.push(`/dashboard/user/${friendRequest.userinfo.user_id}`);
+        }}
+      />
+      <div className={styles.buttons}>
+        <div
+          className={styles.button}
+          onClick={() => {
+            friendRequestReply(request.notification_id, false);
+          }}
+        >
+          <FontAwesomeIcon icon={faXmark} />
+          <div className={`HoverText ${styles.hoverText}`}>Decline</div>
+        </div>
+        <div
+          className={styles.button}
+          onClick={() => {
+            friendRequestReply(request.notification_id, true);
+          }}
+        >
+          <FontAwesomeIcon icon={faCheck} />
+          <div className={`HoverText ${styles.hoverText}`}>Accept</div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export { SentFriendRequestContainer, ReceivedFriendRequestContainer };
 
 function FriendRequestsViewer() {
   const { friendsStatusRefetch } = useFriendsStatus();
@@ -95,59 +150,22 @@ function FriendRequestsViewer() {
         {viewer
           ? sentRequests.map((request, i) => {
               return (
-                <FriendRequestContainer
+                <SentFriendRequestContainer
                   friendRequest={request}
                   key={i}
                   style={{ zIndex: friendRequests.length - i }}
-                >
-                  <div className={styles.buttons}>
-                    <div
-                      className={styles.button}
-                      onClick={() => {
-                        friendRequestDelete(request.notification_id);
-                      }}
-                    >
-                      <FontAwesomeIcon icon={faXmark} />
-                      <div className={`HoverText ${styles.hoverText}`}>
-                        Abort
-                      </div>
-                    </div>
-                  </div>
-                </FriendRequestContainer>
+                  friendRequestDelete={friendRequestDelete}
+                />
               );
             })
           : friendRequests.map((request, i) => {
               return (
-                <FriendRequestContainer
+                <ReceivedFriendRequestContainer
                   friendRequest={request}
                   key={i}
                   style={{ zIndex: friendRequests.length - i }}
-                >
-                  <div className={styles.buttons}>
-                    <div
-                      className={styles.button}
-                      onClick={() => {
-                        friendRequestReply(request.notification_id, false);
-                      }}
-                    >
-                      <FontAwesomeIcon icon={faXmark} />
-                      <div className={`HoverText ${styles.hoverText}`}>
-                        Decline
-                      </div>
-                    </div>
-                    <div
-                      className={styles.button}
-                      onClick={() => {
-                        friendRequestReply(request.notification_id, true);
-                      }}
-                    >
-                      <FontAwesomeIcon icon={faCheck} />
-                      <div className={`HoverText ${styles.hoverText}`}>
-                        Accept
-                      </div>
-                    </div>
-                  </div>
-                </FriendRequestContainer>
+                  friendRequestReply={friendRequestReply}
+                />
               );
             })}
       </div>

@@ -12,6 +12,8 @@ import CircularLoading from "../../LoadingScreen/CircularLoading/CircularLoading
 import { SearchUsersModalContext } from "@/app/utils/Contexts";
 import ChatBtn from "../../Buttons/ChatBtn/ChatBtn";
 import { socket } from "@/app/utils/socket";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faPlus } from "@fortawesome/free-solid-svg-icons";
 
 function FriendsActivityViewer() {
   const { setSearchUsersModal } = useContext(SearchUsersModalContext);
@@ -108,7 +110,7 @@ function FriendsActivityViewer() {
     };
   }, []);
 
-  console.log("friends err", friendsStatusError)
+  console.log("friends err", friendsStatusError);
 
   if (friendsStatusError) {
     return <RecommendedFriendsViewer />;
@@ -117,7 +119,7 @@ function FriendsActivityViewer() {
   return (
     <div className={`Box ${styles.FriendsActivityViewer}`}>
       <div className={`header ${styles.header}`}>
-        <p>Friends</p>
+        <h2>Friends</h2>
         <div
           id={styles.searchFriendBtn}
           onClick={() => {
@@ -129,7 +131,8 @@ function FriendsActivityViewer() {
             }));
           }}
         >
-          +<div className={`HoverText ${styles.hoverText}`}>Add friend!</div>
+          <FontAwesomeIcon icon={faPlus} />
+          <div className={`HoverText ${styles.hoverText}`}>Add friend!</div>
         </div>
       </div>
       <div className={`${styles.friends} contents customScroll`}>

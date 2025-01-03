@@ -6,6 +6,7 @@ import FriendsActivityViewer from "@/app/components/Friends/FriendsActivityViewe
 import SubjectsPie from "@/app/components/Charts/SubjectsPie/SubjectsPie";
 import { useState } from "react";
 import { useReportWebVitals } from "next/web-vitals";
+import FriendsViewer from "@/app/components/Friends/FriendsViewer/FriendsViewer";
 
 export default function Dashboard() {
   const [viewDate, setViewDate] = useState(
@@ -13,59 +14,43 @@ export default function Dashboard() {
   );
   const [viewer, setViewer] = useState("day");
 
-  useReportWebVitals((metric) => {
-    console.log("web vital", metric)
-    /* window?.gtag("event", metric.name, {
-      value: Math.round(
-        metric.name === "CLS" ? metric.value * 1000 : metric.value
-      ), // values must be integers
-      event_label: metric.id, // id unique to current page load
-      non_interaction: true, // avoids affecting bounce rate.
-    });
-
-    switch (metric.name) {
-      case "FCP": {
-        // handle FCP results
-      }
-      case "LCP": {
-        // handle LCP results
-      }
-      // ...
-    } */
-  });
-
   return (
     <div className={`Main`}>
       <div className={styles.Main}>
         <div className={styles.layer}>
-          {/* <div className={`BoxContainer ${styles.box}`} id={styles.calendar}>
-            <div className={styles.title}>Calendar</div>
-          </div> */}
-          <div
-            className={`${styles.box} BoxContainer`}
-            id={styles.planTimeline}
-            style={{ "--notes-color": "var(--gray2)" }}
-          >
-            <PlansTimeline
-              setViewDate={setViewDate}
-              viewDate={viewDate}
-              viewer={viewer}
-              maxHeight="calc(80vh)"
-            />
+          <div className={styles.left}>
+            <div
+              className={`${styles.box} BoxContainer`}
+              id={styles.planTimeline}
+              style={{ "--notes-color": "var(--gray2)" }}
+            >
+              <PlansTimeline
+                setViewDate={setViewDate}
+                viewDate={viewDate}
+                viewer={viewer}
+                maxHeight="calc(80vh)"
+              />
+            </div>
+            <div
+              className={`${styles.box} BoxContainer`}
+              id={styles.SubjectsPie}
+            >
+              <SubjectsPie
+                viewDate={viewDate}
+                setViewDate={setViewDate}
+                viewer={viewer}
+                setViewer={setViewer}
+              />
+            </div>
           </div>
-          <div
-            className={`${styles.box} BoxContainer`}
-            id={styles.FriendsActivityViewer}
-          >
-            <FriendsActivityViewer />
-          </div>
-          <div className={`${styles.box} BoxContainer`} id={styles.SubjectsPie}>
-            <SubjectsPie
-              viewDate={viewDate}
-              setViewDate={setViewDate}
-              viewer={viewer}
-              setViewer={setViewer}
-            />
+          <div className={styles.center}></div>
+          <div className={styles.right}>
+            <div
+              className={`${styles.box} BoxContainer`}
+              id={styles.FriendsActivityViewer}
+            >
+              <FriendsViewer />
+            </div>
           </div>
         </div>
       </div>

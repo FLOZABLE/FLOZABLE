@@ -67,13 +67,26 @@
   width: 100%;
 }
 
-.MovingCheckBox.checked .checkbox input {
+.MovingCheckBox.animate.checked .checkbox input {
   --newBrdr: calc(var(--size, 1) * 2);
   --newBrdrClr: var(--brdr-actv);
+  transition: all calc(var(--dur) / 3) linear;
   transition-delay: calc(var(--dur) / 1.3);
 }
 
-.MovingCheckBox.checked .checkbox input + svg {
+.MovingCheckBox.animate.checked .checkbox svg {
   --dashArray: 16 93;
   --dashOffset: 109;
+  transition: stroke-dasharray var(--dur), stroke-dashoffset var(--dur);
+}
+
+/* Initial state before animation */
+.MovingCheckBox:not(.animate).checked .checkbox svg {
+  --dashArray: 93;
+  --dashOffset: 94;
+  transition: none;
+}
+
+.MovingCheckBox:not(.animate).checked .checkbox input {
+  transition: none;
 }

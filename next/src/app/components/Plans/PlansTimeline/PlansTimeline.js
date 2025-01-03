@@ -1,13 +1,19 @@
 "use client";
 
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import styles from "./PlansTimeline.module.css";
 import { PlanModalContext, PlansContext } from "@/app/utils/Contexts";
 import { DateTime } from "luxon";
 import { DEFAULT_PLAN } from "@/app/utils/Constant";
 import Plan from "../Plan/Plan";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCirclePlus } from "@fortawesome/free-solid-svg-icons";
+import { faCirclePlus, faPlus } from "@fortawesome/free-solid-svg-icons";
 import SubjectsLabels from "../../Charts/SubjectsLabels/SubjectsLabels";
 import DateSelectorBtn from "../../Buttons/DateSelectorBtn/DateSelectorBtn";
 import { useSubjects } from "@/Hooks/subjectsHooks";
@@ -90,63 +96,60 @@ export default function PlansTimeline({
     setTodoPlans(todoPlans);
   }, [plans, viewer, viewDate, subjects]);
 
+  const addPlan = useCallback(() => {
+    if (currentStep === 0) {
+      setTimeout(() => {
+        setCurrentStep(1);
+      }, 300);
+    }
+
+    if (planModal.plan_id === "0000000000") {
+      return;
+    }
+    const subject = subjects?.[0];
+    const subject_id = subject?.subject_id;
+    const color = subject ? subject.color : "#000000";
+
+    const newPlan = {
+      ...DEFAULT_PLAN,
+      plan_id: "0000000000",
+      opened: true,
+      subject_id,
+    };
+    setPlanModal(newPlan);
+    newPlan.backgroundColor = color;
+    newPlan.borderColor = color;
+    setPlans((prev) => [...prev, newPlan]);
+  }, [currentStep, subjects, planModal]);
+
   return (
     <div
-      className={`hiddenScroll ${styles.PlansTimeline} ${
+      className={`Box hiddenScroll ${styles.PlansTimeline} ${
         mode === "study" ? styles.studyMode : ""
       }`}
       ref={containerRef}
       style={{ maxHeight }}
     >
-      <div className={styles.header}>
-        <div className={styles.layer}>
-          <h2>Tasks</h2>
-          <div className={styles.DateSelectorBtn}>
-            <DateSelectorBtn
-              viewDate={viewDate}
-              setViewDate={setViewDate}
-              viewer={viewer}
-              style={{ color: "var(--gray2)" }}
-            />
-          </div>
-          <div className={styles.buttons}>
-            <div
-              id={styles.addPlan}
-              className=""
-              data-tutorial={0}
-              onClick={() => {
-                if (currentStep === 0) {
-                  setTimeout(() => {
-                    setCurrentStep(1);
-                  }, 300);
-                }
-
-                if (planModal.plan_id === "0000000000") {
-                  return;
-                }
-                const subject = subjects?.[0];
-                const subject_id = subject?.subject_id;
-                const color = subject ? subject.color : "#000000";
-
-                const newPlan = {
-                  ...DEFAULT_PLAN,
-                  plan_id: "0000000000",
-                  opened: true,
-                  subject_id,
-                };
-                setPlanModal(newPlan);
-                newPlan.backgroundColor = color;
-                newPlan.borderColor = color;
-                setPlans((prev) => [...prev, newPlan]);
-              }}
-              ref={addBtnRef}
-            >
-              <FontAwesomeIcon icon={faCirclePlus} />
-            </div>
-          </div>
+      <div className="header">
+        <h2>Tasks</h2>
+        <div className={styles.DateSelectorBtn}>
+          <DateSelectorBtn
+            viewDate={viewDate}
+            setViewDate={setViewDate}
+            viewer={viewer}
+            style={{ color: "var(--gray2)" }}
+          />
         </div>
-        <div className={styles.layer} id={styles.notes}>
-          <p>Notes: We need to get focused ASAP!</p>
+        <div className={styles.buttons}>
+          <div
+            id={styles.addPlan}
+            className="button"
+            data-tutorial={0}
+            onClick={addPlan}
+            ref={addBtnRef}
+          >
+            <FontAwesomeIcon icon={faPlus} />
+          </div>
         </div>
       </div>
       <div className={styles.subjects}>
