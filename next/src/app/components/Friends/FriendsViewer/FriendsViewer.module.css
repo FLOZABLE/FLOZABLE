@@ -1,5 +1,22 @@
 .FriendsViewer {
   z-index: 0;
+  display: flex;
+}
+
+.FriendsViewer .sections {
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.section {
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.contents {
+  overflow: auto;
 }
 
 .FriendsViewer .hoverText {
@@ -13,13 +30,7 @@
   opacity: 1;
 }
 
-.FriendsViewer .friends {
-  min-height: 5rem;
-  align-items: center;
-  justify-content: center;
-}
-
-.FriendsViewer .friend {
+.FriendCard {
   display: flex;
   align-items: center;
   border-bottom: 0.1rem solid var(--gray3);
@@ -27,11 +38,11 @@
   position: relative;
 }
 
-.FriendsViewer .friend .info {
+.FriendCard .info {
   width: calc(100% - 4rem);
 }
 
-.FriendsViewer .friend .activeInfo {
+.FriendCard .activeInfo {
   margin-left: 3rem;
   font-size: 0.9rem;
   display: flex;
@@ -44,11 +55,11 @@
   justify-content: center;
 }
 
-.FriendsViewer .friend:nth-last-child(1) {
+.FriendCard:nth-last-child(1) {
   margin-bottom: 20rem;
 }
 
-.FriendRequestsViewer .header {
+.FriendsViewer .header {
   background-color: var(--gray0);
   display: flex;
   justify-content: center;
@@ -58,6 +69,7 @@
   margin-top: 1rem;
 }
 
-.FriendRequestsViewer .header h2 {
-  font-weight: 500;
+.FriendsViewer .header h2 {
+  font-weight: 600;
+  font-size: 1.2rem;
 }
