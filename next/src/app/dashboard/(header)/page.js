@@ -2,10 +2,8 @@
 
 import styles from "./page.module.css";
 import PlansTimeline from "@/app/components/Plans/PlansTimeline/PlansTimeline";
-import FriendsActivityViewer from "@/app/components/Friends/FriendsActivityViewer/FriendsActivityViewer";
 import SubjectsPie from "@/app/components/Charts/SubjectsPie/SubjectsPie";
 import { useState } from "react";
-import { useReportWebVitals } from "next/web-vitals";
 import FriendsViewer from "@/app/components/Friends/FriendsViewer/FriendsViewer";
 
 export default function Dashboard() {

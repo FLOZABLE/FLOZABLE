@@ -186,11 +186,6 @@ async function replyFriendRequest({
       return response;
     }
 
-    if (friends.length >= FRIENDS_LIMIT) {
-      const response = RESPONSE_MESSAGES.friendsLimitReached();
-      return response;
-    }
-
     if (!friendRequest) {
       const response = RESPONSE_MESSAGES.expiredRequest();
       return response;
@@ -209,6 +204,11 @@ async function replyFriendRequest({
         status: 200,
         message: "Declined friend request!",
       };
+    }
+
+    if (friends.length >= FRIENDS_LIMIT) {
+      const response = RESPONSE_MESSAGES.friendsLimitReached();
+      return response;
     }
 
     const date = Math.floor(Date.now() / 1000);

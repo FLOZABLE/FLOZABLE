@@ -16,10 +16,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheck, faPlus, faTimes } from "@fortawesome/free-solid-svg-icons";
 import { useNotifications } from "@/Hooks/notificationsHooks";
 import { deleteFriendRequest, postFriendsRequestReply } from "@/Api/friendsApi";
-import {
-  FriendRequestContainer,
-  ReceivedFriendRequestContainer,
-} from "../FriendRequestsViewer/FriendRequestsViewer";
+import { ReceivedFriendRequestContainer } from "../FriendRequestsViewer/FriendRequestsViewer";
 
 function FriendsViewer() {
   const { setSearchUsersModal } = useContext(SearchUsersModalContext);
@@ -173,6 +170,11 @@ function FriendsViewer() {
     return <RecommendedFriendsViewer />;
   }
 
+  const onlineFriends = friendsStatus.filter((friend) => friend.activeSubject);
+  const offlineFriends = friendsStatus.filter(
+    (friend) => !friend.activeSubject
+  );
+
   return (
     <div className={`Box ${styles.FriendsViewer}`}>
       <div className={`header`}>
@@ -182,56 +184,90 @@ function FriendsViewer() {
           <div className={`HoverText ${styles.hoverText}`}>Add friend!</div>
         </div>
       </div>
-      <div className={`${styles.friends} contents customScroll`}>
-        {friendsStatusIsLoading ? (
-          <CircularLoading />
-        ) : (
-          friendsStatus.map((friend, i) => {
-            return (
-              <div
-                className={styles.friend}
-                key={i}
-                style={{ zIndex: friendsStatus.length - i }}
-              >
-                <div className={styles.info}>
-                  <UserContainer
-                    userInfo={friend}
-                    onClick={() => {
-                      router.push(`/dashboard/user/${friend.user_id}`);
-                    }}
+      <div className={styles.sections}>
+        <div className={styles.section}>
+          <div className={styles.header}>
+            <h2>Online Friends ({onlineFriends.length})</h2>
+          </div>
+          <div className={`${styles.contents} contents customScroll`}>
+            {friendsStatusIsLoading ? (
+              <CircularLoading />
+            ) : (
+              onlineFriends.map((friend, i) => {
+                return (
+                  <FriendCard
+                    key={i}
+                    friend={friend}
+                    index={i}
+                    total={onlineFriends.length}
+                    onClick={() =>
+                      router.push(`/dashboard/user/${friend.user_id}`)
+                    }
                   />
-                  <div className={styles.activeInfo}>
-                    <UserSubjectViewer userInfo={friend} />
-                    <UserGroupViewer userInfo={friend} />
-                  </div>
-                </div>
-                <div className={styles.buttons}>
-                  <ChatBtn targetInfo={friend} padding={"0.3rem 0.6rem"} />
-                </div>
-              </div>
-            );
-          })
-        )}
-      </div>
-      <div className={styles.FriendRequestsViewer}>
-        <div className={`${styles.header}`}>
-          <h2>Friend Requests ({friendRequests.length})</h2>
+                );
+              })
+            )}
+          </div>
         </div>
-        <div className={`contents ${styles.friendRequests} customScroll`}>
-          {friendRequests.map((request, i) => {
-            return (
-              <ReceivedFriendRequestContainer
-                friendRequest={request}
-                key={i}
-                style={{ zIndex: friendRequests.length - i }}
-                friendRequestReply={friendRequestReply}
-              />
-            );
-          })}
+        <div className={styles.section}>
+          <div className={styles.header}>
+            <h2>Offline Friends ({offlineFriends.length})</h2>
+          </div>
+          <div className={`${styles.contents} contents customScroll`}>
+            {friendsStatusIsLoading ? (
+              <CircularLoading />
+            ) : (
+              offlineFriends.map((friend, i) => {
+                return (
+                  <FriendCard
+                    key={i}
+                    friend={friend}
+                    index={i}
+                    total={offlineFriends.length}
+                    onClick={() =>
+                      router.push(`/dashboard/user/${friend.user_id}`)
+                    }
+                  />
+                );
+              })
+            )}
+          </div>
+        </div>
+        <div className={styles.section}>
+          <div className={styles.header}>
+            <h2>Friend Requests</h2>
+          </div>
+          <div className={`${styles.contents} contents customScroll`}>
+            {friendRequests.map((request, i) => {
+              return (
+                <ReceivedFriendRequestContainer
+                  friendRequest={request}
+                  key={i}
+                  style={{ zIndex: friendRequests.length - i }}
+                  friendRequestReply={friendRequestReply}
+                />
+              );
+            })}
+          </div>
         </div>
       </div>
     </div>
   );
 }
+
+const FriendCard = ({ friend, index, total, onClick }) => (
+  <div className={styles.FriendCard} style={{ zIndex: total - index }}>
+    <div className={styles.info}>
+      <UserContainer userInfo={friend} onClick={onClick} />
+      <div className={styles.activeInfo}>
+        <UserSubjectViewer userInfo={friend} />
+        <UserGroupViewer userInfo={friend} />
+      </div>
+    </div>
+    <div className={styles.buttons}>
+      <ChatBtn targetInfo={friend} padding={"0.3rem 0.6rem"} />
+    </div>
+  </div>
+);
 
 export default FriendsViewer;
