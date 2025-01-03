@@ -16,37 +16,12 @@ function MemberTimer({ initialSec = 0, run }) {
     const disp = toTimer(initialSec);
     setTimer({ value: initialSec, disp });
 
-    const onMessage = (e) => {
-      if (run && e.data.command === "update-timer") {
-        setTimer((prev) => {
-          const value = prev.value + 1;
-          //incase when event listener trigger first before initialization, it initialize it.
-          if (value < initialSec) {
-            const disp = toTimer(initialSec);
-            return { value: initialSec, disp };
-          }
-          const disp = toTimer(value);
-          return { value, disp };
-        });
-      }
-    };
-
-    membersTimerWorkerRef?.current?.addEventListener("message", onMessage);
-    return () => {
-      membersTimerWorkerRef?.current?.removeEventListener("message", onMessage);
-    };
-  }, [run, membersTimerWorkerRef, initialSec]);
-
-  useEffect(() => {
-    const disp = toTimer(initialSec);
-    setTimer({ value: initialSec, disp });
-
     if (!membersTimerWorkerRef?.current) return;
 
-    const onMessage = () => {
+    const onMessage = (e) => {
       if (!run || e.data.command !== "update-timer") return;
 
-      const now = DateTime.now().toSeconds().toFixed();
+      const now = DateTime.now().toSeconds();
       /* setTimer((prev) => {
         const value = prev.value + 1;
         //incase when event listener trigger first before initialization, it initialize it.
@@ -57,7 +32,9 @@ function MemberTimer({ initialSec = 0, run }) {
         const disp = toTimer(value);
         return { value, disp };
       }); */
-      setTimer(initialSec + now - run);
+      const value = initialSec + now - run;
+      const disp = toTimer(value);
+      setTimer({ value, disp });
     };
 
     if (run) {
