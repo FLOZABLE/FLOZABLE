@@ -133,7 +133,7 @@ function Header({}) {
           <Link href={"/dashboard/account"} className={styles.userInfo}>
             <div>
               <p className={styles.name}>{accountData.name}</p>
-              <p className={styles.email}>@{accountData.email.split("@")[0]}</p>
+              <p className={styles.email}>&quot;</p>
             </div>
             <div className={styles.ProfileImage}>
               <ProfileImage

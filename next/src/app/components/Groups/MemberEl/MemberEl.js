@@ -17,10 +17,10 @@ function MemberEl({ memberInfo, device, recvTransport }) {
     const { study_time, activeSubject } = memberInfo;
     console.log("member", memberInfo);
     if (activeSubject && activeSubject.subject_id !== "0") {
-      setRun(true);
-      const liveTotal =
-        study_time + DateTime.now().toSeconds() - activeSubject.time;
+      const now = DateTime.now().toSeconds();
+      const liveTotal = study_time + now - activeSubject.time;
       setTotal(liveTotal);
+      setRun(now);
     } else {
       setTotal(study_time);
       setRun(false);

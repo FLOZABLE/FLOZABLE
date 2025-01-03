@@ -11,10 +11,10 @@ export default function Privacy() {
       <div className="layer">
         <div className={"description"}>
           <p>
-            This privacy notice for FLOZABLE ("we," "us," or "our"), describes
-            how and why we might collect, store, use, and/or share ( "process" )
-            your information when you use our services ( "Services"), such as
-            when you:
+            This privacy notice for FLOZABLE (&quot;we,&quot; &quot;us,&quot; or
+            &quot;our&quot;), describes how and why we might collect, store,
+            use, and/or share ( &quot;process&quot; ) your information when you
+            use our services ( &quot;Services&quot;), such as when you:
           </p>
           <ul>
             <li>
@@ -265,7 +265,7 @@ export default function Privacy() {
             account. If you choose to register in this way, we will collect the
             information described in the section called{" "}
             <Link href={"#sociallogins"}>
-              "HOW DO WE HANDLE YOUR SOCIAL LOGINS? "
+              &quot;HOW DO WE HANDLE YOUR SOCIAL LOGINS?&quot;
             </Link>
             below.
           </p>
@@ -307,7 +307,7 @@ export default function Privacy() {
           <ul>
             <li>
               <strong>Location Data.</strong> We collect location data such as
-              information about your device's location, which can be either
+              information about your device&apos;s location, which can be either
               precise or imprecise. How much information we collect depends on
               the type and settings of the device you use to access the
               Services. For example, we may use GPS and other technologies to
@@ -342,9 +342,9 @@ export default function Privacy() {
               working order.
             </li>
             <li>
-              To save or protect an individual's vital interest. We may process
-              your information when necessary to save or protect an individual's
-              vital interest, such as to prevent harm.
+              To save or protect an individual&apos;s vital interest. We may
+              process your information when necessary to save or protect an
+              individual&apos;s vital interest, such as to prevent harm.
             </li>
           </ul>
         </div>
@@ -610,8 +610,8 @@ export default function Privacy() {
             automated decision-making. In certain circumstances, you may also
             have the right to object to the processing of your personal
             information. You can make such a request by contacting us by using
-            the contact details provided in the section "HOW CAN YOU CONTACT US
-            ABOUT THIS NOTICE?" below.
+            the contact details provided in the section &quot;HOW CAN YOU
+            CONTACT US ABOUT THIS NOTICE?&quot; below.
           </p>
           <p>
             We will consider and act upon any request in accordance with
@@ -633,8 +633,9 @@ export default function Privacy() {
             information, which may be express and/or implied consent depending
             on the applicable law, you have the right to withdraw your consent
             at any time. You can withdraw your consent at any time by contacting
-            us by using the contact details provided in the section "HOW CAN YOU
-            CONTACT US ABOUT THIS NOTICE?" below or updating your preferences.
+            us by using the contact details provided in the section &quot;HOW
+            CAN YOU CONTACT US ABOUT THIS NOTICE?&quot; below or updating your
+            preferences.
           </p>
           <p>
             However, please note that this will not affect the lawfulness of the
@@ -686,16 +687,16 @@ export default function Privacy() {
         <div className={"description"}>
           <p>
             Most web browsers and some mobile operating systems and mobile
-            applications include a Do-Not-Track ("DNT") feature or setting you
-            can activate to signal your privacy preference not to have data
-            about your online browsing activities monitored and collected. At
-            this stage no uniform technology standard for recognizing and
-            implementing DNT signals has been finalized. As such, we do not
-            currently respond to DNT browser signals or any other mechanism that
-            automatically communicates your choice not to be tracked online. If
-            a standard for online tracking is adopted that we must follow in the
-            future, we will inform you about that practice in a revised version
-            of this privacy notice.
+            applications include a Do-Not-Track (&quot;DNT&quot;) feature or
+            setting you can activate to signal your privacy preference not to
+            have data about your online browsing activities monitored and
+            collected. At this stage no uniform technology standard for
+            recognizing and implementing DNT signals has been finalized. As
+            such, we do not currently respond to DNT browser signals or any
+            other mechanism that automatically communicates your choice not to
+            be tracked online. If a standard for online tracking is adopted that
+            we must follow in the future, we will inform you about that practice
+            in a revised version of this privacy notice.
           </p>
         </div>
       </div>
@@ -744,7 +745,7 @@ export default function Privacy() {
           </h3>
           <p>
             Learn about how we use your personal information in the section,{" "}
-            <Link href="#infouse">"HOW DO WE PROCESS YOUR INFORMATION?"</Link>
+            <Link href="#infouse">&quot;</Link>
           </p>
 
           <h3 className="subHeading">
@@ -756,14 +757,15 @@ export default function Privacy() {
             Learn more about how we disclose personal information in the
             section,{" "}
             <Link href="#whosare">
-              "WHEN AND WITH WHOM DO WE SHARE YOUR PERSONAL INFORMATION?"
+              &quot;WHEN AND WITH WHOM DO WE SHARE YOUR PERSONAL
+              INFORMATION?&quot;
             </Link>
           </p>
           <p>
             We may use your personal information for our own business purposes,
             such as for undertaking internal research for technological
             development and demonstration. This is not considered to be
-            "selling" of your personal information.
+            &quot;selling&quot; of your personal information.
           </p>
           <p>
             We have not disclosed, sold, or shared any personal information to
@@ -775,16 +777,16 @@ export default function Privacy() {
 
           <h3 className="subHeading">California Residents</h3>
           <p>
-            California Civil Code Section 1798.83, also known as the "Shine The
-            Light" law permits our users who are California residents to request
-            and obtain from us, once a year and free of charge, information
-            about categories of personal information (if any) we disclosed to
-            third parties for direct marketing purposes and the names and
-            addresses of all third parties with which we shared personal
-            information in the immediately preceding calendar year. If you are a
-            California resident and would like to make such a request, please
-            submit your request in writing to us using the contact information
-            provided below.
+            California Civil Code Section 1798.83, also known as the &quot;Shine
+            The Light&quot; law permits our users who are California residents
+            to request and obtain from us, once a year and free of charge,
+            information about categories of personal information (if any) we
+            disclosed to third parties for direct marketing purposes and the
+            names and addresses of all third parties with which we shared
+            personal information in the immediately preceding calendar year. If
+            you are a California resident and would like to make such a request,
+            please submit your request in writing to us using the contact
+            information provided below.
           </p>
           <p>
             If you are under 18 years of age, reside in California, and have a
@@ -804,7 +806,7 @@ export default function Privacy() {
             California Consumer Privacy Act (CCPA), you have the rights listed
             below.
           </p>
-          <p>The California Code of Regulations defines a "residents" as:</p>
+          <p>&quot;</p>
           <ul>
             <li>
               (1) every individual who is in the State of California for other
@@ -816,10 +818,11 @@ export default function Privacy() {
               transitory purpose
             </li>
           </ul>
-          <p>All other individuals are defined as "non-residents."</p>
+          <p>&quot;</p>
           <p>
-            If this definition of "resident" applies to you, we must adhere to
-            certain rights and obligations regarding your personal information.
+            If this definition of &quot;resident&quot; applies to you, we must
+            adhere to certain rights and obligations regarding your personal
+            information.
           </p>
 
           <h4 className="subHeading">
@@ -899,7 +902,7 @@ export default function Privacy() {
               Right to opt out of the processing of your personal data if it is
               used for targeted advertising, the sale of personal data, or
               profiling in furtherance of decisions that produce legal or
-              similarly significant effects ("profiling")
+              similarly significant effects (&quot;profiling&quot;)
             </li>
           </ul>
           <p>
@@ -944,7 +947,7 @@ export default function Privacy() {
               Right to opt out of the processing of your personal data if it is
               used for targeted advertising, the sale of personal data, or
               profiling in furtherance of decisions that produce legal or
-              similarly significant effects ("profiling")
+              similarly significant effects (&quot;profiling&quot;)
             </li>
           </ul>
           <p>
@@ -1003,25 +1006,26 @@ export default function Privacy() {
           <p>Under the Virginia Consumer Data Protection Act (VCDPA):</p>
           <ul>
             <li>
-              "Consumer" means a natural person who is a resident of the
-              Commonwealth acting only in an individual or household context. It
-              does not include a natural person acting in a commercial or
-              employment context.
+              &quot;Consumer&quot; means a natural person who is a resident of
+              the Commonwealth acting only in an individual or household
+              context. It does not include a natural person acting in a
+              commercial or employment context.
             </li>
             <li>
-              "Personal data" means any information that is linked or reasonably
-              linkable to an identified or identifiable natural person.
-              "Personal data" does not include de-identified data or publicly
-              available information.
+              &quot;Personal data&quot; means any information that is linked or
+              reasonably linkable to an identified or identifiable natural
+              person. &quot;Personal data&quot; does not include de-identified
+              data or publicly available information.
             </li>
             <li>
-              "Sale of personal data" means the exchange of personal data for
-              monetary consideration.
+              &quot;Sale of personal data&quot; means the exchange of personal
+              data for monetary consideration.
             </li>
           </ul>
           <p>
-            If this definition of "consumer" applies to you, we must adhere to
-            certain rights and obligations regarding your personal data.
+            If this definition of &quot;consumer&quot; applies to you, we must
+            adhere to certain rights and obligations regarding your personal
+            data.
           </p>
           <h4>Your rights with respect to your personal data</h4>
           <ul>
@@ -1040,7 +1044,7 @@ export default function Privacy() {
               Right to opt out of the processing of your personal data if it is
               used for targeted advertising, the sale of personal data, or
               profiling in furtherance of decisions that produce legal or
-              similarly significant effects ("profiling")
+              similarly significant effects &quot;profiling&quot;
             </li>
           </ul>
           <h4>Exercise your rights provided under the Virginia VCDPA</h4>
@@ -1061,10 +1065,10 @@ export default function Privacy() {
           <h4>Verification process</h4>
           <p>
             We may request that you provide additional information reasonably
-            necessary to verify you and your consumer's request. If you submit
-            the request through an authorized agent, we may need to collect
-            additional information to verify your identity before processing
-            your request.
+            necessary to verify you and your consumer&apos;s request. If you
+            submit the request through an authorized agent, we may need to
+            collect additional information to verify your identity before
+            processing your request.
           </p>
           <p>
             Upon receiving your request, we will respond without undue delay,
@@ -1098,13 +1102,13 @@ export default function Privacy() {
           </p>
           <p>
             We may update this privacy notice from time to time. The updated
-            version will be indicated by an updated "Revised" date, and the
-            updated version will be effective as soon as it is accessible. If we
-            make material changes to this privacy notice, we may notify you
-            either by prominently posting a notice of such changes or by
-            directly sending you a notification. We encourage you to review this
-            privacy notice frequently to be informed of how we are protecting
-            your information.
+            version will be indicated by an updated &quot;Revised&quot; date,
+            and the updated version will be effective as soon as it is
+            accessible. If we make material changes to this privacy notice, we
+            may notify you either by prominently posting a notice of such
+            changes or by directly sending you a notification. We encourage you
+            to review this privacy notice frequently to be informed of how we
+            are protecting your information.
           </p>
         </div>
       </div>

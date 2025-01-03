@@ -15,7 +15,7 @@ import { socket } from "@/app/utils/socket";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheck, faPlus, faTimes } from "@fortawesome/free-solid-svg-icons";
 import { useNotifications } from "@/Hooks/notificationsHooks";
-import { deleteFriendRequest, postFriendsRequestReply } from "@/Api/friendsApi";
+import { postFriendsRequestReply } from "@/Api/friendsApi";
 import { ReceivedFriendRequestContainer } from "../FriendRequestsViewer/FriendRequestsViewer";
 
 function FriendsViewer() {
@@ -35,23 +35,18 @@ function FriendsViewer() {
   const { notifications, filterNotification } = useNotifications();
 
   const [friendRequests, setFriendRequests] = useState([]);
-  const [sentRequests, setSentRequests] = useState([]);
 
   useEffect(() => {
     if (!notifications) return;
     const friendRequests = [];
-    const sentRequests = [];
 
     notifications.map((notification) => {
       if (notification.type === "friend_request") {
         friendRequests.push(notification);
-      } else if (notification.type === "friend_request_sent") {
-        sentRequests.push(notification);
       }
     });
 
     setFriendRequests(friendRequests);
-    setSentRequests(sentRequests);
   }, [notifications]);
 
   const friendRequestReply = useCallback(async (notificationId, accepted) => {
@@ -66,12 +61,6 @@ function FriendsViewer() {
 
     friendsStatusRefetch();
     friendsTrendRefetch();
-  }, []);
-
-  const friendRequestDelete = useCallback(async (notificationId) => {
-    await deleteFriendRequest(notificationId);
-
-    filterNotification(notificationId);
   }, []);
 
   useEffect(() => {
@@ -185,7 +174,7 @@ function FriendsViewer() {
         </div>
       </div>
       <div className={styles.sections}>
-        <div className={styles.section}>
+        <div className={styles.section} id={styles.onlineFriends}>
           <div className={styles.header}>
             <h2>Online Friends ({onlineFriends.length})</h2>
           </div>
@@ -209,7 +198,7 @@ function FriendsViewer() {
             )}
           </div>
         </div>
-        <div className={styles.section}>
+        <div className={styles.section} id={styles.offlineFriends}>
           <div className={styles.header}>
             <h2>Offline Friends ({offlineFriends.length})</h2>
           </div>

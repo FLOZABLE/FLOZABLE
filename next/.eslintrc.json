@@ -2,3 +2,11 @@
   "extends": ["next/babel", "next/core-web-vitals"],
   "parser": "babel-eslint"
 }
+
+
+/*  {
+  "extends": "next/core-web-vitals",
+  "rules": {
+    "@next/next/no-document-import-in-page": "off"
+  }
+} */
