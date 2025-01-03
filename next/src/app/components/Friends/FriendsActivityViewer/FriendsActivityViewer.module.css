@@ -3,17 +3,16 @@
 }
 
 .FriendsActivityViewer .header {
-  align-items: center;
+  justify-content: left;
   border-bottom: 1px solid var(--gray0);
 }
 
 .FriendsActivityViewer div#searchFriendBtn {
   margin-left: 1rem;
   padding: 0rem 0.5rem;
-  color: var(--gray1);
-  font-weight: 300;
   cursor: pointer;
   position: relative;
+  margin-left: auto;
 }
 
 .FriendsActivityViewer .hoverText {

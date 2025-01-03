@@ -1,22 +1,14 @@
 .PlansTimeline {
   position: relative;
   height: 100%;
-  overflow: hidden;
   display: flex;
   flex-direction: column;
   color: var(--text-color);
-  padding: 0.5rem 1rem;
 }
 
 .PlansTimeline .header .layer {
   display: flex;
   align-items: center;
-}
-
-.PlansTimeline .header h2 {
-  font-weight: 700;
-  font-size: 2rem;
-  margin-right: 1rem;
 }
 
 .PlansTimeline .header .layer#notes {
@@ -26,23 +18,9 @@
   font-size: 1rem;
 }
 
-.PlansTimeline .header .DateSelectorBtn {
-  font-size: 0.8rem;
+.PlansTimeline .DateSelectorBtn {
+  font-size: 1rem;
   color: var(--gray1);
-}
-
-.PlansTimeline .header .buttons {
-  display: flex;
-  margin-left: auto;
-}
-
-.PlansTimeline .header .buttons div {
-  cursor: pointer;
-}
-
-.PlansTimeline .header .buttons div#addPlan {
-  font-size: 2.5rem;
-  color: var(--gray2);
 }
 
 .PlansTimeline .subjectEl {

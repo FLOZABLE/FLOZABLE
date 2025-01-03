@@ -130,10 +130,10 @@ export default function SubjectsModal() {
     async (subject) => {
       const subjectId = subject.subject_id;
 
-      /* const response = await deleteSubjectsSubject(subjectId);
+      const response = await deleteSubjectsSubject(subjectId);
       if (!response.success) return;
 
-      setIsSubjectsModal((prev) => ({ ...prev, subject_id: null })); */
+      setIsSubjectsModal((prev) => ({ ...prev, subject_id: null }));
 
       const newSubjects = deleteSubject(subjects, subject.subject_id);
       updateSubjects(newSubjects);

@@ -144,14 +144,19 @@ button:hover {
   display: flex;
   font-size: 1.8rem;
   font-weight: 700;
-  justify-content: center;
+  align-items: center;
+  justify-content: space-between;
 }
 
-.Box .header i {
-  margin-left: 0.5rem;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+.Box .header h2 {
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+.Box .header .button {
+  font-size: 2rem;
+  cursor: pointer;
+  position: relative;
 }
 
 .Box .contents {
@@ -164,7 +169,6 @@ button:hover {
   background-color: #ffffff;
   margin: 2rem;
   /* padding: 2rem 2rem 1rem 2rem; */
-  border-radius: 30px;
   display: flex;
   justify-content: center;
   align-items: center;
