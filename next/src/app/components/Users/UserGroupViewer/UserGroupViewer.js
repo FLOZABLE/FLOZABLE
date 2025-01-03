@@ -16,7 +16,7 @@ function UserGroupViewer({ userInfo }) {
         {userInfo.activeGroup ? (
           <GroupContainer
             groupInfo={userInfo.activeGroup}
-            style={{ height: "15rem" }}
+            style={{ height: "13rem" }}
           />
         ) : null}
       </div>

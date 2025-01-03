@@ -12,17 +12,19 @@ export default function Terms() {
         <h3 className="subHeading">AGREEMENT TO OUR LEGAL TERMS</h3>
         <div className="description">
           <p>
-            We are FLOZABLE ("<strong>Company</strong>," "<strong>we</strong>,"
-            "<strong>us</strong>," "<strong>our</strong>") .
+            We are FLOZABLE (&quot;<strong>Company</strong>&quot;
+            <strong>we</strong>,&quot; &quot;<strong>us</strong>&quot;
+            <strong>our</strong>&quot;) .
           </p>
 
           <p>
-            We operate the website https://flozable.com (the "
-            <strong>Site</strong>"), the mobile application FLOZABLE (the "
-            <strong>App</strong>") , as well as any other related products and
-            services that refer or link to these legal terms (the "
-            <strong>Legal Terms</strong>") (collectively, the "
-            <strong>Services</strong>" ).
+            We operate the website https://flozable.com (the &quot;
+            <strong>Site</strong>&quot;), the mobile application FLOZABLE (the
+            &quot;
+            <strong>App</strong>&quot;) , as well as any other related products
+            and services that refer or link to these legal terms (the &quot;
+            <strong>Legal Terms</strong>&quot;) (collectively, the &quot;
+            <strong>Services</strong>&quot; ).
           </p>
 
           <p>
@@ -37,12 +39,12 @@ export default function Terms() {
 
           <p>
             These Legal Terms constitute a legally binding agreement made
-            between you, whether personally or on behalf of an entity ("
-            <strong>you</strong>"), and FLOZABLE, concerning your access to and
-            use of the Services. You agree that by accessing the Services, you
-            have read, understood, and agreed to be bound by all of these Legal
-            Terms. IF YOU DO NOT AGREE WITH ALL OF THESE LEGAL TERMS, THEN YOU
-            ARE EXPRESSLY PROHIBITED FROM USING THE SERVICES AND YOU MUST
+            between you, whether personally or on behalf of an entity (&quot;
+            <strong>you</strong>&quot;), and FLOZABLE, concerning your access to
+            and use of the Services. You agree that by accessing the Services,
+            you have read, understood, and agreed to be bound by all of these
+            Legal Terms. IF YOU DO NOT AGREE WITH ALL OF THESE LEGAL TERMS, THEN
+            YOU ARE EXPRESSLY PROHIBITED FROM USING THE SERVICES AND YOU MUST
             DISCONTINUE USE IMMEDIATELY.
           </p>
 
@@ -179,8 +181,8 @@ export default function Terms() {
             in our Services, including all source code, databases,
             functionality, software, website designs, audio, video, text,
             photographs, and graphics in the Services (collectively, the
-            "Content"), as well as the trademarks, service marks, and logos
-            contained therein (the "Marks").
+            &quot;Content&quot;), as well as the trademarks, service marks, and
+            logos contained therein (the &quot;Marks&quot;).
           </p>
           <p>
             Our Content and Marks are protected by copyright and trademark laws
@@ -189,9 +191,9 @@ export default function Terms() {
             world.
           </p>
           <p>
-            The Content and Marks are provided in or through the Services "AS
-            IS" for your personal, non-commercial use or internal business
-            purpose only.
+            The Content and Marks are provided in or through the Services
+            &quot;AS IS&quot; for your personal, non-commercial use or internal
+            business purpose only.
           </p>
         </div>
 
@@ -199,8 +201,8 @@ export default function Terms() {
         <div className="description">
           <p>
             Subject to your compliance with these Legal Terms, including the
-            "PROHIBITED ACTIVITIES" section below, we grant you a non-exclusive,
-            non-transferable, revocable license to:
+            &quot;PROHIBITED ACTIVITIES&quot; section below, we grant you a
+            non-exclusive, non-transferable, revocable license to:
           </p>
           <ul>
             <li>access the Services; and</li>
@@ -249,20 +251,20 @@ export default function Terms() {
         <h3 className="subHeading">Your submissions and contributions</h3>
         <div className="description">
           <p>
-            Please review this section and the "PROHIBITED ACTIVITIES" section
-            carefully prior to using our Services to understand the (a) rights
-            you give us and (b) obligations you have when you post or upload any
-            content through the Services.
+            Please review this section and the &quot;PROHIBITED ACTIVITIES&quot;
+            section carefully prior to using our Services to understand the (a)
+            rights you give us and (b) obligations you have when you post or
+            upload any content through the Services.
           </p>
 
           <p>
             <strong>Submissions:</strong> By directly sending us any question,
             comment, suggestion, idea, feedback, or other information about the
-            Services ("Submissions"), you agree to assign to us all intellectual
-            property rights in such Submission. You agree that we shall own this
-            Submission and be entitled to its unrestricted use and dissemination
-            for any lawful purpose, commercial or otherwise, without
-            acknowledgment or compensation to you.
+            Services (&quot;Submissions&quot;), you agree to assign to us all
+            intellectual property rights in such Submission. You agree that we
+            shall own this Submission and be entitled to its unrestricted use
+            and dissemination for any lawful purpose, commercial or otherwise,
+            without acknowledgment or compensation to you.
           </p>
 
           <p>
@@ -273,8 +275,9 @@ export default function Terms() {
             and materials to us or through the Services, including but not
             limited to text, writings, video, audio, photographs, music,
             graphics, comments, reviews, rating suggestions, personal
-            information, or other material ("Contributions"). Any Submission
-            that is publicly posted shall also be treated as a Contribution.
+            information, or other material (&quot;Contributions&quot;). Any
+            Submission that is publicly posted shall also be treated as a
+            Contribution.
           </p>
 
           <p>
@@ -317,13 +320,13 @@ export default function Terms() {
           </p>
           <ul>
             <li>
-              confirm that you have read and agree with our "PROHIBITED
-              ACTIVITIES" and will not post, send, publish, upload, or transmit
-              through the Services any Submission nor post any Contribution that
-              is illegal, harassing, hateful, harmful, defamatory, obscene,
-              bullying, abusive, discriminatory, threatening to any person or
-              group, sexually explicit, false, inaccurate, deceitful, or
-              misleading;
+              confirm that you have read and agree with our &quot;PROHIBITED
+              ACTIVITIES&quot; and will not post, send, publish, upload, or
+              transmit through the Services any Submission nor post any
+              Contribution that is illegal, harassing, hateful, harmful,
+              defamatory, obscene, bullying, abusive, discriminatory,
+              threatening to any person or group, sexually explicit, false,
+              inaccurate, deceitful, or misleading;
             </li>
             <li>
               to the extent permissible by applicable law, waive any and all
@@ -346,7 +349,8 @@ export default function Terms() {
             You are solely responsible for your Submissions and/or Contributions
             and you expressly agree to reimburse us for any and all losses that
             we may suffer because of your breach of (a) this section, (b) any
-            third party's intellectual property rights, or (c) applicable law.
+            third party&apos;s intellectual property rights, or (c) applicable
+            law.
           </p>
 
           <p>
@@ -454,7 +458,7 @@ export default function Terms() {
               Upload or transmit (or attempt to upload or to transmit) viruses,
               Trojan horses, or other material, including excessive use of
               capital letters and spamming (continuous posting of repetitive
-              text), that interferes with any party's uninterrupted use and
+              text), that interferes with any party&apos;s uninterrupted use and
               enjoyment of the Services or modifies, impairs, disrupts, alters,
               or interferes with the use, features, functions, operation, or
               maintenance of the Services.
@@ -476,9 +480,10 @@ export default function Terms() {
               Upload or transmit (or attempt to upload or to transmit) any
               material that acts as a passive or active information collection
               or transmission mechanism, including without limitation, clear
-              graphics interchange formats ("gifs"), 1×1 pixels, web bugs,
-              cookies, or other similar devices (sometimes referred to as
-              "spyware" or "passive collection mechanisms" or "pcms").
+              graphics interchange formats &quot;gifs&quot;, 1×1 pixels, web
+              bugs, cookies, or other similar devices (sometimes referred to as
+              &quot;spyware&quot; or &quot;passive collection mechanisms&quot;
+              or &quot;pcms&quot;).
             </li>
             <li>
               Interfere with, disrupt, or create an undue burden on the Services
@@ -494,8 +499,8 @@ export default function Terms() {
               Services.
             </li>
             <li>
-              Copy or adapt the Services' software, including but not limited to
-              Flash, PHP, HTML, JavaScript, or other code.
+              Copy or adapt the Services&apos; software, including but not
+              limited to Flash, PHP, HTML, JavaScript, or other code.
             </li>
             <li>
               Except as permitted by applicable law, decipher, decompile,
@@ -542,9 +547,9 @@ export default function Terms() {
             content and materials to us or on the Services, including but not
             limited to text, writings, video, audio, photographs, graphics,
             comments, suggestions, or personal information or other material
-            (collectively, "Contributions"). Contributions may be viewable by
-            other users of the Services and through third-party websites. As
-            such, any Contributions you transmit may be treated as
+            (collectively, &quot;Contributions&quot;). Contributions may be
+            viewable by other users of the Services and through third-party
+            websites. As such, any Contributions you transmit may be treated as
             non-confidential and non-proprietary. When you create or make
             available any Contributions, you thereby represent and warrant that:
           </p>
@@ -751,10 +756,10 @@ export default function Terms() {
           <h3>Apple and Android Devices</h3>
           <p>
             The following terms apply when you use the App obtained from either
-            the Apple Store or Google Play (each an "App Distributor") to access
-            the Services: (1) the license granted to you for our App is limited
-            to a non-transferable license to use the application on a device
-            that utilizes the Apple iOS or Android operating systems, as
+            the Apple Store or Google Play (each an &quot;App Distributor&quot;)
+            to access the Services: (1) the license granted to you for our App
+            is limited to a non-transferable license to use the application on a
+            device that utilizes the Apple iOS or Android operating systems, as
             applicable, and in accordance with the usage rules set forth in the
             applicable App Distributor’s terms of service; (2) we are
             responsible for providing any maintenance and support services with
@@ -771,19 +776,19 @@ export default function Terms() {
             other warranty obligation whatsoever with respect to the App; (4)
             you represent and warrant that (i) you are not located in a country
             that is subject to a US government embargo, or that has been
-            designated by the US government as a "terrorist supporting" country
-            and (ii) you are not listed on any US government list of prohibited
-            or restricted parties; (5) you must comply with applicable
-            third-party terms of agreement when using the App, e.g., if you have
-            a VoIP application, then you must not be in violation of their
-            wireless data service agreement when using the App; and (6) you
-            acknowledge and agree that the App Distributors are third-party
-            beneficiaries of the terms and conditions in this mobile application
-            license contained in these Legal Terms, and that each App
-            Distributor will have the right (and will be deemed to have accepted
-            the right) to enforce the terms and conditions in this mobile
-            application license contained in these Legal Terms against you as a
-            third-party beneficiary thereof.
+            designated by the US government as a &quot;terrorist
+            supporting&quot; country and (ii) you are not listed on any US
+            government list of prohibited or restricted parties; (5) you must
+            comply with applicable third-party terms of agreement when using the
+            App, e.g., if you have a VoIP application, then you must not be in
+            violation of their wireless data service agreement when using the
+            App; and (6) you acknowledge and agree that the App Distributors are
+            third-party beneficiaries of the terms and conditions in this mobile
+            application license contained in these Legal Terms, and that each
+            App Distributor will have the right (and will be deemed to have
+            accepted the right) to enforce the terms and conditions in this
+            mobile application license contained in these Legal Terms against
+            you as a third-party beneficiary thereof.
           </p>
         </div>
       </div>
@@ -794,13 +799,13 @@ export default function Terms() {
           <p>
             As part of the functionality of the Services, you may link your
             account with online accounts you have with third-party service
-            providers (each such account, a "Third-Party Account") by either:
-            (1) providing your Third-Party Account login information through the
-            Services; or (2) allowing us to access your Third-Party Account, as
-            is permitted under the applicable terms and conditions that govern
-            your use of each Third-Party Account. You represent and warrant that
-            you are entitled to disclose your Third-Party Account login
-            information to us and/or grant us access to your Third-Party
+            providers (each such account, a &quot;Third-Party Account&quot;) by
+            either: (1) providing your Third-Party Account login information
+            through the Services; or (2) allowing us to access your Third-Party
+            Account, as is permitted under the applicable terms and conditions
+            that govern your use of each Third-Party Account. You represent and
+            warrant that you are entitled to disclose your Third-Party Account
+            login information to us and/or grant us access to your Third-Party
             Account, without breach by you of any of the terms and conditions
             that govern your use of the applicable Third-Party Account, and
             without obligating us to pay any fees or making us subject to any
@@ -812,12 +817,12 @@ export default function Terms() {
             By granting us access to any Third-Party Accounts, you understand
             that (1) we may access, make available, and store (if applicable)
             any content that you have provided to and stored in your Third-Party
-            Account (the "Social Network Content") so that it is available on
-            and through the Services via your account, including without
-            limitation any friend lists and (2) we may submit to and receive
-            from your Third-Party Account additional information to the extent
-            you are notified when you link your account with the Third-Party
-            Account.
+            Account (the &quot;Social Network Content&quot;) so that it is
+            available on and through the Services via your account, including
+            without limitation any friend lists and (2) we may submit to and
+            receive from your Third-Party Account additional information to the
+            extent you are notified when you link your account with the
+            Third-Party Account.
           </p>
 
           <p>
@@ -983,25 +988,26 @@ export default function Terms() {
             arbitration. You understand that without this provision, you would
             have the right to sue in court and have a jury trial. The
             arbitration shall be commenced and conducted under the Commercial
-            Arbitration Rules of the American Arbitration Association ("AAA")
-            and, where appropriate, the AAA’s Supplementary Procedures for
-            Consumer Related Disputes ("AAA Consumer Rules"), both of which are
-            available at the American Arbitration Association (AAA) website.
-            Your arbitration fees and your share of arbitrator compensation
-            shall be governed by the AAA Consumer Rules and, where appropriate,
-            limited by the AAA Consumer Rules. If such costs are determined by
-            the arbitrator to be excessive, we will pay all arbitration fees and
-            expenses. The arbitration may be conducted in person, through the
-            submission of documents, by phone, or online. The arbitrator will
-            make a decision in writing, but need not provide a statement of
-            reasons unless requested by either Party. The arbitrator must follow
-            applicable law, and any award may be challenged if the arbitrator
-            fails to do so. Except where otherwise required by the applicable
-            AAA rules or applicable law, the arbitration will take place in
-            California. Except as otherwise provided herein, the Parties may
-            litigate in court to compel arbitration, stay proceedings pending
-            arbitration, or to confirm, modify, vacate, or enter judgment on the
-            award entered by the arbitrator.
+            Arbitration Rules of the American Arbitration Association
+            &quot;AAA&quot; and, where appropriate, the AAA’s Supplementary
+            Procedures for Consumer Related Disputes &quot;AAA Consumer
+            Rules&quot;, both of which are available at the American Arbitration
+            Association (AAA) website. Your arbitration fees and your share of
+            arbitrator compensation shall be governed by the AAA Consumer Rules
+            and, where appropriate, limited by the AAA Consumer Rules. If such
+            costs are determined by the arbitrator to be excessive, we will pay
+            all arbitration fees and expenses. The arbitration may be conducted
+            in person, through the submission of documents, by phone, or online.
+            The arbitrator will make a decision in writing, but need not provide
+            a statement of reasons unless requested by either Party. The
+            arbitrator must follow applicable law, and any award may be
+            challenged if the arbitrator fails to do so. Except where otherwise
+            required by the applicable AAA rules or applicable law, the
+            arbitration will take place in California. Except as otherwise
+            provided herein, the Parties may litigate in court to compel
+            arbitration, stay proceedings pending arbitration, or to confirm,
+            modify, vacate, or enter judgment on the award entered by the
+            arbitrator.
           </p>
 
           <p>
@@ -1075,37 +1081,37 @@ export default function Terms() {
         <h2 className="heading">18. Disclaimer</h2>
         <div className="description">
           <p>
-            The Services are provided on an "as-is" and "as-available" basis.
-            You agree that your use of the Services will be at your sole risk.
-            To the fullest extent permitted by law, we disclaim all warranties,
-            express or implied, in connection with the Services and your use
-            thereof, including, without limitation, the implied warranties of
-            merchantability, fitness for a particular purpose, and
-            non-infringement. We make no warranties or representations about the
-            accuracy or completeness of the Services' content or the content of
-            any websites or mobile applications linked to the Services and we
-            will assume no liability or responsibility for any (1) errors,
-            mistakes, or inaccuracies of content and materials, (2) personal
-            injury or property damage, of any nature whatsoever, resulting from
-            your access to and use of the Services, (3) any unauthorized access
-            to or use of our secure servers and/or any and all personal
-            information and/or financial information stored therein, (4) any
-            interruption or cessation of transmission to or from the Services,
-            (5) any bugs, viruses, Trojan horses, or the like which may be
-            transmitted to or through the Services by any third party, and/or
-            (6) any errors or omissions in any content and materials or for any
-            loss or damage of any kind incurred as a result of the use of any
-            content posted, transmitted, or otherwise made available via the
-            Services. We do not warrant, endorse, guarantee, or assume
-            responsibility for any product or service advertised or offered by a
-            third party through the Services, any hyperlinked website, or any
-            website or mobile application featured in any banner or other
-            advertising, and we will not be a party to or in any way be
-            responsible for monitoring any transaction between you and any
-            third-party providers of products or services. As with the purchase
-            of a product or service through any medium or in any environment,
-            you should use your best judgment and exercise caution where
-            appropriate.
+            The Services are provided on an &quot;as-is&quot; and
+            &quot;as-available&quot; basis. You agree that your use of the
+            Services will be at your sole risk. To the fullest extent permitted
+            by law, we disclaim all warranties, express or implied, in
+            connection with the Services and your use thereof, including,
+            without limitation, the implied warranties of merchantability,
+            fitness for a particular purpose, and non-infringement. We make no
+            warranties or representations about the accuracy or completeness of
+            the Services&apos; content or the content of any websites or mobile
+            applications linked to the Services and we will assume no liability
+            or responsibility for any (1) errors, mistakes, or inaccuracies of
+            content and materials, (2) personal injury or property damage, of
+            any nature whatsoever, resulting from your access to and use of the
+            Services, (3) any unauthorized access to or use of our secure
+            servers and/or any and all personal information and/or financial
+            information stored therein, (4) any interruption or cessation of
+            transmission to or from the Services, (5) any bugs, viruses, Trojan
+            horses, or the like which may be transmitted to or through the
+            Services by any third party, and/or (6) any errors or omissions in
+            any content and materials or for any loss or damage of any kind
+            incurred as a result of the use of any content posted, transmitted,
+            or otherwise made available via the Services. We do not warrant,
+            endorse, guarantee, or assume responsibility for any product or
+            service advertised or offered by a third party through the Services,
+            any hyperlinked website, or any website or mobile application
+            featured in any banner or other advertising, and we will not be a
+            party to or in any way be responsible for monitoring any transaction
+            between you and any third-party providers of products or services.
+            As with the purchase of a product or service through any medium or
+            in any environment, you should use your best judgment and exercise
+            caution where appropriate.
           </p>
         </div>
       </div>

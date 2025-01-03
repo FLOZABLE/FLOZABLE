@@ -10,11 +10,11 @@ export default function Cookies() {
       <div className="layer">
         <div className="description">
           <p>
-            This Cookie Policy explains how FLOZABLE ("Company," "we," "us," and
-            "our") uses cookies and similar technologies to recognize you when
-            you visit our website at https://flozable.com ("Website"). It
-            explains what these technologies are and why we use them, as well as
-            your rights to control our use of them.
+            This Cookie Policy explains how FLOZABLE ( and &quot;our&quot;) uses
+            cookies and similar technologies to recognize you when you visit our
+            website at https://flozable.com (&quot;Website&quot;). It explains
+            what these technologies are and why we use them, as well as your
+            rights to control our use of them.
           </p>
           <p>
             In some cases we may use cookies to collect personal information, or
@@ -32,13 +32,13 @@ export default function Cookies() {
           </p>
           <p>
             Cookies set by the website owner (in this case, FLOZABLE) are called
-            "first party cookies". Cookies set by parties other than the website
-            owner are called "third party cookies". Third party cookies enable
-            third party features or functionality to be provided on or through
-            the website (e.g. like advertising, interactive content and
-            analytics). The parties that set these third party cookies can
-            recognize your computer both when it visits the website in question
-            and also when it visits certain other websites.
+            &quot;first party cookies&quot;. Cookies set by parties other than
+            the website owner are called &quot;third party cookies&quot;. Third
+            party cookies enable third party features or functionality to be
+            provided on or through the website (e.g. like advertising,
+            interactive content and analytics). The parties that set these third
+            party cookies can recognize your computer both when it visits the
+            website in question and also when it visits certain other websites.
           </p>
         </div>
         <h3 className="subHeading">Why do we use cookies?</h3>
@@ -46,12 +46,12 @@ export default function Cookies() {
           <p>
             We use first- and third-party cookies for several reasons. Some
             cookies are required for technical reasons in order for our Website
-            to operate, and we refer to these as "essential" or "strictly
-            necessary" cookies. Other cookies also enable us to track and target
-            the interests of our users to enhance the experience on our Online
-            Properties. Third parties serve cookies through our Website for
-            advertising, analytics, and other purposes. This is described in
-            more detail below.
+            to operate, and we refer to these as &quot;essential&quot; or
+            &quot;strictly necessary&quot; cookies. Other cookies also enable us
+            to track and target the interests of our users to enhance the
+            experience on our Online Properties. Third parties serve cookies
+            through our Website for advertising, analytics, and other purposes.
+            This is described in more detail below.
           </p>
         </div>
       </div>
@@ -171,7 +171,7 @@ export default function Cookies() {
           <p>
             As the means by which you can refuse cookies through your web
             browser controls vary from browser to browser, you should visit your
-            browser's help menu for more information. The following is
+            browser&apos;s help menu for more information. The following is
             information about how to manage cookies on the most popular
             browsers:
           </p>
@@ -226,15 +226,15 @@ export default function Cookies() {
           <p>
             Cookies are not the only way to recognize or track visitors to a
             website. We may use other, similar technologies from time to time,
-            like web beacons (sometimes called "tracking pixels" or "clear
-            gifs"). These are tiny graphics files that contain a unique
-            identifier that enables us to recognize when someone has visited our
-            Website or opened an email including them. This allows us, for
-            example, to monitor the traffic patterns of users from one page
-            within a website to another, to deliver or communicate with cookies,
-            to understand whether you have come to the website from an online
-            advertisement displayed on a third-party website, to improve site
-            performance, and to measure the success of email marketing
+            like web beacons (sometimes called &quot;tracking pixels&quot; or
+            &quot;clear gifs&quot;). These are tiny graphics files that contain
+            a unique identifier that enables us to recognize when someone has
+            visited our Website or opened an email including them. This allows
+            us, for example, to monitor the traffic patterns of users from one
+            page within a website to another, to deliver or communicate with
+            cookies, to understand whether you have come to the website from an
+            online advertisement displayed on a third-party website, to improve
+            site performance, and to measure the success of email marketing
             campaigns. In many instances, these technologies are reliant on
             cookies to function properly, and so declining cookies will impair
             their functioning.
@@ -246,10 +246,10 @@ export default function Cookies() {
         </h3>
         <div className="description">
           <p>
-            Websites may also use so-called "Flash Cookies" (also known as Local
-            Shared Objects or "LSOs") to, among other things, collect and store
-            information about your use of our services, fraud prevention, and
-            for other site operations.
+            Websites may also use so-called &quot;Flash Cookies&quot; (also
+            known as Local Shared Objects or &quot;LSOs&quot;) to, among other
+            things, collect and store information about your use of our
+            services, fraud prevention, and for other site operations.
           </p>
           <p>
             If you do not want Flash Cookies stored on your computer, you can
@@ -258,11 +258,11 @@ export default function Cookies() {
             Panel. You can also control Flash Cookies by going to the Global
             Storage Settings Panel and following the instructions (which may
             include instructions that explain, for example, how to delete
-            existing Flash Cookies (referred to "information" on the Macromedia
-            site), how to prevent Flash LSOs from being placed on your computer
-            without your being asked, and (for Flash Player 8 and later) how to
-            block Flash Cookies that are not being delivered by the operator of
-            the page you are on at the time).
+            existing Flash Cookies (referred to &quot;information&quot; on the
+            Macromedia site), how to prevent Flash LSOs from being placed on
+            your computer without your being asked, and (for Flash Player 8 and
+            later) how to block Flash Cookies that are not being delivered by
+            the operator of the page you are on at the time).
           </p>
           <p>
             Please note that setting the Flash Player to restrict or limit
@@ -276,11 +276,12 @@ export default function Cookies() {
       <div className="layer">
         <div className="description">
           <p>
-            This Cookie Policy explains how FLOZABLE ("Company," "we," "us," and
-            "our") uses cookies and similar technologies to recognize you when
-            you visit our website at https://flozable.com ("Website"). It
-            explains what these technologies are and why we use them, as well as
-            your rights to control our use of them.
+            This Cookie Policy explains how FLOZABLE (&quot;Company,&quot;
+            &quot;we,&quot; &quot;us,&quot; and &quot;our&quot;) uses cookies
+            and similar technologies to recognize you when you visit our website
+            at https://flozable.com (&quot;Website&quot;). It explains what
+            these technologies are and why we use them, as well as your rights
+            to control our use of them.
           </p>
           <p>
             In some cases, we may use cookies to collect personal information,
@@ -298,13 +299,14 @@ export default function Cookies() {
           </p>
           <p>
             Cookies set by the website owner (in this case, FLOZABLE) are called
-            "first-party cookies." Cookies set by parties other than the website
-            owner are called "third-party cookies." Third-party cookies enable
-            third-party features or functionality to be provided on or through
-            the website (e.g., advertising, interactive content, and analytics).
-            The parties that set these third-party cookies can recognize your
-            computer both when it visits the website in question and also when
-            it visits certain other websites.
+            &quot;first-party cookies.&quot; Cookies set by parties other than
+            the website owner are called &quot;third-party cookies.&quot;
+            Third-party cookies enable third-party features or functionality to
+            be provided on or through the website (e.g., advertising,
+            interactive content, and analytics). The parties that set these
+            third-party cookies can recognize your computer both when it visits
+            the website in question and also when it visits certain other
+            websites.
           </p>
         </div>
         <h3 className="subHeading">Why do we use cookies?</h3>
@@ -312,12 +314,12 @@ export default function Cookies() {
           <p>
             We use first- and third-party cookies for several reasons. Some
             cookies are required for technical reasons in order for our Website
-            to operate, and we refer to these as "essential" or "strictly
-            necessary" cookies. Other cookies also enable us to track and target
-            the interests of our users to enhance the experience on our Online
-            Properties. Third parties serve cookies through our Website for
-            advertising, analytics, and other purposes. This is described in
-            more detail below.
+            to operate, and we refer to these as &quot;essential&quot; or
+            &quot;strictly necessary&quot; cookies. Other cookies also enable us
+            to track and target the interests of our users to enhance the
+            experience on our Online Properties. Third parties serve cookies
+            through our Website for advertising, analytics, and other purposes.
+            This is described in more detail below.
           </p>
         </div>
 
