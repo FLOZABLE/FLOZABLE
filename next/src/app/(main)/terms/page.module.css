@@ -1,7 +1,3 @@
-html {
-  scroll-behavior: smooth;
-}
-
 .Terms {
   padding-top: 10rem;
   margin: var(--main-offset);

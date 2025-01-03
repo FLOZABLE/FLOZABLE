@@ -18,9 +18,10 @@ function UserSubjectViewer({ userInfo }) {
       setSubjectName(`Studying ${activeSubject.name}`);
     }
     if (activeSubject) {
-      setRun(true);
-      const liveTotal = DateTime.now().toSeconds() - activeSubject.time;
+      const now = DateTime.now().toSeconds();
+      const liveTotal = 0 + now - activeSubject.time;
       setTotal(liveTotal);
+      setRun(now);
     } else {
       setTotal(0);
       setRun(false);

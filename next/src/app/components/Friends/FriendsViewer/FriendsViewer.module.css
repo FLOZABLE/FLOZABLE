@@ -55,8 +55,12 @@
   justify-content: center;
 }
 
-.FriendCard:nth-last-child(1) {
-  margin-bottom: 20rem;
+.section#onlineFriends .FriendCard:nth-last-child(1) {
+  margin-bottom: 17rem;
+}
+
+.section#offlineFriends .FriendCard:nth-last-child(1) {
+  margin-bottom: 2rem;
 }
 
 .FriendsViewer .header {

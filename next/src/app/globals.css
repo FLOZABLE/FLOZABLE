@@ -51,6 +51,7 @@
 
 html {
   font-size: clamp(8px, 0.7vw, 16px);
+  scroll-behavior: smooth;
 }
 
 body {

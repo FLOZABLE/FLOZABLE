@@ -211,7 +211,7 @@ function ChatModal({}) {
           toast.info(
             <div>
               {newChatrooms[chatroomIndex].name}
-              <br />"{message.message}"
+              <br />&quot;{message.message}&quot;
             </div>
           );
         }
