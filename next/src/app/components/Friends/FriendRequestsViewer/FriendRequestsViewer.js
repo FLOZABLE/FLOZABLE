@@ -58,7 +58,7 @@ function ReceivedFriendRequestContainer({
         <div
           className={styles.button}
           onClick={() => {
-            friendRequestReply(request.notification_id, false);
+            friendRequestReply(friendRequest.notification_id, false);
           }}
         >
           <FontAwesomeIcon icon={faXmark} />
@@ -67,7 +67,7 @@ function ReceivedFriendRequestContainer({
         <div
           className={styles.button}
           onClick={() => {
-            friendRequestReply(request.notification_id, true);
+            friendRequestReply(friendRequest.notification_id, true);
           }}
         >
           <FontAwesomeIcon icon={faCheck} />

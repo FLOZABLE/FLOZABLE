@@ -1,3 +1,7 @@
 .MemberTimer {
   display: flex;
 }
+
+.MemberTimer p {
+  margin-left: 0.5rem;
+}
