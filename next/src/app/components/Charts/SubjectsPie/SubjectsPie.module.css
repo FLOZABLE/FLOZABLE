@@ -11,6 +11,10 @@
   pointer-events: all;
 }
 
+.SubjectsPie div#dateSelectorBtn {
+  font-size: 1rem;
+}
+
 .SubjectsPie .options {
   font-size: 0.8rem;
   display: flex;

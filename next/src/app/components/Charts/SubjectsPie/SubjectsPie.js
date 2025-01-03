@@ -1,6 +1,6 @@
 import styles from "./SubjectsPie.module.css";
 import { updateTimeUsagePie } from "@/app/utils/StatTools";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { PieCustomTooltip } from "../Charts";
 import { secondConverter } from "@/app/utils/Tool";
 import { Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
@@ -9,9 +9,13 @@ import DateSelectorBtn from "../../Buttons/DateSelectorBtn/DateSelectorBtn";
 import ViewerSelectorBtn from "../../Buttons/ViewerSelectorBtn/ViewerSelectorBtn";
 import Link from "next/link";
 import { useSubjects } from "@/Hooks/subjectsHooks";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faPlus } from "@fortawesome/free-solid-svg-icons";
+import { AddSubjectsModalContext } from "@/app/utils/Contexts";
 
 function SubjectsPie({ viewDate, setViewDate, viewer, setViewer }) {
   const { subjects, subjectsIsLoading } = useSubjects();
+  const { setIsAddSubjectModal } = useContext(AddSubjectsModalContext);
 
   const [subjectsPie, setSubjectsPie] = useState([]);
   const [totalTime, setTotalTime] = useState("0 Seconds");
@@ -37,19 +41,26 @@ function SubjectsPie({ viewDate, setViewDate, viewer, setViewer }) {
 
   return (
     <div className={`Box ${styles.SubjectsPie}`}>
-      <div className="header">Subjects</div>
-      <div className={styles.options} data-tutorial={17}>
-        <div className={styles.DateSelectorBtn}>
+      <div className={`header`} data-tutorial={17}>
+        <h2>Subjects</h2>
+        <div id={styles.dateSelectorBtn}>
           <DateSelectorBtn
             viewDate={viewDate}
             setViewDate={setViewDate}
             viewer={viewer}
           />
         </div>
-        <div className={styles.ViewerSelectorBtn}>
-          <ViewerSelectorBtn viewer={viewer} setViewer={setViewer} />
+        <div
+          id={styles.addSubjectBtn}
+          className="button"
+          onClick={() => {
+            setIsAddSubjectModal(true);
+          }}
+        >
+          <FontAwesomeIcon icon={faPlus} />
         </div>
       </div>
+      <ViewerSelectorBtn viewer={viewer} setViewer={setViewer} />
       {subjectsIsLoading ? (
         <CircularLoading />
       ) : !subjectsPie.length ? (

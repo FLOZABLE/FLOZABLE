@@ -1,23 +1,37 @@
+// MovingCheckBox.jsx
 import { useEffect, useState } from "react";
 import styles from "./MovingCheckBox.module.css";
 
-export default function MovingCheckBox({ checked, onClick, id }) {
-  const [isAnimating, setIsAnimating] = useState(false);
+export default function MovingCheckBox({
+  checked: initialChecked,
+  onClick,
+  id,
+}) {
+  // Add state to control animation
+  const [shouldAnimate, setShouldAnimate] = useState(false);
 
+  // Trigger animation after initial render
   useEffect(() => {
-    // Trigger animation when checked state changes
-    if (checked) {
-      setIsAnimating(true);
-    } else {
-      setIsAnimating(false);
-    }
-  }, [checked]);
+    const timer = setTimeout(() => {
+      setShouldAnimate(true);
+    }, 50); // Small delay to ensure DOM is ready
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  const checkboxClass = `${styles.MovingCheckBox} ${
+    shouldAnimate ? styles.animate : ""
+  } ${initialChecked ? styles.checked : ""}`;
+
   return (
-    <div
-      className={`${styles.MovingCheckBox} ${isAnimating  ? styles.checked : ""}`}
-    >
+    <div className={checkboxClass}>
       <span className={styles.checkbox}>
-        <input type="checkbox" checked={checked} onChange={onClick} />
+        <input
+          type="checkbox"
+          checked={initialChecked}
+          onClick={onClick}
+          onChange={() => {}}
+        />
         <svg>
           <use href={`#${id}`} className={styles.checkbox}></use>
         </svg>

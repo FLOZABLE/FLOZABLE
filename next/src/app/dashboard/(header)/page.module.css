@@ -38,11 +38,23 @@
 
 .Main .box#SubjectsPie {
   max-height: 80vh;
-  max-width: 30rem;
   padding-top: 1rem;
 }
 
-@media (max-width: 1800px) {
+.Main .left {
+  width: 30%;
+}
+
+.Main .center {
+  flex: 1;
+}
+
+.Main .right {
+  width: 30%;
+  display: flex;
+}
+
+/* @media (max-width: 1800px) {
   .Main .box#SubjectsPie {
     max-width: 25rem;
   }
@@ -60,8 +72,5 @@
   .Main .box#SubjectsPie {
     max-width: 23rem;
   }
-
-  /* .Main .box#planTimeline {
-    min-width: 23rem;
-  } */
 }
+ */
