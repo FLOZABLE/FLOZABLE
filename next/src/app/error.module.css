@@ -1,0 +1,32 @@
+.Error {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.Error p {
+  margin-bottom: 1rem;
+}
+
+p#shoot {
+  font-size: 4rem;
+}
+
+p#unexpected {
+  font-size: 2rem;
+}
+
+p#sorry {
+  font-size: 1.5rem;
+}
+
+ul#solutionsList li {
+  list-style-type: disc;
+  margin-left: 1rem;
+}
+
+ul#solutionsList li#refresh {
+  text-decoration: underline;
+  cursor: pointer;
+}
