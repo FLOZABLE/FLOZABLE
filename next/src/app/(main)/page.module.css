@@ -1,3 +1,8 @@
+.Home {
+  width: 100vw;
+  overflow: hidden;
+}
+
 .Home #mainViewer {
   width: 100vw;
   height: 100vh;
@@ -237,4 +242,36 @@
   gap: 2.5rem;
   color: #fff;
   font-size: 1.75rem;
+}
+
+@media (max-width: 600px) {
+  .Home #mainViewer {
+    height: 120vh;
+  }
+  .Home #mainViewer .floating {
+    top: calc(5rem + 3rem);
+    transform: unset;
+  }
+
+  .Home #mainViewer .app {
+    right: var(--main-offset);
+    transform: unset;
+    bottom: 0rem;
+  }
+
+  .Home .section#about {
+    display: block;
+  }
+
+  .Home .section#about .layer#phoneLayer {
+    height: 50vh;
+    margin-top: 10rem;
+  }
+
+  .Home .boxes {
+    grid-template-columns: repeat(1, 1fr);
+    gap: 1.25rem;
+    margin-top: 2rem;
+  }
+  
 }

@@ -1,6 +1,7 @@
 .MainFooter {
   background: var(--blueGradient);
   color: #fff;
+  white-space: nowrap;
 }
 
 .MainFooter .section {
@@ -43,4 +44,14 @@
   height: 1px;
   background-color: #fff;
   margin: 2rem var(--main-offset);
+}
+
+@media (max-width: 600px) {
+  .MainFooter .section {
+    flex-direction: column;
+  }
+
+  .layer .title {
+    margin-top: 1rem;
+  }
 }

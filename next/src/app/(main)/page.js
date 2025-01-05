@@ -20,8 +20,11 @@ import {
   faTrophy,
 } from "@fortawesome/free-solid-svg-icons";
 import styled from "@emotion/styled";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import GradientBtn from "../components/Buttons/GradientBtn/GradientBtn";
+import { useWindowSize } from "@/Hooks/otherHooks";
+
+const SMALL_SCREEN = 768;
 
 const reviews = [
   {
@@ -149,6 +152,7 @@ export default function Home() {
   const router = useRouter();
 
   const [activeIndex, setActiveIndex] = useState(0);
+  const { width, height } = useWindowSize();
 
   const reviewsRef = useRef(null);
 
@@ -245,7 +249,7 @@ export default function Home() {
             <p>Try it!</p>
           </BlobBtn>
         </div>
-        <div className={styles.layer}>
+        <div className={styles.layer} id={styles.phoneLayer}>
           <div id={styles.phone2}>
             <AppTrial initialSlide={1} />
           </div>
@@ -309,7 +313,7 @@ export default function Home() {
         <div className={styles.layer}>
           <div className={styles.subTitle}>What Our Client Say!</div>
           <Swiper
-            slidesPerView={3}
+            slidesPerView={width > SMALL_SCREEN ? 3 : 1}
             loop={true}
             pagination={{
               clickable: true,
@@ -321,7 +325,11 @@ export default function Home() {
             /* onSlideChange={(swiper) => setActiveIndex(swiper.activeIndex)} */
             onSnapIndexChange={(swiperCore) => {
               const { realIndex } = swiperCore;
-              setActiveIndex(realIndex);
+              if (width > SMALL_SCREEN) {
+                setActiveIndex(realIndex);
+              } else {
+                setActiveIndex(realIndex - 1);
+              }
             }}
             ref={reviewsRef}
           >
