@@ -5,3 +5,11 @@
   justify-content: center;
   align-items: center;
 }
+
+.Onboarding .container {
+  
+}
+
+/* :global(.Onboarding) html {
+  font-size: clamp(15px, 1vw, 16px);
+} */

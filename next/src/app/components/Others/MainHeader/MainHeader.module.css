@@ -20,3 +20,13 @@
 .MainHeader .page a {
   padding: 1rem;
 }
+
+.MainHeader .right {
+  margin-left: auto;
+}
+
+@media (max-width: 600px) {
+  .MainHeader .pages {
+    display: none;
+  }
+}
