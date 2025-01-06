@@ -4,12 +4,41 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  background: var(--blueGradient);
 }
 
-.Onboarding .container {
-  
+.container {
+  background-color: #ffffff20;
+  border-radius: 0.5rem;
+  padding: 1rem;
 }
 
-/* :global(.Onboarding) html {
-  font-size: clamp(15px, 1vw, 16px);
-} */
+.header > div {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.header h3 {
+  margin-left: 1rem;
+  font-size: 2rem;
+}
+
+#logo {
+  height: 5rem;
+  width: 5rem;
+  background-color: #000;
+  border-radius: 0.5rem;
+}
+
+.progressBar {
+  margin-left: auto;
+}
+
+.layer {
+  margin-bottom: 1rem;
+}
+
+p.title {
+  color: var(--gray3)
+}
