@@ -52,6 +52,8 @@ async function botSelector(numbers) {
 
     for (let i = 0; i < numbers; i++) {
       const index = randomIntInRange(0, bots.length - 1);
+      if (!bots[index]) return;
+      
       const { user_id } = bots[index];
 
       // Prevents the same bot from being added
