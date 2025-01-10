@@ -38,7 +38,7 @@ if (process.env.HTTPS === "true") {
 }
 
 //redis
-const RedisStore = require("connect-redis").default;
+const {RedisStore} = require("connect-redis");
 const redisClient = require("./model/redis");
 const redisStore = new RedisStore({
   client: redisClient,
