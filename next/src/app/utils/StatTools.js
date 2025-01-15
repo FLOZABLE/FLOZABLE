@@ -36,7 +36,9 @@ function updateTimeTrend(subjects, mode, sum) {
   const datumPoint = DateTime.fromSeconds(subjects[mode].created_at);
   subjects[mode].total.map((val, i) => {
     const date = datumPoint.plus({ [sum]: i });
-    const label = `${date.month}/${date.day}`;
+    const label = date.toFormat(
+      viewer === "month" ? "yy/M" : "M/d"
+    );
     data.push(val);
     labels.push(label);
   });
@@ -48,7 +50,9 @@ function updateSubjectsTrendChart(subjects, viewDate, type) {
   const dates = getDates(viewDate, type, 7);
 
   dates.map((date) => {
-    const label = `${date.month}/${date.day}`;
+    const label = date.toFormat(
+      type === "month" ? "yy/M" : "M/d"
+    );
     const subjectData = updateTimeUsagePie(subjects, date.toJSDate(), type);
     const day = {
       label,
@@ -61,13 +65,13 @@ function updateSubjectsTrendChart(subjects, viewDate, type) {
   return data;
 }
 
-function updateRankingTrend(rankings, maxLength) {
+function updateRankingTrend(rankings, viewer, maxLength) {
   const data = [];
   const copiedArr = JSON.parse(JSON.stringify(rankings));
-  copiedArr.map((rankingData) => {
-    const { date, ranking } = rankingData;
-    const label = DateTime.fromSeconds(date).toISODate();
-    //const label = DateTime.fromSeconds(date).toFormat('M/d');
+  copiedArr.map(({date, ranking}) => {
+    const label = DateTime.fromSeconds(date).toFormat(
+      viewer === "month" ? "yy/M" : "M/d"
+    );
     if (ranking === -1) {
       data.push({ ranking: maxLength, label });
     } else {

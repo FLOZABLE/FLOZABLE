@@ -35,8 +35,11 @@ function RankingsTrendsChart({
 
     const rankingTrend = updateRankingTrend(
       rankingsUserData.data.rankings,
+      viewer,
       rankingsUserData.data.max_length
     );
+
+    console.log("ranking trend", rankingTrend);
 
     setRankingsTrend(rankingTrend);
   }, [rankingsUserData, viewDate, viewer]);
@@ -61,14 +64,7 @@ function RankingsTrendsChart({
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={rankingsTrend}>
             <CartesianGrid vertical={false} />
-            <XAxis
-              dataKey="label"
-              tickFormatter={(data) => {
-                const dateTime = DateTime.fromISO(data);
-
-                return dateTime.toFormat("M/d");
-              }}
-            />
+            <XAxis dataKey="label" />
             <YAxis reversed={true} />
             <Tooltip />
             <Line
