@@ -236,17 +236,17 @@ function PlansProvider({ children }) {
 }
 
 function AccountModalProvider({ children }) {
-  const { accountData, accountError } = useAccount();
+  const { accountData } = useAccount();
 
   const [isAccountModal, setIsAccountModal] = useState(false);
 
   useEffect(() => {
-    if (accountError) {
+    if (!accountData) {
       setIsAccountModal(true);
     } else {
       setIsAccountModal(false);
     }
-  }, [accountError]);
+  }, [accountData]);
 
   const pathname = usePathname();
 
