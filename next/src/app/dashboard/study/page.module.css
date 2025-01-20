@@ -4,6 +4,7 @@
   --subjectLabelsColor: var(--gray0);
   --filteredSubjectLabelsColor: var(--gray2);
   --planDescriptionColor: "#fff";
+  --date-selector-color: #fff;
 }
 
 .Study .ytBg {
@@ -99,6 +100,7 @@
 .StudyModalContainer#planner {
   left: 3rem;
   bottom: 8rem;
+  padding: 1rem;
 }
 
 .StudyModalContainer#media {
