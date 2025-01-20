@@ -14,7 +14,7 @@
   width: 100%;
 }
 
-.ExtensionSetting .extensionHeader p{
+.ExtensionSetting .extensionHeader p {
   justify-content: center;
   margin-left: 1.25rem;
 }
@@ -24,18 +24,18 @@
   margin-top: 0.625rem;
 }
 
-.ExtensionSetting .BtnPos {
+.inputContainer {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.ExtensionSetting div#submitBtn {
   position: absolute;
-  top: 7.7rem;
-  right: 6.6rem;
+  right: 1rem;
 }
 
-.ExtensionSetting .BtnPos > * {
-  width: 0rem;
-  height: 1rem
-}
-
-.ExtensionSetting .websiteOptions > div{
+.ExtensionSetting .websiteOptions > div {
   display: flex;
   justify-content: center;
   width: 100%;

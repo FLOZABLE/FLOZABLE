@@ -155,11 +155,10 @@
 }
 
 .passwordDescription {
-  color: rgb(211, 211, 211);
-  font-size: 70%;
+  color: var(--gray2);
+  font-size: 0.7rem;
   font-weight: 400;
-  margin-top: 8.4rem;
-  position: absolute;
+  margin-top: 1rem;
 }
 
 .passwordDescription h3 {

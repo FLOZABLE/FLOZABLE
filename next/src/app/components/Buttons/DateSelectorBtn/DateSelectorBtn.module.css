@@ -11,7 +11,7 @@
   margin: 0em 0.5em;
   cursor: pointer;
   white-space: nowrap;
-  color: #000;
+  color: var(--date-selector-color);
 }
 
 .DateSelectorBtn .button {

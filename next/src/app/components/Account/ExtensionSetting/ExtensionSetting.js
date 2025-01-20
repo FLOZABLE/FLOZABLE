@@ -66,14 +66,14 @@ function ExtensionSetting() {
   return (
     <div className={styles.ExtensionSetting}>
       <div>
-        <div>
+        <div className={styles.inputContainer}>
           <LabelMovingInput
             title={"Please Provide A URL"}
             value={url}
             setValue={setUrl}
             type={"text"}
           />
-           <div className={styles.BtnPos}>
+          <div id={styles.submitBtn}>
             <BlobBtn
               onClick={() => {
                 onSubmitUrl(url);
@@ -81,7 +81,7 @@ function ExtensionSetting() {
             >
               Add
             </BlobBtn>
-        </div>
+          </div>
         </div>
       </div>
       <div>
