@@ -6,7 +6,7 @@ function ProfileImage({userId, width = '2rem', height = '2rem'}) {
   return (
     <div className={styles.ProfileImage} style={{width, height}}>
       <Image
-        src={`${config.static_server}/profile-image/${userId}.jpeg`}
+        src={`${config.static_server}/img/profile-images/${userId}.jpeg`}
         width={0}
         height={0}
         sizes="100vw"

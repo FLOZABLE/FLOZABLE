@@ -192,30 +192,6 @@ app.use("/payment", paymentAPI);
 app.use("/notifications", notificationsAPI);
 app.use("/webhooks", webhooksAPI);
 
-//handle profile images
-app.get("/profile-image/:userId.jpeg", (req, res) => {
-  const { userId } = req.params;
-  const imagePath = path.join(
-    __dirname,
-    "public/profile-images",
-    `${userId}.jpeg`
-  );
-  fs.readFile(imagePath, (err, imageData) => {
-    if (err) {
-      // Handle the case when the image is not found
-      const defaultImagePath = path.join(
-        __dirname,
-        "public",
-        "/img/default_profile.jpg"
-      );
-      return res.sendFile(defaultImagePath);
-    }
-
-    res.setHeader("Content-Type", "image/jpeg");
-    res.send(imageData);
-  });
-});
-
 //catch 404
 app.get("*", function (req, res) {
   res.redirect("/");
