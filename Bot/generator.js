@@ -140,7 +140,7 @@ function createProfileImg(percentage, userId, gender) {
               .toFormat("jpeg")
               .resize({ width: 800, height: 800 })
               .jpeg({ quality: 40 })
-              .toFile(`../public/profile-images/${userId}.jpeg`);
+              .toFile(`../public/img/profile-images/${userId}.jpeg`);
           }
         }
       });
@@ -165,7 +165,7 @@ function createChessProfileImg(userId, imgSrc) {
         return sharp(res.data)
           .resize({ width: 800, height: 800 })
           .jpeg({ quality: 40 })
-          .toFile(`../public/profile-images/${userId}.jpeg`);
+          .toFile(`../public/img/profile-images/${userId}.jpeg`);
       })
       .catch((err) => {
         console.log(`Couldn't process: ${err}`);
@@ -449,7 +449,7 @@ async function deleteBots() {
     await redisClient.del(`user:${user_id}:friends`);
     await redisClient.del(`user:${user_id}:groups`);
 
-    fs.unlink(`./public/profile-images/${user_id}.jpeg`, (err) => {
+    fs.unlink(`./public/img/profile-images/${user_id}.jpeg`, (err) => {
       if (err) {
         console.error(`Error deleting ${user_id}:`, err);
       } else {

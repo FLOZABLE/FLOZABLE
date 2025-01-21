@@ -52,7 +52,7 @@ function Account() {
     if (!accountData) return;
     const { user_id, name, email, verified } = accountData;
 
-    setImageSrc(`${config.static_server}/profile-image/${user_id}.jpeg`);
+    setImageSrc(`${config.static_server}/img/profile-images/${user_id}.jpeg`);
     setProfile({ name, email, confirmEmail: email, verified });
   }, [accountData]);
 
