@@ -16,7 +16,13 @@ const nextConfig = {
       },
       {
         protocol: "https",
-        hostname: "static.flozable.com",
+        hostname: "api.flozable.com",
+        port: "",
+        pathname: "/**",
+      },
+      {
+        protocol: "http",
+        hostname: "api.localhost",
         port: "",
         pathname: "/**",
       },

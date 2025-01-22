@@ -22,7 +22,8 @@ const {
 const { googleOauth2client, autoSignin } = require("./auth");
 const { google } = require("googleapis");
 const RESPONSE_MESSAGES = require("../utils/responses");
-const upload = multer();
+const storage = multer.memoryStorage(); // Store file in memory buffer
+const upload = multer({ storage });
 
 Router.get("/", async (req, res) => {
   autoSignin(req, res, async (userId) => {
@@ -187,7 +188,7 @@ Router.patch("/image", upload.single("image"), async (req, res) => {
         .toFormat("jpeg")
         .resize({ width: 800, height: 800 })
         .jpeg({ quality: 40 })
-        .toFile(`./public/profile-images/${userId}.jpeg`);
+        .toFile(`./public/img/profile-images/${userId}.jpeg`);
       res.status(200).send({
         success: true,
         status: 200,
