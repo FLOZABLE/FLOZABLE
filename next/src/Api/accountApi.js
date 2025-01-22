@@ -28,7 +28,13 @@ async function patchAccountInfo({ name, email, confirmEmail }) {
 }
 
 async function patchAccountImage(formData) {
-  return requestHandler(AxiosInstance.patch(`/account/image`, formData));
+  return requestHandler(
+    AxiosInstance.patch(`/account/image`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    })
+  );
 }
 
 async function patchAccountPassword({ password, confirmPassword }) {

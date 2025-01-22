@@ -12,6 +12,7 @@ function ProfileImage({userId, width = '2rem', height = '2rem'}) {
         sizes="100vw"
         style={{ width: '100%', height: 'auto' }}
         alt={`${userId} profile image`}
+        unoptimized
       />
     </div>
   )

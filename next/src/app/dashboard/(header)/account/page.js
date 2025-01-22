@@ -61,6 +61,8 @@ function Account() {
       const reader = new FileReader();
       reader.readAsDataURL(input.files[0]);
 
+      console.log(input.files)
+
       reader.onload = (e) => {
         setImageSrc(e.target.result);
         const formData = new FormData();
@@ -122,7 +124,6 @@ function Account() {
                 <Image
                   sizes="100vw"
                   style={{ width: "100%", height: "auto" }}
-                  className={styles.profilePic}
                   src={imageSrc}
                   alt=""
                   width={0}

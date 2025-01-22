@@ -24,12 +24,6 @@
   position: relative;
 }
 
-.Account .imgSelector .profilePic {
-  width: 12.5rem;
-  height: auto;
-  object-fit: cover;
-}
-
 .Account .imgSelector .uploadBtn {
   color: rgb(66, 66, 66);
 }
@@ -38,7 +32,7 @@
 }
 
 .Account .imgSelector .circle {
-  border-radius: 100% !important;
+  border-radius: 100%;
   overflow: hidden;
   width: 9.5rem;
   height: 9.5rem;
@@ -48,6 +42,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  background-color: red;
 }
 
 .Account .imgSelector .pImage {
