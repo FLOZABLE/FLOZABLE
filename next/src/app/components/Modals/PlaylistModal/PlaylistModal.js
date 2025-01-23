@@ -9,7 +9,7 @@ function PlaylistModal() {
 
   return (
     <div className={styles.PlaylistModal}>
-      <div style={{ "--hoverTextColor": "#000" }}>
+      <div className={styles.DropDownButton}>
         <DropDownButton
           options={[
             {

@@ -150,6 +150,9 @@ export default function Terms() {
               <Link href="#misc">MISCELLANEOUS</Link>
             </li>
             <li>
+              <Link href="#spotify-compliance"> Spotify API Compliance</Link>
+            </li>
+            <li>
               <Link href="#contact">CONTACT US</Link>
             </li>
           </ol>
@@ -1246,8 +1249,64 @@ export default function Terms() {
         </div>
       </div>
 
+      <div className="layer" id="spotify-compliance">
+        <h2 className="heading">25. Spotify API Compliance</h2>
+        <div className="description">
+          <p>
+            FLOZABLE is committed to protecting the privacy and security of user
+            data. Our use and transfer of information received from Spotify APIs
+            will adhere to the <strong>Spotify Developer Policy</strong>,
+            ensuring that user data is accessed, stored, and used only to
+            provide and enhance our services. We do not share this data with
+            third parties without explicit user consent.
+          </p>
+          <h3>Limited Use Policy Disclosure</h3>
+          <p>
+            FLOZABLE’s use and transfer of information received from Spotify
+            APIs will comply with{" "}
+            <strong>Spotify’s Developer Terms and Policies</strong>. We only
+            access the necessary data to display and manage user playlists
+            within our app. We do not transfer user data to external services
+            without explicit consent and do not use it for advertising or resale
+            purposes.
+          </p>
+          <h3>Data Sharing and User Consent</h3>
+          <p>
+            To provide seamless integration with Spotify, FLOZABLE may access
+            and display user playlists. This data access is strictly limited to
+            functionality related to{" "}
+            <strong>playlist management and display</strong>. If we ever need to
+            share data with external services to improve user experience, this
+            will only occur after obtaining{" "}
+            <strong>explicit user consent</strong>. Users will be given the
+            choice to <strong>opt-in or opt-out</strong> of such data sharing at
+            any time.
+          </p>
+          <h3>User Control and Data Access</h3>
+          <p>
+            Users have full control over their Spotify data within FLOZABLE. You
+            can manage your data-sharing preferences and revoke access by
+            visiting your
+            <strong>Spotify account settings</strong>. If you wish to disconnect
+            FLOZABLE from your Spotify account, you can do so via
+            <strong>Spotify’s Authorized Applications settings</strong> at any
+            time.
+          </p>
+          <h3>How Do You Exercise Your Rights?</h3>
+          <p>
+            The easiest way to exercise your rights is by visiting
+            <a href="https://flozable.com/dashboard/account">
+              {" "}
+              your account settings
+            </a>
+            or by contacting us directly. We will consider and act upon any
+            request in accordance with applicable data protection laws.
+          </p>
+        </div>
+      </div>
+
       <div className="layer" id="contact">
-        <h2 className="heading">25. CONTACT US</h2>
+        <h2 className="heading">26. CONTACT US</h2>
         <div className="description">
           <p>
             In order to resolve a complaint regarding the Services or to receive

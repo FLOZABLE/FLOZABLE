@@ -59,7 +59,7 @@ function usePlaylistsYoutube() {
     queryKey: [`usePlaylistsYoutube`],
     queryFn: getPlaylistsYoutube,
     staleTime: 1000 * 60 * 10,
-    enabled: !!accountGoogleData?.success,
+    enabled: !!accountGoogleData,
   });
 
   const { data: playlistsYoutubeData, isLoading: playlistsYoutubeIsLoading } =
