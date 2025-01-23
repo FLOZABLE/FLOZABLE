@@ -42,7 +42,6 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: red;
 }
 
 .Account .imgSelector .pImage {
@@ -61,18 +60,18 @@
 }
 
 @keyframes fadeIn {
-	0% {
-		opacity: 0;
-	}
+  0% {
+    opacity: 0;
+  }
 
-	100% {
-		opacity: 0.6;
-	}
+  100% {
+    opacity: 0.6;
+  }
 }
 
 .Account .imgSelector .pImage:hover {
-  animation-name : fadeIn;
-	animation-duration : 0.4s;
+  animation-name: fadeIn;
+  animation-duration: 0.4s;
   animation-fill-mode: both;
 }
 
@@ -98,7 +97,7 @@
 .Account .boxContainer#profile .emails > * {
   flex: 1;
   margin-top: 0.5rem;
-} 
+}
 
 .Account .boxContainer#profile .emails > :first-child {
   margin-right: 1rem;
@@ -129,7 +128,7 @@
 
 .Account .AccountExplain {
   font-size: 1.5rem;
-  margin-bottom: .7rem;
+  margin-bottom: 0.7rem;
 }
 
 .Account .Passwords {
@@ -137,7 +136,7 @@
   flex-direction: column;
 }
 
-.Account .Passwords > *{
+.Account .Passwords > * {
   margin-bottom: 0.5rem;
 }
 
@@ -145,7 +144,7 @@
   margin-top: 0.5rem;
 }
 
-.Account .Passwords > :nth-child(2){
+.Account .Passwords > :nth-child(2) {
   margin-top: 0.5rem;
 }
 
@@ -181,9 +180,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-right: .8rem;
+  margin-right: 0.8rem;
 }
-
 
 .Account .app .description p {
   word-break: keep-all;
@@ -194,7 +192,6 @@
 
 .Account .app .authBtn {
   margin-left: auto;
-  display: flex;  
+  display: flex;
   margin-bottom: 1rem;
 }
-
