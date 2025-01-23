@@ -38,7 +38,7 @@ if (process.env.HTTPS === "true") {
 }
 
 //redis
-const {RedisStore} = require("connect-redis");
+const { RedisStore } = require("connect-redis");
 const redisClient = require("./model/redis");
 const redisStore = new RedisStore({
   client: redisClient,
@@ -194,7 +194,7 @@ app.use("/webhooks", webhooksAPI);
 
 //catch 404
 app.get("*", function (req, res) {
-  res.redirect("/");
+  res.send({ success: false, message: "page not found", code: 404 });
 });
 
 const { botManager } = require("./Bot/Bot");
@@ -207,12 +207,12 @@ server.listen(port, process.env.IP, () => {
   console.log(`Server running ${port}`);
 });
 
-process.on('uncaughtException', (err) => {
-  console.error('Uncaught Exception:', err);
+process.on("uncaughtException", (err) => {
+  console.error("Uncaught Exception:", err);
   // Potential connection cleanup logic
 });
 
 // Monitor open handles
-process.on('unhandledRejection', (reason, promise) => {
-  console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+process.on("unhandledRejection", (reason, promise) => {
+  console.error("Unhandled Rejection at:", promise, "reason:", reason);
 });
