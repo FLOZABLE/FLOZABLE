@@ -5,6 +5,7 @@ import PlansTimeline from "@/app/components/Plans/PlansTimeline/PlansTimeline";
 import SubjectsPie from "@/app/components/Charts/SubjectsPie/SubjectsPie";
 import { useState } from "react";
 import FriendsViewer from "@/app/components/Friends/FriendsViewer/FriendsViewer";
+import Analysis from "@/app/components/Others/Analysis/Analysis";
 
 export default function Dashboard() {
   const [viewDate, setViewDate] = useState(
@@ -41,7 +42,9 @@ export default function Dashboard() {
               />
             </div>
           </div>
-          <div className={styles.center}></div>
+          <div className={styles.center}>
+            <Analysis />
+          </div>
           <div className={styles.right}>
             <div
               className={`${styles.box} BoxContainer`}
