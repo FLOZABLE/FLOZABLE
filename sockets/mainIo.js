@@ -111,6 +111,7 @@ mainIo.on("connection", (socket) => {
   socket.on("start", async (subjectId) => {
     try {
       const now = Math.floor(new Date().getTime() / 1000);
+      console.log("start", subjectId)
 
       const connection = pool.promise();
 
@@ -137,7 +138,7 @@ mainIo.on("connection", (socket) => {
   socket.on("stop", async () => {
     try {
       const connection = pool.promise();
-
+      console.log("stop")
       stopStudying(connection, userId, "rest");
     } catch (err) {
       console.log(err);
