@@ -49,7 +49,7 @@ const secondConverter = ({
   let value = sec ? sec : 0;
   let type = 0;
   const hour = Math.floor(value / (60 * 60));
-  const minute = Math.floor(value / 60);
+  const minute = Math.floor((value / 60) % 60);
   const second = value % 60;
 
   let formattedValue = "";
@@ -77,7 +77,7 @@ const durationFormatter = (sec) => {
   }
   let mins = 0;
   if (sec >= 60) {
-    mins = Math.floor(sec / 60);
+    mins = Math.floor((sec / 60) % 60);
     sec = sec % 60;
   }
 
