@@ -28,6 +28,7 @@ import {
   faHourglassStart,
   faRocket,
 } from "@fortawesome/free-solid-svg-icons";
+import { AccountModalContext } from "@/app/utils/Contexts";
 
 function HeaderEl({ children, value, title }) {
   return (
@@ -41,6 +42,8 @@ function HeaderEl({ children, value, title }) {
   );
 }
 function Header({}) {
+  const { setIsAccountModal } = useContext(AccountModalContext);
+
   const { accountData } = useAccount();
   const { groupedSubjects } = useSubjects();
 
@@ -91,6 +94,14 @@ function Header({}) {
     });
     setAppUsage(formattedWebsiteUsage);
   }, [extensionUsageData]);
+
+  useEffect(() => {
+    if (!accountData) {
+      setIsAccountModal(true);
+    } else {
+      setIsAccountModal(false);
+    }
+  }, [accountData]);
 
   return (
     <header className={styles.Header}>
