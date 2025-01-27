@@ -31,12 +31,11 @@ function SubjectsPie({ viewDate, setViewDate, viewer, setViewer }) {
     subjectsPie.map((subject) => {
       totalTime += subject.value;
     });
-    const { value, type } = secondConverter(totalTime, [
-      "seconds",
-      "minutes",
-      "hours",
-    ]);
-    setTotalTime(`${value} ${type}`);
+    const formattedValue = secondConverter({
+      sec: totalTime,
+      options: ["seconds", "minutes", "hours"],
+    });
+    setTotalTime(formattedValue);
   }, [subjects, viewDate, viewer]);
 
   return (

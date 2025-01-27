@@ -61,24 +61,22 @@ function Header({}) {
 
     //Solve day
     const todayTotal = todayTotalCalculator(groupedSubjects);
-    const formattedTodayTotal = secondConverter(todayTotal, [
-      "seconds",
-      "minutes",
-      "hours",
-    ]);
-    setTotalStudied(formattedTodayTotal.value + " " + formattedTodayTotal.type);
+    const formattedTodayTotal = secondConverter({
+      sec: todayTotal,
+      options: ["seconds", "minutes", "hours"],
+    });
+    setTotalStudied(formattedTodayTotal);
 
     //Solve streak
     const streaks = streakCalculator(groupedSubjects);
     setStudyStreak(streaks + " days");
 
     const focus = todayFocusCalculator(groupedSubjects);
-    const formattedFocus = secondConverter(focus, [
-      "seconds",
-      "minutes",
-      "hours",
-    ]);
-    setLongestSession(formattedFocus.value + " " + formattedFocus.type);
+    const formattedFocus = secondConverter({
+      sec: focus,
+      options: ["seconds", "minutes", "hours"],
+    });
+    setLongestSession(formattedFocus);
   }, [groupedSubjects]);
 
   useEffect(() => {
@@ -87,12 +85,11 @@ function Header({}) {
     const totalWebsiteUsage = extensionUsageData.data.usage.reduce((a, b) => {
       return a + b.duration;
     }, 0);
-    const { value, type } = secondConverter(totalWebsiteUsage, [
-      "seconds",
-      "minutes",
-      "hours",
-    ]);
-    setAppUsage(value + " " + type);
+    const formattedWebsiteUsage = secondConverter({
+      sec: totalWebsiteUsage,
+      options: ["seconds", "minutes", "hours"],
+    });
+    setAppUsage(formattedWebsiteUsage);
   }, [extensionUsageData]);
 
   return (
