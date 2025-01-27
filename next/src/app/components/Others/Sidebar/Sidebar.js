@@ -54,19 +54,17 @@ function Sidebar({}) {
 
   return (
     <aside className={styles.Sidebar}>
-      <div className={styles.logoContainer}>
-        <a href="https://flozable.com" className={styles.logo}>
-          <Image
-            src="/logo.png"
-            alt="FLOZABLE"
-            width={0}
-            height={0}
-            sizes="100vw"
-            style={{ width: "100%", height: "auto" }}
-          />
-        </a>
+      <Link href={"/"} className={styles.logoContainer}>
+        <Image
+          src="/logo.png"
+          alt="FLOZABLE"
+          width={0}
+          height={0}
+          sizes="100vw"
+          className={styles.logo}
+        />
         <p className="jost">FLOZABLE</p>
-      </div>
+      </Link>
       <div ref={focusBackgroundRef} id={styles.focusBackground}></div>
       <SidebarEl pathname={pathname} href={"/dashboard"}>
         <i>

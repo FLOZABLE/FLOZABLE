@@ -15,19 +15,17 @@
   display: flex;
   align-items: center;
 }
-.Sidebar .logoContainer {
-  margin-left: 0.6rem;
-  margin-top: 0.8rem;
-  font-size: 1.2rem;
-  font-weight: 800;
-}
-.Sidebar .logo {
+
+.logoContainer {
   display: flex;
-  justify-content: center;
   align-items: center;
-  height: 3.7rem;
-  width: 3.7rem;
-  margin-top: -0.2rem;
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+.logo {
+  width: 5rem;
+  height: 5rem;
 }
 
 .Sidebar div#focusBackground {
