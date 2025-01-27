@@ -394,11 +394,9 @@ function ChatModalProvider({ children }) {
     totalNewMsg: 0,
   });
 
-  const pathname = usePathname();
-
-  useEffect(() => {
+  /* useEffect(() => {
     setChatModal((prev) => ({ ...prev, chatroom_id: null, opened: false }));
-  }, [pathname]);
+  }, [pathname]); */
 
   return (
     <ChatModalContext.Provider
