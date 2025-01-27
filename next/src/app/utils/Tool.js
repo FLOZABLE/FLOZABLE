@@ -41,20 +41,31 @@ function getTimezone() {
  * @param {*} sec
  * @returns
  */
-const secondConverter = (sec, options = ["s", "m", "h"]) => {
+const secondConverter = ({
+  sec,
+  options = ["s", "m", "h"],
+  precise = false,
+}) => {
   let value = sec ? sec : 0;
   let type = 0;
-  if (sec >= 60 * 60) {
-    value = (sec / (60 * 60)).toFixed(2);
-    type = 2;
-  } else if (sec > 60) {
-    value = Math.floor(sec / 60);
-    type = 1;
+  const hour = Math.floor(value / (60 * 60));
+  const minute = Math.floor(value / 60);
+  const second = value % 60;
+
+  let formattedValue = "";
+
+  if (hour) {
+    formattedValue += `${hour} ${options[2]} `;
   }
 
-  const formattedValue = `${value} ${options[type]}`;
+  if (minute || (!hour && !second)) {
+    formattedValue += `${minute} ${options[1]} `;
+  }
 
-  return { value, type: options[type], formattedValue };
+  if (second && (precise || (!hour && !minute))) {
+    formattedValue += `${second} ${options[0]} `;
+  }
+  return formattedValue;
 };
 
 const durationFormatter = (sec) => {

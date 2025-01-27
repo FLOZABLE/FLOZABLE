@@ -60,15 +60,15 @@ function FriendsTrendChart() {
         <CartesianGrid strokeDasharray="3 3" />
         <XAxis dataKey="date" />
         <YAxis
-          tickFormatter={(data) => {
-            const { value, type } = secondConverter(data);
-            return `${value} ${type}`;
+          tickFormatter={(sec) => {
+            const formattedValue = secondConverter({ sec });
+            return formattedValue;
           }}
         />
         <Tooltip
-          formatter={(data) => {
-            const { value, type } = secondConverter(data);
-            return `${value} ${type}`;
+          formatter={(sec) => {
+            const formattedValue = secondConverter({ sec });
+            return formattedValue;
           }}
         />
         <Legend />

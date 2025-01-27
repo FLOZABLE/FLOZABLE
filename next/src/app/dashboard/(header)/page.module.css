@@ -50,6 +50,9 @@
 
 .Main .center {
   flex: 1;
+  display: flex;
+  align-items: center;
+  margin-top: 1rem;
 }
 
 .Main .right {

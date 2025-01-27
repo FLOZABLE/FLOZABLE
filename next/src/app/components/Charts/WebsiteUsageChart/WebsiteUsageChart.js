@@ -33,19 +33,18 @@ export default function WebsiteUsageChart({}) {
       .sort((a, b) => a.duration - b.duration)
       .map((website) => ({
         ...website,
-        labelVal: secondConverter(website.duration).formattedValue,
+        labelVal: secondConverter({ sec: website.duration }),
       }));
     setDurations(durations);
 
     const totalDuration = usage.reduce((a, b) => {
       return a + b.duration;
     }, 0);
-    const formattedTotalVisits = secondConverter(totalDuration, [
-      "seconds",
-      "minutes",
-      "hours",
-    ]);
-    setTotalDuration(formattedTotalVisits.formattedValue);
+    const formattedTotalVisits = secondConverter({
+      sec: totalDuration,
+      options: ["seconds", "minutes", "hours"],
+    });
+    setTotalDuration(formattedTotalVisits);
 
     const visits = usage
       .slice()
@@ -153,7 +152,7 @@ export default function WebsiteUsageChart({}) {
                     {duration.website}
                   </p>
                   <p>
-                    {secondConverter(duration.duration).formattedValue},{" "}
+                    {secondConverter({ sec: duration.duration })},{" "}
                     {duration.visits} times
                   </p>
                 </div>

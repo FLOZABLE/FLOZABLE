@@ -64,10 +64,9 @@ function MyGroupContainer({ group, isAdmin, isActive, leaveGroup }) {
       (partialTime, a) => partialTime + a.study_time,
       0
     );
-    const { value, type } = secondConverter(
-      (totalTime / groupMembersData.length).toFixed(2)
-    );
-    setTotalTime(`${value} ${type}`);
+    const membersAvg = Math.floor(totalTime / groupMembersData.length);
+    const formattedValue = secondConverter({ sec: membersAvg });
+    setTotalTime(formattedValue);
   }, [groupMembersData]);
 
   const [rtpCapabilities, setRtpCapabilities] = useState(null);

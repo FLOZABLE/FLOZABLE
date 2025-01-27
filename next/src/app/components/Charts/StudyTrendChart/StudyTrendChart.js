@@ -48,7 +48,7 @@ function StudyTrendChart({
             />
           </div>
         ) : null}
-      </div>  
+      </div>
       {userId ? (
         <>
           <ResponsiveContainer width="100%" height="100%">
@@ -97,15 +97,15 @@ function StudyTrendChart({
               <CartesianGrid vertical={false} />
               <XAxis dataKey="label" />
               <YAxis
-                tickFormatter={(data) => {
-                  const { value, type } = secondConverter(data);
-                  return `${value} ${type}`;
+                tickFormatter={(sec) => {
+                  const formattedValue = secondConverter({ sec });
+                  return formattedValue;
                 }}
               />
               <Tooltip
-                formatter={(data) => {
-                  const { value, type } = secondConverter(data);
-                  return `${value} ${type}`;
+                formatter={(sec) => {
+                  const formattedValue = secondConverter({ sec });
+                  return formattedValue;
                 }}
               />
               {subjects.map((subject, i) => {

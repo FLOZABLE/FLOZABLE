@@ -43,7 +43,7 @@ export default function Dashboard() {
             </div>
           </div>
           <div className={styles.center}>
-            <Analysis />
+            <Analysis viewer={viewer} viewDate={viewDate} />
           </div>
           <div className={styles.right}>
             <div

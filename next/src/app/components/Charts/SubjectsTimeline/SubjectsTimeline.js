@@ -37,11 +37,10 @@ export default function SubjectsTimeline({ viewDate }) {
           DateTime.TIME_SIMPLE
         );
 
-        const duration = secondConverter(data[1] - data[0], [
-          "seconds",
-          "minutes",
-          "hours",
-        ]).formattedValue;
+        const duration = secondConverter({
+          sec: data[1] - data[0],
+          options: ["seconds", "minutes", "hours"],
+        });
 
         return {
           name: subject.name,

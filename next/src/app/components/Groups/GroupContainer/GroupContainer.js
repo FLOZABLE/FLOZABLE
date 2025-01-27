@@ -80,10 +80,9 @@ function GroupContainer({
       (partialTime, a) => partialTime + a.study_time,
       0
     );
-    const { value, type } = secondConverter(
-      (totalTime / members.length).toFixed(2)
-    );
-    setTotalTime(`${value} ${type}`);
+    const membersAvg = Math.floor(totalTime / members.length);
+    const formattedValue = secondConverter({ sec: membersAvg });
+    setTotalTime(formattedValue);
   }, [members, rankings]);
 
   return (
