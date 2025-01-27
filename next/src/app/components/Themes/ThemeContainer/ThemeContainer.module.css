@@ -1,11 +1,14 @@
 .ThemeContainer {
   position: relative;
   background-color: beige;
-  height: 31.25rem;
+  min-height: 31.25rem;
+  height: 100%;
   width: 100%;
+  min-width: 10rem;
   border-radius: 1.25rem;
   box-shadow: rgba(100, 100, 111, 0.2) 0em 0.4375rem 1.8125rem 0em;
   color: #fff;
+  display: flex;
 }
 
 .ThemeContainer.hidden {
@@ -13,24 +16,24 @@
 }
 
 .ThemeContainer .contents {
-  position: absolute;
-  bottom: 0.625rem;
-  padding: 0em 1.875rem;
+  padding: 0.5rem 1.875rem;
+  flex: 1;
+  margin-top: auto;
+  margin-bottom: 1rem;
 }
 
 .ThemeContainer .contents .counts {
   display: flex;
 }
 
-.ThemeContainer .contents .counts>div {
+.ThemeContainer .contents .counts > div {
   display: flex;
   margin-right: 0.625rem;
 }
 
-.ThemeContainer .contents .counts>div i {
+.ThemeContainer .contents .counts > div i {
   margin-right: 0.313rem;
 }
-
 
 .ThemeContainer .description {
   height: 6.25rem;
@@ -45,7 +48,7 @@
   flex-wrap: wrap;
 }
 
-.ThemeContainer .tags>div {
+.ThemeContainer .tags > div {
   margin: 0em 0.5rem;
   white-space: nowrap;
 }
@@ -54,13 +57,14 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  width: 100%;
 }
 
-.ThemeContainer .buttons>div {
+.ThemeContainer .buttons > div {
   margin: 0em 0.313rem;
 }
 
-@media (max-width: 87.5rem) {
+/* @media (max-width: 87.5rem) {
   .ThemeContainer {
     height: 25rem;
   }
@@ -68,19 +72,5 @@
   .ThemeContainer .contents {
     padding: 0em 1.25rem;
   }
-  
 }
-
-@media (max-width: 75rem) {
-  .ThemeContainer .contents {
-    padding: 0em 0.313rem;
-  }
-
-  .ThemeContainer .description {
-    font-size:0.813rem;
-  }
-
-  .ThemeContainer .buttons > div {
-    margin: 0em 0.125rem;
-  }
-}
+ */

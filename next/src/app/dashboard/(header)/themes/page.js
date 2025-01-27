@@ -18,9 +18,9 @@ import SearchBar from "@/app/components/Inputs/SearchBar/SearchBar";
 import DropDownButton from "@/app/components/Buttons/DropDownButton/DropDownButton";
 import BlobBtn from "@/app/components/Buttons/BlobBtn/BlobBtn";
 import ThemesContainer from "@/app/components/Themes/ThemesContainer/ThemesContainer";
-import RankedTheme from "@/app/components/Themes/RankedTheme/RankedTheme";
 import { ThemesContext } from "@/app/utils/Contexts";
 import TagsGenerator from "@/app/components/Inputs/TagsGenerator/TagsGenerator";
+import ThemeContainer from "@/app/components/Themes/ThemeContainer/ThemeContainer";
 
 function Themes() {
   const { themes } = useContext(ThemesContext);
@@ -61,7 +61,7 @@ function Themes() {
               navigation={true}
               effect="coverflow"
               coverflowEffect={{
-                rotate: -20,
+                rotate: -15,
                 stretch: 1,
                 depth: 100,
                 slideShadows: false,
@@ -69,7 +69,7 @@ function Themes() {
               spaceBetween={30}
               pagination={{ clickable: true }}
               slidesPerView={3}
-              autoplay={{ delay: 1300, disableOnInteraction: true }}
+              autoplay={{ delay: 3000, disableOnInteraction: true }}
               speed={500}
               loop={true}
               className={styles.Swiper}
@@ -77,7 +77,8 @@ function Themes() {
               {rankedThemes.map((theme, i) => {
                 return (
                   <SwiperSlide className={styles.Slide} key={i}>
-                    <RankedTheme
+                    <ThemeContainer
+                      isSearched={true}
                       key={i}
                       theme={theme}
                       setIsThemePreview={setIsThemePreview}
