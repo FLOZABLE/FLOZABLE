@@ -139,11 +139,11 @@ function getAnalysis(viewer, viewDate, subjects) {
     sec: Math.abs(diff),
     options: ["seconds", "minutes", "hours"],
   });
-  
+
   if (diff > 0) {
-    summary = `Compared to yesterday, you studied ${formattedDiff} more! Keep up the great work!`;
+    summary = `Compared to ${label1.toLowerCase()}, you studied ${formattedDiff} more! Keep up the great work!`;
   } else {
-    summary = `You studied ${formattedDiff} less than yesterday. Try to regain your streak!`;
+    summary = `You studied ${formattedDiff} less than ${label1.toLowerCase()}. Try to regain your streak!`;
   }
 
   return { data, summary };
