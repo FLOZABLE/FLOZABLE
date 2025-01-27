@@ -1,10 +1,8 @@
-.Welcome {
-  height: 3rem;
+/* .Analysis {
+} */
 
-}
-
-.Welcome p {
-  font-size: 2rem;
+.Analysis p.summary {
+  font-size: 1.7rem;
 }
 
 .barChart {

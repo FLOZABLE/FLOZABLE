@@ -43,7 +43,7 @@ export default function StudyHeatMap({ viewDate, setViewDate }) {
             if (!value.date) {
               return null;
             }
-            const label = secondConverter(value.count).formattedValue;
+            const label = secondConverter({ sec: value.count });
             return {
               "data-tooltip-id": "study-heatmap-tooltip",
               "data-tooltip-content": `${label} on ${value.date}`,

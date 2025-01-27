@@ -1,85 +1,77 @@
 import { useSubjects } from "@/Hooks/subjectsHooks";
 import styles from "./Analysis.module.css";
-import { Bar, BarChart, CartesianGrid, DefaultTooltipContent, Legend, ResponsiveContainer, XAxis, YAxis } from "recharts";
+import {
+  Bar,
+  BarChart,
+  CartesianGrid,
+  Legend,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
+import { useEffect, useState } from "react";
+import { getAnalysis } from "@/app/utils/StatTools";
+import { secondConverter } from "@/app/utils/Tool";
 
-const data = [
-  {
-    name: 'Page A',
-    uv: 4000,
-    pv: 2400,
-    amt: 2400,
-  },
-  {
-    name: 'Page B',
-    uv: 3000,
-    pv: 1398,
-    amt: 2210,
-  },
-  {
-    name: 'Page C',
-    uv: 2000,
-    pv: 9800,
-    amt: 2290,
-  },
-  {
-    name: 'Page D',
-    uv: 2780,
-    pv: 3908,
-    amt: 2000,
-  },
-  {
-    name: 'Page E',
-    uv: 1890,
-    pv: 4800,
-    amt: 2181,
-  },
-  {
-    name: 'Page F',
-    uv: 2390,
-    pv: 3800,
-    amt: 2500,
-  },
-  {
-    name: 'Page G',
-    uv: 3490,
-    pv: 4300,
-    amt: 2100,
-  },
-];
+export default function Analysis({ viewDate, viewer }) {
+  const { subjects } = useSubjects();
 
-export default function Analysis() {
-  const { groupedSubjects } = useSubjects();
+  console.log(subjects, "gdf");
+  const [subjectsLine, setSubjectsLine] = useState([]);
+  const [summary, setSummary] = useState("");
 
-  console.log(groupedSubjects, 'gdf')
+  useEffect(() => {
+    const { data, summary } = getAnalysis(viewer, viewDate, subjects);
+    console.log("analysus", data);
+    setSubjectsLine(data);
+    setSummary(summary);
+  }, [viewDate, viewer, subjects]);
 
   return (
-    <div className={styles.Welcome}>
-      <p>
-        Compared to yesterday, you studied 2 hours 3 minutes more! Keep up the
-        great work!
-      </p>
+    <div className={`Box ${styles.Analysis}`}>
+      <p className={styles.summary}>{summary}</p>
       <div className={styles.barChart}>
-      <ResponsiveContainer width="100%" height="100%">
-        <BarChart
-          width={500}
-          height={300}
-          data={data}
-          margin={{
-            top: 20,
-            right: 30,
-            left: 20,
-            bottom: 5,
-          }}
-        >
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="name" />
-          <YAxis />
-          <DefaultTooltipContent />
-          <Legend />
-          <Bar dataKey="pv" stackId="a" fill="#8884d8" />
-          <Bar dataKey="uv" stackId="a" fill="#82ca9d" />
-        </BarChart>
-      </ResponsiveContainer>
+        <ResponsiveContainer width="100%" height="100%">
+          <BarChart
+            width={500}
+            height={300}
+            data={subjectsLine}
+            margin={{
+              top: 20,
+              right: 30,
+              left: 20,
+              bottom: 5,
+            }}
+          >
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="label" />
+            <YAxis
+              tickFormatter={(sec) => {
+                const formattedValue = secondConverter({ sec });
+                return formattedValue;
+              }}
+            />
+            <Tooltip
+              formatter={(sec) => {
+                const formattedValue = secondConverter({ sec });
+                return formattedValue;
+              }}
+            />
+            <Tooltip />
+            <Legend />
+            {subjects.map((subject, i) => {
+              return (
+                <Bar
+                  dataKey={subject.name}
+                  stackId="a"
+                  fill={subject.color}
+                  key={i}
+                />
+              );
+            })}
+          </BarChart>
+        </ResponsiveContainer>
       </div>
     </div>
   );

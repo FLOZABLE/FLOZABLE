@@ -30,12 +30,12 @@ function SmallSubjectsViewer({}) {
                   if (value) {
                     const fill =
                       coldColorsList[arr.length % coldColorsList.length];
-                    const labelVal = secondConverter(value);
+                    const labelVal = secondConverter({ sec: value });
                     arr.push({
                       value,
                       ...subject,
                       fill,
-                      labelVal: `${labelVal.value} ${labelVal.type}`,
+                      labelVal,
                     });
                   }
                   return arr;
