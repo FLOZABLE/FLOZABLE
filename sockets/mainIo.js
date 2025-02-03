@@ -98,8 +98,8 @@ mainIo.on("connection", (socket) => {
       const device = socket.handshake.query?.device;
       console.log("disconnection", device);
 
-      //won't terminate if it's mobile
-      if (device === "mobile") return;
+      //won't terminate if it's mobile or chrome extension
+      if (device === "mobile" || device === "chrome-extension") return;
 
       stopStudying(connection, userId, "disconnect");
       deActiveGroup(connection, userId, socket);
@@ -111,7 +111,7 @@ mainIo.on("connection", (socket) => {
   socket.on("start", async (subjectId) => {
     try {
       const now = Math.floor(new Date().getTime() / 1000);
-      console.log("start", subjectId)
+      console.log("start", subjectId);
 
       const connection = pool.promise();
 
@@ -138,7 +138,7 @@ mainIo.on("connection", (socket) => {
   socket.on("stop", async () => {
     try {
       const connection = pool.promise();
-      console.log("stop")
+      console.log("stop");
       stopStudying(connection, userId, "rest");
     } catch (err) {
       console.log(err);
