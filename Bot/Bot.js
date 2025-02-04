@@ -26,7 +26,7 @@ async function botManager(numbers) {
       })
     );
     botSelector(numbers);
-    schedule.scheduleJob("0 */5 * * *", async () => {
+    schedule.scheduleJob("0 */3 * * *", async () => {
       console.log("run bot");
       botSelector(numbers);
     });
@@ -141,7 +141,10 @@ async function startBot(userId) {
     ]);
     const subject = subjects[randomIntInRange(0, subjects.length - 1)];
 
-    if (!subject) return;
+    if (!subject) {
+      console.log("bot study - no subject");
+      return;
+    }
     console.log("bot start", userId);
     if (groups.length) {
       mainIo.to(groups).emit(`studying`, userId, subject);
