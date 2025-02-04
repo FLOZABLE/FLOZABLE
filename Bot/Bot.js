@@ -39,6 +39,7 @@ async function botSelector(numbers) {
   try {
     const connection = pool.promise();
 
+    console.log("study:", numbers);
     // Execute these queries in parallel
     const [bots, activeBots, allMembers] = await Promise.all([
       connection
@@ -52,8 +53,8 @@ async function botSelector(numbers) {
 
     for (let i = 0; i < numbers; i++) {
       const index = randomIntInRange(0, bots.length - 1);
-      if (!bots[index]) return;
-      
+      if (!bots[index]) continue;
+
       const { user_id } = bots[index];
 
       // Prevents the same bot from being added
