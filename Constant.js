@@ -26,8 +26,8 @@ const REDIS_EXP = {
 const BOT_OPTIONS = {
   MIN_STUDY: 60 * 10,
   MAX_STUDY: 60 * 60 * 2,
-  MIN_START_DELAY: 0,
-  MAX_START_DELAY: 60 * 60 * 1,
+  MIN_START_DELAY: 60,
+  MAX_START_DELAY: 60 * 60 * 0.5,
 };
 
 //used for bot testing
