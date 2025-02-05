@@ -156,7 +156,7 @@ function GroupContainer({
       </div>
       <div className={styles.layer} id={styles.buttons}>
         <GroupUrlBtn
-          text={`${config.static_server}/dashboard/groups?groupId=${groupInfo.group_id}`}
+          text={`${config.next_server}/dashboard/groups?groupId=${groupInfo.group_id}`}
         />
         <GroupJoinBtn groupInfo={groupInfo} />
         <LikeBtn

@@ -95,7 +95,7 @@ function ThemeContainer({ theme, isSearched, setIsThemePreview }) {
           }}
         >
           <GroupUrlBtn
-            text={`${config.static_server}/dashboard/themes?id=${theme.theme_id}`}
+            text={`${config.next_server}/dashboard/themes?id=${theme.theme_id}`}
           />
           <div>
             <ThemeCategoryBtn theme={theme} />
