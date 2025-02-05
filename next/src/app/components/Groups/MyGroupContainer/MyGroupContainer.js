@@ -531,7 +531,7 @@ function MyGroupContainer({ group, isAdmin, isActive, leaveGroup }) {
           </Link>
         </div>
         <GroupUrlBtn
-          text={`${config.static_server}/dashboard/groups?groupId=${group.group_id}`}
+          text={`${config.next_server}/dashboard/groups?groupId=${group.group_id}`}
           copyText="Share"
           bgColor="var(--dark-gray)"
         />
