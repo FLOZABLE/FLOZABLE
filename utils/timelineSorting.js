@@ -67,8 +67,6 @@ function timelineSorter(subjects, timezone) {
 
     const now = DateTime.now().setZone(timezone).startOf("day");
 
-    //console.log("test tq", dayStart.toSeconds(), now.toSeconds()); tq
-
     const daysLength = now.diff(dayStart, "days").days + 1;
     const weeksLength = now.startOf("week").diff(weekStart, "weeks").weeks + 1;
     const monthsLength =
@@ -89,114 +87,95 @@ function timelineSorter(subjects, timezone) {
     const { dataArray: monthData, timelineArray: monthTimeline } =
       arrayGenerator(monthsLength, monthStart, "month");
 
+    // Initialize groupedSubjects
     groupedSubjects.day = {
       created_at: dayStart.toISODate(),
-      timeline: structuredClone(dayTimeline),
-      total: structuredClone(dayData),
-      focus: structuredClone(dayData),
+      timeline: dayTimeline.map((t) => ({ date: t.date, data: [] })),
+      total: dayData.map((d) => ({ date: d.date, data: 0 })),
+      focus: dayData.map((d) => ({ date: d.date, data: 0 })),
     };
 
     groupedSubjects.week = {
       created_at: weekStart.toISODate(),
-      timeline: structuredClone(weekTimeline),
-      total: structuredClone(weekData),
-      focus: structuredClone(weekData),
+      timeline: weekTimeline.map((t) => ({ date: t.date, data: [] })),
+      total: weekData.map((d) => ({ date: d.date, data: 0 })),
+      focus: weekData.map((d) => ({ date: d.date, data: 0 })),
     };
 
     groupedSubjects.month = {
       created_at: monthStart.toISODate(),
-      timeline: structuredClone(monthTimeline),
-      total: structuredClone(monthData),
-      focus: structuredClone(monthData),
+      timeline: monthTimeline.map((t) => ({ date: t.date, data: [] })),
+      total: monthData.map((d) => ({ date: d.date, data: 0 })),
+      focus: monthData.map((d) => ({ date: d.date, data: 0 })),
     };
 
-    subjects.map((subject) => {
+    subjects.forEach((subject) => {
+      // Initialize subject's timelines
       subject.day = {
-        timeline: structuredClone(dayTimeline),
-        total: structuredClone(dayData),
-        focus: structuredClone(dayData),
+        timeline: dayTimeline.map((t) => ({ date: t.date, data: [] })),
+        total: dayData.map((d) => ({ date: d.date, data: 0 })),
+        focus: dayData.map((d) => ({ date: d.date, data: 0 })),
       };
 
       subject.week = {
-        timeline: structuredClone(weekTimeline),
-        total: structuredClone(weekData),
-        focus: structuredClone(weekData),
+        timeline: weekTimeline.map((t) => ({ date: t.date, data: [] })),
+        total: weekData.map((d) => ({ date: d.date, data: 0 })),
+        focus: weekData.map((d) => ({ date: d.date, data: 0 })),
       };
 
       subject.month = {
-        timeline: structuredClone(monthTimeline),
-        total: structuredClone(monthData),
-        focus: structuredClone(monthData),
+        timeline: monthTimeline.map((t) => ({ date: t.date, data: [] })),
+        total: monthData.map((d) => ({ date: d.date, data: 0 })),
+        focus: monthData.map((d) => ({ date: d.date, data: 0 })),
       };
 
       subject.timeline.forEach(([start, duration]) => {
-        const endDateTime = DateTime.fromSeconds(start + duration, {
+        const end = start + duration;
+        const endDateTime = DateTime.fromSeconds(end, {
           zone: timezone,
         }).startOf("day");
+
+        // Update day data
         const dayIndex = endDateTime.diff(dayStart, "day").days;
-
-        if (subject.day.timeline[dayIndex]) {
-          subject.day.timeline[dayIndex].data.push([start, start + duration]);
-          subject.day.total[dayIndex].data += duration;
-          if (duration > subject.day.focus[dayIndex].data) {
-            subject.day.focus[dayIndex].data = duration;
-          }
-
-          //grouped subjects
-          groupedSubjects.day.timeline[dayIndex].data.push([
+        if (dayIndex >= 0 && dayIndex < daysLength) {
+          updateTimeline(
+            subject.day,
+            groupedSubjects.day,
+            dayIndex,
             start,
-            start + duration,
-          ]);
-          groupedSubjects.day.total[dayIndex].data += duration;
-          if (duration > groupedSubjects.day.focus[dayIndex].data) {
-            groupedSubjects.day.focus[dayIndex].data = duration;
-          }
+            end,
+            duration
+          );
         }
 
+        // Update week data
         const weekIndex = endDateTime
           .startOf("week")
           .diff(weekStart, "week").weeks;
-
-        if (subject.week.timeline[weekIndex]) {
-          subject.week.timeline[weekIndex].data.push([start, start + duration]);
-          subject.week.total[weekIndex].data += duration;
-          if (duration > subject.week.focus[weekIndex].data) {
-            subject.week.focus[weekIndex].data = duration;
-          }
-
-          //grouped subjects
-          groupedSubjects.week.timeline[weekIndex].data.push([
+        if (weekIndex >= 0 && weekIndex < weeksLength) {
+          updateTimeline(
+            subject.week,
+            groupedSubjects.week,
+            weekIndex,
             start,
-            start + duration,
-          ]);
-          groupedSubjects.week.total[weekIndex].data += duration;
-          if (duration > groupedSubjects.week.focus[weekIndex].data) {
-            groupedSubjects.week.focus[weekIndex].data = duration;
-          }
+            end,
+            duration
+          );
         }
 
+        // Update month data
         const monthIndex = endDateTime
           .startOf("month")
           .diff(monthStart, "month").months;
-        if (subject.month.timeline[monthIndex]) {
-          subject.month.timeline[monthIndex].data.push([
+        if (monthIndex >= 0 && monthIndex < monthsLength) {
+          updateTimeline(
+            subject.month,
+            groupedSubjects.month,
+            monthIndex,
             start,
-            start + duration,
-          ]);
-          subject.month.total[monthIndex].data += duration;
-          if (duration > subject.month.focus[monthIndex].data) {
-            subject.month.focus[monthIndex].data = duration;
-          }
-
-          //grouped subjects
-          groupedSubjects.month.timeline[monthIndex].data.push([
-            start,
-            start + duration,
-          ]);
-          groupedSubjects.month.total[monthIndex].data += duration;
-          if (duration > groupedSubjects.month.focus[monthIndex].data) {
-            groupedSubjects.month.focus[monthIndex].data = duration;
-          }
+            end,
+            duration
+          );
         }
       });
     });
@@ -205,6 +184,27 @@ function timelineSorter(subjects, timezone) {
   } catch (err) {
     console.log(err);
     return { subjects: [], groupedSubjects: [] };
+  }
+}
+
+function updateTimeline(
+  subjectPeriod,
+  groupedPeriod,
+  index,
+  start,
+  end,
+  duration
+) {
+  subjectPeriod.timeline[index].data.push([start, end]);
+  subjectPeriod.total[index].data += duration;
+  if (duration > subjectPeriod.focus[index].data) {
+    subjectPeriod.focus[index].data = duration;
+  }
+
+  groupedPeriod.timeline[index].data.push([start, end]);
+  groupedPeriod.total[index].data += duration;
+  if (duration > groupedPeriod.focus[index].data) {
+    groupedPeriod.focus[index].data = duration;
   }
 }
 
