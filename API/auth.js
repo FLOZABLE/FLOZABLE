@@ -6,7 +6,12 @@ const fetch = require("node-fetch");
 const querystring = require("node:querystring");
 const pool = require("../model/pool");
 const redisClient = require("../model/redis");
-const { hashing, generateRandomId, isValidTimeZone } = require("../utils/tool");
+const {
+  hashing,
+  generateRandomId,
+  isValidTimeZone,
+  randomIntInRange,
+} = require("../utils/tool");
 const {
   validateEmail,
   validateStrictString,
@@ -75,7 +80,13 @@ async function autoSignin(
   }
 }
 
-async function createAccount(name, email, timezone, userInfo) {
+async function createAccount({
+  name,
+  email,
+  timezone,
+  userInfo,
+  nameWarn = true,
+}) {
   try {
     if (!isValidTimeZone(timezone)) {
       timezone = "UTC";
@@ -97,14 +108,22 @@ async function createAccount(name, email, timezone, userInfo) {
       };
     }
 
+    let updatedName = name;
+    const user_id = generateRandomId(10);
+
     const isValidName = validateStrictString(name, "Name", 25, 1);
     if (!isValidName.isValid) {
-      return {
-        success: false,
-        status: 400,
-        message: isValidName.reason,
-        error: { reason: isValidName.reason },
-      };
+      if (nameWarn) {
+        return {
+          success: false,
+          status: 400,
+          message: isValidName.reason,
+          error: { reason: isValidName.reason },
+        };
+      }
+
+      //if no name warning, just use user_id for name
+      updatedName = `user${user_id}`;
     }
     const connection = pool.promise();
 
@@ -122,11 +141,10 @@ async function createAccount(name, email, timezone, userInfo) {
       };
     }
 
-    const user_id = generateRandomId(10);
     const key_salt = crypto.randomBytes(32).toString("hex");
     const iv = crypto.randomBytes(16).toString("hex");
     const user = {
-      name,
+      name: updatedName,
       email,
       user_id,
       timezone,
@@ -301,7 +319,12 @@ Router.get("/signin/google", async (req, res) => {
 
         if (!userInfo) {
           //new user
-          const accountResponse = await createAccount(name, email, timezone);
+          const accountResponse = await createAccount({
+            name,
+            email,
+            timezone,
+            nameWarn: false,
+          });
 
           const { success, data } = accountResponse;
 
@@ -665,10 +688,16 @@ Router.post("/app/signin/google", async (req, res) => {
 
     if (!userInfo) {
       //new user
-      const accountResponse = await createAccount(name, email, timezone);
+      const accountResponse = await createAccount({
+        name,
+        email,
+        timezone,
+        nameWarn: false,
+      });
 
       const { success, data } = accountResponse;
 
+      console.log("create acc", name, email, timezone, accountResponse);
       if (!success) {
         const response = RESPONSE_MESSAGES.error();
         return res.status(response.status).send(response);
@@ -763,9 +792,14 @@ Router.post("/app/signup", async (req, res) => {
 
     const [salt, hashed_password] = hashing(password);
 
-    const response = await createAccount(name, email, timezone, {
-      salt,
-      hashed_password,
+    const response = await createAccount({
+      name,
+      email,
+      timezone,
+      userInfo: {
+        salt,
+        hashed_password,
+      },
     });
 
     const { success, data } = response;
@@ -990,9 +1024,14 @@ Router.post("/signup", async (req, res) => {
 
     const [salt, hashed_password] = hashing(password);
 
-    const response = await createAccount(name, email, timezone, {
-      salt,
-      hashed_password,
+    const response = await createAccount({
+      name,
+      email,
+      timezone,
+      userInfo: {
+        salt,
+        hashed_password,
+      },
     });
 
     const { success, data } = response;
