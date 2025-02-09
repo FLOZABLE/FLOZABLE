@@ -7,6 +7,7 @@ import { THEMES_CATEGORIES } from "@/app/utils/Themes";
 import { ThemesContext } from "@/app/utils/Contexts";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { BackArrow } from "@/app/utils/Svg";
+import Link from "next/link";
 
 function ThemeSelector({ link, handleLinkInput, setVideoId }) {
   const { userThemes } = useContext(ThemesContext);
@@ -49,28 +50,34 @@ function ThemeSelector({ link, handleLinkInput, setVideoId }) {
   return (
     <div className={styles.ThemeSelector}>
       <div className={styles.categoriesPage}>
-        <div className={`customScroll ${styles.categories}`}>
-          {categories.map((category, i) => {
-            const videoId = category.themes[0].video_id;
-            return (
-              <div
-                className={styles.category}
-                key={i}
-                style={{
-                  backgroundImage: `url("https://i.ytimg.com/vi/${videoId}/maxresdefault.jpg`,
-                  backgroundSize: "cover",
-                  backgroundPosition: "center center",
-                  backgroundRepeat: "no-repeat",
-                }}
-                onClick={() => {
-                  setSelectedCategory(category);
-                }}
-              >
-                <p className={styles.name}>{category.name}</p>
-              </div>
-            );
-          })}
-        </div>
+        {categories.length ? (
+          <div className={`customScroll ${styles.categories}`}>
+            {categories.map((category, i) => {
+              const videoId = category.themes[0].video_id;
+              return (
+                <div
+                  className={styles.category}
+                  key={i}
+                  style={{
+                    backgroundImage: `url("https://i.ytimg.com/vi/${videoId}/maxresdefault.jpg`,
+                    backgroundSize: "cover",
+                    backgroundPosition: "center center",
+                    backgroundRepeat: "no-repeat",
+                  }}
+                  onClick={() => {
+                    setSelectedCategory(category);
+                  }}
+                >
+                  <p className={styles.name}>{category.name}</p>
+                </div>
+              );
+            })}
+          </div>
+        ) : (
+          <Link className={styles.toTheme} href={"/dashboard/themes"}>
+            Explore more themes!
+          </Link>
+        )}
         <CustomInput
           input={link}
           handleInput={handleLinkInput}

@@ -56,7 +56,7 @@ function Study() {
     zoom: false,
   });
 
-  const [videoId, setVideoId] = useState("_gVrQa_bvm8");
+  const [videoId, setVideoId] = useState("YQc4WT0yDH4");
   const [volume, setVolume] = useState(0);
   const [link, setLink] = useState([]);
 
