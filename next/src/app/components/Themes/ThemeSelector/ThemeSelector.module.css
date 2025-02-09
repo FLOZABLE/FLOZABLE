@@ -24,6 +24,16 @@
   gap: 1.25rem;
   margin-bottom: 1rem;
   overflow-y: auto;
+  flex: 1;
+}
+
+.toTheme {
+  flex: 1;
+  color: #fff;
+  font-size: 1.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .ThemeSelector .categories .category {
