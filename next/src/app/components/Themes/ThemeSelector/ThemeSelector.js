@@ -47,6 +47,14 @@ function ThemeSelector({ link, handleLinkInput, setVideoId }) {
     setCategories(categories);
   }, [userThemes]);
 
+  useEffect(() => {
+    const savedThemeId = localStorage.getItem("selectedThemeId");
+    if (savedThemeId) {
+      setVideoId(savedThemeId);
+      localStorage.removeItem("selectedThemeId");
+    }
+  }, [userThemes]);
+
   return (
     <div className={styles.ThemeSelector}>
       <div className={styles.categoriesPage}>
@@ -119,6 +127,8 @@ function ThemeSelector({ link, handleLinkInput, setVideoId }) {
                 }}
                 onClick={() => {
                   setVideoId(theme.video_id);
+                  localStorage.setItem("selectedThemeId", theme.video_id);
+                  console.log("clicked");
                 }}
               >
                 <p className={styles.name}>{theme.name}</p>

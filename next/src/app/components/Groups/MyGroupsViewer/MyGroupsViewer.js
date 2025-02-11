@@ -8,10 +8,11 @@ import { useDebounce } from "use-debounce";
 import { socket } from "@/app/utils/socket";
 import { mediaSocket } from "@/app/utils/mediaSocket";
 import { ACTIVE_GROUP_DEBOUNCE } from "@/app/utils/Constant";
-import { useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { MittInstance } from "@/app/utils/mittInstance";
 import { useAccount } from "@/Hooks/accountHooks";
 import { useGroups } from "@/Hooks/groupsHook";
+import Link from "next/link";
 
 function MyGroupsViewer({}) {
   const { myGroups, updateGroupsData } = useGroups();
@@ -24,6 +25,7 @@ function MyGroupsViewer({}) {
   const SwiperRef = useRef(null);
   const searchParams = useSearchParams();
   const router = useRouter();
+  const pathname = usePathname();
 
   const groupId = searchParams.get("group");
 
@@ -60,6 +62,7 @@ function MyGroupsViewer({}) {
     const group = myGroups[debouncedIndex];
     if (!group) return;
 
+    localStorage.setItem("swiperGroupId", group.group_id);
     //only in study page
     //if (!window.location.href.includes("study")) return;
 
@@ -77,9 +80,20 @@ function MyGroupsViewer({}) {
       const groupIndex = myGroups.findIndex(
         (group) => group.group_id === groupId
       );
+      console.log("swiper", groupIndex);
       if (groupIndex === -1) return;
+      localStorage.removeItem("swiperGroupId");
       SwiperRef.current.swiper.slideTo(groupIndex);
     };
+
+    const swiperGroupId = localStorage.getItem("swiperGroupId");
+    console.log("swiper", swiperGroupId);
+    if (swiperGroupId) {
+      setTimeout(() => {
+        onMessage({ groupId: swiperGroupId });
+      }, 500);
+    }
+
     MittInstance.on("moveMyGroupsViewer", onMessage);
     return () => {
       MittInstance.off("moveMyGroupsViewer", onMessage);
@@ -109,7 +123,12 @@ function MyGroupsViewer({}) {
   if (!myGroups.length) {
     return (
       <div className={styles.noGroups}>
-        {"You haven't joined any groups yet!"}
+        <h3>{"You haven't joined any groups yet!"}</h3>
+        {pathname !== "/dashboard/groups" ? (
+          <Link href={"/dashboard/groups"} className={styles.toGroups}>
+            Click here to join groups!
+          </Link>
+        ) : null}
       </div>
     );
   }
