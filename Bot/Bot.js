@@ -28,7 +28,7 @@ async function botManager(numbers) {
     botSelector(numbers);
 
     // Schedule the task to run at 5 minutes past every hour
-    schedule.scheduleJob("5 * * * *", () => {
+    schedule.scheduleJob("5 */2 * * *", () => {
       console.log("run bot");
       botSelector(numbers);
     });
