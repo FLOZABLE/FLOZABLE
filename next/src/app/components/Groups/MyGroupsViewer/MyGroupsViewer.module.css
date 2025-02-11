@@ -17,4 +17,9 @@
 
 .noGroups {
   font-size: 2rem;
+  color: var(--textColor);
+}
+
+.toGroups {
+  text-decoration: underline;
 }
