@@ -178,6 +178,7 @@ function SubjecTimer({}) {
 
     socket.on("studying", onStudying);
     socket.on("stopStudying", onStopStudying);
+    socket.on("disconnected", onStopStudying)
 
     return () => {
       socket.off("studying", onStudying);
