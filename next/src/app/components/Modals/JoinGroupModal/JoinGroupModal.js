@@ -34,6 +34,8 @@ function JoinGroupModal() {
       const response = await postGroupJoin(groupId, password);
       if (!response.success) return;
 
+      localStorage.removeItem("swiperGroupId");
+
       setJoinGroupModal({
         open: false,
         group: null,
@@ -59,7 +61,7 @@ function JoinGroupModal() {
 
       setTimeout(() => {
         MittInstance.emit("moveMyGroupsViewer", { groupId });
-      }, 100);
+      }, 1000);
 
       router.push(window.location.pathname, { scroll: false });
 

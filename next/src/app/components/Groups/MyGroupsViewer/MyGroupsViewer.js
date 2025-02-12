@@ -63,6 +63,7 @@ function MyGroupsViewer({}) {
     if (!group) return;
 
     localStorage.setItem("swiperGroupId", group.group_id);
+    console.log("swiper set" ,group)
     //only in study page
     //if (!window.location.href.includes("study")) return;
 
@@ -80,7 +81,6 @@ function MyGroupsViewer({}) {
       const groupIndex = myGroups.findIndex(
         (group) => group.group_id === groupId
       );
-      console.log("swiper", groupIndex);
       if (groupIndex === -1) return;
       localStorage.removeItem("swiperGroupId");
       SwiperRef.current.swiper.slideTo(groupIndex);

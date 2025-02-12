@@ -17,6 +17,9 @@ export default function GroupJoinBtn({ groupInfo }) {
         <Link
           href={`/dashboard/study?group=${groupInfo.group_id}`}
           className={styles.inner}
+          onClick={() => {
+            localStorage.removeItem("swiperGroupId");
+          }}
         >
           Join the session
         </Link>
