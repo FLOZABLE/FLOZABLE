@@ -2,15 +2,6 @@
 
 import React, { useCallback, useState } from "react";
 import styles from "./CreateGroupModal.module.css";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faUserGroup,
-  faPalette,
-  faFileLines,
-  faTags,
-  faLock,
-  faStopwatch,
-} from "@fortawesome/free-solid-svg-icons";
 import CustomInput from "@/app/components/Inputs/CustomInput/CustomInput";
 import TextEditor from "@/app/components/Inputs/TextEditor/TextEditor";
 import ColorPalette from "@/app/components/Inputs/ColorPalette/ColorPalette";
@@ -39,6 +30,8 @@ function CreateGroupModal({ isOpen, setIsOpen }) {
       const response = await putGroup(newGroup);
       if (!response.success) return;
 
+      localStorage.removeItem("swiperGroupId");
+
       const { data } = response;
 
       setIsOpen(false);
@@ -50,11 +43,13 @@ function CreateGroupModal({ isOpen, setIsOpen }) {
         groups: [...prev.groups, groupId],
       }));
       updateGroupsData((prev) => [...prev, data.group]);
+
       setTimeout(() => {
         MittInstance.emit("moveMyGroupsViewer", {
           groupId,
         });
-      }, 100);
+      }, 1000);
+      
       document.body.scrollIntoView({ behavior: "smooth", block: "start" });
     } catch (err) {
       console.log(err);
