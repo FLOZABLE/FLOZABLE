@@ -11,11 +11,17 @@ import BlobBtn from "@/app/components/Buttons/BlobBtn/BlobBtn";
 import DraggableModal from "../DraggableModal/DraggableModal";
 import TagsGenerator from "../../Inputs/TagsGenerator/TagsGenerator";
 import { putGroup } from "@/Api/groupsApi";
-import { DEFAULT_GROUP } from "@/app/utils/Constant";
+import { ACTIVE_GROUP_DEBOUNCE, DEFAULT_GROUP } from "@/app/utils/Constant";
 import ModalLayer from "../ModalLayer/ModalLayer";
 import { MittInstance } from "@/app/utils/mittInstance";
 import { useGroups } from "@/Hooks/groupsHook";
 import { useAccount } from "@/Hooks/accountHooks";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faBullseye,
+  faStopwatch,
+  faUserGroup,
+} from "@fortawesome/free-solid-svg-icons";
 
 function CreateGroupModal({ isOpen, setIsOpen }) {
   const { updateGroupsData } = useGroups();
@@ -30,8 +36,6 @@ function CreateGroupModal({ isOpen, setIsOpen }) {
       const response = await putGroup(newGroup);
       if (!response.success) return;
 
-      localStorage.removeItem("swiperGroupId");
-
       const { data } = response;
 
       setIsOpen(false);
@@ -45,11 +49,9 @@ function CreateGroupModal({ isOpen, setIsOpen }) {
       updateGroupsData((prev) => [...prev, data.group]);
 
       setTimeout(() => {
-        MittInstance.emit("moveMyGroupsViewer", {
-          groupId,
-        });
-      }, 1000);
-      
+        MittInstance.emit("moveMyGroupsViewer", { groupId });
+      }, ACTIVE_GROUP_DEBOUNCE);
+
       document.body.scrollIntoView({ behavior: "smooth", block: "start" });
     } catch (err) {
       console.log(err);
@@ -89,7 +91,10 @@ function CreateGroupModal({ isOpen, setIsOpen }) {
               setIsSelectColor={setIsSelectColor}
             />
           </ModalLayer>
-          <ModalLayer hoverText={"Max Members"}>
+          <ModalLayer
+            hoverText={"Max Members"}
+            icon={<FontAwesomeIcon icon={faUserGroup} />}
+          >
             <SliderAnimation
               min={0}
               max={100}
@@ -135,7 +140,10 @@ function CreateGroupModal({ isOpen, setIsOpen }) {
               />
             </div>
           </ModalLayer>
-          <ModalLayer hoverText={"Group's Goal"}>
+          <ModalLayer
+            icon={<FontAwesomeIcon icon={faStopwatch} />}
+            hoverText={"Group's Goal"}
+          >
             <SliderAnimation
               min={0}
               max={10}
