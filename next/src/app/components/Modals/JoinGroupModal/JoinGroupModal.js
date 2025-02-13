@@ -14,6 +14,7 @@ import { toast } from "react-toastify";
 import { MittInstance } from "@/app/utils/mittInstance";
 import { useGroups } from "@/Hooks/groupsHook";
 import { useAccount } from "@/Hooks/accountHooks";
+import { ACTIVE_GROUP_DEBOUNCE } from "@/app/utils/Constant";
 
 function JoinGroupModal() {
   const { joinGroupModal, setJoinGroupModal } = useContext(
@@ -33,8 +34,6 @@ function JoinGroupModal() {
 
       const response = await postGroupJoin(groupId, password);
       if (!response.success) return;
-
-      localStorage.removeItem("swiperGroupId");
 
       setJoinGroupModal({
         open: false,
@@ -61,7 +60,7 @@ function JoinGroupModal() {
 
       setTimeout(() => {
         MittInstance.emit("moveMyGroupsViewer", { groupId });
-      }, 1000);
+      }, ACTIVE_GROUP_DEBOUNCE);
 
       router.push(window.location.pathname, { scroll: false });
 

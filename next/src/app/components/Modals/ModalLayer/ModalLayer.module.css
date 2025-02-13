@@ -1,13 +1,11 @@
 .ModalLayer {
   display: flex;
-  flex-direction: row;  
-  margin: .625rem 0rem;
+  flex-direction: row;
+  margin: 0.625rem 1rem;
   align-items: center;
-  width: 100%;
 }
 
 .ModalLayer .iconWrapper {
-  margin-left: 2rem;
   height: 2.5rem;
   display: flex;
   justify-content: center;
@@ -15,6 +13,7 @@
   font-size: 1.688rem;
   position: relative;
   color: var(--gray2);
+  margin-right: 1rem;
 }
 
 .ModalLayer .iconWrapper:hover .hoverText {
@@ -24,14 +23,13 @@
 
 .ModalLayer .iconWrapper .hoverText {
   bottom: -2rem;
-  left: 0.5rem;
+  left: 0rem;
 }
 
 .ModalLayer .contentWrapper {
   position: relative;
-  width: calc(100% - 4.375rem);
+  flex: 1;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-right: 1rem;
 }

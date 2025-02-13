@@ -5,10 +5,6 @@ import styles from "./EditGroupModal.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faUserGroup,
-  faPalette,
-  faFileLines,
-  faTags,
-  faLock,
   faStopwatch,
   faTrashCan,
 } from "@fortawesome/free-solid-svg-icons";
@@ -102,15 +98,11 @@ function EditGroupModal() {
                 const name = e.target.value;
                 setNewGroup((prev) => ({ ...prev, name }));
               }}
-              icon={null}
               placeHolder={"Study Group Name"}
               type={"text"}
             />
           </ModalLayer>
-          <ModalLayer
-            hoverText={"Description"}
-            icon={<FontAwesomeIcon icon={faFileLines} />}
-          >
+          <ModalLayer hoverText={"Description"}>
             <TextEditor
               setValue={(description) => {
                 setNewGroup((prev) => ({ ...prev, description }));
@@ -118,10 +110,7 @@ function EditGroupModal() {
               value={newGroup.description}
             />
           </ModalLayer>
-          <ModalLayer
-            hoverText={"Color"}
-            icon={<FontAwesomeIcon icon={faPalette} />}
-          >
+          <ModalLayer hoverText={"Color"}>
             <ColorPalette
               setSelectedColor={(color) => {
                 setNewGroup((prev) => ({ ...prev, color }));
@@ -145,10 +134,7 @@ function EditGroupModal() {
               }}
             />
           </ModalLayer>
-          <ModalLayer
-            hoverText={"Tags"}
-            icon={<FontAwesomeIcon icon={faTags} />}
-          >
+          <ModalLayer hoverText={"Tags"}>
             <TagsGenerator
               tags={newGroup.tags}
               setTags={(tags) => {
@@ -157,10 +143,7 @@ function EditGroupModal() {
               maxTags={10}
             />
           </ModalLayer>
-          <ModalLayer
-            hoverText={"Visibility"}
-            icon={<FontAwesomeIcon icon={faLock} />}
-          >
+          <ModalLayer hoverText={"Visibility"}>
             <OptionToggleBtn
               opt1={{ val: 0, name: "PRIVATE" }}
               opt2={{ val: 1, name: "PUBLIC" }}
@@ -180,7 +163,6 @@ function EditGroupModal() {
                   const password = e.target.value;
                   setNewGroup((prev) => ({ ...prev, password }));
                 }}
-                icon={null}
                 placeHolder={"Enter Password"}
                 type={"text"}
               />
