@@ -1,5 +1,5 @@
 .ThemesContainer {
-  --theme-width: 18.75rem;
+  --theme-width: 22rem;
   position: relative;
   grid-template-columns: repeat(auto-fill, var(--theme-width));
   justify-content: center;
@@ -7,17 +7,6 @@
   width: 100%;
   display: grid;
   margin-bottom: 15rem;
+  --icon-color: var(--gray1);
+  --hover-icon-color: #fff;
 }
-
-/* @media (max-width: 87.5rem) {
-  .ThemesContainer {
-    grid-template-columns: repeat(auto-fill, 2 3.75rem);
-  }
-}
-
-@media (max-width: 75rem) {
-  .ThemesContainer {
-    grid-template-columns: repeat(auto-fill, 14.375rem);
-    gap: 0.625rem;
-  }
-} */
