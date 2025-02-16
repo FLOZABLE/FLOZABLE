@@ -37,6 +37,7 @@
     "@tiptap/pm": "^2.11.2",
     "@tiptap/react": "^2.11.2",
     "@tiptap/starter-kit": "^2.11.2",
+    "@uiw/react-color-github": "^2.4.0",
     "axios": "^1.7.9",
     "axios-retry": "^4.5.0",
     "countries-and-timezones": "^3.7.2",

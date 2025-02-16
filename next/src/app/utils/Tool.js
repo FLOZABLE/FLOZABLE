@@ -20,13 +20,15 @@ function getCountryCode(timezone) {
 }
 
 function toTimer(sec) {
-  const hrDisp = Math.floor(sec / 3600)
+  const positiveSec = sec < 0 ? 0 : sec;
+
+  const hrDisp = Math.floor(positiveSec / 3600)
     .toString()
     .padStart(2, "0");
-  const minDisp = Math.floor((sec / 60) % 60)
+  const minDisp = Math.floor((positiveSec / 60) % 60)
     .toString()
     .padStart(2, "0");
-  const secDisp = Math.floor(sec % 60)
+  const secDisp = Math.floor(positiveSec % 60)
     .toString()
     .padStart(2, "0");
   return `${hrDisp}:${minDisp}:${secDisp}`;
