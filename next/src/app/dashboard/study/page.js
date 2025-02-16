@@ -90,13 +90,15 @@ function Study() {
 
   return (
     <div className={styles.Study}>
-      <div className={styles.ytBg}>
-        <YouTubePlayer
-          height={"100vh"}
-          width={"100vw"}
-          videoId={videoId}
-          volume={volume}
-        />
+      <div className={styles.ytBg} style={{ backgroundColor: videoId }}>
+        {videoId[0] !== "#" ? (
+          <YouTubePlayer
+            height={"100vh"}
+            width={"100vw"}
+            videoId={videoId}
+            volume={volume}
+          />
+        ) : null}
       </div>
       <div className={styles.studyOptions} data-tutorial={13}>
         <StudyOption
@@ -257,6 +259,7 @@ function Study() {
         <ThemeSelector
           link={link}
           handleLinkInput={handleLinkInput}
+          videoId={videoId}
           setVideoId={setVideoId}
         />
       </div>
