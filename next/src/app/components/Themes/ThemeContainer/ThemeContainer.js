@@ -68,7 +68,7 @@ function ThemeContainer({ theme, isSearched, setIsThemePreview }) {
               setMembers={setLikes}
             />
           </div>
-          <div>
+          {/* <div>
             <i>
               <FontAwesomeIcon icon={faPeopleGroup} />
             </i>
@@ -76,7 +76,7 @@ function ThemeContainer({ theme, isSearched, setIsThemePreview }) {
               initialVal={theme.weekUsage}
               themeId={theme.theme_id}
             />
-          </div>
+          </div> */}
         </div>
         <div className={`${styles.description} hiddenScroll`}>
           {parse(theme.description)}

@@ -35,6 +35,8 @@
   --modalWidth: 18rem;
   --blueGradient: linear-gradient(to bottom right, var(--blue2), var(--blue1));
   --main-offset: 3rem;
+  --icon-color: var(--gray2);
+  --hover-icon-color: #000;
 }
 
 .title {

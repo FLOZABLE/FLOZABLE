@@ -14,11 +14,11 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  color: var(--gray2);
+  color: var(--icon-color);
 }
 
 .GroupUrlBtn:hover i {
-  color: #000;
+  color: var(--hover-icon-color);
 }
 
 .GroupUrlBtn .hoverText {
