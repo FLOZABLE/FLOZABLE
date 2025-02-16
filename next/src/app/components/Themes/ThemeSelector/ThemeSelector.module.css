@@ -27,6 +27,33 @@
   flex: 1;
 }
 
+div#useColor {
+  position: absolute;
+  top: 0.5rem;
+  left: 0.5rem;
+  color: #fff;
+  font-size: 2rem;
+}
+
+div#useColor .colorSelecter {
+  position: absolute !important;
+  opacity: 0;
+  visibility: hidden;
+  transition: 0.3s ease-in-out opacity, 0.3s ease-in-out visibility;
+  top: 3rem;
+}
+
+div#useColor:hover .colorSelecter {
+  opacity: 1;
+  visibility: visible;
+}
+
+div#useColor:hover .hoverText {
+  opacity: 1;
+  visibility: visible;
+  bottom: -1rem;
+}
+
 .toTheme {
   flex: 1;
   color: #fff;

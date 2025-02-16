@@ -17,11 +17,7 @@ import { MittInstance } from "@/app/utils/mittInstance";
 import { useGroups } from "@/Hooks/groupsHook";
 import { useAccount } from "@/Hooks/accountHooks";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faBullseye,
-  faStopwatch,
-  faUserGroup,
-} from "@fortawesome/free-solid-svg-icons";
+import { faStopwatch, faUserGroup } from "@fortawesome/free-solid-svg-icons";
 
 function CreateGroupModal({ isOpen, setIsOpen }) {
   const { updateGroupsData } = useGroups();

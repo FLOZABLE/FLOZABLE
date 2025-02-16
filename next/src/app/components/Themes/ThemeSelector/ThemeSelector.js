@@ -1,5 +1,5 @@
 import styles from "./ThemeSelector.module.css";
-import { faLink, faXmark } from "@fortawesome/free-solid-svg-icons";
+import { faBrush, faLink, faXmark } from "@fortawesome/free-solid-svg-icons";
 import React, { useState, useEffect, useContext } from "react";
 import config from "@/app/utils/config";
 import CustomInput from "../../Inputs/CustomInput/CustomInput";
@@ -8,8 +8,9 @@ import { ThemesContext } from "@/app/utils/Contexts";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { BackArrow } from "@/app/utils/Svg";
 import Link from "next/link";
+import Github from "@uiw/react-color-github";
 
-function ThemeSelector({ link, handleLinkInput, setVideoId }) {
+function ThemeSelector({ link, handleLinkInput, videoId, setVideoId }) {
   const { userThemes } = useContext(ThemesContext);
 
   const [categories, setCategories] = useState([]);
@@ -93,6 +94,41 @@ function ThemeSelector({ link, handleLinkInput, setVideoId }) {
         >
           <FontAwesomeIcon icon={faLink} />
         </CustomInput>
+        <div id={styles.useColor}>
+          <FontAwesomeIcon icon={faBrush} />
+          <Github
+            placement="L"
+            color={videoId}
+            style={{
+              "--github-background-color": "#d1eff9",
+            }}
+            onChange={(color) => {
+              setVideoId(color.hex);
+              localStorage.setItem("selectedThemeId", color.hex);
+            }}
+            className={styles.colorSelecter}
+            colors={[
+              '#B80000',
+              '#DB3E00',
+              '#FCCB00',
+              '#008B02',
+              '#006B76',
+              '#1273DE',
+              '#004DCF',
+              '#5300EB',
+              '#EB9694',
+              '#FAD0C3',
+              '#FEF3BD',
+              '#C1E1C5',
+              '#BEDADC',
+              '#C4DEF6',
+              '#BED3F3',
+              '#D4C4FB',
+              '#000000'
+            ]}
+          />
+          <div className={`HoverText ${styles.hoverText}`}>Solid colors</div>
+        </div>
       </div>
       <div
         className={`${styles.themesPage} ${
@@ -128,7 +164,6 @@ function ThemeSelector({ link, handleLinkInput, setVideoId }) {
                 onClick={() => {
                   setVideoId(theme.video_id);
                   localStorage.setItem("selectedThemeId", theme.video_id);
-                  console.log("clicked");
                 }}
               >
                 <p className={styles.name}>{theme.name}</p>
