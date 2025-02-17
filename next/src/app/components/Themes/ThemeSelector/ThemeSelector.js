@@ -1,7 +1,6 @@
 import styles from "./ThemeSelector.module.css";
-import { faBrush, faLink, faXmark } from "@fortawesome/free-solid-svg-icons";
+import { faBrush, faLink } from "@fortawesome/free-solid-svg-icons";
 import React, { useState, useEffect, useContext } from "react";
-import config from "@/app/utils/config";
 import CustomInput from "../../Inputs/CustomInput/CustomInput";
 import { THEMES_CATEGORIES } from "@/app/utils/Themes";
 import { ThemesContext } from "@/app/utils/Contexts";
@@ -97,7 +96,7 @@ function ThemeSelector({ link, handleLinkInput, videoId, setVideoId }) {
         <div id={styles.useColor}>
           <FontAwesomeIcon icon={faBrush} />
           <Github
-            placement="L"
+            placement="RB"
             color={videoId}
             style={{
               "--github-background-color": "#d1eff9",
