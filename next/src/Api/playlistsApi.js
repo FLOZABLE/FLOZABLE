@@ -15,7 +15,7 @@ async function getPlaylistsYoutube() {
 
 async function getPlaylistsYoutubeItems(playlistId) {
   return requestHandler(
-    AxiosInstance.get(`/playlists`, {
+    AxiosInstance.get(`/playlists/youtube/items`, {
       params: { playlist_id: playlistId },
     })
   );

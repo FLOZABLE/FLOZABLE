@@ -30,7 +30,7 @@ const AUDIOS = [
 export default function AudioController({ themeVolume, setThemeVolume }) {
   return (
     <div className={styles.AudioController}>
-      <div className={styles.title}>
+      <div className={styles.header}>
         <i>
           <FontAwesomeIcon icon={faHeadphones} />
         </i>

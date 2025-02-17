@@ -18,7 +18,7 @@ export default function VideoCallController({}) {
 
   return (
     <div className={styles.VideoCallController}>
-      <div className={styles.title}>
+      <div className={styles.header}>
         <i>
           <FontAwesomeIcon icon={faPhone} />
         </i>

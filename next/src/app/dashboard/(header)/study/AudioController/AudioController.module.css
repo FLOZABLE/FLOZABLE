@@ -1,21 +1,17 @@
 .AudioController {
   color: #fff;
-  padding: 1rem;
   width: 20rem;
 }
 
-.AudioController .title {
+.AudioController .header {
   display: flex;
   justify-content: center;
+  gap: 0.5rem;
 }
 
 .AudioController .controller {
   display: flex;
   padding: 1rem 0rem;
-}
-
-.AudioController .controller i {
-  margin-left: auto;
 }
 
 .AudioController .controller:not(:nth-last-child(1)) {
