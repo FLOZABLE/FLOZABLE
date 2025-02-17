@@ -1,65 +1,65 @@
 .User {
+  --outer-padding: 4rem;
+  --outer-border-radius: 3rem;
+  padding: var(--outer-padding);
+  border-radius: var(--outer-border-radius);
+  background-color: var(--gray0);
+  margin: 5rem;
+  display: flex;
+  flex-direction: row;
+  gap: 5rem;
+}
+
+.left {
   flex: 1;
-  position: relative;
+}
+
+.right {
+  width: 25%;
+}
+
+img#profileImg {
+  width: 20rem;
+  height: 20rem;
+  background-color: var(--gray1);
+  /* border-radius: calc( var(--outer-border-radius) - var(--outer-padding)); */
+  border-radius: 2rem;
+  border: none;
+  box-shadow: var(--shadow1);
+}
+
+div#profileCard {
   display: flex;
-  padding: 0rem 3.125rem;
+  gap: 3rem;
 }
 
-.User .profileCard {
-  width: 10vw;
-  background-color: #fff;
-  position: fixed;
-  padding: 1.5rem;
-}
-
-.User .profileCard .ProfileImage {
+div#userInfo {
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 3rem;
 }
 
-.User .profileCard .info {
-  display: flex;
-  margin-top: 2rem;
-  align-items: center;
-}
-
-.User .profileCard .info .name {
-  max-width: 70%;
-  font-size: 1.5rem;
-}
-
-.User .profileCard .info i {
+p#name {
   font-size: 2rem;
-  margin-left: 1.5rem;
 }
 
-.User .profileCard .buttons {
+.buttons {
   display: flex;
-  justify-content: space-around;
+  gap: 2rem;
   margin-top: 1rem;
 }
 
-.User .layer {
-  flex: 1;
-  margin-left: 10vw;
-  width: calc(100% - 10vw);
+.boxContainer {
+  height: 30rem;
+  display: block;
 }
 
-.User .layer .boxContainer {
-  height: 50vh;
-  margin: 5rem;
-}
-
-.User .boxContainer#GroupsContainer {
-  overflow: hidden;
-}
-
-.User .layer .boxContainer#GroupsContainer > div {
-  grid-template-columns: repeat(auto-fill, 21.25rem);
-  gap: 1.25rem;
-  display: grid;
+div#myGroups {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  max-height: 150vh;
   overflow-y: auto;
-  width: 100%;
-  height: 100%;
-  padding: 1rem;
+  padding: 1rem 1.5rem;
 }
