@@ -2,10 +2,16 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  transform: translate3d(0, 0, 0);
+  will-change: transform;
 }
 
 .YouTubePlayer .video {
-  height: calc(100% + 18.75rem);
-  width: 100%;
+  height: calc(100% + 18.75rem) !important;
+  width: 100% !important;
   pointer-events: none;
+  flex: 1;
+  transform: translate3d(0, 0, 0);
+  will-change: transform;
+  transform: translateZ(0);
 }
