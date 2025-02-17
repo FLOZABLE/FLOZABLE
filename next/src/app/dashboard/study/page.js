@@ -10,6 +10,7 @@ import PlansTimeline from "@/app/components/Plans/PlansTimeline/PlansTimeline";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { IconBxHome, IconClipboardOutline } from "@/app/utils/Svg";
 import {
+  faCalendar,
   faDownLeftAndUpRightToCenter,
   faHeadphones,
   faHourglass,
@@ -18,6 +19,7 @@ import {
   faPhone,
   faUpRightAndDownLeftFromCenter,
   faUsers,
+  faXmark,
 } from "@fortawesome/free-solid-svg-icons";
 import VideoCallController from "../(header)/study/VideoCallController/VideoCallController";
 import AudioController from "../(header)/study/AudioController/AudioController";
@@ -41,6 +43,28 @@ function StudyOption({ onClick, children, hoverText, tutorial }) {
   );
 }
 
+function StudyModalContainer({ children, id, isVisible, setStudyOptions }) {
+  return (
+    <div
+      className={`${styles.StudyModalContainer} ${
+        isVisible ? styles.visible : ""
+      }`}
+      id={styles[id]}
+    >
+      <div className={styles.header}>
+        <i
+          onClick={() => {
+            setStudyOptions((prev) => ({ ...prev, [id]: false }));
+          }}
+        >
+          <FontAwesomeIcon icon={faXmark} />
+        </i>
+      </div>
+      {children}
+    </div>
+  );
+}
+
 function Study() {
   const router = useRouter();
   const { currentStep, setCurrentStep, isOpen } = useTour();
@@ -54,6 +78,7 @@ function Study() {
     media: false,
     themeSelector: false,
     zoom: false,
+    timeline: true,
   });
 
   const [videoId, setVideoId] = useState("YQc4WT0yDH4");
@@ -185,6 +210,16 @@ function Study() {
             )}
           </i>
         </StudyOption>
+        <StudyOption
+          onClick={() => {
+            toggleStudyOption("timeline");
+          }}
+          hoverText={"Timeline"}
+        >
+          <i>
+            <FontAwesomeIcon icon={faCalendar} />
+          </i>
+        </StudyOption>
         <StudyOption hoverText={"Chat"}>
           <ChatModalBtn />
         </StudyOption>
@@ -205,56 +240,49 @@ function Study() {
           </i>
         </StudyOption>
       </div>
-      <div
-        className={`${styles.StudyModalContainer} ${
-          studyOptions.timer ? styles.visible : ""
-        }`}
-        id={styles.timer}
+      <StudyModalContainer
+        isVisible={studyOptions.timer}
+        id={"timer"}
+        setStudyOptions={setStudyOptions}
       >
         <SubjectTimer />
-      </div>
-      <div
-        className={`${styles.StudyModalContainer} ${
-          studyOptions.planner ? styles.visible : ""
-        }`}
-        id={styles.planner}
-        style={{ "--text-color": "#fff" }}
+      </StudyModalContainer>
+      <StudyModalContainer
+        isVisible={studyOptions.planner}
+        id={"planner"}
+        setStudyOptions={setStudyOptions}
       >
         <PlansTimeline
           viewDate={new Date(new Date().setHours(0, 0, 0, 0))}
           viewer={"day"}
           maxHeight="calc(50vh)"
         />
-      </div>
-      <div
-        className={`${styles.StudyModalContainer} ${
-          studyOptions.media ? styles.visible : ""
-        }`}
-        id={styles.media}
+      </StudyModalContainer>
+      <StudyModalContainer
+        isVisible={studyOptions.media}
+        id={"media"}
+        setStudyOptions={setStudyOptions}
       >
         <VideoCallController />
-      </div>
-      <div
-        className={`${styles.StudyModalContainer} ${
-          studyOptions.audioController ? styles.visible : ""
-        }`}
-        id={styles.AudioController}
+      </StudyModalContainer>
+      <StudyModalContainer
+        isVisible={studyOptions.audioController}
+        id={"audioController"}
+        setStudyOptions={setStudyOptions}
       >
         <AudioController themeVolume={volume} setThemeVolume={setVolume} />
-      </div>
-      <div
-        className={`${styles.StudyModalContainer} ${
-          studyOptions.playlists ? styles.visible : ""
-        }`}
-        id={styles.PlaylistModal}
+      </StudyModalContainer>
+      <StudyModalContainer
+        isVisible={studyOptions.playlists}
+        id={"playlists"}
+        setStudyOptions={setStudyOptions}
       >
         <PlaylistModal />
-      </div>
-      <div
-        className={`${styles.StudyModalContainer} ${
-          studyOptions.themeSelector ? styles.visible : ""
-        }`}
-        id={styles.ThemeSelector}
+      </StudyModalContainer>
+      <StudyModalContainer
+        isVisible={studyOptions.themeSelector}
+        id={"themeSelector"}
+        setStudyOptions={setStudyOptions}
       >
         <ThemeSelector
           link={link}
@@ -262,18 +290,22 @@ function Study() {
           videoId={videoId}
           setVideoId={setVideoId}
         />
-      </div>
-      <div
-        className={`${styles.MyGroupsViewer} ${
-          studyOptions.groups ? styles.visible : ""
-        }`}
-        style={{ "--textColor": "#ffffff" }}
+      </StudyModalContainer>
+      <StudyModalContainer
+        isVisible={studyOptions.groups}
+        id={"groups"}
+        setStudyOptions={setStudyOptions}
       >
         <MyGroupsViewer />
-      </div>
-      <div className={styles.StudyTimelineBar}>
+      </StudyModalContainer>
+      <div className={styles.StudyTimelineBar}></div>
+      <StudyModalContainer
+        isVisible={studyOptions.timeline}
+        id={"timeline"}
+        setStudyOptions={setStudyOptions}
+      >
         <StudyTimelineBar />
-      </div>
+      </StudyModalContainer>
     </div>
   );
 }

@@ -5,6 +5,10 @@
   --filteredSubjectLabelsColor: var(--gray2);
   --planDescriptionColor: "#fff";
   --date-selector-color: #fff;
+  --text-color: #fff;
+  color: #fff;
+  --icon-color: var(--gray1);
+  --hover-icon-color: #fff;
 }
 
 .Study .ytBg {
@@ -29,14 +33,6 @@
 .Study .MyGroupsViewer.visible {
   opacity: 1;
   visibility: visible;
-}
-
-.Study .StudyTimelineBar {
-  position: fixed;
-  bottom: 0.5rem;
-  left: 50vw;
-  transform: translateX(-50%);
-  width: 70vw;
 }
 
 .Study .studyOptions {
@@ -76,7 +72,7 @@
 
 .StudyModalContainer {
   background-color: var(--opacity-black);
-  z-index: 2;
+  z-index: 4;
   position: fixed;
   z-index: 2;
   visibility: hidden;
@@ -84,6 +80,7 @@
   opacity: 0;
   max-width: 35rem;
   border-radius: 1rem;
+  padding: 0.7rem;
 }
 
 .StudyModalContainer.visible {
@@ -94,13 +91,11 @@
 .StudyModalContainer#timer {
   left: 3rem;
   top: 3rem;
-  padding: 0.5rem;
 }
 
 .StudyModalContainer#planner {
   left: 3rem;
   bottom: 8rem;
-  padding: 1rem;
 }
 
 .StudyModalContainer#media {
@@ -108,19 +103,59 @@
   top: 10rem;
 }
 
-.StudyModalContainer#AudioController {
+.StudyModalContainer#audioController {
   right: 3rem;
   bottom: 10rem;
 }
 
-.StudyModalContainer#ThemeSelector {
+.StudyModalContainer#themeSelector {
   left: 50vw;
   top: 50vh;
   transform: translate(-50%, -50%);
 }
 
-.StudyModalContainer#PlaylistModal {
+.StudyModalContainer#playlists {
   right: 3rem;
   top: 50vh;
   transform: translateY(-50%);
+}
+
+.StudyModalContainer#groups {
+  width: 60vw;
+  left: 50vw;
+  top: 50vh;
+  transform: translate(-50%, -50%);
+  max-width: unset;
+  background-color: unset;
+  z-index: 1;
+}
+
+.StudyModalContainer#timeline {
+  bottom: 0rem;
+  left: 50vw;
+  transform: translateX(-50%);
+  width: 70vw;
+  max-width: unset;
+  color: #000;
+  padding: 0rem;
+  background-color: unset;
+}
+
+.StudyModalContainer#timeline .header i{
+  background-color: var(--opacity-black);
+}
+
+.StudyModalContainer .header {
+  font-size: 1.7rem;
+  display: flex;
+  justify-content: right;
+  align-items: center;
+}
+
+.StudyModalContainer .header i {
+  cursor: pointer;
+  color: #fff;
+  border-radius: 0.5rem;
+  width: 2.5rem;
+  height: 2.5rem;
 }
