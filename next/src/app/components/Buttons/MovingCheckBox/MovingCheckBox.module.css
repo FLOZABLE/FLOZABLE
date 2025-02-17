@@ -7,6 +7,7 @@
   display: inline-block;
   width: calc(var(--size, 1) * 22px);
   position: relative;
+  color: var(--brdr-actv);
 }
 .MovingCheckBox .checkbox:after {
   content: "";
