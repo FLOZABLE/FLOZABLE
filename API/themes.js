@@ -141,9 +141,12 @@ Router.put("/theme", async (req, res) => {
         });
       }
 
-      const video_id = new URLSearchParams(new URL(isValidURL.url).search).get(
-        "v"
-      );
+      const vidUrl = new URL(isValidURL.url);
+
+      const video_id =
+        new URLSearchParams(vidUrl.search).get("v") ||
+        vidUrl.pathname.replaceAll("/", "");
+
       if (!video_id) {
         return res.status(400).send({
           success: false,

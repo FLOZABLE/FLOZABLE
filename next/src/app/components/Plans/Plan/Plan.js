@@ -4,7 +4,6 @@ import { PlanModalContext, PlansContext } from "@/app/utils/Contexts";
 import parse from "html-react-parser";
 import { DEFAULT_PLAN } from "@/app/utils/Constant";
 import { patchPlanStatus } from "@/Api/plansApi";
-import ClearCheckBox from "../../Buttons/ClearCheckBox/ClearCheckBox";
 import MovingCheckBox from "../../Buttons/MovingCheckBox/MovingCheckBox";
 
 export default function Plan({ plan }) {
@@ -65,14 +64,16 @@ export default function Plan({ plan }) {
         )} */}
         <div className={`overflowDot ${styles.title}`}>{plan.title}</div>
         <div className={styles.date}>{plan.dispStart}</div>
-        <MovingCheckBox
-          checked={plan.completed}
-          onClick={(e) => {
-            e.stopPropagation();
-            togglePlan();
-          }}
-          id={plan.plan_id}
-        />
+        {plan.type === "google" ? null : (
+          <MovingCheckBox
+            checked={plan.completed}
+            onClick={(e) => {
+              e.stopPropagation();
+              togglePlan();
+            }}
+            id={plan.plan_id}
+          />
+        )}
       </div>
       <div className={styles.layer}>
         <div className={`${styles.description} customScroll`}>
