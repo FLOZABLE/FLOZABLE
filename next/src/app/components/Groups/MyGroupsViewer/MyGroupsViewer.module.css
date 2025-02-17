@@ -8,6 +8,7 @@
   /* IE 10 and IE 11 */
   user-select: none;
   /* Standard syntax */
+  min-height: 40rem;
 }
 
 .MyGroupsViewer .Swiper {

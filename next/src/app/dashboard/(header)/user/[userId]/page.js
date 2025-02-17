@@ -12,6 +12,7 @@ import CountryViewer from "@/app/components/Others/CountryViewer/CountryViewer";
 import ChatBtn from "@/app/components/Buttons/ChatBtn/ChatBtn";
 import FriendRequestBtn from "@/app/components/Buttons/FriendRequestBtn/FriendRequestBtn";
 import { useGroups } from "@/Hooks/groupsHook";
+import config from "@/app/utils/config";
 
 function User({ params }) {
   const { userId } = React.use(params);
@@ -55,26 +56,21 @@ function User({ params }) {
   return (
     <div className={`Main`}>
       <div className={styles.User}>
-        <div className={styles.profileCard}>
-          <div className={styles.ProfileImage}>
-            <ProfileImage
-              userId={userInfo?.user_id}
-              height="15rem"
-              width="15rem"
+        <div className={styles.left}>
+          <div id={styles.profileCard}>
+            <img
+              id={styles.profileImg}
+              src={`${config.static_server}/img/profile-images/${userId}.jpeg`}
             />
+            <div id={styles.userInfo}>
+              <p id={styles.name}>{userInfo.name}</p>
+              <p>Joined 2 months ago</p>
+              <div className={styles.buttons}>
+                <FriendRequestBtn userInfo={userInfo} />
+                <ChatBtn targetInfo={userInfo} />
+              </div>
+            </div>
           </div>
-          <div className={styles.info}>
-            <p className={`overflowDot ${styles.name}`}>{userInfo?.name}</p>
-            <i>
-              <CountryViewer timezone={userInfo.timezone} />
-            </i>
-          </div>
-          <div className={styles.buttons}>
-            <ChatBtn targetInfo={userInfo} />
-            <FriendRequestBtn userInfo={userInfo} />
-          </div>
-        </div>
-        <div className={styles.layer}>
           <div className={`BoxContainer ${styles.boxContainer}`}>
             <StudyTrendChart
               viewDate={viewDate}
@@ -92,24 +88,15 @@ function User({ params }) {
               userId={userInfo?.user_id}
             />
           </div>
-          {userGroups.length ? (
-            <div
-              className={`BoxContainer customScroll ${styles.boxContainer}`}
-              id={styles.GroupsContainer}
-            >
-              <div className="customScroll">
-                {userGroups.map((group, i) => {
-                  return (
-                    <GroupContainer
-                      groupInfo={group}
-                      key={i}
-                      isSearched={true}
-                    />
-                  );
-                })}
-              </div>
-            </div>
-          ) : null}
+        </div>
+        <div className={styles.right}>
+          <div id={styles.myGroups}>
+            {userGroups.map((group, i) => {
+              return (
+                <GroupContainer groupInfo={group} key={i} isSearched={true} />
+              );
+            })}
+          </div>
         </div>
       </div>
     </div>
