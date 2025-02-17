@@ -29,8 +29,8 @@
 
 div#useColor {
   position: absolute;
-  top: 0.5rem;
-  left: 0.5rem;
+  bottom: 4rem;
+  right: 0.5rem;
   color: #fff;
   font-size: 2rem;
 }
@@ -40,12 +40,17 @@ div#useColor .colorSelecter {
   opacity: 0;
   visibility: hidden;
   transition: 0.3s ease-in-out opacity, 0.3s ease-in-out visibility;
-  top: 3rem;
+  bottom: 1rem;
+  right: 2.5rem;
 }
 
 div#useColor:hover .colorSelecter {
   opacity: 1;
   visibility: visible;
+}
+
+div#useColor .hoverText {
+  right: 0rem;
 }
 
 div#useColor:hover .hoverText {

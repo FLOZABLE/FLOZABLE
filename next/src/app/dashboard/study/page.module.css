@@ -148,7 +148,7 @@
 .StudyModalContainer .header {
   font-size: 1.7rem;
   display: flex;
-  justify-content: right;
+  justify-content: left;
   align-items: center;
 }
 
