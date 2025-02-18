@@ -276,6 +276,7 @@ async function userCache(connection, userId, query = true) {
 
     if (isCached) {
       const userInfo = await redisClient.hgetall(`user:${userId}`);
+      userInfo.created_at = parseInt(userInfo.created_at);
       return { ...userInfo, user_id: userId };
     }
 

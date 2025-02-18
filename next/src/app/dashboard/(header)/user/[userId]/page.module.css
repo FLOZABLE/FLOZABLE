@@ -18,6 +18,21 @@
   width: 25%;
 }
 
+div#profileCard {
+  display: flex;
+  gap: 3rem;
+}
+
+div#profile {
+  position: relative;
+}
+
+div#userStatus {
+  position: absolute;
+  right: 0rem;
+  bottom: 0rem;
+}
+
 img#profileImg {
   width: 20rem;
   height: 20rem;
@@ -26,11 +41,6 @@ img#profileImg {
   border-radius: 2rem;
   border: none;
   box-shadow: var(--shadow1);
-}
-
-div#profileCard {
-  display: flex;
-  gap: 3rem;
 }
 
 div#userInfo {
