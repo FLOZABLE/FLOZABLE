@@ -2,17 +2,17 @@
 
 import React, { useEffect, useState } from "react";
 import styles from "./page.module.css";
-import ProfileImage from "@/app/components/Users/ProfileImage/ProfileImage";
 import { useAccountProfile } from "@/Hooks/accountHooks";
 import { timelineSorter } from "@/app/utils/timelineSorting";
 import StudyTrendChart from "@/app/components/Charts/StudyTrendChart/StudyTrendChart";
 import RankingsTrendsChart from "@/app/components/Charts/RankingsTrendsChart/RankingsTrendsChart";
 import GroupContainer from "@/app/components/Groups/GroupContainer/GroupContainer";
-import CountryViewer from "@/app/components/Others/CountryViewer/CountryViewer";
 import ChatBtn from "@/app/components/Buttons/ChatBtn/ChatBtn";
 import FriendRequestBtn from "@/app/components/Buttons/FriendRequestBtn/FriendRequestBtn";
 import { useGroups } from "@/Hooks/groupsHook";
 import config from "@/app/utils/config";
+import UserStatus from "@/app/components/Users/UserStatus/UserStatus";
+import { DateTime } from "luxon";
 
 function User({ params }) {
   const { userId } = React.use(params);
@@ -24,6 +24,7 @@ function User({ params }) {
   const [friends, setFriends] = useState([]);
   const [userInfo, setUserInfo] = useState(null);
   const [userGroups, setUserGroups] = useState([]);
+  const [joinedAt, setJointedAt] = useState("");
 
   const [viewDate, setViewDate] = useState(
     new Date(new Date().setHours(0, 0, 0, 0))
@@ -43,6 +44,28 @@ function User({ params }) {
   }, [accountProfileData]);
 
   useEffect(() => {
+    if (!userInfo) return;
+
+    const diff = DateTime.now().diff(DateTime.fromSeconds(userInfo.created_at));
+    const diffSec = diff.as("seconds");
+
+    let mode = "seconds";
+
+    if (diffSec > 60 * 60 * 24 * 30) {
+      mode = "months";
+    } else if (diffSec > 60 * 60 * 24) {
+      mode = "days";
+    } else if (diffSec > 60 * 60) {
+      mode = "hours";
+    } else if (diffSec > 60) {
+      mode = "minutes";
+    }
+
+    const value = Math.round(diff.as(mode));
+    setJointedAt(`Joined ${value} ${mode} ago`);
+  }, [userInfo]);
+
+  useEffect(() => {
     if (!userInfo || !groups) return;
     setUserGroups(
       groups.filter((group) => userInfo.groups.includes(group.group_id))
@@ -58,13 +81,18 @@ function User({ params }) {
       <div className={styles.User}>
         <div className={styles.left}>
           <div id={styles.profileCard}>
-            <img
-              id={styles.profileImg}
-              src={`${config.static_server}/img/profile-images/${userId}.jpeg`}
-            />
+            <div id={styles.profile}>
+              <img
+                id={styles.profileImg}
+                src={`${config.static_server}/img/profile-images/${userId}.jpeg`}
+              />
+              <div id={styles.userStatus}>
+                <UserStatus userId={userId} />
+              </div>
+            </div>
             <div id={styles.userInfo}>
               <p id={styles.name}>{userInfo.name}</p>
-              <p>Joined 2 months ago</p>
+              <p>{joinedAt}</p>
               <div className={styles.buttons}>
                 <FriendRequestBtn userInfo={userInfo} />
                 <ChatBtn targetInfo={userInfo} />
