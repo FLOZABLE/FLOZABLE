@@ -357,7 +357,6 @@ async function deActiveGroup(connection, userId, socket) {
       socket.leave(group);
     });
     redisClient.del(`user:${userId}:activeGroup`);
-    console.log("gdddd");
     if (!friends.length) return;
     mainIo.to(friends).emit(`deActiveGroup`, { userId });
   } catch (err) {

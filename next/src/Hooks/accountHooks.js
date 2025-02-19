@@ -2,6 +2,7 @@ import {
   getAccount,
   getAccountGoogle,
   getAccountProfile,
+  getAccountProfileStatus,
 } from "@/Api/accountApi";
 import { updateQueryData } from "@/app/utils/Tool";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -73,8 +74,6 @@ function useAccountGoogle() {
 }
 
 function useAccountProfile(userId) {
-  const queryClient = useQueryClient();
-
   const queryResult = useQuery({
     queryKey: [`useAccountProfile`, userId],
     queryFn: () => getAccountProfile(userId),
@@ -89,13 +88,40 @@ function useAccountProfile(userId) {
     error: accountProfileError,
   } = queryResult;
 
-  const updateAccountActiveSubject = useCallback(
-    async (newData) => {
+  return {
+    accountProfileData,
+    accountProfileIsLoading,
+    accountProfileError,
+    ...queryResult,
+  };
+}
+
+function useProfileStatus(userId) {
+  const queryClient = useQueryClient();
+
+  const queryResult = useQuery({
+    queryKey: [`useProfileStatus`, userId],
+    queryFn: () => getAccountProfileStatus(userId),
+    staleTime: 1000 * 60,
+    refetchOnMount: true,
+    refetchOnWindowFocus: true,
+    refetchOnReconnect: true,
+    enabled: !!userId,
+    select: (response) => response?.data ?? false,
+  });
+
+  const {
+    data: profileStatus,
+    isLoading: profileStatusIsLoading,
+    error: profileStatusError,
+  } = queryResult;
+
+  const updateProfileStatus = useCallback(
+    async (field, newData) => {
       await queryClient.setQueryData(
-        ["useAccountProfile", userId],
+        ["useProfileStatus", userId],
         (oldData) => {
-          const test = updateQueryData(oldData, newData, "activeSubject");
-          console.log(test.data, "account");
+          const test = updateQueryData(oldData, newData, field);
           return test;
         }
       );
@@ -104,12 +130,12 @@ function useAccountProfile(userId) {
   );
 
   return {
-    accountProfileData,
-    accountProfileIsLoading,
-    accountProfileError,
+    profileStatus,
+    profileStatusIsLoading,
+    profileStatusError,
     ...queryResult,
-    updateAccountActiveSubject,
+    updateProfileStatus,
   };
 }
 
-export { useAccount, useAccountGoogle, useAccountProfile };
+export { useAccount, useAccountGoogle, useAccountProfile, useProfileStatus };
