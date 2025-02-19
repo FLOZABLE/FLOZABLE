@@ -843,8 +843,6 @@ Router.post("/plan/share/respond", async (req, res) => {
         [userId, notificationId]
       );
 
-      console.log("gddd");
-
       if (!accepted) {
         const [result] = await connection.query(
           `

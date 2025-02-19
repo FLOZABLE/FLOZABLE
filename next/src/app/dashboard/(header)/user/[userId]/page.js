@@ -18,8 +18,7 @@ import { socket } from "@/app/utils/socket";
 function User({ params }) {
   const { userId } = React.use(params);
 
-  const { accountProfileData, updateAccountActiveSubject } =
-    useAccountProfile(userId);
+  const { accountProfileData } = useAccountProfile(userId);
   const { groups } = useGroups();
 
   const [subjects, setSubjects] = useState([]);
@@ -27,7 +26,6 @@ function User({ params }) {
   const [userInfo, setUserInfo] = useState(null);
   const [userGroups, setUserGroups] = useState([]);
   const [joinedAt, setJointedAt] = useState("");
-  const [activeSubject, setActiveSubject] = useState(null);
 
   const [viewDate, setViewDate] = useState(
     new Date(new Date().setHours(0, 0, 0, 0))
@@ -47,11 +45,10 @@ function User({ params }) {
   useEffect(() => {
     if (!accountProfileData) return;
 
-    const { userInfo, friends, activeSubject } = accountProfileData;
+    const { userInfo, friends } = accountProfileData;
 
     setUserInfo(userInfo);
     setFriends(friends);
-    setActiveSubject(activeSubject);
   }, [accountProfileData]);
 
   useEffect(() => {
@@ -74,26 +71,6 @@ function User({ params }) {
 
     const value = Math.round(diff.as(mode));
     setJointedAt(`Joined ${value} ${mode} ago`);
-
-    const onStudying = ({ userId, subject }) => {
-      if (userId !== userInfo?.user_id) return;
-      console.log("start", userId, subject);
-
-      updateAccountActiveSubject(subject);
-    };
-
-    const onStopStudying = ({ userId, subject, duration }) => {
-      if (userId !== userInfo?.user_id) return;
-
-      updateAccountActiveSubject(subject);
-    };
-
-    socket.on("studying", onStudying);
-    socket.on("stopStudying", onStopStudying);
-    return () => {
-      socket.off("studying", onStudying);
-      socket.off("stopStudying", onStopStudying);
-    };
   }, [userInfo?.created_at]);
 
   useEffect(() => {
@@ -118,7 +95,7 @@ function User({ params }) {
                 src={`${config.static_server}/img/profile-images/${userId}.jpeg`}
               />
               <div id={styles.userStatus}>
-                <UserStatus activeSubject={activeSubject} />
+                <UserStatus userInfo={userInfo} />
               </div>
             </div>
             <div id={styles.userInfo}>
