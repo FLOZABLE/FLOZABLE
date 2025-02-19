@@ -122,6 +122,11 @@ function validateURL(url, strict = false, allowedOrigins) {
       return { isValid: false, reason: "Invalid URL" };
     }
 
+    // NEW CHECK: Require at least one dot in the domain
+    if (!domain.includes(".")) {
+      return { isValid: false, reason: "Invalid public domain" };
+    }
+
     if (strict && !allowedOrigins.includes(origin)) {
       return { isValid: false, reason: "Invalid Domain" };
     }
