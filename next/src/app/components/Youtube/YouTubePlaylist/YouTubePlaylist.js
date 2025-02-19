@@ -55,7 +55,7 @@ function YouTubePlaylist({}) {
   if (!playlistsYoutubeData?.success) {
     return (
       <GoogleLoginBtn
-        scope="https://www.googleapis.com/auth/youtube.force-ssl"
+        scope="https://www.googleapis.com/auth/youtube.readonly"
         required="youtube"
       />
     );

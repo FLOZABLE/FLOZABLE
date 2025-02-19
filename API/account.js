@@ -18,6 +18,7 @@ const {
   userFriendsCache,
   userGroupsCache,
   clearGoogleAccessToken,
+  activeSubjectCache,
 } = require("../services/redisLoader");
 const { googleOauth2client, autoSignin } = require("./auth");
 const { google } = require("googleapis");
@@ -275,12 +276,14 @@ Router.get("/profile", async (req, res) => {
     const { user_id } = req.query;
 
     const connection = pool.promise();
-    const [userInfo, friends, groups, subjects] = await Promise.all([
-      userCache(connection, user_id),
-      userFriendsCache(connection, user_id),
-      userGroupsCache(connection, user_id),
-      subjectsTimelineCache(connection, user_id),
-    ]);
+    const [userInfo, friends, groups, subjects, activeSubject] =
+      await Promise.all([
+        userCache(connection, user_id),
+        userFriendsCache(connection, user_id),
+        userGroupsCache(connection, user_id),
+        subjectsTimelineCache(connection, user_id),
+        activeSubjectCache(user_id),
+      ]);
     if (!userInfo) {
       const response = RESPONSE_MESSAGES.noUser();
       return res.status(response.status).send(response);
@@ -288,10 +291,12 @@ Router.get("/profile", async (req, res) => {
 
     userInfo.groups = groups;
 
+    console.log("act", activeSubject)
+
     return res.status(200).send({
       success: true,
       status: 200,
-      data: { userInfo, friends, subjects },
+      data: { userInfo, friends, subjects, activeSubject },
     });
   } catch (err) {
     console.log(err);
