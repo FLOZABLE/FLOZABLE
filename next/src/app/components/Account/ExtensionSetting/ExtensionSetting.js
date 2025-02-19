@@ -6,8 +6,7 @@ import styles from "./ExtensionSetting.module.css";
 import { useExtensionSettings } from "@/Hooks/extensionHooks";
 import CircularLoading from "../../LoadingScreen/CircularLoading/CircularLoading";
 import { patchExtensionSetting, putExtensionSetting } from "@/Api/extensionApi";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { IconGear } from "@/app/utils/Svg";
+import { useRouter, useSearchParams } from "next/navigation";
 
 function ExtensionSetting() {
   const { useExtensionSettingsData, useExtensionSettingsIsLoading } =
@@ -18,11 +17,39 @@ function ExtensionSetting() {
 
   const extensionRef = useRef(null);
 
+  const searchParams = useSearchParams();
+  const router = useRouter();
+
   useEffect(() => {
     if (!useExtensionSettingsData?.success) return;
 
     setSettings(useExtensionSettingsData.data.settings);
   }, [useExtensionSettingsData]);
+
+  useEffect(() => {
+    const newSearchParams = new URLSearchParams(searchParams);
+    const websiteDomain = searchParams.get("website");
+    if (!websiteDomain) return;
+    newSearchParams.delete("website");
+
+    const element = document.getElementById(
+      websiteDomain.replaceAll(/\./g, "_")
+    );
+
+    setTimeout(() => {
+      element?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+        inline: "nearest",
+      });
+      router.replace(
+        `${document.location.pathname}?${newSearchParams.toString()}`,
+        {
+          scroll: false,
+        }
+      );
+    }, 500);
+  }, [settings, searchParams]);
 
   const onSubmitUrl = useCallback(() => {
     (async () => {
@@ -34,7 +61,7 @@ function ExtensionSetting() {
 
         setTimeout(() => {
           const section = document.querySelector(
-            `#${domain.replace(/\./g, "_")}`
+            `#${domain.replaceAll(/\./g, "_")}`
           );
           if (!section) return;
           section.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -72,6 +99,7 @@ function ExtensionSetting() {
             value={url}
             setValue={setUrl}
             type={"text"}
+            onEnter={(val) => onSubmitUrl(val)}
           />
           <div id={styles.submitBtn}>
             <BlobBtn
@@ -103,7 +131,7 @@ function ExtensionSetting() {
                 <li
                   className={styles.websiteOptions}
                   key={i}
-                  id={website.replace(/\./g, "_")}
+                  id={website.replaceAll(/\./g, "_")}
                 >
                   <div>
                     <p>{website}</p>
