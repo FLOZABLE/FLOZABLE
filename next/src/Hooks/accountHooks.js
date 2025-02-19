@@ -73,6 +73,8 @@ function useAccountGoogle() {
 }
 
 function useAccountProfile(userId) {
+  const queryClient = useQueryClient();
+
   const queryResult = useQuery({
     queryKey: [`useAccountProfile`, userId],
     queryFn: () => getAccountProfile(userId),
@@ -87,11 +89,26 @@ function useAccountProfile(userId) {
     error: accountProfileError,
   } = queryResult;
 
+  const updateAccountActiveSubject = useCallback(
+    async (newData) => {
+      await queryClient.setQueryData(
+        ["useAccountProfile", userId],
+        (oldData) => {
+          const test = updateQueryData(oldData, newData, "activeSubject");
+          console.log(test.data, "account");
+          return test;
+        }
+      );
+    },
+    [userId]
+  );
+
   return {
     accountProfileData,
     accountProfileIsLoading,
     accountProfileError,
     ...queryResult,
+    updateAccountActiveSubject,
   };
 }
 

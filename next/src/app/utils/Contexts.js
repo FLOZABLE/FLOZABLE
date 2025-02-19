@@ -121,7 +121,6 @@ function AppProvider({ children }) {
     }
 
     setTimeout(() => {
-      console.log("gddddd");
       socket.connect();
       mediaSocket.connect();
       socket.emit("joinChats");
