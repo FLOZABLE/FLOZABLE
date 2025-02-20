@@ -14,7 +14,10 @@ import {
   HeaderMeteor,
   HeaderTarget,
 } from "@/app/utils/Svg";
-import { useExtensionUsage } from "@/Hooks/extensionHooks";
+import {
+  useExtensionSettings,
+  useExtensionUsage,
+} from "@/Hooks/extensionHooks";
 import ProfileImage from "../../Users/ProfileImage/ProfileImage";
 import Link from "next/link";
 import NotificationsContainer from "../../Notifications/NotificationsContainer/NotificationsContainer";
@@ -23,12 +26,15 @@ import { useSubjects } from "@/Hooks/subjectsHooks";
 import ChatModalBtn from "../../Buttons/ChatModalBtn/ChatModalBtn";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
+  faArrowUpRightFromSquare,
   faBookOpen,
   faBrain,
   faHourglassStart,
   faRocket,
 } from "@fortawesome/free-solid-svg-icons";
 import { AccountModalContext } from "@/app/utils/Contexts";
+import { useRouter } from "next/navigation";
+import { toast } from "react-toastify";
 
 function HeaderEl({ children, value, title }) {
   return (
@@ -51,8 +57,9 @@ function Header({}) {
   const [appUsage, setAppUsage] = useState("0 minutes");
   const [longestSession, setLongestSession] = useState("0 seconds");
   const [studyStreak, setStudyStreak] = useState("0 day"); //days of consecutive study
+  const { useExtensionSettingsData } = useExtensionSettings();
 
-  const studyBtnRef = useRef(null);
+  const router = useRouter();
 
   const { extensionUsageData } = useExtensionUsage(
     new Date(new Date().setHours(0, 0, 0, 0)),
@@ -132,6 +139,28 @@ function Header({}) {
       </div>
       {accountData ? (
         <div className={styles.right}>
+          {useExtensionSettingsData?.data?.settings?.length ? null : (
+            <button
+              id={styles.tryExtensionBtn}
+              onClick={() => {
+                router.push("/dashboard/account?website=youtube.com");
+                window.open(
+                  "https://chromewebstore.google.com/detail/flozable-tab-monitor/cmbdaanokelibhphiidlikongdoandlj",
+                  "_blank"
+                );
+                setTimeout(() => {
+                  toast.info(
+                    "Manage the websites you want to block or track usage from this page!"
+                  );
+                }, 500);
+              }}
+            >
+              Try our Chrome extension to block distractions!
+              <i>
+                <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
+              </i>
+            </button>
+          )}
           <div className={styles.ChatBtn}>
             <ChatModalBtn />
           </div>
