@@ -195,3 +195,9 @@
   display: flex;
   margin-bottom: 1rem;
 }
+
+.header a {
+  display: flex;
+  gap: 1rem;
+  text-decoration: underline;
+}
