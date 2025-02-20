@@ -3,7 +3,10 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import styles from "./page.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCamera } from "@fortawesome/free-solid-svg-icons";
+import {
+  faArrowUpRightFromSquare,
+  faCamera,
+} from "@fortawesome/free-solid-svg-icons";
 import LineInput from "@/app/components/Inputs/LineInput/LineInput";
 import BlobBtn from "@/app/components/Buttons/BlobBtn/BlobBtn";
 import LabelMovingInput from "@/app/components/Inputs/LabelMovingInput/LabelMovingInput";
@@ -61,7 +64,7 @@ function Account() {
       const reader = new FileReader();
       reader.readAsDataURL(input.files[0]);
 
-      console.log(input.files)
+      console.log(input.files);
 
       reader.onload = (e) => {
         setImageSrc(e.target.result);
@@ -138,7 +141,7 @@ function Account() {
               }}
             >
               <i className={styles.uploadBtn}>
-                 <FontAwesomeIcon icon={faCamera} />
+                <FontAwesomeIcon icon={faCamera} />
               </i>
               <form>
                 <input
@@ -216,13 +219,13 @@ function Account() {
                   type={"password"}
                 />
                 <LineInput
-                    title={"Confirm Password"}
-                    value={password.confirmPassword}
-                    setValue={(confirmPassword) => {
-                      setPassword((prev) => ({ ...prev, confirmPassword }));
-                    }}
-                    type={"password"}
-                  />
+                  title={"Confirm Password"}
+                  value={password.confirmPassword}
+                  setValue={(confirmPassword) => {
+                    setPassword((prev) => ({ ...prev, confirmPassword }));
+                  }}
+                  type={"password"}
+                />
                 <div className={styles.passwordDescription}>
                   <h3>Password requirements</h3>
                   <ul>
@@ -240,7 +243,9 @@ function Account() {
         <div className={styles.layer}>
           <div className={`BoxContainer ${styles.boxContainer}`}>
             <div className="Box">
-              <div className="header">Manage Subjects</div>
+              <div className="header">
+                <h3>Manage Subjects</h3>
+              </div>
               <SubjectsManager />
             </div>
           </div>
@@ -249,10 +254,15 @@ function Account() {
           <div className={`BoxContainer ${styles.boxContainer}`}>
             <div className="Box">
               <div className={styles.chromeContainer}>
-                <div className="header">Chrome Extension</div>
-                <p>
-                  Set up and manage your chrome extension
-                </p>
+                <div className={`header ${styles.header}`}>
+                  <a href="https://chromewebstore.google.com/detail/flozable-tab-monitor/cmbdaanokelibhphiidlikongdoandlj" target="_blank">
+                    <h3>Chrome Extension</h3>
+                    <i>
+                      <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
+                    </i>
+                  </a>
+                </div>
+                <p>Set up and manage your chrome extension</p>
               </div>
               <ExtensionSetting websites={websites} setWebsites={setWebsites} />
             </div>
@@ -261,24 +271,26 @@ function Account() {
         <div className={styles.layer}>
           <div className={`BoxContainer ${styles.boxContainer}`}>
             <div className="Box">
-              <div className="header">Accounts</div>
+              <div className="header">
+                <h3>Accounts</h3>
+              </div>
               <div className={styles.AccountExplain}>
                 <p>Manage your integration settings</p>
               </div>
               <div className={styles.appWrapper}>
                 <div className={styles.app} id="googleCalendar">
                   <div className={styles.icon}>
-                    <GoogleCalendar/>
+                    <GoogleCalendar />
                   </div>
                   <div className={styles.description}>
                     {!accountGoogleData?.scopes?.some((scope) =>
                       scope.includes("calendar")
                     ) ? (
                       <p>
-                        You haven&apos;t connected your Google Calendar yet or you
-                        aren&apos;t authorized. Please authorize our application
-                        to access your Google Calendar by signing in with your
-                        Google account here.
+                        You haven&apos;t connected your Google Calendar yet or
+                        you aren&apos;t authorized. Please authorize our
+                        application to access your Google Calendar by signing in
+                        with your Google account here.
                       </p>
                     ) : (
                       <p>
@@ -304,9 +316,9 @@ function Account() {
                       scope.includes("youtube")
                     ) ? (
                       <p>
-                        You haven&apos;t connected your YouTube Account yet or you
-                        aren&apos;t authorized. Please authorize our application
-                        to access your YouTube Playlists here.
+                        You haven&apos;t connected your YouTube Account yet or
+                        you aren&apos;t authorized. Please authorize our
+                        application to access your YouTube Playlists here.
                       </p>
                     ) : (
                       <p>
@@ -328,9 +340,9 @@ function Account() {
                   <div className={styles.description}>
                     {!spotifyInfo ? (
                       <p>
-                        You haven&apos;t connected your Spotify Account yet or you
-                        aren&apos;t authorized. Please authorize our application
-                        to access your Spotify Playlists here.
+                        You haven&apos;t connected your Spotify Account yet or
+                        you aren&apos;t authorized. Please authorize our
+                        application to access your Spotify Playlists here.
                       </p>
                     ) : (
                       <p>

@@ -85,3 +85,12 @@
   color: var(--gray2);
   font-size: 0.8rem;
 }
+
+
+button#tryExtensionBtn {
+  font-size: 1.3rem;
+  display: flex;
+  gap: 1rem;
+  text-decoration: underline;
+  margin-right: 2rem;
+}
