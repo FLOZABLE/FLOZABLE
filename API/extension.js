@@ -78,7 +78,7 @@ Router.put("/setting", async (req, res) => {
       }
 
       const setting = {
-        website: url,
+        website: isValidURL.domain,
         block: 0,
         study_block: 0,
         timer: 0,
