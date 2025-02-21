@@ -81,6 +81,8 @@
   max-width: 35rem;
   border-radius: 1rem;
   padding: 0.7rem;
+  display: flex;
+  flex-direction: column;
 }
 
 .StudyModalContainer.visible {
@@ -96,6 +98,7 @@
 .StudyModalContainer#planner {
   left: 3rem;
   bottom: 8rem;
+  min-width: 25rem;
 }
 
 .StudyModalContainer#media {
@@ -141,7 +144,7 @@
   background-color: unset;
 }
 
-.StudyModalContainer#timeline .header i{
+.StudyModalContainer#timeline .header i {
   background-color: var(--opacity-black);
 }
 
