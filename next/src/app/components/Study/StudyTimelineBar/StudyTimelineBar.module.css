@@ -15,6 +15,7 @@
   height: 7rem;
   border-radius: 1rem;
   overflow: hidden;
+  flex: 1;
 }
 
 /* .StudyTimelineBar *::-webkit-scrollbar-track {

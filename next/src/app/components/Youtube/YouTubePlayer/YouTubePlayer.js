@@ -10,7 +10,7 @@ function YouTubePlayer({ height, width, videoId, volume }) {
           url={`https://www.youtube.com/watch?v=${videoId}`}
           loop={true}
           className={styles.video}
-          volume={volume}
+          volume={volume / 100}
           controls={0}
           playing={true}
           config={{ youtube: { playerVars: {} } }}
