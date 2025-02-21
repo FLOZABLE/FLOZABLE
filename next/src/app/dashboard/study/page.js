@@ -43,13 +43,20 @@ function StudyOption({ onClick, children, hoverText, tutorial }) {
   );
 }
 
-function StudyModalContainer({ children, id, isVisible, setStudyOptions }) {
+function StudyModalContainer({
+  children,
+  id,
+  isVisible,
+  setStudyOptions,
+  headerPosition = "top",
+}) {
   return (
     <div
       className={`${styles.StudyModalContainer} ${
         isVisible ? styles.visible : ""
       }`}
       id={styles[id]}
+      style={{ flexDirection: headerPosition === "left" ? "row" : "column" }}
     >
       <div className={styles.header}>
         <i
@@ -300,6 +307,7 @@ function Study() {
       </StudyModalContainer>
       <div className={styles.StudyTimelineBar}></div>
       <StudyModalContainer
+        headerPosition="left"
         isVisible={studyOptions.timeline}
         id={"timeline"}
         setStudyOptions={setStudyOptions}
