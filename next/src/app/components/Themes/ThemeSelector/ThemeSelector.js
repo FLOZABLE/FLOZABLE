@@ -51,7 +51,6 @@ function ThemeSelector({ link, handleLinkInput, videoId, setVideoId }) {
     const savedThemeId = localStorage.getItem("selectedThemeId");
     if (savedThemeId) {
       setVideoId(savedThemeId);
-      localStorage.removeItem("selectedThemeId");
     }
   }, [userThemes]);
 
