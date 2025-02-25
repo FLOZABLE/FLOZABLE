@@ -45,7 +45,7 @@
 }
 
 .SubjectTimer .mainDisplay .subject .time {
-  margin-right: 0.5rem;
+  width: 6.5rem;
 }
 
 .SubjectTimer .mainDisplay i#caret {
