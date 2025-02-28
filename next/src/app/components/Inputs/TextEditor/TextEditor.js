@@ -3,9 +3,6 @@ import { EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import styles from "./TextEditor.module.css";
 import DropDownButton from "../../Buttons/DropDownButton/DropDownButton";
-import Document from "@tiptap/extension-document";
-import Paragraph from "@tiptap/extension-paragraph";
-import Text from "@tiptap/extension-text";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faBold,
