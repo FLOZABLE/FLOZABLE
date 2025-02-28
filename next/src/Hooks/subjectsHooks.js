@@ -2,7 +2,7 @@ import { getSubjects, getSubjectUsers } from "@/Api/subjectsApi";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useAccount } from "./accountHooks";
 import { useCallback } from "react";
-import { updateQueryData } from "@/app/utils/Tool";
+import { calculateTimeToMidnight, updateQueryData } from "@/app/utils/Tool";
 
 function useSubjects() {
   const queryClient = useQueryClient();
@@ -22,6 +22,8 @@ function useSubjects() {
           }
         : { subjects: [], groupedSubjects: {} },
     placeholderData: { subjects: [], groupedSubjects: {} },
+    refetchIntervalInBackground: true,
+    refetchInterval: calculateTimeToMidnight,
   });
 
   const {

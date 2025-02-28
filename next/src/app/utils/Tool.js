@@ -351,6 +351,13 @@ function updateQueryData(oldData, newData, key) {
   }
 }
 
+const calculateTimeToMidnight = () => {
+  const now = new Date();
+  const midnight = new Date(now);
+  midnight.setHours(24, 0, 0, 0); // Sets to next midnight (12 AM)
+  return midnight - now; // Time in milliseconds until midnight
+};
+
 export {
   cyrb128,
   getCountryCode,
@@ -371,4 +378,5 @@ export {
   exitFullscreen,
   requestHandler,
   updateQueryData,
+  calculateTimeToMidnight,
 };
