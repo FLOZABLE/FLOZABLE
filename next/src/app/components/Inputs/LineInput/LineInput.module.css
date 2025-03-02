@@ -1,51 +1,64 @@
 .LineInput {
   position: relative;
-  height: 50px;
+  height: 3.25rem;
+  display: flex;
+  align-items: center;
+  padding-top: 0.5rem;
+  --default-color: var(--gray-3);
+  --changed-color: #e91e63;
 }
 
 .LineInput input {
-  margin-top: 10px;
   border: none;
   width: 100%;
-  height: 100%;
+  margin-top: 0.3rem;
 }
 
-.LineInput .lineContainer {
+.icon {
+  margin-right: 0.5rem;
+  font-size: 1.1rem;
+  transition: 0.3s ease-in-out color;
+  color: var(--default-color);
+}
+
+.lineContainer {
   display: flex;
   width: 100%;
   background-color: #e7e7e7;
-  height: 3px;
+  height: 0.1875rem;
   position: absolute;
-  bottom: 0px;
+  bottom: 0rem;
 }
 
-.LineInput input:focus ~ .lineContainer .line {
+input:focus ~ .lineContainer .line {
   width: 50%;
 }
 
-.LineInput .line {
+.line {
   width: 0%;
   transition: 0.3s ease-in-out width;
-  background-color: var(--blue1);
+  background-color: var(--changed-color);
   position: absolute;
-  height: 3px;
+  height: 0.1875rem;
 }
 
-.LineInput .line.left {
+.line.left {
   right: 50%;
 }
 
-.LineInput .line.right {
+.line.right {
   left: 50%;
 }
 
-.LineInput .title {
+.title {
   transition: 0.3s ease-in-out color;
   z-index: 1;
   position: absolute;
-  top: 0px;
+  top: 0rem;
+  color: var(--default-color);
 }
 
-.LineInput input:focus ~ .title {
-  color: var(--blue1);
+.LineInput.focused .title,
+.LineInput.focused .icon {
+  color: var(--changed-color);
 }

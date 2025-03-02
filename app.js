@@ -127,34 +127,16 @@ const cspOptions = {
   directives: {
     defaultSrc: [
       "'self'",
-      "*.googleapis.com",
-      "'unsafe-inline'",
-      "*.fonts.gstatic.com",
-      "*.googletagmanager.com",
-      "*.fontawesome.com",
-      "https://www.google-analytics.com",
     ],
     scriptSrc: [
       "'self'",
-      "*.swiper-bundle.min.js",
-      "https://unpkg.com/swiper@6.8.4/swiper-bundle.min.js",
-      "*.fontawesome.com",
-      "*.google.com",
-      "*.googletagmanager.com",
-      "'unsafe-inline'",
-      "https://code.jquery.com",
     ],
     frameSrc: [
       "'self'",
-      "https://googleads.g.doubleclick.net",
-      "https://*.google.com",
-      "*.googletagmanager.com",
     ],
-    "img-src": ["'self'", "*.googletagmanager.com"],
+    "img-src": ["'self'"],
     "form-action": [
       "'self'",
-      "https://accounts.google.com/o/oauth2/v2/auth",
-      "https://accounts.google.com",
     ],
   },
 };
@@ -164,9 +146,6 @@ app.use(bodyParser.json({ limit: "50mb" }));
 app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
 app.use(sessionMiddleWare);
 
-//ejs setting
-app.set("view engine", "ejs");
-app.set(__dirname + "/views");
 app.set("socketio", io);
 app.use(bodyParser.json());
 app.use(cookieParser(process.env.SECRET_ID));
