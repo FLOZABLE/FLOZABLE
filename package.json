@@ -33,7 +33,6 @@
     "crypto": "^1.0.1",
     "csvtojson": "^2.0.10",
     "dotenv": "^16.4.7",
-    "ejs": "^3.1.10",
     "expo-server-sdk": "^3.13.0",
     "express": "^4.21.2",
     "express-session": "^1.18.1",

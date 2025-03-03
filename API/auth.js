@@ -861,6 +861,8 @@ Router.post("/app/signup", async (req, res) => {
     });
   } catch (err) {
     console.log(err);
+    const response = RESPONSE_MESSAGES.error();
+    return res.status(response.status).send(response);
   }
 });
 
@@ -905,6 +907,8 @@ Router.post("/verify/token", async (req, res) => {
       .send({ success: true, status: 200, data: { device } });
   } catch (err) {
     console.log(err);
+    const response = RESPONSE_MESSAGES.error();
+    return res.status(response.status).send(response);
   }
 });
 
@@ -1060,6 +1064,8 @@ Router.post("/signup", async (req, res) => {
     });
   } catch (err) {
     console.log(err);
+    const response = RESPONSE_MESSAGES.error();
+    return res.status(response.status).send(response);
   }
 });
 
@@ -1075,6 +1081,8 @@ Router.get("/logout", function (req, res) {
     });
   } catch (err) {
     console.log(err);
+    const response = RESPONSE_MESSAGES.error();
+    return res.status(response.status).send(response);
   }
 });
 
