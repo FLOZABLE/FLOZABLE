@@ -3,14 +3,16 @@
   top: 50vh;
   left: 50vw;
   transform: translate(-50%, -50%);
-  z-index: 10;
-  -webkit-transform-style: preserve-3d;
-  transform-style: preserve-3d;
-  perspective: 50rem;
+  background-color: #fff;
+  background-color: #fff;
+  width: 25rem;
+  box-shadow: var(--shadow-5);
+  padding: 2rem;
+  border-radius: 1rem;
+  z-index: 11;
+  transition: var(--show-animation);
   visibility: hidden;
   opacity: 0;
-  transition: .3s ease-in-out opacity, .3s ease-in-out visibility;
-  z-index: 11;
 }
 
 .AccountModal.opened {
@@ -18,101 +20,59 @@
   opacity: 1;
 }
 
-.AccountModal #closeBtn {
+.header {
+  font-size: 2rem;
+  text-align: center;
+  margin-bottom: 1rem;
+  position: relative;
+}
+
+.closeBtn {
   position: absolute;
-  top: 0.625rem;
-  right: 0.625rem;
-  color: #000;
-  border-radius: 0.8125rem;
-  width: 1.25rem;
-  height: 1.25rem;
-  border: 0.125rem solid #000;
+  top: 0rem;
+  right: 0rem;
+  cursor: pointer;
+  padding: 0.3rem;
+}
+
+.input {
+  margin-bottom: 1.75rem;
+  position: relative;
+}
+
+.showPasswordBtn {
+  position: absolute;
+  right: 0rem;
+  bottom: 50%;
+  transform: translateY(50%);
+}
+
+.layer#title {
+  text-align: center;
+  font-size: 2rem;
+}
+
+.buttons {
   display: flex;
   justify-content: center;
-  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.noAccount {
+  text-decoration: underline;
   cursor: pointer;
 }
 
-.AccountModal .optionsWrapper {
-  display: flex;
-  justify-content: center;
-}
-
-.AccountModal .containers {
-  -webkit-transform-style: preserve-3d;
-  transform-style: preserve-3d;
-  transition: all 600ms ease-out;
-  width: 25rem;
-  height: 25rem;
-}
-
-.AccountModal .container {
-  position: absolute;
-  width: 25rem;
-  height: 25rem;
-  border-radius: 1.25rem;
-  background-color: #fff;
-  background-position: bottom center;
-  background-repeat: no-repeat;
-  background-size: 300%;
+.options {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-
-  -webkit-transform-style: preserve-3d;
-  transform-style: preserve-3d;
-  -webkit-backface-visibility: hidden;
-  -moz-backface-visibility: hidden;
-  -o-backface-visibility: hidden;
-  backface-visibility: hidden;
-  box-shadow: var(--shadow1);
-}
-
-.AccountModal .container#back {
-  transform: rotateY(180deg);
-}
-
-.AccountModal .containers.login {
-  transform: rotateY(180deg);
-}
-
-.AccountModal .contents {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  width: 21.875rem;
-  position: relative;
-  transform: translate3d(0, 0, 2.188rem) perspective(6.25rem);
-}
-
-.AccountModal .contents .inputWrapper{
-  margin: 0.625rem;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  border-radius: 0.625rem;
-  border: solid 0.125rem #000;
-  height: 3.125rem;
-}
-
-.AccountModal .contents .inputWrapper input {
-  border: none;
-  height: 100%;
-  background-color: none;
-  width: 100%;
-  background-color: transparent;
-}
-
-.AccountModal .contents .inputWrapper .icon {
-  padding: 0em 1.25rem;
+  gap: 1.5rem;
 }
 
 .touchBlocker {
-  background-color: #a4afd4bb;
+  background-color: #5558629a;
   width: 100vw;
   height: 100vh;
   position: fixed;
@@ -121,7 +81,7 @@
   z-index: 9;
   visibility: hidden;
   opacity: 0;
-  transition: .3s ease-in-out opacity, .3s ease-in-out visibility;
+  transition: 0.3s ease-in-out opacity, 0.3s ease-in-out visibility;
 }
 
 .touchBlocker.opened {

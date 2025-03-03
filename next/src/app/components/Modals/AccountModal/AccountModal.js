@@ -1,41 +1,60 @@
 "use client";
 
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import styles from "./AccountModal.module.css";
-import {
-  faAt,
-  faLock,
-  faUser,
-  faXmark,
-} from "@fortawesome/free-solid-svg-icons";
-import React, { useContext, useEffect, useState } from "react";
-import ArrowOptionBtn from "@/app/components/Buttons/ArrowOptionBtn/ArrowOptionBtn";
-import BlobBtn from "@/app/components/Buttons/BlobBtn/BlobBtn";
-import { useRouter, useSearchParams } from "next/navigation";
-import GoogleLoginBtn from "../../Buttons/GoogleLoginBtn/GoogleLoginBtn";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faLock, faUser, faXmark } from "@fortawesome/free-solid-svg-icons";
+import { useCallback, useContext, useEffect, useState } from "react";
+import LineInput from "../../Inputs/LineInput/LineInput";
+import ShowPasswordBtn from "../../Buttons/ShowPasswordBtn/ShowPasswordBtn";
+import { AccountModalContext } from "@/app/utils/Contexts";
 import { postAuthSignin, postAuthSignup } from "@/Api/authApi";
+import BlobBtn from "../../Buttons/BlobBtn/BlobBtn";
 import { getTimezone } from "@/app/utils/Tool";
 import { useAccount } from "@/Hooks/accountHooks";
-import { AccountModalContext } from "@/app/utils/Contexts";
+import { useRouter, useSearchParams } from "next/navigation";
+import GoogleLoginBtn from "../../Buttons/GoogleLoginBtn/GoogleLoginBtn";
 
-function AccountModal({}) {
-  const { isAccountModal, setIsAccountModal } = useContext(AccountModalContext);
-  const { accountRefetch } = useAccount();
-
+export default function AccountModal() {
+  const searchParams = useSearchParams();
   const router = useRouter();
 
-  const [isLogin, setIsLogin] = useState(false);
+  const { accountRefetch } = useAccount();
 
+  const { isAccountModal, setIsAccountModal } = useContext(AccountModalContext);
+
+  const [isSignIn, setIsSignIn] = useState(true);
+
+  const [signIn, setSignIn] = useState({ email: "", password: "" });
   const [signUp, setSignUp] = useState({
-    name: "",
     email: "",
     password: "",
-    timezone: null,
+    name: "",
+    timezone: "",
   });
-  const [login, setLogin] = useState({ email: "", password: "" });
-  const [isNew, setIsNew] = useState(false);
 
-  const searchParams = useSearchParams();
+  const [isShowPassword, setIsShowPassword] = useState(false);
+
+  const submitSignIn = useCallback(async () => {
+    const response = await postAuthSignin(signIn);
+    if (!response.success) return;
+
+    setIsAccountModal(false);
+    accountRefetch();
+  }, [signIn]);
+
+  const submitSignUp = useCallback(async () => {
+    const response = await postAuthSignup(signUp);
+    if (!response.success) return;
+
+    accountRefetch();
+    setIsSignIn(false);
+
+    const newSearchParams = new URLSearchParams(searchParams);
+    newSearchParams.set("welcome", "true");
+    router.replace(`/dashboard?${newSearchParams.toString()}`, {
+      scroll: false,
+    });
+  }, [signUp]);
 
   useEffect(() => {
     try {
@@ -47,157 +66,148 @@ function AccountModal({}) {
     }
   }, []);
 
-  return (
-    <>
-      <div
-        className={`${styles.touchBlocker} ${
-          isAccountModal ? styles.opened : ""
-        }`}
-      ></div>
-      <div
-        className={`${styles.AccountModal} ${
-          isAccountModal ? styles.opened : ""
-        }`}
-      >
-        <div className={styles.optionsWrapper}>
-          <ArrowOptionBtn clicked={isLogin} setClicked={setIsLogin} />
-        </div>
-        <div className={`${styles.containers} ${isLogin ? styles.login : ""}`}>
-          <form className={styles.container} id={styles.front}>
+  if (isSignIn) {
+    return (
+      <>
+        <div
+          className={`${styles.touchBlocker} ${
+            isAccountModal ? styles.opened : ""
+          }`}
+        ></div>
+        <div
+          className={`${styles.AccountModal} ${
+            isAccountModal ? styles.opened : ""
+          }`}
+        >
+          <div className={styles.header}>
+            <h3>Login</h3>
             <i
-              id={styles.closeBtn}
+              className={styles.closeBtn}
               onClick={() => {
                 setIsAccountModal(false);
               }}
             >
               <FontAwesomeIcon icon={faXmark} />
             </i>
-            <div className={styles.contents}>
-              <div className={styles.inputWrapper}>
-                <div className={styles.icon}>
-                  <FontAwesomeIcon icon={faAt} />
-                </div>
-                <input
-                  type="text"
-                  placeholder="Email"
-                  onChange={(e) => {
-                    setLogin((prev) => ({ ...prev, email: e.target.value }));
-                  }}
-                />
-              </div>
-              <div className={styles.inputWrapper}>
-                <div className={styles.icon}>
-                  <FontAwesomeIcon icon={faLock} />
-                </div>
-                <input
-                  type="password"
-                  placeholder="Password"
-                  autoComplete="current-password"
-                  onChange={(e) => {
-                    setLogin((prev) => ({ ...prev, password: e.target.value }));
-                  }}
-                />
-              </div>
-              <GoogleLoginBtn scope={"email profile"} required={"email"} />
-              <BlobBtn
-                onClick={async () => {
-                  try {
-                    const response = await postAuthSignin(login);
-                    if (!response.success) return;
-
-                    setIsAccountModal(false);
-                    accountRefetch();
-                    if (isNew) {
-                      router.push("/dashboard?welcome=true");
-                    }
-                  } catch (err) {
-                    console.log(err);
-                  }
-                }}
-              >
-                SUBMIT
-              </BlobBtn>
+          </div>
+          <div className={styles.input}>
+            <LineInput
+              title={"Email"}
+              type={"email"}
+              value={signIn.email}
+              setValue={(email) => setSignIn((prev) => ({ ...prev, email }))}
+              icon={<FontAwesomeIcon icon={faUser} />}
+            />
+          </div>
+          <div className={styles.input}>
+            <LineInput
+              type={isShowPassword ? "text" : "password"}
+              title={"Password"}
+              value={signIn.password}
+              setValue={(password) =>
+                setSignIn((prev) => ({ ...prev, password }))
+              }
+              icon={<FontAwesomeIcon icon={faLock} />}
+            />
+            <div className={styles.showPasswordBtn}>
+              <ShowPasswordBtn
+                isShowPassword={isShowPassword}
+                setIsShowPassword={setIsShowPassword}
+              />
             </div>
-          </form>
-          <form className={styles.container} id={styles.back}>
+          </div>
+          <div className={styles.buttons}>
+            <BlobBtn onClick={submitSignIn}>Login</BlobBtn>
+          </div>
+          <div className={styles.options}>
+            <GoogleLoginBtn scope={"email profile"} required={"email"} />
+            <p
+              className={styles.noAccount}
+              onClick={() => {
+                setIsSignIn(false);
+              }}
+            >
+              {"Don't have an account?"}
+            </p>
+          </div>
+        </div>
+      </>
+    );
+  } else {
+    return (
+      <>
+        <div
+          className={`${styles.touchBlocker} ${
+            isAccountModal ? styles.opened : ""
+          }`}
+        ></div>
+        <div
+          className={`${styles.AccountModal} ${
+            isAccountModal ? styles.opened : ""
+          }`}
+        >
+          <div className={styles.header}>
+            <h3>Sign Up</h3>
             <i
-              id={styles.closeBtn}
+              className={styles.closeBtn}
               onClick={() => {
                 setIsAccountModal(false);
               }}
             >
               <FontAwesomeIcon icon={faXmark} />
             </i>
-            <div className={styles.contents}>
-              <div className={styles.inputWrapper}>
-                <div className={styles.icon}>
-                  <FontAwesomeIcon icon={faUser} />
-                </div>
-                <input
-                  type="text"
-                  placeholder="Name"
-                  onChange={(e) => {
-                    setSignUp((prev) => ({ ...prev, name: e.target.value }));
-                  }}
-                />
-              </div>
-              <div className={styles.inputWrapper}>
-                <div className={styles.icon}>
-                  <FontAwesomeIcon icon={faAt} />
-                </div>
-                <input
-                  type="text"
-                  placeholder="Email"
-                  onChange={(e) => {
-                    setSignUp((prev) => ({ ...prev, email: e.target.value }));
-                  }}
-                />
-              </div>
-              <div className={styles.inputWrapper}>
-                <div className={styles.icon}>
-                  <FontAwesomeIcon icon={faLock} />
-                </div>
-                <input
-                  type="password"
-                  placeholder="Password"
-                  autoComplete="current-password"
-                  onChange={(e) => {
-                    setSignUp((prev) => ({
-                      ...prev,
-                      password: e.target.value,
-                    }));
-                  }}
-                />
-              </div>
-              <GoogleLoginBtn scope={"email profile"} required={"email"} />
-              <BlobBtn
-                onClick={async () => {
-                  try {
-                    const response = await postAuthSignup(signUp);
-                    if (!response.success) return;
-
-                    accountRefetch();
-                    setIsLogin(false);
-                    setIsNew(true);
-
-                    const newSearchParams = new URLSearchParams(searchParams);
-                    newSearchParams.set("welcome", "true");
-                    router.replace(`/dashboard?${newSearchParams.toString()}`, {
-                      scroll: false,
-                    });
-                  } catch (err) {
-                    console.log(err);
-                  }
-                }}
-              >
-                SUBMIT
-              </BlobBtn>
+          </div>
+          <div className={styles.input}>
+            <LineInput
+              title={"Name"}
+              type={"name"}
+              value={signUp.name}
+              setValue={(name) => setSignUp((prev) => ({ ...prev, name }))}
+              icon={<FontAwesomeIcon icon={faUser} />}
+            />
+          </div>
+          <div className={styles.input}>
+            <LineInput
+              title={"Email"}
+              type={"email"}
+              value={signUp.email}
+              setValue={(email) => setSignUp((prev) => ({ ...prev, email }))}
+              icon={<FontAwesomeIcon icon={faUser} />}
+            />
+          </div>
+          <div className={styles.input}>
+            <LineInput
+              type={isShowPassword ? "text" : "password"}
+              title={"Password"}
+              value={signUp.password}
+              setValue={(password) =>
+                setSignUp((prev) => ({ ...prev, password }))
+              }
+              icon={<FontAwesomeIcon icon={faLock} />}
+            />
+            <div className={styles.showPasswordBtn}>
+              <ShowPasswordBtn
+                isShowPassword={isShowPassword}
+                setIsShowPassword={setIsShowPassword}
+              />
             </div>
-          </form>
+          </div>
+          <div className={styles.buttons}>
+            <BlobBtn onClick={submitSignUp}>Sign Up</BlobBtn>
+          </div>
+          <div className={styles.options}>
+            <GoogleLoginBtn scope={"email profile"} required={"email"} />
+            <p
+              className={styles.noAccount}
+              onClick={() => {
+                setIsSignIn(true);
+              }}
+            >
+              {"Already have an account?"}
+            </p>
+          </div>
         </div>
-      </div>
-    </>
-  );
+      </>
+    );
+  }
 }
-
-export default AccountModal;

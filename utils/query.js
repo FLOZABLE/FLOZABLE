@@ -212,7 +212,7 @@ async function createChatroomMessagesTable() {
     message_id VARCHAR(8) NOT NULL,
     chatroom_id VARCHAR(10) NOT NULL,
     user_id VARCHAR(10),
-    message VARCHAR(100),
+    message VARCHAR(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
     sent_at INT(10),
     PRIMARY KEY (message_id),
     FOREIGN KEY (user_id) REFERENCES users(user_id),

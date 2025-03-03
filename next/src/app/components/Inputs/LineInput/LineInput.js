@@ -1,11 +1,12 @@
 import React, { useState } from "react";
 import styles from "./LineInput.module.css";
 
-function LineInput({ title, value, setValue, type }) {
+function LineInput({ title, value, setValue, type, icon }) {
   const [isFocused, setIsFocused] = useState(false);
 
   return (
-    <div className={styles.LineInput}>
+    <div className={`${styles.LineInput} ${isFocused ? styles.focused : ""}`}>
+      {icon ? <i className={styles.icon}>{icon}</i> : null}
       <input
         type={type}
         onFocus={() => {
@@ -14,7 +15,7 @@ function LineInput({ title, value, setValue, type }) {
         onBlur={() => {
           setIsFocused(false);
         }}
-        defaultValue={value}
+        value={value}
         onChange={(e) => {
           setValue(e.target.value);
         }}
