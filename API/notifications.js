@@ -219,10 +219,10 @@ Router.put("/token", async (req, res) => {
         [token, deviceId, userId]
       );
 
-      if (!result.affectedRows) {
+      /* if (!result.affectedRows) {
         const response = RESPONSE_MESSAGES.error();
         return res.status(response.status).send(response);
-      }
+      } */
 
       //delete cached value because it is mutated
       redisClient.del(`user:${userId}:device:push_tokens`);

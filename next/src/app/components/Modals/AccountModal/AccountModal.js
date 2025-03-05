@@ -2,7 +2,12 @@
 
 import styles from "./AccountModal.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faLock, faUser, faXmark } from "@fortawesome/free-solid-svg-icons";
+import {
+  faEnvelope,
+  faLock,
+  faUser,
+  faXmark,
+} from "@fortawesome/free-solid-svg-icons";
 import { useCallback, useContext, useEffect, useState } from "react";
 import LineInput from "../../Inputs/LineInput/LineInput";
 import ShowPasswordBtn from "../../Buttons/ShowPasswordBtn/ShowPasswordBtn";
@@ -172,7 +177,7 @@ export default function AccountModal() {
               type={"email"}
               value={signUp.email}
               setValue={(email) => setSignUp((prev) => ({ ...prev, email }))}
-              icon={<FontAwesomeIcon icon={faUser} />}
+              icon={<FontAwesomeIcon icon={faEnvelope} />}
             />
           </div>
           <div className={styles.input}>
