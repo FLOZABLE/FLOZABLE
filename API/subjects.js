@@ -81,9 +81,8 @@ Router.put("/subject", async (req, res) => {
     } catch (err) {
       console.log(err);
       if (err.errno === 1062) {
-        return res
-          .status(400)
-          .send({ success: false, reason: "Name already in use" });
+        const response = RESPONSE_MESSAGES.existingValue(req.body?.name);
+        return res.status(response.status).send(response);
       }
       const response = RESPONSE_MESSAGES.error();
       return res.status(response.status).send(response);

@@ -20,331 +20,309 @@ const expo = require("../expoInstance");
 const { default: Expo } = require("expo-server-sdk");
 const { sendExpoPushNotifications } = require("../services/notification");
 
-mainIo.on("connection", (socket) => {
-  let session;
+mainIo.on("connection", async (socket) => {
+  try {
+    const userId = socket.request?.session?.user_id;
+    console.log("socket joined", userId);
 
-  if (
-    process.env.NODE_ENV === "production" ||
-    process.env.NODE_ENV === "test"
-  ) {
-    try {
-      session = socket.request.session;
-    } catch (err) {
-      console.log(err);
+    if (!userId) return;
+
+    //join my socket servernpm
+    socket.join(userId);
+
+    const connection = pool.promise();
+
+    // Use Promise.all to run multiple promises in parallel
+    const [friends, chatrooms, groups] = await Promise.all([
+      userFriendsCache(connection, userId),
+      connection
+        .query(`SELECT chatroom_id FROM chatroom_members WHERE user_id = ?`, [
+          userId,
+        ])
+        .then(([chatrooms]) => chatrooms),
+      userGroupsCache(connection, userId),
+    ]);
+
+    const activeSubject = await activeSubjectCache(userId);
+    if (!activeSubject) {
+      const now = Math.floor(new Date().getTime() / 1000);
+      cacheActiveSubject(userId, { subject_id: "0", name: "break" }, now);
+      mainIo.to([...friends, ...groups, userId]).emit("study:start", {
+        userId,
+        subject: { subject_id: "0", time: now },
+      });
     }
-  } else {
-    session = {
-      cookie: {
-        path: "/",
-        _expires: null,
-        originalMaxAge: null,
-        httpOnly: true,
-        secure: false,
-      },
-      user_id: process.env.TESTER_ID,
-    };
-  }
-  const userId = session.user_id;
-  console.log("socket joined");
 
-  if (userId) {
-    (async () => {
+    const chatroomIds = chatrooms.map(
+      (chatroom) => "chatroom:" + chatroom.chatroom_id
+    );
+    const groupIds = groups.map((group) => "chatroom:" + group);
+
+    //join my chatrooms
+    socket.join([...chatroomIds, ...groupIds]);
+
+    socket.on("disconnect", async (reason) => {
       try {
-        //join my socket server
-        socket.join(userId);
-
         const connection = pool.promise();
+        const device = socket.handshake.query?.device;
+        console.log("disconnection", device);
 
-        // Use Promise.all to run multiple promises in parallel
-        const [friends, chatrooms, groups] = await Promise.all([
-          userFriendsCache(connection, userId),
-          connection
-            .query(
-              `SELECT chatroom_id FROM chatroom_members WHERE user_id = ?`,
-              [userId]
-            )
-            .then(([chatrooms]) => chatrooms),
-          userGroupsCache(connection, userId),
-        ]);
+        //won't terminate if it's mobile or chrome extension
+        if (device === "mobile" || device === "chrome-extension") return;
 
-        const activeSubject = await activeSubjectCache(userId);
-        if (!activeSubject) {
-          const now = Math.floor(new Date().getTime() / 1000);
-          cacheActiveSubject(userId, { subject_id: "0", name: "break" }, now);
-          mainIo.to([...friends, ...groups, userId]).emit("studying", {
-            userId,
-            subject: { subject_id: "0", time: now },
-          });
-        }
-
-        const chatroomIds = chatrooms.map(
-          (chatroom) => "chatroom:" + chatroom.chatroom_id
-        );
-        const groupIds = groups.map((group) => "chatroom:" + group);
-
-        //join my chatrooms
-        socket.join([...chatroomIds, ...groupIds]);
+        stopStudying(connection, userId, "disconnect");
+        deActiveGroup(connection, userId, socket);
       } catch (err) {
         console.log(err);
       }
-    })();
-  } else {
-    return;
-  }
+    });
 
-  socket.on("disconnect", async (reason) => {
-    try {
-      const connection = pool.promise();
-      const device = socket.handshake.query?.device;
-      console.log("disconnection", device);
+    socket.on("study:start", async (subjectId) => {
+      try {
+        const now = Math.floor(new Date().getTime() / 1000);
+        console.log("start", subjectId);
 
-      //won't terminate if it's mobile or chrome extension
-      if (device === "mobile" || device === "chrome-extension") return;
+        const connection = pool.promise();
 
-      stopStudying(connection, userId, "disconnect");
-      deActiveGroup(connection, userId, socket);
-    } catch (err) {
-      console.log(err);
-    }
-  });
+        const [subject, groups, friends] = await Promise.all([
+          subjectCache(connection, userId, subjectId),
+          userGroupsCache(connection, userId),
+          userFriendsCache(connection, userId),
+        ]);
 
-  socket.on("start", async (subjectId) => {
-    try {
-      const now = Math.floor(new Date().getTime() / 1000);
-      console.log("start", subjectId);
+        if (!subject) return;
 
-      const connection = pool.promise();
+        mainIo
+          .to([...friends, ...groups, userId])
+          .emit("study:start", { userId, subject: { ...subject, time: now } });
 
-      const [subject, groups, friends] = await Promise.all([
-        subjectCache(connection, userId, subjectId),
-        userGroupsCache(connection, userId),
-        userFriendsCache(connection, userId),
-      ]);
-
-      if (!subject) return;
-
-      mainIo
-        .to([...friends, ...groups, userId])
-        .emit("studying", { userId, subject: { ...subject, time: now } });
-
-      redisClient.rpush(`user:${userId}:subject:${subjectId}`, `[${now},0]`);
-      cacheActiveSubject(userId, subject, now);
-      extensionIo.to(userId).emit("studying");
-    } catch (err) {
-      console.log(err);
-    }
-  });
-
-  socket.on("stop", async () => {
-    try {
-      const connection = pool.promise();
-      console.log("stop");
-      stopStudying(connection, userId, "rest");
-    } catch (err) {
-      console.log(err);
-    }
-  });
-
-  socket.on("changeGroup", async (groupId) => {
-    try {
-      const connection = pool.promise();
-      const [friends, groups] = await Promise.all([
-        userFriendsCache(connection, userId),
-        userGroupsCache(connection, userId),
-      ]);
-      if (groupId === null) {
-        groups.map((group) => {
-          socket.leave(group);
-        });
-        redisClient.del(`user:${userId}:activeGroup`);
-        if (friends.length) {
-          mainIo.to(friends).emit(`deActiveGroup`, { userId });
-        }
-        return;
+        redisClient.rpush(`user:${userId}:subject:${subjectId}`, `[${now},0]`);
+        cacheActiveSubject(userId, subject, now);
+        extensionIo.to(userId).emit("study:start");
+      } catch (err) {
+        console.log(err);
       }
-      if (!groups.includes(groupId)) return;
-      groups.map((group) => {
-        if (group !== groupId) {
-          socket.leave(group);
-        }
-      });
-      socket.join(groupId);
-      const now = DateTime.now().toSeconds().toFixed();
-      cacheActiveGroup(userId, groupId, now);
+    });
 
-      if (!friends.length) return;
+    socket.on("study:stop", async () => {
+      try {
+        const connection = pool.promise();
+        console.log("stop");
+        stopStudying(connection, userId, "rest");
+      } catch (err) {
+        console.log(err);
+      }
+    });
 
-      const [[group]] = await connection.query(
-        `
-        SELECT 
-          g.group_id, 
-          g.name, 
-          g.leader, 
-          g.visibility, 
-          g.description, 
-          g.created_at, 
-          g.max_members, 
-          g.tags, 
-          g.color, 
-          g.goal_hr, 
-        GROUP_CONCAT(DISTINCT m.user_id) AS members, 
-        GROUP_CONCAT(DISTINCT l.user_id) AS likes
-        FROM \`groups\` g
-        LEFT JOIN group_members m ON g.group_id = m.group_id
-        LEFT JOIN group_likes l ON g.group_id = l.group_id
-        WHERE g.group_id = ?
-        GROUP BY g.group_id
-        `,
-        [groupId]
-      );
-      if (!group) return;
-
-      group.members = group.members ? group.members.split(",") : [];
-      group.likes = group.likes ? group.likes.split(",") : [];
-      group.tags = group.tags ? JSON.parse(group.tags) : [];
-
-      mainIo.to(friends).emit(`activeGroup`, { userId, group });
-    } catch (err) {
-      console.log(err);
-    }
-  });
-
-  socket.on("exitSession", async () => {
-    try {
-      const connection = pool.promise();
-      deActiveGroup(connection, userId, socket);
-      stopStudying(connection, userId, "rest");
-    } catch (err) {
-      console.log(err);
-    }
-  });
-
-  //messages
-
-  socket.on("chat/send", async (roomId, message) => {
-    try {
-      if (!roomId || !message) return;
-
-      const connection = pool.promise();
-      const members = await chatroomMembersCache(connection, roomId);
-
-      if (!members.includes(userId) || !message.length) return;
-
-      const sent_at = Math.floor(new Date().getTime() / 1000);
-      const message_id = generateRandomId(8);
-      const newMsg = {
-        message,
-        user_id: userId,
-        sent_at,
-        message_id,
-      };
-
-      redisClient.rpush(`chatroom:${roomId}:messages`, JSON.stringify(newMsg));
-
-      newMsg.chatroom_id = roomId;
-      connection.query(
-        `
-        INSERT INTO chatroom_messages SET ?
-        `,
-        newMsg
-      );
-
-      mainIo.to(`chatroom:${roomId}`).emit("chat/message", { message: newMsg });
-
-      /*
-      add unread messages to chatroom members who is not me.
-      room:ROOMID:last_read_message stores last message's (current sent message) id
-      room:ROOMID:unreads stores total number of unread messages
-      */
-      members
-        .filter((member) => member !== userId)
-        .map((member) => {
-          redisClient.hincrby(
-            `user:${member}:chatrooms`,
-            `room:${roomId}:unreads`,
-            1
-          );
-          redisClient.expire(
-            `user:${member}:chatrooms`,
-            REDIS_EXP.USER_CHAT_READS
-          );
-        });
-
-      /**
-       * for me, set last_read_message id as same as other members, but hset room:ROOMID:unreads as 0 instead of hincryby.
-       */
-      redisClient.hset(
-        `user:${userId}:chatrooms`,
-        `room:${roomId}:last_read_message`,
-        message_id
-      );
-      redisClient.hset(`user:${userId}:chatrooms`, `room:${roomId}:unreads`, 0);
-      redisClient.expire(`user:${userId}:chatrooms`, REDIS_EXP.USER_CHAT_READS);
-
-      const chatroomName = await getChatroomName(connection, roomId);
-      const pushMessages = [];
-      await Promise.all(
-        members.map(async (member) => {
-          //don't send notification to myself166
-          if (member === userId) return;
-
-          const tokens = await getDevicePushTokens(connection, member);
-          tokens.map((token) => {
-            if (!Expo.isExpoPushToken(token)) return;
-            pushMessages.push({
-              to: token,
-              sound: "default",
-              title: chatroomName,
-              body: `${message}`,
-              data: {
-                type: "message",
-                message: newMsg,
-                chatroom: {
-                  name: chatroomName,
-                  chatroom_id: roomId,
-                },
-                url: `/chat/chatroom/${roomId}`,
-              },
-            });
+    socket.on("group:change", async (groupId) => {
+      try {
+        const connection = pool.promise();
+        const [friends, groups] = await Promise.all([
+          userFriendsCache(connection, userId),
+          userGroupsCache(connection, userId),
+        ]);
+        if (groupId === null) {
+          groups.map((group) => {
+            socket.leave(group);
           });
-        })
-      );
+          redisClient.del(`user:${userId}:activeGroup`);
+          if (friends.length) {
+            mainIo.to(friends).emit("group:member:offline", { userId });
+          }
+          return;
+        }
+        if (!groups.includes(groupId)) return;
+        groups.map((group) => {
+          if (group !== groupId) {
+            socket.leave(group);
+          }
+        });
+        socket.join(groupId);
+        const now = DateTime.now().toSeconds().toFixed();
+        cacheActiveGroup(userId, groupId, now);
 
-      sendExpoPushNotifications(pushMessages);
-    } catch (err) {
-      console.log(err);
-    }
-  });
+        if (!friends.length) return;
 
-  socket.on("chat/read", async (roomId) => {
-    try {
-      if (!userId || !roomId) return;
+        const [[group]] = await connection.query(
+          `
+          SELECT 
+            g.group_id, 
+            g.name, 
+            g.leader, 
+            g.visibility, 
+            g.description, 
+            g.created_at, 
+            g.max_members, 
+            g.tags, 
+            g.color, 
+            g.goal_hr, 
+          GROUP_CONCAT(DISTINCT m.user_id) AS members, 
+          GROUP_CONCAT(DISTINCT l.user_id) AS likes
+          FROM \`groups\` g
+          LEFT JOIN group_members m ON g.group_id = m.group_id
+          LEFT JOIN group_likes l ON g.group_id = l.group_id
+          WHERE g.group_id = ?
+          GROUP BY g.group_id
+          `,
+          [groupId]
+        );
+        if (!group) return;
 
-      const chatroomMembers = await chatroomMembersCache(null, roomId);
+        group.members = group.members ? group.members.split(",") : [];
+        group.likes = group.likes ? group.likes.split(",") : [];
+        group.tags = group.tags ? JSON.parse(group.tags) : [];
 
-      if (!chatroomMembers.includes(userId)) {
-        return;
+        mainIo.to(friends).emit("group:member:online", { userId, group });
+      } catch (err) {
+        console.log(err);
       }
+    });
 
-      const [lastMsg] = (
-        await redisClient.lrange(`chatroom:${roomId}:messages`, -1, -1)
-      ).map(JSON.parse);
+    //messages
 
-      console.log("read", lastMsg?.message_id, roomId);
+    socket.on("chat:send", async (roomId, message) => {
+      try {
+        if (!roomId || !message) return;
 
-      if (lastMsg) {
+        const connection = pool.promise();
+        const members = await chatroomMembersCache(connection, roomId);
+
+        if (!members.includes(userId) || !message.length) return;
+
+        const sent_at = Math.floor(new Date().getTime() / 1000);
+        const message_id = generateRandomId(8);
+        const newMsg = {
+          message,
+          user_id: userId,
+          sent_at,
+          message_id,
+        };
+
+        redisClient.rpush(
+          `chatroom:${roomId}:messages`,
+          JSON.stringify(newMsg)
+        );
+
+        newMsg.chatroom_id = roomId;
+        connection.query(
+          `
+          INSERT INTO chatroom_messages SET ?
+          `,
+          newMsg
+        );
+
+        mainIo
+          .to(`chatroom:${roomId}`)
+          .emit("chat/message", { message: newMsg });
+
+        /*
+        add unread messages to chatroom members who is not me.
+        room:ROOMID:last_read_message stores last message's (current sent message) id
+        room:ROOMID:unreads stores total number of unread messages
+        */
+        members
+          .filter((member) => member !== userId)
+          .map((member) => {
+            redisClient.hincrby(
+              `user:${member}:chatrooms`,
+              `room:${roomId}:unreads`,
+              1
+            );
+            redisClient.expire(
+              `user:${member}:chatrooms`,
+              REDIS_EXP.USER_CHAT_READS
+            );
+          });
+
+        /**
+         * for me, set last_read_message id as same as other members, but hset room:ROOMID:unreads as 0 instead of hincryby.
+         */
         redisClient.hset(
           `user:${userId}:chatrooms`,
           `room:${roomId}:last_read_message`,
-          lastMsg.message_id
+          message_id
         );
-      }
+        redisClient.hset(
+          `user:${userId}:chatrooms`,
+          `room:${roomId}:unreads`,
+          0
+        );
+        redisClient.expire(
+          `user:${userId}:chatrooms`,
+          REDIS_EXP.USER_CHAT_READS
+        );
 
-      redisClient.hset(`user:${userId}:chatrooms`, `room:${roomId}:unreads`, 0);
-    } catch (err) {
-      console.log(err);
-    }
-  });
+        const chatroomName = await getChatroomName(connection, roomId);
+        const pushMessages = [];
+        await Promise.all(
+          members.map(async (member) => {
+            //don't send notification to myself166
+            if (member === userId) return;
+
+            const tokens = await getDevicePushTokens(connection, member);
+            tokens.map((token) => {
+              if (!Expo.isExpoPushToken(token)) return;
+              pushMessages.push({
+                to: token,
+                sound: "default",
+                title: chatroomName,
+                body: `${message}`,
+                data: {
+                  type: "message",
+                  message: newMsg,
+                  chatroom: {
+                    name: chatroomName,
+                    chatroom_id: roomId,
+                  },
+                  url: `/chat/chatroom/${roomId}`,
+                },
+              });
+            });
+          })
+        );
+
+        sendExpoPushNotifications(pushMessages);
+      } catch (err) {
+        console.log(err);
+      }
+    });
+
+    socket.on("chat:read", async (roomId) => {
+      try {
+        if (!userId || !roomId) return;
+
+        const chatroomMembers = await chatroomMembersCache(null, roomId);
+
+        if (!chatroomMembers.includes(userId)) {
+          return;
+        }
+
+        const [lastMsg] = (
+          await redisClient.lrange(`chatroom:${roomId}:messages`, -1, -1)
+        ).map(JSON.parse);
+
+        console.log("read", lastMsg?.message_id, roomId);
+
+        if (lastMsg) {
+          redisClient.hset(
+            `user:${userId}:chatrooms`,
+            `room:${roomId}:last_read_message`,
+            lastMsg.message_id
+          );
+        }
+
+        redisClient.hset(
+          `user:${userId}:chatrooms`,
+          `room:${roomId}:unreads`,
+          0
+        );
+      } catch (err) {
+        console.log(err);
+      }
+    });
+  } catch (err) {
+    console.log(err);
+  }
 });
 
 async function deActiveGroup(connection, userId, socket) {
@@ -358,7 +336,7 @@ async function deActiveGroup(connection, userId, socket) {
     });
     redisClient.del(`user:${userId}:activeGroup`);
     if (!friends.length) return;
-    mainIo.to(friends).emit(`deActiveGroup`, { userId });
+    mainIo.to(friends).emit("group:member:offline", { userId });
   } catch (err) {
     console.log(err);
   }
@@ -382,7 +360,7 @@ async function stopStudying(connection, userId, status) {
         ? { subject_id: "0", name: "break", time: now }
         : null;
 
-    extensionIo.to(userId).emit("stopStudying");
+    extensionIo.to(userId).emit("study:stop");
 
     if (subject) {
       cacheActiveSubject(userId, subject, now);
@@ -451,7 +429,7 @@ async function emitStopStudying({
   try {
     const receivers = [...groups, ...friends, userId];
 
-    mainIo.to(receivers).emit("stopStudying", {
+    mainIo.to(receivers).emit("study:stop", {
       userId,
       subject,
       duration,

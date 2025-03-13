@@ -149,13 +149,13 @@ async function startBot(userId) {
     }
     console.log("bot start", userId);
     if (groups.length) {
-      mainIo.to(groups).emit(`studying`, userId, subject);
+      mainIo.to(groups).emit("study:start", userId, subject);
 
       const groupIdIndex = randomIntInRange(0, groups.length - 1);
       cacheActiveGroup(userId, groups[groupIdIndex], now);
     }
     if (friends.length) {
-      mainIo.to(friends).emit(`studying`, userId, subject);
+      mainIo.to(friends).emit("study:start", userId, subject);
     }
     redisClient.rpush(
       `user:${userId}:subject:${subject.subject_id}`,
@@ -183,10 +183,10 @@ async function stopBot(userId) {
     ]);
 
     if (groups.length) {
-      mainIo.to(groups).emit(`stopStudying`, userId, { status: "disconnect" });
+      mainIo.to(groups).emit("study:stop", userId, { status: "disconnect" });
     }
     if (friends.length) {
-      mainIo.to(friends).emit(`stopStudying`, userId, { status: "disconnect" });
+      mainIo.to(friends).emit("study:stop", userId, { status: "disconnect" });
     }
 
     if (!activeSubject || activeSubject.subject_id === "0") {

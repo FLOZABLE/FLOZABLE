@@ -23,6 +23,7 @@ const {
 const { googleOauth2client, autoSignin } = require("./auth");
 const { google } = require("googleapis");
 const RESPONSE_MESSAGES = require("../utils/responses");
+const { timelineSorter } = require("../utils/timelineSorting");
 const storage = multer.memoryStorage(); // Store file in memory buffer
 const upload = multer({ storage });
 
@@ -44,11 +45,13 @@ Router.get("/", async (req, res) => {
       }
       userInfo.groups = groups;
       userInfo.friends = friends;
+      userInfo.verified = !!userInfo.verified;
+
       res.status(200).send({
         success: true,
         status: 200,
         data: {
-          userInfo,
+          userinfo: userInfo,
         },
       });
       addActiveUserCache(userId);
@@ -96,7 +99,7 @@ Router.get("/google", async (req, res) => {
       return res.status(200).send({
         success: true,
         status: 200,
-        data: { googleInfo: data },
+        data: { google_info: data },
       });
     } catch (err) {
       console.log(err);
@@ -203,7 +206,7 @@ Router.patch("/image", upload.single("image"), async (req, res) => {
   });
 });
 
-Router.patch("/info", async (req, res) => {
+Router.patch("/", async (req, res) => {
   autoSignin(req, res, async (userId) => {
     try {
       const { name, email, confirmEmail } = req.body;
@@ -273,10 +276,10 @@ Router.patch("/info", async (req, res) => {
 
 Router.get("/profile", async (req, res) => {
   try {
-    const { user_id } = req.query;
+    const { user_id, timezone } = req.query;
 
     const connection = pool.promise();
-    const [userInfo, friends, groups, subjects] = await Promise.all([
+    const [userInfo, friends, groups, rawSubjects] = await Promise.all([
       userCache(connection, user_id),
       userFriendsCache(connection, user_id),
       userGroupsCache(connection, user_id),
@@ -288,11 +291,17 @@ Router.get("/profile", async (req, res) => {
     }
 
     userInfo.groups = groups;
+    const { subjects, groupedSubjects } = timelineSorter(rawSubjects, timezone);
 
     return res.status(200).send({
       success: true,
       status: 200,
-      data: { userInfo, friends, subjects },
+      data: {
+        userinfo: userInfo,
+        friends,
+        subjects,
+        grouped_subjects: groupedSubjects,
+      },
     });
   } catch (err) {
     console.log(err);

@@ -134,6 +134,14 @@ const RESPONSE_MESSAGES = {
       reason: `Missing ${value}`,
     },
   }),
+  existingValue: (value) => ({
+    success: false,
+    message: `${value} already in use`,
+    status: 400,
+    error: {
+      reason: `Missing ${value}`,
+    },
+  }),
 };
 
 module.exports = RESPONSE_MESSAGES;
