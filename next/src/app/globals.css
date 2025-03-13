@@ -18,9 +18,9 @@
   --date-selector-color: #000;
   --opacity-black: #000000c3;
   --shadow1: rgba(100, 100, 111, 0.2) 0rem 0.4375rem 1.8125rem 0rem;
-  --shadow2: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
+  --shadow2: rgba(0, 0, 0, 0.15) .1219rem .1219rem .1625rem;
   --shadow3: rgba(0, 0, 0, 0.35) 0rem 0.3125rem 0.9375rem;
-  --shadow4: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+  --shadow4: rgba(0, 0, 0, 0.16) 0rem .0625rem .25rem;
   --shadow9: rgba(0, 0, 0, 0.1) 0rem 0.25rem 0.75rem;
   --shadow10: rgba(0, 0, 0, 0.25) 0rem 3.375rem 3.4375rem,
     rgba(0, 0, 0, 0.12) 0rem -0.75rem 1.875rem,
@@ -43,7 +43,7 @@
   font-size: 3.5rem;
   font-weight: 700;
   margin-left: 1.875rem;
-  margin-bottom: 10px;
+  margin-bottom: .625rem;
 }
 
 .Main {
@@ -53,7 +53,7 @@
 }
 
 html {
-  font-size: clamp(8px, 0.7vw, 16px);
+  font-size: clamp(.5rem, 0.7vw, 1rem);
   scroll-behavior: smooth;
   width: 100vw;
   overflow-x: hidden;
@@ -320,7 +320,7 @@ svg > * {
   margin-bottom: 1rem;
 }
 
-@media (max-width: 600px) {
+@media (max-width: 37.5rem) {
   :root {
     --main-offset: 1.5rem;
   }
