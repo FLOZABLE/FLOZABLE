@@ -213,7 +213,7 @@ mainIo.on("connection", async (socket) => {
 
         mainIo
           .to(`chatroom:${roomId}`)
-          .emit("chat/message", { message: newMsg });
+          .emit("chat:message", { message: newMsg });
 
         /*
         add unread messages to chatroom members who is not me.
