@@ -85,7 +85,7 @@ const consumers = {};
 
       if (!userId) return;
 
-      socket.on("changeGroup", async (groupId) => {
+      socket.on("group:change", async (groupId) => {
         try {
           if (groupId === null) {
             await onDisconnect();

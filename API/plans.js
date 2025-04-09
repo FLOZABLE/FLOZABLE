@@ -694,7 +694,7 @@ Router.post("/plan/share", async (req, res) => {
           notifications.push(notification);
 
           socketNotification.message = NOTIFICATION_MESSAGES.planShared(
-            userInfo.name,
+            userInfo,
             plan.title
           );
 
@@ -704,7 +704,7 @@ Router.post("/plan/share", async (req, res) => {
           //non friends
           socketNotification.type = "plan_share";
           socketNotification.message = NOTIFICATION_MESSAGES.planShare(
-            userInfo.name,
+            userInfo,
             plan.title
           );
 

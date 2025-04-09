@@ -147,23 +147,26 @@ const subjectColors = [
 ];
 
 const NOTIFICATION_MARKERS = {
-  PROFILE_CARD: "##profileCard",
+  PROFILE_CARD: "##profile_card",
+  PROFILE_IMAGE: "##profile_image",
 };
 
 const NOTIFICATION_MESSAGES = {
-  friendRequest: (name) => ({
-    contents: [NOTIFICATION_MARKERS.PROFILE_CARD, "sent friend request!"],
-    title: `${name} sent friend request!`,
+  friendRequest: ({ user_id, name }) => ({
+    title: `New Friend Request`,
+    contents: `${name} wants to be your friend.`,
+    cover_image: `profile`,
   }),
   friendRequestDecline: () => ({
     contents: "Declined friend request!",
     title: "Declined friend request!",
   }),
-  friendRequestAccept: (name) => ({
-    contents: [NOTIFICATION_MARKERS.PROFILE_CARD, `is now your friend!`],
-    title: `${name} is now your friend!`,
+  friendRequestAccept: ({ user_id, name }) => ({
+    title: `Friend Request Accepted`,
+    contents: `${name} accepted your friend request.`,
+    cover_image: "profile",
   }),
-  planShare: (name, planName) => ({
+  /* planShare: (name, planName) => ({
     contents: [
       NOTIFICATION_MARKERS.PROFILE_CARD,
       `wants to share plan "${planName}"!`,
@@ -173,10 +176,11 @@ const NOTIFICATION_MESSAGES = {
   planShared: (name, planName) => ({
     contents: [NOTIFICATION_MARKERS.PROFILE_CARD, `shared plan "${planName}"!`],
     title: `${name} shared plan "${planName}"!`,
-  }),
-  chatRequest: (name) => ({
-    contents: [NOTIFICATION_MARKERS.PROFILE_CARD, `wants to chat!`],
-    title: `${name} wants to chat!`,
+  }), */
+  chatRequest: ({ user_id, name }) => ({
+    title: `New Chat Request`,
+    contents: `${name} wants to start a chat with you..`,
+    cover_image: "profile",
   }),
 };
 

@@ -68,27 +68,27 @@ Router.get("/", async (req, res) => {
 
         if (notification.type === "friend_request") {
           notification.message = NOTIFICATION_MESSAGES.friendRequest(
-            notification.userinfo.name
+            notification.userinfo
           );
         } else if (notification.type === "friend_request_accepted") {
           notification.message = NOTIFICATION_MESSAGES.friendRequestAccept(
-            notification.userinfo.name
+            notification.userinfo
           );
         } else if (notification.type === "plan_share") {
           notification.extra_info = JSON.parse(notification.extra_info);
           notification.message = NOTIFICATION_MESSAGES.planShare(
-            notification.userinfo.name,
+            notification.userinfo,
             notification.extra_info.title
           );
         } else if (notification.type === "plan_shared") {
           notification.extra_info = JSON.parse(notification.extra_info);
           notification.message = NOTIFICATION_MESSAGES.planShared(
-            notification.userinfo.name,
+            notification.userinfo,
             notification.extra_info.title
           );
         } else if (notification.type === "chat_request") {
           notification.message = NOTIFICATION_MESSAGES.chatRequest(
-            notification.userinfo.name
+            notification.userinfo
           );
         }
       });

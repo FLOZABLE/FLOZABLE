@@ -267,7 +267,7 @@ Router.post("/request", async (req, res) => {
       const socketNotification = {
         ...notification,
         userinfo: userInfo,
-        message: NOTIFICATION_MESSAGES.chatRequest(userInfo.name),
+        message: NOTIFICATION_MESSAGES.chatRequest(userInfo),
       };
 
       mainIo.to(targetId).emit("notification", socketNotification);

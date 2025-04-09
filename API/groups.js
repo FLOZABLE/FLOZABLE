@@ -621,7 +621,7 @@ Router.post("/group/join", async (req, res) => {
         userId
       );
       study_time = study_time === null ? 0 : study_time;
-      mainIo.to(groupId).emit(`newMember`, {
+      mainIo.to(groupId).emit(`group:member:new`, {
         groupId,
         userInfo: {
           ...userInfo,
@@ -689,7 +689,7 @@ Router.post("/group/leave", async (req, res) => {
 
       redisClient.srem(`chatroom:${groupId}`, userId);
 
-      mainIo.emit(`removeMember`, { groupId, userId });
+      mainIo.emit(`group:member:left`, { groupId, userId });
 
       return res.status(200).send({
         success: true,
@@ -817,14 +817,14 @@ Router.post("/group/like", async (req, res) => {
 
         await connection.query(`INSERT INTO group_likes SET ?`, newLike);
 
-        mainIo.emit(`like:group:${groupId}`, { userId });
+        mainIo.emit(`group:like:${groupId}`, { userId });
       } else {
         await connection.query(
           `DELETE FROM group_likes WHERE user_id = ? AND group_id = ?`,
           [userId, groupId]
         );
 
-        mainIo.emit(`unlike:group:${groupId}`, { userId });
+        mainIo.emit(`group:unlike:${groupId}`, { userId });
       }
 
       return res.status(200).send({ success: true, status: 200 });
