@@ -98,7 +98,7 @@ async function sendFriendRequest(userId, targetId) {
       notification_id: friendship_id,
       userinfo: userInfo,
       type: "friend_request",
-      message: NOTIFICATION_MESSAGES.friendRequest(userInfo.name),
+      message: NOTIFICATION_MESSAGES.friendRequest(userInfo),
     };
 
     const myNotification = {
@@ -287,9 +287,7 @@ async function replyFriendRequest({
     await connection.query(`INSERT INTO notifications SET ?`, [notification]);
 
     notification.userinfo = userInfo;
-    notification.message = NOTIFICATION_MESSAGES.friendRequestAccept(
-      userInfo.name
-    );
+    notification.message = NOTIFICATION_MESSAGES.friendRequestAccept(userInfo);
     mainIo.to(targetId).emit("notification", notification);
 
     friends.push(targetId);
