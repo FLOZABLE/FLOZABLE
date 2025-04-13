@@ -36,6 +36,11 @@ Router.get("/settings", async (req, res) => {
         [userId]
       );
 
+      websiteSettings.map((setting) => {
+        setting.block = !!setting.block;
+        setting.study_block = !!setting.study_block;
+      });
+
       res.status(200).send({
         success: true,
         status: 200,
@@ -174,42 +179,42 @@ Router.patch("/setting", async (req, res) => {
 Router.get("/usage", async (req, res) => {
   autoSignin(req, res, async (userId) => {
     try {
-      const allVisits = await redisClient.zrange(
-        `user:${userId}:websites:visits`,
-        0,
-        -1,
-        "WITHSCORES"
-      );
+      const [visitsRaw, durationsRaw] = await Promise.all([
+        redisClient.zrange(
+          `user:${userId}:websites:visits`,
+          0,
+          -1,
+          "WITHSCORES"
+        ),
+        redisClient.zrange(
+          `user:${userId}:websites:duration`,
+          0,
+          -1,
+          "WITHSCORES"
+        ),
+      ]);
 
-      const allDurations = await redisClient.zrange(
-        `user:${userId}:websites:duration`,
-        0,
-        -1,
-        "WITHSCORES"
-      );
       const usage = [];
 
-      for (let i = 0; i < allVisits.length; i += 2) {
-        const website = allVisits[i];
-        const visits = parseInt(allVisits[i + 1])
-          ? parseInt(allVisits[i + 1])
-          : 0;
-        const durationIndex =
-          allDurations.findIndex((val) => val === website) + 1;
-        const duration = parseInt(allDurations[durationIndex])
-          ? parseInt(allDurations[durationIndex])
-          : 0;
+      for (let i = 0; i < visitsRaw.length; i += 2) {
+        const website = visitsRaw[i];
+        const visits = parseInt(visitsRaw[i + 1]) || 0;
 
-        usage.push({
-          website,
-          visits,
-          duration,
-        });
+        const durationIndex =
+          durationsRaw.findIndex((val) => val === website) + 1;
+        const duration =
+          durationIndex > 0 ? parseInt(durationsRaw[durationIndex]) || 0 : 0;
+
+        usage.push({ website, visits, duration });
       }
 
-      res.status(200).send({ success: true, status: 200, data: { usage } });
+      res.status(200).send({
+        success: true,
+        status: 200,
+        data: { usage },
+      });
     } catch (err) {
-      console.log(err);
+      console.error(err);
       const response = RESPONSE_MESSAGES.error();
       return res.status(response.status).send(response);
     }

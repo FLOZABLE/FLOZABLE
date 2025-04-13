@@ -130,7 +130,7 @@ Router.patch("/password", async (req, res) => {
   autoSignin(req, res, async (userId) => {
     try {
       const connection = pool.promise();
-      const { password, confirmPassword } = req.body;
+      const { password } = req.body;
 
       const isValidPassword = validatePassword(password);
       if (!isValidPassword.isValid) {
@@ -140,18 +140,6 @@ Router.patch("/password", async (req, res) => {
           message: isValidPassword.reason,
           error: {
             reason: isValidPassword.reason,
-            code: 400,
-          },
-        });
-      }
-
-      if (password !== confirmPassword) {
-        return res.status(400).send({
-          success: false,
-          status: 400,
-          message: "Password Does Not Match",
-          error: {
-            reason: "Password Does Not Match",
             code: 400,
           },
         });
@@ -209,7 +197,7 @@ Router.patch("/image", upload.single("image"), async (req, res) => {
 Router.patch("/", async (req, res) => {
   autoSignin(req, res, async (userId) => {
     try {
-      const { name, email, confirmEmail } = req.body;
+      const { name, email } = req.body;
       //const supportedLanguages = ['English', 'Spanish', 'French'];
       const isValidEmail = validateEmail(email);
       if (!isValidEmail.isValid) {
@@ -228,15 +216,6 @@ Router.patch("/", async (req, res) => {
           status: 400,
           message: isValidName.reason,
           error: { reason: isValidName.reason },
-        });
-      }
-
-      if (email !== confirmEmail) {
-        return res.status(400).send({
-          success: false,
-          status: 400,
-          message: "Email Confirmation Failed",
-          error: { reason: "Email Confirmation Failed" },
         });
       }
 

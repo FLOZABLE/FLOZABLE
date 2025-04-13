@@ -28,7 +28,7 @@ const { DateTime } = require("luxon");
       },
     },
   ],
-  groupedSubjects: [
+  groupedSubjects: 
     {
       day: {
         timeline: [{ date: "2024-1-1", data: [[start, duration]] }],
@@ -46,7 +46,7 @@ const { DateTime } = require("luxon");
         focus: [{ date: "2024-1-1", data: 0 }],
       },
     },
-  ],
+  ,
 }; */
 
 function timelineSorter(subjects, timezone) {
