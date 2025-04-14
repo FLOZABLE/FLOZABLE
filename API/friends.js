@@ -118,8 +118,6 @@ async function sendFriendRequest(userId, targetId) {
     const pushTokens = await getDevicePushTokens(connection, targetId);
     const pushMessages = [];
 
-    console.log("push tokens", pushTokens);
-
     pushTokens.map((token) => {
       console.log(Expo.isExpoPushToken(token));
       if (!Expo.isExpoPushToken(token)) return;
@@ -565,7 +563,7 @@ Router.get("/status", async (req, res) => {
 
           const activeSubject = await activeSubjectCache(friend.user_id);
 
-          friend.activeSubject = activeSubject;
+          friend.active_subject = activeSubject;
 
           const activeGroup = await activeGroupCache(friend.user_id);
 

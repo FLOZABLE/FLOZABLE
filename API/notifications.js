@@ -59,7 +59,7 @@ Router.get("/", async (req, res) => {
         (notification) => notification.from_user_id
       );
       const users = await usersCache(connection, userIds);
-      notifications.map((notification) => {
+      notifications.map((notification, i) => {
         const userInfo = users.find(
           (user) => user.user_id === notification.from_user_id
         );
@@ -67,29 +67,34 @@ Router.get("/", async (req, res) => {
         notification.userinfo = userInfo ? userInfo : {};
 
         if (notification.type === "friend_request") {
-          notification.message = NOTIFICATION_MESSAGES.friendRequest(
+          const message = NOTIFICATION_MESSAGES.friendRequest(
             notification.userinfo
           );
+          notifications[i] = { ...notification, ...message };
         } else if (notification.type === "friend_request_accepted") {
-          notification.message = NOTIFICATION_MESSAGES.friendRequestAccept(
+          const message = NOTIFICATION_MESSAGES.friendRequestAccept(
             notification.userinfo
           );
+          notifications[i] = { ...notification, ...message };
         } else if (notification.type === "plan_share") {
           notification.extra_info = JSON.parse(notification.extra_info);
-          notification.message = NOTIFICATION_MESSAGES.planShare(
+          const message = NOTIFICATION_MESSAGES.planShare(
             notification.userinfo,
             notification.extra_info.title
           );
+          notifications[i] = { ...notification, ...message };
         } else if (notification.type === "plan_shared") {
           notification.extra_info = JSON.parse(notification.extra_info);
-          notification.message = NOTIFICATION_MESSAGES.planShared(
+          const message = NOTIFICATION_MESSAGES.planShared(
             notification.userinfo,
             notification.extra_info.title
           );
+          notifications[i] = { ...notification, ...message };
         } else if (notification.type === "chat_request") {
-          notification.message = NOTIFICATION_MESSAGES.chatRequest(
+          const message = NOTIFICATION_MESSAGES.chatRequest(
             notification.userinfo
           );
+          notifications[i] = { ...notification, ...message };
         }
       });
       res.send({ success: true, status: 200, data: { notifications } });
