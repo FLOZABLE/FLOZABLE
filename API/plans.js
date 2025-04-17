@@ -29,7 +29,7 @@ const { mainIo } = require("../sockets/io");
 const { googleOauth2client, autoSignin } = require("./auth");
 const { NOTIFICATION_MESSAGES } = require("../Constant");
 
-Router.get("/", async (req, res) => {
+/* Router.get("/", async (req, res) => {
   autoSignin(req, res, async (userId) => {
     try {
       const connection = pool.promise();
@@ -85,101 +85,82 @@ Router.get("/", async (req, res) => {
       return res.status(response.status).send(response);
     }
   });
-});
+}); */
 
-Router.get("/google", async (req, res) => {
+Router.get("/", async (req, res) => {
   autoSignin(req, res, async (userId) => {
     const connection = pool.promise();
     try {
       const { date } = req.query;
 
       const isValidDate = validateISO(date, "date");
-      console.log(req.query);
       if (!isValidDate.isValid) {
         const response = RESPONSE_MESSAGES.validationError(isValidDate);
         return res.status(response.status).send(response);
       }
 
       const dateTime = DateTime.fromISO(date).startOf("day").startOf("month");
-
       const timeMin = dateTime.minus({ week: 1 }).toISO();
-
       const timeMax = dateTime.endOf("month").plus({ week: 1 }).toISO();
 
-      const plans = [];
       const access_token = await googleAccessTokenCache(connection, userId);
 
       if (!access_token) {
         return res.status(200).send({
           success: true,
           status: 200,
-          data: { plans: plans },
+          data: { plans: [] },
         });
       }
 
       const auth = googleOauth2client({ access_token });
-      const googleCalendar = google.calendar({
-        version: "v3",
-        auth: auth,
-      });
+      const googleCalendar = google.calendar({ version: "v3", auth });
+
       const calendars = await googleCalendar.calendarList.list();
-      if (!calendars?.data) {
-        const response = RESPONSE_MESSAGES.error();
-        return res.status(response.status).send(response);
+
+      const items = calendars?.data?.items || [];
+
+      if (!items.length) {
+        return res.status(200).send({
+          success: true,
+          status: 200,
+          data: { plans: [] },
+        });
       }
 
-      await Promise.all(
-        calendars.data.items.map(async (calendar) => {
+      const calendarResults = await Promise.allSettled(
+        items.map(async (calendar) => {
           const response = await googleCalendar.events.list({
             calendarId: calendar.id,
-            timeMax,
             timeMin,
+            timeMax,
+            maxResults: 250,
           });
-          const events = response.data.items;
 
-          events.map((event) => {
-            const { htmlLink, id, summary, start, end, description } = event;
-            const startDateTime = DateTime.fromISO(
-              start ? start.dateTime : "",
-              {
-                zone: start ? start.timeZone : "",
-              }
-            ).toMillis();
-            const endDateTime = DateTime.fromISO(end ? end.dateTime : "", {
-              zone: end ? end.timeZone : "",
-            }).toMillis();
-            const editable = calendar.accessRole !== "reader";
-            const newEvent = {
-              plan_id: id,
-              title: summary,
-              start: startDateTime,
-              end: endDateTime,
-              repeat: 0,
-              description,
-              subject: calendar.id,
-              priority: 5,
-              completed: 0,
-              htmlLink,
-              type: "google",
-              editable,
-              isEditable: editable,
-              backgroundColor: calendar.backgroundColor,
-              borderColor: calendar.backgroundColor,
-            };
-            plans.push(newEvent);
-            return null;
-          });
-          return null;
+          const events = (response.data.items || []).map((event) =>
+            formatEvent(calendar, event)
+          );
+
+          return {
+            background_color: calendar.backgroundColor,
+            foreground_color: calendar.foregroundColor,
+            summary: calendar.summary,
+            id: calendar.id,
+            events,
+          };
         })
       );
+
+      const plans = calendarResults
+        .filter((result) => result.status === "fulfilled")
+        .map((result) => result.value);
 
       return res.status(200).send({
         success: true,
         status: 200,
-        data: { plans: plans },
+        data: { plans },
       });
     } catch (err) {
-      //console.log(err);
       if (!err?.response?.data?.error) {
         const response = RESPONSE_MESSAGES.error();
         return res.status(response.status).send(response);
@@ -200,6 +181,22 @@ Router.get("/google", async (req, res) => {
     }
   });
 });
+
+function formatEvent(calendar, event) {
+  const isAllDay = !!event.start?.date;
+
+  return {
+    id: event.id,
+    title: event.summary || "(No Title)",
+    description: event.description || "",
+    html_link: event.htmlLink || "",
+    start: isAllDay ? event.start.date : event.start.dateTime,
+    end: isAllDay ? event.end.date : event.end.dateTime,
+    all_day: isAllDay,
+    background_color: calendar.backgroundColor,
+    text_color: calendar.foregroundColor,
+  };
+}
 
 Router.patch("/plan", async (req, res) => {
   autoSignin(req, res, async (userId) => {

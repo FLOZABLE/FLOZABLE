@@ -98,7 +98,7 @@ async function sendFriendRequest(userId, targetId) {
       notification_id: friendship_id,
       userinfo: userInfo,
       type: "friend_request",
-      message: NOTIFICATION_MESSAGES.friendRequest(userInfo),
+      ...NOTIFICATION_MESSAGES.friendRequest(userInfo),
     };
 
     const myNotification = {
@@ -125,7 +125,7 @@ async function sendFriendRequest(userId, targetId) {
         to: token,
         sound: "default",
         title: `New Friend Request from ${userInfo.name}`,
-        body: notification.message.title,
+        body: notification.title,
         data: {
           type: "friend_request",
           url: `/notifications/notifications`,
@@ -273,7 +273,7 @@ async function replyFriendRequest({
     }
 
     const notification_id = generateRandomId(10);
-    const notification = {
+    let notification = {
       from_user_id: userId,
       user_id: targetId,
       notification_id,
@@ -285,7 +285,8 @@ async function replyFriendRequest({
     await connection.query(`INSERT INTO notifications SET ?`, [notification]);
 
     notification.userinfo = userInfo;
-    notification.message = NOTIFICATION_MESSAGES.friendRequestAccept(userInfo);
+    notification = NOTIFICATION_MESSAGES.friendRequestAccept(userInfo);
+
     mainIo.to(targetId).emit("notification", notification);
 
     friends.push(targetId);
@@ -569,7 +570,7 @@ Router.get("/status", async (req, res) => {
 
           if (activeGroup) {
             friendGroups.push(activeGroup.id);
-            friend.activeGroup = { ...activeGroup };
+            friend.active_group = { ...activeGroup };
           }
         })
       );
@@ -604,14 +605,14 @@ Router.get("/status", async (req, res) => {
           group.tags = group.tags ? JSON.parse(group.tags) : [];
         });
         friends.map((friend) => {
-          if (friend.activeGroup) {
+          if (friend.active_group) {
             const activeGroup = friendGroupsInfo.find(
-              (group) => group.group_id === friend.activeGroup.id
+              (group) => group.group_id === friend.active_group.id
             );
             if (activeGroup) {
-              friend.activeGroup = { ...friend.activeGroup, ...activeGroup };
+              friend.active_group = { ...friend.active_group, ...activeGroup };
             } else {
-              friend.activeGroup = null;
+              friend.active_group = null;
             }
           }
         });

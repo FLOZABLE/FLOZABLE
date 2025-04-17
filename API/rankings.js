@@ -14,13 +14,13 @@ const { autoSignin } = require("./auth");
 
 Router.get("/", async (req, res) => {
   try {
-    const { mode, date, timezone } = req.query;
+    const { viewer, date, timezone } = req.query;
 
     const dateTime = DateTime.fromISO(date, { zone: timezone })
       .startOf("day")
-      .startOf(mode);
+      .startOf(viewer);
 
-    const now = DateTime.now().setZone(timezone).startOf("day").startOf(mode);
+    const now = DateTime.now().setZone(timezone).startOf("day").startOf(viewer);
 
     const rankings = [];
 
@@ -31,7 +31,7 @@ Router.get("/", async (req, res) => {
       const timezoneOffset = Math.floor(now.offset / 60).toString();
 
       const studyTotal = await redisClient.zrevrange(
-        `users:${timezoneOffset}:${mode}Total`,
+        `users:${timezoneOffset}:${viewer}Total`,
         0,
         -1,
         "WITHSCORES"
@@ -60,7 +60,7 @@ Router.get("/", async (req, res) => {
         WHERE r.date = ? AND r.mode = ?
         ORDER by rd.rank
       `,
-        [dateTime.toSeconds(), mode]
+        [dateTime.toSeconds(), viewer]
       );
 
       rankings.push(...rankingsData);
@@ -92,9 +92,9 @@ Router.get("/", async (req, res) => {
 
 Router.get("/user", async (req, res) => {
   try {
-    const { user_id: userId, mode, date, timezone } = req.query;
+    const { user_id: userId, viewer, date, timezone } = req.query;
 
-    const dates = getDates(date, timezone, mode, 7);
+    const dates = getDates(date, timezone, viewer, 7);
 
     const connection = pool.promise();
     const [searchedRankings] = await connection.query(
@@ -102,14 +102,17 @@ Router.get("/user", async (req, res) => {
       FROM ranking_details rd 
       JOIN rankings r ON rd.ranking_id = r.ranking_id 
       WHERE rd.user_id = ? AND r.mode = ? AND r.date IN (?)`,
-      [userId, mode, dates.map((date) => date.toSeconds())]
+      [userId, viewer, dates.map((date) => date.toSeconds())]
     );
 
-    const today = DateTime.now().setZone(timezone).startOf("day").startOf(mode);
+    const today = DateTime.now()
+      .setZone(timezone)
+      .startOf("day")
+      .startOf(viewer);
     const timezoneOffset = Math.floor(today.offset / 60).toString();
 
     const currentRanking = await redisClient.zrevrank(
-      `users:${timezoneOffset}:${mode}Total`,
+      `users:${timezoneOffset}:${viewer}Total`,
       userId
     );
 
@@ -162,14 +165,17 @@ Router.get("/friends", async (req, res) => {
         return res.status(response.status).send(response);
       }
 
-      const { mode, timezone, date } = req.query;
+      const { viewer, timezone, date } = req.query;
 
-      const now = DateTime.now().setZone(timezone).startOf("day").startOf(mode);
+      const now = DateTime.now()
+        .setZone(timezone)
+        .startOf("day")
+        .startOf(viewer);
 
       const dateTime = date
         ? DateTime.fromISO(date, { zone: timezone })
             .startOf("day")
-            .startOf(mode)
+            .startOf(viewer)
         : now;
 
       const friends = await usersCache(connection, userFriends);
@@ -181,7 +187,7 @@ Router.get("/friends", async (req, res) => {
         const timezoneOffset = Math.floor(now.offset / 60).toString();
 
         const studyTotal = await redisClient.zmscore(
-          `users:${timezoneOffset}:${mode}Total`,
+          `users:${timezoneOffset}:${viewer}Total`,
           friends.map((friend) => friend.user_id)
         );
 
@@ -204,7 +210,11 @@ Router.get("/friends", async (req, res) => {
           WHERE r.date = ? AND r.mode = ? AND rd.user_id IN (?)
           ORDER by rd.rank
         `,
-          [dateTime.toSeconds(), mode, friends.map((friend) => friend.user_id)]
+          [
+            dateTime.toSeconds(),
+            viewer,
+            friends.map((friend) => friend.user_id),
+          ]
         );
 
         friends.map((friend) => {
