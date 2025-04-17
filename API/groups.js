@@ -57,6 +57,7 @@ Router.get("/", async (req, res) => {
       members: group.members ? group.members.split(",") : [],
       likes: group.likes ? group.likes.split(",") : [],
       tags: group.tags ? JSON.parse(group.tags) : [],
+      visibility: !!group.visibility,
     }));
 
     autoSignin(
