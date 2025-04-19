@@ -29,64 +29,6 @@ const { mainIo } = require("../sockets/io");
 const { googleOauth2client, autoSignin } = require("./auth");
 const { NOTIFICATION_MESSAGES } = require("../Constant");
 
-/* Router.get("/", async (req, res) => {
-  autoSignin(req, res, async (userId) => {
-    try {
-      const connection = pool.promise();
-      const [plans] = await connection.query(
-        `SELECT 
-          p.plan_id, 
-          p.title, 
-          p.start * 1000 AS start, 
-          p.end  * 1000 AS end, 
-          p.\`repeat\`, 
-          p.description, 
-          p.notification, 
-          p.subject_id, 
-          p.priority, 
-          p.completed,
-          s.color as subject_color
-        FROM 
-          plans p
-        LEFT JOIN 
-          plan_share ps ON p.plan_id = ps.plan_id AND ps.status = "accepted"
-        LEFT JOIN
-          subjects s ON s.subject_id = p.subject_id
-        WHERE 
-          p.user_id = ? OR ps.user_id = ?
-        GROUP BY 
-          p.plan_id;`,
-        [userId, userId]
-      );
-      plans.map((plan) => {
-        plan.type = "local";
-        plan.editable = true;
-        plan.isEditable = true;
-        plan.backgroundColor = plan.subject_color
-          ? plan.subject_color
-          : "#000000";
-        plan.borderColor = plan.subject_color ? plan.subject_color : "#000000";
-        plan.backgroundColor = plan.subject_color
-          ? plan.subject_color
-          : "#000000";
-        if (plan.completed) {
-          plan.className = "completed";
-        }
-      });
-
-      return res.status(200).send({
-        success: true,
-        status: 200,
-        data: { plans: plans },
-      });
-    } catch (err) {
-      console.log(err);
-      const response = RESPONSE_MESSAGES.error();
-      return res.status(response.status).send(response);
-    }
-  });
-}); */
-
 Router.get("/", async (req, res) => {
   autoSignin(req, res, async (userId) => {
     const connection = pool.promise();
@@ -184,6 +126,7 @@ Router.get("/", async (req, res) => {
 
 function formatEvent(calendar, event) {
   const isAllDay = !!event.start?.date;
+  const editable = calendar.accessRole === 'owner' || calendar.accessRole === 'writer';
 
   return {
     id: event.id,
@@ -194,196 +137,63 @@ function formatEvent(calendar, event) {
     end: isAllDay ? event.end.date : event.end.dateTime,
     all_day: isAllDay,
     background_color: calendar.backgroundColor,
-    text_color: calendar.foregroundColor,
+    calendar_id: calendar.id,
+    editable,
   };
 }
 
 Router.patch("/plan", async (req, res) => {
   autoSignin(req, res, async (userId) => {
     try {
-      const minPlanTime = DateTime.now().minus({ month: 1 }).toSeconds();
-      const maxPlanTime = DateTime.now().plus({ year: 1 }).toSeconds();
-      const {
-        title,
-        plan_id,
-        start,
-        end,
-        repeat,
-        description,
-        subject_id,
-        notification,
-        priority,
-        completed,
-        timezone,
-      } = req.body;
+      const { plan, timezone } = req.body;
 
-      const isValidTitle = validateString(title, "Title", 100);
-      if (!isValidTitle.isValid) {
-        return res.status(400).send({
-          success: false,
-          status: 400,
-          message: isValidTitle.reason,
-          error: { reason: isValidTitle.reason },
-        });
+      const access_token = await googleAccessTokenCache(null, userId);
+
+      if (!access_token) {
+        const response = RESPONSE_MESSAGES.notAuthed();
+        return res.status(response.status).send(response);
       }
 
-      const isValidPlanId = validateStrictString(plan_id, "Id", 10, 10);
-      if (!isValidPlanId.isValid) {
-        return res.status(400).send({
-          success: false,
-          status: 400,
-          message: isValidPlanId.reason,
-          error: { reason: isValidPlanId.reason },
-        });
-      }
+      const auth = googleOauth2client({ access_token });
+      const googleCalendar = google.calendar({ version: "v3", auth });
 
-      const isValidStart = validateInteger(
-        start,
-        "Start time",
-        maxPlanTime,
-        minPlanTime
-      );
-      if (!isValidStart.isValid) {
-        return res.status(400).send({
-          success: false,
-          status: 400,
-          message: isValidStart.reason,
-          error: { reason: isValidStart.reason },
-        });
-      }
-
-      const isValidEnd = validateInteger(end, "End time", maxPlanTime, start);
-      if (!isValidEnd.isValid) {
-        return res.status(400).send({
-          success: false,
-          status: 400,
-          message: isValidEnd.reason,
-          error: { reason: isValidEnd.reason },
-        });
-      }
-
-      const isValidRepeat = validateInteger(repeat, "Repeat", 3, 0);
-      if (!isValidRepeat.isValid) {
-        return res.status(400).send({
-          success: false,
-          status: 400,
-          message: isValidRepeat.reason,
-          error: { reason: isValidRepeat.reason },
-        });
-      }
-
-      const isValidDescription = validateLength(
-        description,
-        "Description",
-        3000
-      );
-      if (!isValidDescription.isValid) {
-        return res.status(400).send({
-          success: false,
-          status: 400,
-          message: isValidDescription.reason,
-          error: { reason: isValidDescription.reason },
-        });
-      }
-
-      const isValidSubjectId = validateStrictString(
-        subject_id,
-        "Subject",
-        10,
-        10
-      );
-      if (!isValidSubjectId.isValid) {
-        return res.status(400).send({
-          success: false,
-          status: 400,
-          message: isValidSubjectId.reason,
-          error: { reason: isValidSubjectId.reason },
-        });
-      }
-
-      const isValidNotification = validateInteger(
-        notification,
-        "Notification",
-        -1,
-        1800
-      );
-      if (!isValidNotification.isValid) {
-        return res.status(400).send({
-          success: false,
-          status: 400,
-          message: isValidNotification.reason,
-          error: { reason: isValidNotification.reason },
-        });
-      }
-
-      const isValidPriority = validateStrictString(priority, "Subject", 10, 10);
-      if (!isValidPriority.isValid) {
-        return res.status(400).send({
-          success: false,
-          status: 400,
-          message: isValidPriority.reason,
-          error: { reason: isValidPriority.reason },
-        });
-      }
-
-      const isValidCompleted = validateInteger(completed, "Completed", 0, 1);
-      if (!isValidCompleted.isValid) {
-        return res.status(400).send({
-          success: false,
-          status: 400,
-          message: isValidCompleted.reason,
-          error: { reason: isValidCompleted.reason },
-        });
-      }
-
-      const connection = pool.promise();
-
-      const newPlan = {
-        title,
-        start,
-        end,
-        repeat,
-        description,
-        subject_id,
-        notification,
-        priority,
-        completed,
-        user_id: userId,
+      const startDateTime = DateTime.fromISO(plan.start, { zone: timezone });
+      const start = {
+        dateTime: startDateTime.toISODate(),
+        timeZone: timezone,
       };
 
-      if (plan_id !== "0000000000") {
-        await connection.query(
-          `UPDATE plans set ? WHERE plan_id = ? AND user_id = ?`,
-          [newPlan, plan_id, userId]
-        );
-        newPlan.plan_id = plan_id;
-      } else {
-        newPlan.plan_id = generateRandomId(10);
-        await connection.query(`INSERT INTO plans SET ?`, newPlan);
-      }
+      const endDateTime = DateTime.fromISO(plan.end, { zone: timezone });
+      const end = {
+        dateTime: endDateTime.toISODate(),
+        timeZone: timezone,
+      };
 
-      const notificationId = userId + "-" + plan_id;
-      schedule.cancelJob(notificationId);
+      console.log(plan);
 
-      const notificationTime = start - notification; //DateTime.now().toSeconds() + 5
+      googleCalendar.events.update(
+        {
+          calendarId: plan.calendar_id,
+          eventId: plan.id,
+          requestBody: {
+            ...plan,
+            start: { dateTime: plan.start },
+            end: { dateTime: plan.end },
+          },
+        },
+        (err, res) => {
+          if (err) {
+            console.error("Error updating event:", err);
+          } else {
+            console.log("Event updated:", res.data);
+          }
+        }
+      );
 
-      if (notification !== -1) {
-        const payload = NOTIFICATION_PAYLOADS["plan"]({ ...newPlan, timezone });
-        planPushNotification(
-          connection,
-          userId,
-          notificationId,
-          notificationTime,
-          payload
-        );
-      }
-      //planNotification(insertInfo, userInfo[0], startTime)
-      const is_new = plan_id === "0000000000";
       res.status(200).send({
         success: true,
         status: 200,
         message: "Plan Saved!",
-        data: { plan: newPlan, is_new },
       });
     } catch (err) {
       console.log(err);
