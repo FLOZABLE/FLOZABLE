@@ -558,6 +558,10 @@ async function googleAccessTokenCache(connection, userId) {
       return googleAccessToken;
     }
 
+    if (!connection) {
+      connection = pool.promise();
+    }
+
     const [[userInfo]] = await connection.query(
       `SELECT google_refresh_token FROM users WHERE user_id = ?`,
       [userId]
