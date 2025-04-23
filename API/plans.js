@@ -31,7 +31,6 @@ const { NOTIFICATION_MESSAGES } = require("../Constant");
 
 Router.get("/", async (req, res) => {
   autoSignin(req, res, async (userId) => {
-    const connection = pool.promise();
     try {
       const { date } = req.query;
 
@@ -44,6 +43,8 @@ Router.get("/", async (req, res) => {
       const dateTime = DateTime.fromISO(date).startOf("day").startOf("month");
       const timeMin = dateTime.minus({ week: 1 }).toISO();
       const timeMax = dateTime.endOf("month").plus({ week: 1 }).toISO();
+
+      const connection = pool.promise();
 
       const access_token = await googleAccessTokenCache(connection, userId);
 
@@ -126,7 +127,8 @@ Router.get("/", async (req, res) => {
 
 function formatEvent(calendar, event) {
   const isAllDay = !!event.start?.date;
-  const editable = calendar.accessRole === 'owner' || calendar.accessRole === 'writer';
+  const editable =
+    calendar.accessRole === "owner" || calendar.accessRole === "writer";
 
   return {
     id: event.id,
@@ -145,7 +147,7 @@ function formatEvent(calendar, event) {
 Router.patch("/plan", async (req, res) => {
   autoSignin(req, res, async (userId) => {
     try {
-      const { plan, timezone } = req.body;
+      const { plan } = req.body;
 
       const access_token = await googleAccessTokenCache(null, userId);
 
@@ -156,20 +158,6 @@ Router.patch("/plan", async (req, res) => {
 
       const auth = googleOauth2client({ access_token });
       const googleCalendar = google.calendar({ version: "v3", auth });
-
-      const startDateTime = DateTime.fromISO(plan.start, { zone: timezone });
-      const start = {
-        dateTime: startDateTime.toISODate(),
-        timeZone: timezone,
-      };
-
-      const endDateTime = DateTime.fromISO(plan.end, { zone: timezone });
-      const end = {
-        dateTime: endDateTime.toISODate(),
-        timeZone: timezone,
-      };
-
-      console.log(plan);
 
       googleCalendar.events.update(
         {
@@ -203,15 +191,63 @@ Router.patch("/plan", async (req, res) => {
   });
 });
 
-Router.patch("/plan/google", async (req, res) => {
+Router.put("/plan", async (req, res) => {
   autoSignin(req, res, async (userId) => {
-    const connection = pool.promise();
-
     try {
-      const { subject, plan_id, title, description, start, end, timezone } =
-        req.body;
+      const { plan } = req.body;
 
-      const access_token = await googleAccessTokenCache(connection, userId);
+      const access_token = await googleAccessTokenCache(null, userId);
+
+      if (!access_token) {
+        const response = RESPONSE_MESSAGES.notAuthed();
+        return res.status(response.status).send(response);
+      }
+
+      const auth = googleOauth2client({ access_token });
+      const googleCalendar = google.calendar({ version: "v3", auth });
+
+      console.log("put", plan);
+
+      const response = await googleCalendar.events.insert({
+        calendarId: "primary",
+        requestBody: {
+          ...plan,
+          summary: plan.title,
+          start: { dateTime: plan.start },
+          end: { dateTime: plan.end },
+        },
+      });
+
+      const calendarResponse = await googleCalendar.calendarList.get({
+        calendarId: "primary",
+        auth,
+      });
+
+      const formattedPlan = formatEvent(calendarResponse.data, response.data);
+
+      console.log(formattedPlan);
+
+      res.status(200).send({
+        success: true,
+        status: 200,
+        message: "Plan Saved!",
+        data: {
+          plan: formattedPlan,
+        },
+      });
+    } catch (err) {
+      console.log(err);
+      const response = RESPONSE_MESSAGES.error();
+      return res.status(response.status).send(response);
+    }
+  });
+});
+
+Router.delete("/plan", async (req, res) => {
+  autoSignin(req, res, async (userId) => {
+    try {
+      const { calendar_id, plan_id } = req.body;
+      const access_token = await googleAccessTokenCache(null, userId);
 
       if (!access_token) {
         const response = RESPONSE_MESSAGES.notAuthed();
@@ -224,137 +260,16 @@ Router.patch("/plan/google", async (req, res) => {
         auth: auth,
       });
 
-      const updateResults = await googleCalendar.events.update({
-        auth: auth,
-        calendarId: subject,
+      await googleCalendar.events.delete({
+        calendarId: calendar_id,
         eventId: plan_id,
-        resource: {
-          summary: title,
-          description,
-          start: {
-            dateTime: start,
-            timeZone: timezone,
-          },
-          end: { dateTime: end, timeZone: timezone },
-        },
+        auth: auth,
       });
-
-      if (updateResults.status === 200) {
-        return res.status(200).send({
-          success: true,
-          status: 200,
-          message: "Plan updated!",
-        });
-      }
-
-      const response = RESPONSE_MESSAGES.error();
-      return res.status(response.status).send(response);
-    } catch (err) {
-      //console.log(err);
-      if (!err?.response?.data?.error) {
-        const response = RESPONSE_MESSAGES.error();
-        return res.status(response.status).send(response);
-      }
-
-      if (err.response.data.error === "invalid_token") {
-        clearGoogleAccessToken(connection, userId);
-      }
-
-      return res.status(400).send({
-        success: false,
-        status: err.response.data.error.code,
-        message: err.response.data.error.message,
-        error: {
-          code: err.response.data.error.code,
-          reason: err.response.data.error.message,
-        },
-      });
-    }
-  });
-});
-
-Router.patch("/plan/status", async (req, res) => {
-  autoSignin(req, res, async (userId) => {
-    try {
-      const { plan_id, completed } = req.body;
-
-      const isValidPlanId = validateStrictString(plan_id, "plan id", 10, 8);
-
-      if (!isValidPlanId.isValid) {
-        return res.status(400).send({
-          success: false,
-          status: 400,
-          message: isValidPlanId.reason,
-          error: { reason: isValidPlanId.reason },
-        });
-      }
-
-      const isValidCompleted = validateInteger(completed, "completed", 1, 0);
-
-      if (!isValidCompleted) {
-        return res.status(400).send({
-          success: false,
-          status: 400,
-          message: isValidCompleted.reason,
-          error: { reason: isValidCompleted.reason },
-        });
-      }
-
-      const connection = pool.promise();
-      await connection.query(
-        `UPDATE plans SET completed = ? WHERE plan_id = ? AND user_id = ?`,
-        [completed, plan_id, userId]
-      );
-      res
-        .status(200)
-        .send({ success: true, status: 200, message: "Plan Updated" });
-    } catch (err) {
-      console.log(err);
-      const response = RESPONSE_MESSAGES.error();
-      return res.status(response.status).send(response);
-    }
-  });
-});
-
-Router.delete("/plan", async (req, res) => {
-  autoSignin(req, res, async (userId) => {
-    try {
-      const connection = pool.promise();
-
-      const { plan_id: planId } = req.body;
-
-      const isValidPlanId = validateStrictString(planId, "plan id", 10, 8);
-
-      if (!isValidPlanId.isValid) {
-        return res.status(400).send({
-          success: false,
-          status: 400,
-          message: isValidPlanId.reason,
-          error: { reason: isValidPlanId.reason },
-        });
-      }
-
-      const [[planInfo]] = await connection.query(
-        `SELECT title FROM plans WHERE plan_id = ? AND user_id = ?`,
-        [planId, userId]
-      );
-
-      if (!planInfo) {
-        const response = RESPONSE_MESSAGES.noPlan();
-        return res.status(response.status).send(response);
-      }
-
-      await connection.query(
-        `
-        DELETE FROM plan_share WHERE plan_id = ?;
-        DELETE FROM plans WHERE user_id = ? AND plan_id = ?`,
-        [planId, planId, userId, planId]
-      );
 
       res.status(200).send({
         success: true,
         status: 200,
-        message: `Deleted plan ${planInfo.title}`,
+        message: `Deleted the plan`,
       });
     } catch (err) {
       console.log(err);
