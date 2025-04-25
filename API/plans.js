@@ -148,6 +148,7 @@ Router.patch("/plan", async (req, res) => {
   autoSignin(req, res, async (userId) => {
     try {
       const { plan } = req.body;
+      console.log(plan);
 
       const access_token = await googleAccessTokenCache(null, userId);
 
@@ -159,29 +160,32 @@ Router.patch("/plan", async (req, res) => {
       const auth = googleOauth2client({ access_token });
       const googleCalendar = google.calendar({ version: "v3", auth });
 
-      googleCalendar.events.update(
-        {
-          calendarId: plan.calendar_id,
-          eventId: plan.id,
-          requestBody: {
-            ...plan,
-            start: { dateTime: plan.start },
-            end: { dateTime: plan.end },
-          },
+      const patchPlanResponse = await googleCalendar.events.update({
+        calendarId: plan.calendar_id,
+        eventId: plan.id,
+        requestBody: {
+          ...plan,
+          summary: plan.title,
+          start: { dateTime: plan.start },
+          end: { dateTime: plan.end },
         },
-        (err, res) => {
-          if (err) {
-            console.error("Error updating event:", err);
-          } else {
-            console.log("Event updated:", res.data);
-          }
-        }
+      });
+
+      const calendarResponse = await googleCalendar.calendarList.get({
+        calendarId: "primary",
+        auth,
+      });
+
+      const formattedPlan = formatEvent(
+        calendarResponse.data,
+        patchPlanResponse.data
       );
 
       res.status(200).send({
         success: true,
         status: 200,
         message: "Plan Saved!",
+        data: { plan: formattedPlan },
       });
     } catch (err) {
       console.log(err);
