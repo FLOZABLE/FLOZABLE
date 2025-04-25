@@ -433,7 +433,7 @@ async function emitStopStudying({
       userId,
       subject,
       duration,
-      stopped_subject: activeSubject,
+      stoppedSubject: activeSubject,
     });
   } catch (err) {
     console.log(err);
