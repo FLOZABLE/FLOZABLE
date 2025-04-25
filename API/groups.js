@@ -893,7 +893,7 @@ Router.get("/group/members", async (req, res) => {
           );
           study_time = study_time === null ? 0 : parseInt(study_time);
           const activeSubject = await activeSubjectCache(member.user_id);
-          return { ...member, study_time, activeSubject };
+          return { ...member, study_time, active_subject: activeSubject };
         })
       );
 
