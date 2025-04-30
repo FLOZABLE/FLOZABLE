@@ -161,6 +161,7 @@ async function activeSubjectCache(userId) {
       `user:${userId}:activeSubject`
     );
     if (activeSubject.subject_id && activeSubject.time) {
+      activeSubject.time = parseInt(activeSubject.time);
       return activeSubject;
     }
     return null;

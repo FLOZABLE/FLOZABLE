@@ -97,13 +97,16 @@ Router.get("/user", async (req, res) => {
     const dates = getDates(date, timezone, viewer, 7);
 
     const connection = pool.promise();
-    const [searchedRankings] = await connection.query(
-      `SELECT rd.rank, r.date, r.length
-      FROM ranking_details rd 
-      JOIN rankings r ON rd.ranking_id = r.ranking_id 
-      WHERE rd.user_id = ? AND r.mode = ? AND r.date IN (?)`,
-      [userId, viewer, dates.map((date) => date.toSeconds())]
-    );
+    const [searchedRankings, [[usersLength]]] = await Promise.all([
+      connection.query(
+        `SELECT rd.rank, r.date, r.length
+         FROM ranking_details rd 
+         JOIN rankings r ON rd.ranking_id = r.ranking_id 
+         WHERE rd.user_id = ? AND r.mode = ? AND r.date IN (?)`,
+        [userId, viewer, dates.map((date) => date.toSeconds())]
+      ),
+      connection.query(`SELECT COUNT(*) FROM users`),
+    ]);
 
     const today = DateTime.now()
       .setZone(timezone)
@@ -116,32 +119,30 @@ Router.get("/user", async (req, res) => {
       userId
     );
 
+    const lastIndex = Object.values(usersLength)[0];
+
     const rankings = dates.map((date) => {
       if (
         date.toSeconds() === today.toSeconds() &&
         typeof currentRanking === "number"
       ) {
-        return { date: date.toSeconds(), ranking: currentRanking + 1 };
+        return { date: date.toISO(), ranking: currentRanking + 1 };
       }
 
       const rankingInfo = searchedRankings.find(
         (ranking) => ranking.date === date.toSeconds()
       );
       if (rankingInfo) {
-        return { date: date.toSeconds(), ranking: rankingInfo.rank };
+        return { date: date.toISO(), ranking: rankingInfo.rank };
       }
 
-      return { date: date.toSeconds(), ranking: -1 };
+      return { date: date.toISO(), ranking: lastIndex };
     });
-
-    const [[usersLength]] = await connection.query(
-      `SELECT COUNT(*) FROM users`
-    );
 
     res.status(200).send({
       success: true,
       status: 200,
-      data: { rankings, max_length: Object.values(usersLength)[0] },
+      data: { rankings },
     });
   } catch (err) {
     console.log(err);
