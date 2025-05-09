@@ -26,7 +26,7 @@ Router.get("/rooms", async (req, res) => {
         `
         SELECT
           c.chatroom_id,
-          c.type,
+          'room' AS type,
           c.name,
           GROUP_CONCAT(cm.user_id) AS members
         FROM chatrooms c
@@ -35,12 +35,12 @@ Router.get("/rooms", async (req, res) => {
           SELECT chatroom_id FROM chatroom_members WHERE user_id = ?
         )
         GROUP BY c.chatroom_id
-  
+      
         UNION
-  
+      
         SELECT
           g.group_id AS chatroom_id,
-          1 AS type,
+          'group' AS type,
           g.name,
           GROUP_CONCAT(gm.user_id) AS members
         FROM groups g
@@ -49,7 +49,7 @@ Router.get("/rooms", async (req, res) => {
           SELECT group_id FROM group_members WHERE user_id = ?
         )
         GROUP BY g.group_id;
-      `,
+        `,
         [userId, userId]
       );
 
@@ -66,8 +66,8 @@ Router.get("/rooms", async (req, res) => {
             0,
             1
           );
-          chatroom.lastMsg = lastMsg;
-          chatroom.lastRead =
+          chatroom.last_message = lastMsg;
+          chatroom.last_read =
             chatroomsMessages[chatroom.chatroom_id]?.lastReadMessage || null;
           chatroom.unreads =
             chatroomsMessages[chatroom.chatroom_id]?.unreads || 0;
@@ -75,10 +75,10 @@ Router.get("/rooms", async (req, res) => {
       );
 
       chatrooms.sort((a, b) => {
-        if (!a.lastMsg && !b.lastMsg) return 0; // Both are null
-        if (!a.lastMsg) return 1; // a is null, should go to the end
-        if (!b.lastMsg) return -1; // b is null, should go to the end
-        return b.lastMsg.sent_at - a.lastMsg.sent_at; // Both have a lastMsg, compare normally
+        if (!a.last_message && !b.last_message) return 0; // Both are null
+        if (!a.last_message) return 1; // a is null, should go to the end
+        if (!b.last_message) return -1; // b is null, should go to the end
+        return b.last_message.sent_at - a.last_message.sent_at; // Both have a last_message, compare normally
       });
 
       res.status(200).send({ success: true, status: 200, data: { chatrooms } });
