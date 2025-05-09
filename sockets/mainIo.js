@@ -96,6 +96,10 @@ mainIo.on("connection", async (socket) => {
           .to([...friends, ...groups, userId])
           .emit("study:start", { userId, subject: { ...subject, time: now } });
 
+        mainIo.to(userId).emit("mystudy:start", {
+          subject: { ...subject, time: now },
+        });
+
         redisClient.rpush(`user:${userId}:subject:${subjectId}`, `[${now},0]`);
         cacheActiveSubject(userId, subject, now);
         extensionIo.to(userId).emit("study:start");
@@ -213,7 +217,7 @@ mainIo.on("connection", async (socket) => {
 
         mainIo
           .to(`chatroom:${roomId}`)
-          .emit("chat:message", { message: newMsg });
+          .emit("chat:message", { message: newMsg, chatroomId: roomId });
 
         /*
         add unread messages to chatroom members who is not me.
@@ -431,6 +435,11 @@ async function emitStopStudying({
 
     mainIo.to(receivers).emit("study:stop", {
       userId,
+      subject,
+      duration,
+      stoppedSubject: activeSubject,
+    });
+    mainIo.to(userId).emit("mystudy:stop", {
       subject,
       duration,
       stoppedSubject: activeSubject,

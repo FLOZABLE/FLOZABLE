@@ -43,7 +43,7 @@ Router.get("/", async (req, res) => {
           rankings.push({
             user_id: studyTotal[i],
             study_time,
-            rank: Math.floor(i / 2) + 1,
+            ranking: Math.floor(i / 2) + 1,
           });
         }
       }
@@ -51,7 +51,7 @@ Router.get("/", async (req, res) => {
       const [rankingsData] = await connection.query(
         `
         SELECT
-        rd.rank,
+        rd.rank as ranking,
         rd.user_id,
         rd.study_time
         FROM ranking_details rd
@@ -99,7 +99,7 @@ Router.get("/user", async (req, res) => {
     const connection = pool.promise();
     const [searchedRankings, [[usersLength]]] = await Promise.all([
       connection.query(
-        `SELECT rd.rank, r.date, r.length
+        `SELECT rd.rank as ranking, r.date, r.length
          FROM ranking_details rd 
          JOIN rankings r ON rd.ranking_id = r.ranking_id 
          WHERE rd.user_id = ? AND r.mode = ? AND r.date IN (?)`,
@@ -133,7 +133,7 @@ Router.get("/user", async (req, res) => {
         (ranking) => ranking.date === date.toSeconds()
       );
       if (rankingInfo) {
-        return { date: date.toISO(), ranking: rankingInfo.rank };
+        return { date: date.toISO(), ranking: rankingInfo.ranking };
       }
 
       return { date: date.toISO(), ranking: lastIndex };
