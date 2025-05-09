@@ -110,6 +110,12 @@ Router.put("/setting", async (req, res) => {
         }
       }
       extensionIo.to(userId).emit("setting-updated", setting);
+
+      setting.block = !!setting.block;
+      setting.study_block = !!setting.study_block;
+      setting.timer = !!setting.timer;
+      setting.study_timer = !!setting.study_timer;
+
       res.status(200).send({
         success: true,
         status: 200,
@@ -168,6 +174,33 @@ Router.patch("/setting", async (req, res) => {
         message: "Setting updated!",
       });
       extensionIo.to(userId).emit("setting-updated", { ...setting, website });
+    } catch (err) {
+      console.log(err);
+      const response = RESPONSE_MESSAGES.error();
+      return res.status(response.status).send(response);
+    }
+  });
+});
+
+Router.delete("/setting", async (req, res) => {
+  autoSignin(req, res, async (userId) => {
+    try {
+      const { website } = req.body;
+
+      const connection = await pool.promise();
+
+      await connection.query(
+        `
+        DELETE FROM website_settings WHERE user_id = ? AND website = ?
+      `,
+        [userId, website]
+      );
+      res.status(200).send({
+        success: true,
+        status: 200,
+        message: "Setting deleted!",
+      });
+      extensionIo.to(userId).emit("setting-deleted", { website });
     } catch (err) {
       console.log(err);
       const response = RESPONSE_MESSAGES.error();
