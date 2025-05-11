@@ -188,6 +188,8 @@ mainIo.on("connection", async (socket) => {
       try {
         if (!roomId || !message) return;
 
+        if (message.length > 500) return;
+
         const connection = pool.promise();
         const members = await chatroomMembersCache(connection, roomId);
 
@@ -202,17 +204,21 @@ mainIo.on("connection", async (socket) => {
           message_id,
         };
 
-        redisClient.rpush(
-          `chatroom:${roomId}:messages`,
-          JSON.stringify(newMsg)
-        );
-
-        newMsg.chatroom_id = roomId;
         connection.query(
           `
           INSERT INTO chatroom_messages SET ?
           `,
-          newMsg
+          { ...newMsg, chatroom_id: roomId }
+        );
+
+        redisClient.rpush(
+          `chatroom:${roomId}:messages`,
+          JSON.stringify(newMsg),
+          (err) => {
+            if (err) {
+              console.error("Redis message rpush failed", err);
+            }
+          }
         );
 
         mainIo
