@@ -142,6 +142,7 @@ const NOTIFICATION_PAYLOADS = {
 
 async function sendExpoPushNotifications(messages) {
   try {
+    if (!messages.length) return;
     // The Expo push notification service accepts batches of notifications so
     // that you don't need to send 1000 requests to send 1000 notifications. We
     // recommend you batch your notifications to reduce the number of requests
@@ -175,5 +176,5 @@ module.exports = {
   NOTIFICATION_PAYLOADS,
   planPushNotification,
   updateVapidKeys,
-  sendExpoPushNotifications
+  sendExpoPushNotifications,
 };

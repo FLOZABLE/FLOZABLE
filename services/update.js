@@ -61,6 +61,7 @@ readline.question(
   createFriends:MIN:MAX
   updateBotSubjectColor
   migrateFriendsTable
+  updateMessages
   `,
   async (command) => {
     if (command.startsWith("maria:")) {
@@ -88,6 +89,8 @@ readline.question(
       await updateBotSubjectsColor();
     } else if (command === "migrateFriendsTable") {
       await migrateFriendsTable();
+    } else if (command === "updateMessages") {
+      await upodateMessagesV1();
     }
     readline.close();
   }
@@ -238,6 +241,26 @@ async function updateMariaV1() {
       ALTER TABLE users ADD COLUMN IF NOT EXISTS level SMALLINT UNSIGNED DEFAULT 1;
       ALTER TABLE users ADD COLUMN IF NOT EXISTS current_streak SMALLINT UNSIGNED DEFAULT 0;
     `);
+    console.log("udated mariadb v1");
+  } catch (err) {
+    console.log(err);
+  }
+}
+
+async function upodateMessagesV1() {
+  try {
+    const connection = pool.promise();
+    await connection.query(`
+      DROP TABLE chatroom_messages_old;
+      RENAME TABLE chatroom_messages TO chatroom_messages_old;
+    `);
+    await createChatroomMessagesTable();
+    await connection.query(`
+      INSERT INTO chatroom_messages (message_id, chatroom_id, user_id, message, sent_at)
+      SELECT message_id, chatroom_id, user_id, message, sent_at
+      FROM chatroom_messages_old;
+    `);
+
     console.log("udated mariadb v1");
   } catch (err) {
     console.log(err);
