@@ -251,7 +251,7 @@ async function upodateMessagesV1() {
   try {
     const connection = pool.promise();
     await connection.query(`
-      DROP TABLE chatroom_messages_old;
+      DROP TABLE IF EXISTS chatroom_messages_old;
       RENAME TABLE chatroom_messages TO chatroom_messages_old;
     `);
     await createChatroomMessagesTable();
@@ -259,6 +259,7 @@ async function upodateMessagesV1() {
       INSERT INTO chatroom_messages (message_id, chatroom_id, user_id, message, sent_at)
       SELECT message_id, chatroom_id, user_id, message, sent_at
       FROM chatroom_messages_old;
+      DROP TABLE chatroom_messages_old;
     `);
 
     console.log("udated mariadb v1");
