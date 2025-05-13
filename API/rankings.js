@@ -97,7 +97,7 @@ Router.get("/user", async (req, res) => {
     const dates = getDates(date, timezone, viewer, 7);
 
     const connection = pool.promise();
-    const [searchedRankings, [[usersLength]]] = await Promise.all([
+    const [[searchedRankings], [[usersLength]]] = await Promise.all([
       connection.query(
         `SELECT rd.rank as ranking, r.date, r.length
          FROM ranking_details rd 
