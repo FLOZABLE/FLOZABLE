@@ -38,7 +38,7 @@ const BOT_OPTIONS = {
   MAX_START_DELAY: 60,
 }; */
 
-const MAX_STUDY_TIME = 60 * 60 * 20; // 20hr = max study time. ignore more than 6 hr
+const MAX_STUDY_TIME = 60 * 60 * 5; // 5hr = max study time. ignore more than 5 hr
 
 const PASSWORD_LINK_EXP = 60 * 60 * 24; //reset password link only available for 24 hr
 
