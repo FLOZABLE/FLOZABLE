@@ -8,7 +8,15 @@ const RESPONSE_MESSAGES = {
     },
     action: "signin",
   }),
-
+  invalidCredentials: (message = "Incorrect email or password") => ({
+    success: false,
+    message,
+    status: 401,
+    error: {
+      reason: "Authentication Failed",
+    },
+    action: "signin",
+  }),
   noSession: (message = "Sign In") => ({
     success: false,
     message,
@@ -99,12 +107,12 @@ const RESPONSE_MESSAGES = {
     },
   }),
 
-  wrongPassword: (message = "Wrong Password") => ({
+  wrongPassword: (message = "Please check your password and try again.") => ({
     success: false,
     message,
     status: 403,
     error: {
-      reason: "Wrong Password",
+      reason: "Incorrect password",
     },
   }),
 

@@ -49,7 +49,7 @@ mainIo.on("connection", async (socket) => {
       cacheActiveSubject(userId, { subject_id: "0", name: "break" }, now);
       mainIo.to([...friends, ...groups, userId]).emit("study:start", {
         userId,
-        subject: { subject_id: "0", time: now },
+        subject: { subject_id: "0", start_time: now },
       });
     }
 
@@ -92,12 +92,13 @@ mainIo.on("connection", async (socket) => {
 
         if (!subject) return;
 
-        mainIo
-          .to([...friends, ...groups, userId])
-          .emit("study:start", { userId, subject: { ...subject, time: now } });
+        mainIo.to([...friends, ...groups, userId]).emit("study:start", {
+          userId,
+          subject: { ...subject, start_time: now },
+        });
 
         mainIo.to(userId).emit("mystudy:start", {
-          subject: { ...subject, time: now },
+          subject: { ...subject, start_time: now },
         });
 
         redisClient.rpush(`user:${userId}:subject:${subjectId}`, `[${now},0]`);
@@ -367,7 +368,7 @@ async function stopStudying(connection, userId, status) {
 
     const subject =
       status !== "disconnect"
-        ? { subject_id: "0", name: "break", time: now }
+        ? { subject_id: "0", name: "break", start_time: now }
         : null;
 
     extensionIo.to(userId).emit("study:stop");

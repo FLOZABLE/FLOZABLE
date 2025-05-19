@@ -136,7 +136,7 @@ async function createAccount({
       return {
         success: false,
         status: 400,
-        message: "Email already in use",
+        message: "That email is already taken. Please use a different one.",
         error: { reason: "Email already in use" },
       };
     }
@@ -558,7 +558,7 @@ Router.post("/app/signin", async (req, res) => {
     );
 
     if (!userInfo) {
-      const response = RESPONSE_MESSAGES.noUser();
+      const response = RESPONSE_MESSAGES.invalidCredentials();
       return res.status(response.status).send(response);
     }
 
@@ -605,7 +605,7 @@ Router.post("/app/signin", async (req, res) => {
     return res.status(200).send({
       success: true,
       status: 200,
-      message: "Authed",
+      message: "Signed in successfully",
       data: {
         token,
         user_id: userInfo.user_id,
@@ -923,7 +923,7 @@ Router.post("/verify", async (req, res) => {
       );
 
       if (!userInfo) {
-        const response = RESPONSE_MESSAGES.noUser();
+        const response = RESPONSE_MESSAGES.invalidCredentials();
         return res.status(response.status).send(response);
       }
 
