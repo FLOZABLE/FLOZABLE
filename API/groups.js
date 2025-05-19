@@ -592,12 +592,8 @@ Router.post("/group/join", async (req, res) => {
           .pbkdf2Sync(password, groupInfo.salt, 99097, 32, "sha512")
           .toString("hex");
         if (hashedPassword !== groupInfo.password) {
-          return res.status(400).send({
-            success: false,
-            status: 400,
-            message: "Wrong Password",
-            error: { reason: "Wrong Password" },
-          });
+          const response = RESPONSE_MESSAGES.wrongPassword();
+          return res.status(response.status).send(response);
         }
       }
 
