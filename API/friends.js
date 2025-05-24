@@ -645,7 +645,7 @@ Router.get("/search", async (req, res) => {
 
     const connection = pool.promise();
     const [users] = await connection.query(
-      `SELECT user_id, name, timezone from users where name like ? LIMIT 20`,
+      `SELECT user_id, name, timezone, created_at from users where name like ? LIMIT 20`,
       `%${query}%`
     );
     res.status(200).send({ success: true, status: 200, data: { users } });

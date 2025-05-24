@@ -29,6 +29,9 @@ const { sendEmail } = require("../email");
 const { USER_ID_COOKIE_OPTIONS, REDIS_EXP } = require("../Constant");
 const { google } = require("googleapis");
 const RESPONSE_MESSAGES = require("../utils/responses");
+const appleSignin = require("apple-signin-auth");
+const fs = require("fs");
+const path = require("path");
 
 async function autoSignin(
   req,
@@ -504,6 +507,140 @@ Router.get("/signin/spotify/callback", async (req, res) => {
       `${process.env.NEXT_SERVER}/dashboard/account?` +
         querystring.stringify({ success: true, message: "Success!" })
     );
+  } catch (err) {
+    console.log(err);
+    const response = RESPONSE_MESSAGES.error();
+    return res.status(response.status).send(response);
+  }
+});
+
+const filePath = path.resolve(__dirname, "../config/AuthKey_HR5LD544WV.p8");
+const privateKey = fs.readFileSync(filePath, "utf8");
+//for native app
+Router.post("/apple", async (req, res) => {
+  try {
+    const {
+      code,
+      device_id: deviceId,
+      brand,
+      device_name: deviceName,
+    } = req.body;
+
+    if (!deviceId) {
+      return res.status(400).send({
+        success: false,
+        status: 400,
+        message: "Device id Missing",
+        error: { reason: "Device id Missing" },
+      });
+    }
+
+    const clientSecret = appleSignin.getClientSecret({
+      clientID: process.env.APPLE_CLIENT_ID, // Apple Client ID
+      teamID: process.env.APPLE_TEAM_ID, // Apple Developer Team ID.
+      privateKey, // private key associated with your client ID. -- Or provide a `privateKeyPath` property instead.
+      keyIdentifier: process.env.APPLE_KEY_ID, // identifier of the private key.
+    });
+
+    const response = await appleSignin.getAuthorizationToken(code, {
+      clientID: process.env.APPLE_CLIENT_ID, // Service ID
+      clientSecret,
+    });
+
+    const idToken = response.id_token;
+    const payload = await appleSignin.verifyIdToken(idToken, {
+      audience: process.env.APPLE_CLIENT_ID,
+      ignoreExpiration: true,
+    });
+
+    const timezone = isValidTimeZone(req.body.timezone)
+      ? req.body.timezone
+      : "UTC";
+
+    const now = DateTime.now().toSeconds();
+    const token = generateRandomId(20);
+
+    const device = {
+      device_id: deviceId,
+      user_id: null,
+      created_at: now,
+      name: deviceName,
+      brand,
+      token,
+    };
+
+    const connection = pool.promise();
+
+    const { email } = payload;
+
+    const [[userInfo]] = await connection.query(
+      `SELECT user_id FROM users WHERE email = ?`,
+      [email]
+    );
+
+    let userId = userInfo?.user_id;
+
+    const name = req.body.name;
+
+    if (!userInfo) {
+      //new user
+      const accountResponse = await createAccount({
+        name,
+        email,
+        timezone,
+        nameWarn: false,
+      });
+
+      const { success, data } = accountResponse;
+
+      if (!success) {
+        const response = RESPONSE_MESSAGES.error();
+        return res.status(response.status).send(response);
+      }
+
+      userId = data.user_id;
+    }
+
+    device.user_id = userId;
+
+    req.session.regenerate((err) => {
+      if (err) {
+        console.log("Error regenerating session ID:", err);
+        const response = RESPONSE_MESSAGES.error();
+        return res.status(response.status).send(response);
+      }
+
+      req.session.user_id = userId;
+    });
+
+    res.cookie("userId", userId, USER_ID_COOKIE_OPTIONS);
+
+    await connection.query(
+      `
+      DELETE FROM devices WHERE device_id = ? AND user_id = ?
+    `,
+      [deviceId, userId]
+    );
+
+    await redisClient.del(`user:${userId}:device:${deviceId}:auth_token`);
+
+    connection.query("INSERT INTO devices SET ?", [device]);
+
+    redisClient.setex(
+      `user:${userId}:device:${deviceId}:auth_token`,
+      REDIS_EXP.APP_AUTH,
+      token
+    );
+
+    return res.status(200).send({
+      success: true,
+      status: 200,
+      message: "Authed",
+      data: {
+        token,
+        user_id: userId,
+      },
+    });
   } catch (err) {
     console.log(err);
     const response = RESPONSE_MESSAGES.error();

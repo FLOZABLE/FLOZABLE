@@ -22,6 +22,7 @@
     "@googleapis/calendar": "^9.7.9",
     "@mapbox/node-pre-gyp": "^1.0.11",
     "ajv": "^8.17.1",
+    "apple-signin-auth": "^2.0.0",
     "async": "^3.2.6",
     "autocannon": "^8.0.0",
     "axios": "^1.7.9",
