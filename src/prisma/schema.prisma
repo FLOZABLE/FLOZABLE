@@ -11,13 +11,13 @@ datasource db {
 model User {
   user_id                                         String              @id @db.VarChar(10)
   name                                            String              @db.VarChar(40)
-  email                                           String?             @default("") @db.VarChar(60)
-  timezone                                        String?             @default("") @db.VarChar(40)
-  created_at                                      Int?
-  type                                            Int?                @default(0) @db.SmallInt
+  email                                           String              @db.VarChar(60)
+  timezone                                        String              @default("UTC") @db.VarChar(40)
+  created_at                                      Int
+  type                                            Int                 @default(0) @db.SmallInt
   key_salt                                        String?             @db.VarChar(64)
-  hashed_password                                 String?             @db.VarChar(64)
-  hashed_password_type                            String?             @default("pbkdf2") @db.VarChar(10)
+  hashed_password                                 String              @db.VarChar(64)
+  hashed_password_type                            String              @default("pbkdf2") @db.VarChar(10)
   salt                                            String?             @db.VarChar(64)
   iv                                              String?             @db.VarChar(32)
   subscription                                    Boolean?            @default(false)
@@ -26,9 +26,9 @@ model User {
   notification_keys                               String?             @db.VarChar(150)
   stripe_id                                       String?             @db.VarChar(25)
   spotify_refresh_token                           String?             @db.VarChar(150)
-  verified                                        Boolean?            @default(false)
-  level                                           Int?                @default(1) @db.UnsignedSmallInt
-  current_streak                                  Int?                @default(0) @db.UnsignedSmallInt
+  verified                                        Boolean             @default(false)
+  level                                           Int                 @default(1) @db.UnsignedSmallInt
+  current_streak                                  Int                 @default(0) @db.UnsignedSmallInt
   chatroom_members                                chatroom_members[]
   chatroom_messages                               chatroom_messages[]
   devices                                         devices[]
@@ -38,7 +38,6 @@ model User {
   group_members                                   group_members[]
   notifications_notifications_user_idTousers      notifications[]     @relation("notifications_user_idTousers")
   notifications_notifications_from_user_idTousers notifications[]     @relation("notifications_from_user_idTousers")
-  plans                                           plans[]
   purchases                                       purchases[]
   ranking_details                                 ranking_details[]
   subjects                                        subjects[]
@@ -65,10 +64,10 @@ model chatroom_members {
 model chatroom_messages {
   message_id  String    @id @db.VarChar(8)
   chatroom_id String    @db.VarChar(10)
-  user_id     String?   @db.VarChar(10)
-  message     String    @db.Text
-  sent_at     Int?
-  users       User?     @relation(fields: [user_id], references: [user_id], onDelete: Restrict, onUpdate: Restrict, map: "chatroom_messages_ibfk_1")
+  user_id     String    @db.VarChar(10)
+  message     String   @db.Text
+  sent_at     Int
+  users       User      @relation(fields: [user_id], references: [user_id], onDelete: Restrict, onUpdate: Restrict, map: "chatroom_messages_ibfk_1")
   chatrooms   chatrooms @relation(fields: [chatroom_id], references: [chatroom_id], onUpdate: Restrict, map: "chatroom_messages_ibfk_2")
 
   @@index([chatroom_id], map: "chatroom_id")
@@ -77,8 +76,8 @@ model chatroom_messages {
 
 model chatrooms {
   chatroom_id       String              @id @db.VarChar(10)
-  name              String?             @db.VarChar(50)
-  type              Int?                @default(0) @db.TinyInt
+  name              String              @db.VarChar(50)
+  type              Int                 @default(0) @db.TinyInt
   chatroom_members  chatroom_members[]
   chatroom_messages chatroom_messages[]
 }
@@ -86,10 +85,10 @@ model chatrooms {
 model devices {
   device_id          String  @db.VarChar(40)
   user_id            String  @db.VarChar(10)
-  created_at         Int?
+  created_at         Int
   name               String? @db.VarChar(30)
   brand              String? @db.VarChar(30)
-  token              String? @db.VarChar(20)
+  token              String  @db.VarChar(20)
   notification_token String? @db.VarChar(60)
   users              User    @relation(fields: [user_id], references: [user_id], onUpdate: Restrict, map: "devices_ibfk_1")
 
@@ -98,13 +97,13 @@ model devices {
 }
 
 model friends {
-  friendship_id                  String          @id @db.VarChar(10)
-  user_id                        String          @db.VarChar(10)
-  friend_id                      String          @db.VarChar(10)
-  status                         friends_status? @default(pending)
-  date                           Int?
-  users_friends_user_idTousers   User            @relation("friends_user_idTousers", fields: [user_id], references: [user_id], onUpdate: Restrict, map: "friends_ibfk_1")
-  users_friends_friend_idTousers User            @relation("friends_friend_idTousers", fields: [friend_id], references: [user_id], onUpdate: Restrict, map: "friends_ibfk_2")
+  friendship_id                  String         @id @db.VarChar(10)
+  user_id                        String         @db.VarChar(10)
+  friend_id                      String         @db.VarChar(10)
+  status                         friends_status @default(pending)
+  date                           Int
+  users_friends_user_idTousers   User           @relation("friends_user_idTousers", fields: [user_id], references: [user_id], onUpdate: Restrict, map: "friends_ibfk_1")
+  users_friends_friend_idTousers User           @relation("friends_friend_idTousers", fields: [friend_id], references: [user_id], onUpdate: Restrict, map: "friends_ibfk_2")
 
   @@unique([user_id, friend_id], map: "unique_friend_pair")
   @@index([friend_id], map: "friend_id")
@@ -123,7 +122,7 @@ model group_likes {
 model group_members {
   group_id  String @db.VarChar(10)
   user_id   String @db.VarChar(10)
-  joined_at Int?
+  joined_at Int
   users     User   @relation(fields: [user_id], references: [user_id], onUpdate: Restrict, map: "group_members_ibfk_1")
   groups    groups @relation(fields: [group_id], references: [group_id], onUpdate: Restrict, map: "group_members_ibfk_2")
 
@@ -133,18 +132,17 @@ model group_members {
 
 model groups {
   group_id       String          @id @db.VarChar(10)
-  name           String?         @db.VarChar(50)
-  leader         String?         @db.VarChar(50)
-  visibility     Int?            @default(1) @db.SmallInt
-  password       String?         @db.VarChar(255)
+  name           String          @db.VarChar(50)
+  leader         String          @db.VarChar(50)
+  visibility     Int             @default(1) @db.SmallInt
+  password       String          @db.VarChar(255)
   salt           String?         @db.VarChar(100)
-  description    String?         @db.VarChar(1000)
-  created_at     Int?
-  max_members    Int?            @db.SmallInt
-  tags           String?         @db.VarChar(300)
+  description    String          @db.VarChar(1000)
+  created_at     Int
+  max_members    Int             @db.SmallInt
+  tags           String          @db.VarChar(300)
   color          String?         @db.VarChar(9)
-  goal_hr        Int?            @db.SmallInt
-  members_length Int?            @db.UnsignedSmallInt
+  goal_hr        Int             @db.SmallInt
   group_likes    group_likes[]
   group_members  group_members[]
 }
@@ -153,9 +151,9 @@ model notifications {
   notification_id                         String  @id @db.VarChar(10)
   user_id                                 String? @db.VarChar(10)
   from_user_id                            String? @db.VarChar(10)
-  sent_at                                 Int?
-  message                                 String? @db.VarChar(300)
-  type                                    String? @db.VarChar(40)
+  sent_at                                 Int
+  message                                 String?  @db.VarChar(300)
+  type                                    String  @db.VarChar(40)
   related_id                              String? @db.VarChar(10)
   users_notifications_user_idTousers      User?   @relation("notifications_user_idTousers", fields: [user_id], references: [user_id], onDelete: Restrict, onUpdate: Restrict, map: "notifications_ibfk_1")
   users_notifications_from_user_idTousers User?   @relation("notifications_from_user_idTousers", fields: [from_user_id], references: [user_id], onDelete: Restrict, onUpdate: Restrict, map: "notifications_ibfk_2")
@@ -164,41 +162,25 @@ model notifications {
   @@index([user_id], map: "user_id")
 }
 
-model plans {
-  plan_id      String       @id @db.VarChar(10)
-  user_id      String?      @db.VarChar(10)
-  title        String?      @db.VarChar(100)
-  start        Int?
-  end          Int?
-  repeat       Int?         @db.UnsignedTinyInt
-  description  String?      @db.VarChar(3000)
-  notification Int?         @db.SmallInt
-  priority     Int?         @db.UnsignedTinyInt
-  completed    Int?         @default(0) @db.TinyInt
-  users        User?        @relation(fields: [user_id], references: [user_id], onDelete: Restrict, onUpdate: Restrict, map: "plans_ibfk_1")
-
-  @@index([user_id], map: "user_id")
-}
-
 model products {
   product_id String      @db.VarChar(30)
   price_id   String      @db.VarChar(30)
-  cost       Int?        @db.UnsignedSmallInt
-  interval   String?     @db.VarChar(15)
-  name       String?     @db.VarChar(40)
+  cost       Int         @db.UnsignedSmallInt
+  interval   String      @db.VarChar(15)
+  name       String      @db.VarChar(40)
   purchases  purchases[]
 
   @@id([product_id, price_id])
 }
 
 model purchases {
-  purchase_id  String    @id @db.VarChar(30)
-  user_id      String?   @db.VarChar(10)
-  price_id     String?   @db.VarChar(30)
-  product_id   String?   @db.VarChar(30)
-  purchased_at Int?
-  users        User?     @relation(fields: [user_id], references: [user_id], onDelete: Restrict, onUpdate: Restrict, map: "purchases_ibfk_1")
-  products     products? @relation(fields: [product_id, price_id], references: [product_id, price_id], onDelete: Restrict, onUpdate: Restrict, map: "purchases_ibfk_2")
+  purchase_id  String   @id @db.VarChar(30)
+  user_id      String   @db.VarChar(10)
+  price_id     String   @db.VarChar(30)
+  product_id   String   @db.VarChar(30)
+  purchased_at Int
+  users        User     @relation(fields: [user_id], references: [user_id], onDelete: Restrict, onUpdate: Restrict, map: "purchases_ibfk_1")
+  products     products @relation(fields: [product_id, price_id], references: [product_id, price_id], onDelete: Restrict, onUpdate: Restrict, map: "purchases_ibfk_2")
 
   @@index([product_id, price_id], map: "product_id")
   @@index([user_id], map: "user_id")
@@ -219,18 +201,18 @@ model ranking_details {
 model rankings {
   ranking_id      String            @id @db.VarChar(10)
   date            Int
-  timezone        String?           @db.VarChar(40)
+  timezone        String            @db.VarChar(40)
   mode            String            @db.VarChar(10)
-  length          Int?
+  length          Int
   ranking_details ranking_details[]
 }
 
 /// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 model subject_timelines {
-  subject_id String    @db.VarChar(10)
+  subject_id String   @db.VarChar(10)
   start_time Int
-  duration   Int       @db.UnsignedSmallInt
-  subjects   subjects? @relation(fields: [subject_id], references: [subject_id], onDelete: Restrict, onUpdate: Restrict, map: "subject_timelines_ibfk_1")
+  duration   Int      @db.UnsignedSmallInt
+  subjects   subjects @relation(fields: [subject_id], references: [subject_id], onDelete: Restrict, onUpdate: Restrict, map: "subject_timelines_ibfk_1")
 
   @@unique([subject_id, start_time])
   @@index([subject_id], map: "subject_id")
@@ -238,10 +220,10 @@ model subject_timelines {
 
 model subjects {
   subject_id        String              @id @db.VarChar(10)
-  name              String?             @db.VarChar(20)
+  name              String              @db.VarChar(20)
   user_id           String              @db.VarChar(10)
-  color             String?             @db.VarChar(9)
-  created_at        Int?
+  color             String              @db.VarChar(9)
+  created_at        Int
   subject_timelines subject_timelines[]
   users             User                @relation(fields: [user_id], references: [user_id], onUpdate: Restrict, map: "subjects_ibfk_1")
 
@@ -260,13 +242,13 @@ model theme_likes {
 
 model themes {
   theme_id    String        @id @db.VarChar(10)
-  user_id     String?       @db.VarChar(20)
-  video_id    String?       @db.VarChar(11)
-  name        String?       @db.VarChar(40)
-  description String?       @db.VarChar(700)
-  tags        String?       @default("") @db.VarChar(300)
+  user_id     String        @db.VarChar(20)
+  video_id    String        @db.VarChar(11)
+  name        String        @db.VarChar(40)
+  description String        @db.VarChar(700)
+  tags        String        @default("") @db.VarChar(300)
   theme_likes theme_likes[]
-  users       User?         @relation(fields: [user_id], references: [user_id], onDelete: Restrict, onUpdate: Restrict, map: "themes_ibfk_1")
+  users       User          @relation(fields: [user_id], references: [user_id], onDelete: Restrict, onUpdate: Restrict, map: "themes_ibfk_1")
   user_themes user_themes[]
 
   @@index([user_id], map: "user_id")
@@ -284,24 +266,24 @@ model user_themes {
 }
 
 model website_settings {
-  user_id     String   @db.VarChar(10)
-  website     String   @db.VarChar(20)
-  block       Boolean?
-  study_block Boolean?
-  timer       Boolean?
-  study_timer Boolean?
-  users       User     @relation(fields: [user_id], references: [user_id], onUpdate: Restrict, map: "website_settings_ibfk_1")
+  user_id     String  @db.VarChar(10)
+  website     String  @db.VarChar(20)
+  block       Boolean
+  study_block Boolean
+  timer       Boolean
+  study_timer Boolean
+  users       User    @relation(fields: [user_id], references: [user_id], onUpdate: Restrict, map: "website_settings_ibfk_1")
 
   @@id([user_id, website])
 }
 
 model website_usage {
-  user_id  String  @db.VarChar(10)
-  website  String  @db.VarChar(20)
-  visits   Int?    @db.SmallInt
-  duration Int?    @db.SmallInt
-  date     String? @db.VarChar(10)
-  users    User    @relation(fields: [user_id], references: [user_id], onUpdate: Restrict, map: "website_usage_ibfk_1")
+  user_id  String @db.VarChar(10)
+  website  String @db.VarChar(20)
+  visits   Int    @db.SmallInt
+  duration Int    @db.SmallInt
+  date     String @db.VarChar(10)
+  users    User   @relation(fields: [user_id], references: [user_id], onUpdate: Restrict, map: "website_usage_ibfk_1")
 
   @@id([user_id, website])
 }
