@@ -4,3 +4,8 @@ export type SignupRequestBody = {
   timezone: string;
   password: string;
 };
+
+export type LoginRequestBody = {
+  email: string;
+  password: string;
+};
