@@ -7,3 +7,8 @@ export const registerAccountSchema = Joi.object({
   password: accountSchemas.password,
   timezone: accountSchemas.timezone,
 });
+
+export const loginAccountSchema = Joi.object({
+  email: accountSchemas.email,
+  password: accountSchemas.password,
+});
