@@ -1,5 +1,8 @@
 export const REDIS_TTL = {
   SESSION_EXP: 60 * 60 * 24 * 3, //3 days
+  USER_EXP: 60 * 60, //1 hour
+  USER_FRIENDS_EXP: 60 * 60, //1hour
+  USER_GROUPS_EXP: 60 * 60, //1hour
 };
 
 export const COOKIE_TTL = {
