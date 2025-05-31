@@ -1,6 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
 
-import prisma from '../libs/prisma';
 import { getUserIdByToken } from '../services/sessionService';
 
 export const authMiddleware = async (
@@ -11,24 +10,16 @@ export const authMiddleware = async (
   const token = req.headers.authorization?.split(' ')[1] || req.cookies?.token;
 
   if (!token) {
-    return res.status(401).json({ error: 'Unauthorized: No token provided' });
+    res.status(401).json({ error: 'Unauthorized: No token provided' });
+    return;
   }
 
   const userId = await getUserIdByToken(token);
   if (!userId) {
-    return res
-      .status(401)
-      .json({ error: 'Unauthorized: Invalid or expired token' });
+    res.status(401).json({ error: 'Unauthorized: Invalid or expired token' });
+    return;
   }
 
-  // Attach user to request
-  const user = await prisma.users.findUnique({
-    where: { user_id: userId },
-  });
-  if (!user) {
-    return res.status(401).json({ error: 'Unauthorized: User not found' });
-  }
-
-  (req as any).user = user;
+  (req as Request).user_id = userId;
   next();
 };

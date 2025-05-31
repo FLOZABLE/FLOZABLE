@@ -1,12 +1,17 @@
-import express from 'express';
-import { errorHandler } from './middlewares/errorHandler';
-import authRouter from './routes/authRoutes';
+import cookieParser from 'cookie-parser';
 import cors from 'cors';
+import express from 'express';
+
 import config from './config/config';
+import { errorHandler } from './middlewares/errorHandler';
+import accountRouter from './routes/accountRoutes';
+import authRouter from './routes/authRoutes';
 
 const app = express();
 
 app.use(express.json());
+
+app.use(cookieParser());
 
 app.use(
   cors({
@@ -18,6 +23,7 @@ app.use(
 
 // Routes
 app.use('/auth', authRouter);
+app.use('/account', accountRouter);
 
 // Global error handler (should be after routes)
 app.use(errorHandler);

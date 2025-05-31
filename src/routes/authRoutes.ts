@@ -1,6 +1,6 @@
 import { Router } from 'express';
 
-import { login, signup } from '../controllers/authController';
+import { postLogin, postSignup } from '../controllers/authController';
 import { validate } from '../middlewares/validationMiddleWare';
 import {
   loginAccountSchema,
@@ -9,10 +9,7 @@ import {
 
 const authRouter = Router();
 
-authRouter.post('/signup', validate(registerAccountSchema, 'body'), signup);
-
-authRouter.post('/login', validate(loginAccountSchema, 'body'), login);
-
-authRouter.post('/google', validate(loginAccountSchema, 'body'), login);
+authRouter.post('/signup', validate(registerAccountSchema, 'body'), postSignup);
+authRouter.post('/login', validate(loginAccountSchema, 'body'), postLogin);
 
 export default authRouter;
