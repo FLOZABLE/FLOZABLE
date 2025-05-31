@@ -42,12 +42,19 @@ type LoginUserParam = {
   email: string;
   password: string;
 };
+
 export const loginUser = async ({ email, password }: LoginUserParam) => {
   const user = await prisma.users.findFirst({
     where: {
       email: {
         equals: email,
       },
+    },
+    select: {
+      hashed_password_type: true,
+      hashed_password: true,
+      salt: true,
+      user_id: true,
     },
   });
   if (!user) throw AppErrorFactory.invalidCredentials();

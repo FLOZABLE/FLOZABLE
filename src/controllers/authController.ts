@@ -6,7 +6,7 @@ import { createSession } from '../services/sessionService';
 import { createSubject } from '../services/subjectService';
 import { LoginRequestBody, SignupRequestBody } from '../types/authTypes';
 
-export const signup = async (
+export const postSignup = async (
   req: Request<{}, {}, SignupRequestBody>,
   res: Response,
   next: NextFunction,
@@ -31,7 +31,7 @@ export const signup = async (
   }
 };
 
-export const login = async (
+export const postLogin = async (
   req: Request<{}, {}, LoginRequestBody>,
   res: Response,
   next: NextFunction,
