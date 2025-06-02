@@ -1,9 +1,10 @@
 import { NextFunction, Request, Response } from 'express';
+import type { ParsedQs } from 'qs';
 
 import { getUserIdByToken } from '../services/sessionService';
 
-export const authMiddleware = async (
-  req: Request,
+export const authMiddleware = async <Q = ParsedQs>(
+  req: Request<{}, {}, {}, Q>,
   res: Response,
   next: NextFunction,
 ) => {
@@ -20,6 +21,6 @@ export const authMiddleware = async (
     return;
   }
 
-  (req as Request).user_id = userId;
+  req.user_id = userId;
   next();
 };

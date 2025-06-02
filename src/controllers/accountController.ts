@@ -1,10 +1,9 @@
 import { NextFunction, Request, Response } from 'express';
 
 import { getCachedUser, getCachedUserFriends } from '../services/cacheService';
-import { SignupRequestBody } from '../types/authTypes';
 
 export const getAccount = async (
-  req: Request<{}, {}, SignupRequestBody>,
+  req: Request,
   res: Response,
   next: NextFunction,
 ) => {
