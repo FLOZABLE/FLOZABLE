@@ -5,3 +5,9 @@ export interface UserInfo
     Prisma.usersCreateInput,
     'user_id' | 'name' | 'timezone' | 'created_at'
   > {}
+
+export interface UserStatus {
+  subject_id: string;
+  name: string;
+  start_time: number;
+}

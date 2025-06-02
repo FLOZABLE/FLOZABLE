@@ -6,6 +6,7 @@ import config from './config/config';
 import { errorHandler } from './middlewares/errorHandler';
 import accountRouter from './routes/accountRoutes';
 import authRouter from './routes/authRoutes';
+import subjectRoutes from './routes/subjectRoutes';
 
 const app = express();
 
@@ -24,6 +25,7 @@ app.use(
 // Routes
 app.use('/auth', authRouter);
 app.use('/account', accountRouter);
+app.use('/subject', subjectRoutes);
 
 // Global error handler (should be after routes)
 app.use(errorHandler);
