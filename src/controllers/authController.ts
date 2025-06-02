@@ -4,10 +4,10 @@ import { COOKIE_TTL } from '../libs/constants';
 import { createUser, loginUser } from '../services/authService';
 import { createSession } from '../services/sessionService';
 import { createSubject } from '../services/subjectService';
-import { LoginRequestBody, SignupRequestBody } from '../types/authTypes';
+import { PostLoginBody, PostSignupBody } from '../types/authTypes';
 
 export const postSignup = async (
-  req: Request<{}, {}, SignupRequestBody>,
+  req: Request<{}, {}, PostSignupBody>,
   res: Response,
   next: NextFunction,
 ) => {
@@ -32,7 +32,7 @@ export const postSignup = async (
 };
 
 export const postLogin = async (
-  req: Request<{}, {}, LoginRequestBody>,
+  req: Request<{}, {}, PostLoginBody>,
   res: Response,
   next: NextFunction,
 ) => {

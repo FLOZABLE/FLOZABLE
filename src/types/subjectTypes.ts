@@ -18,7 +18,7 @@ export interface FocusEntry {
 export interface TimePeriodData {
   timeline: TimelineEntry[];
   total: TotalEntry[];
-  focus: FocusEntry[];
+  //focus: FocusEntry[];
 }
 
 export interface Subject {
@@ -42,4 +42,8 @@ export interface ActiveSubject {
   subject_id: string;
   start_time: number;
   name: string;
+}
+
+export interface GetSubjectAllQuery {
+  timezone: string;
 }
