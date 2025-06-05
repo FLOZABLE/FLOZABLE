@@ -1,8 +1,8 @@
 import { NextFunction, Request, Response } from 'express';
 
 import prisma from '../libs/prisma';
-import { subjectsFormatter } from '../services/subjectService';
-import { GetSubjectAllQuery } from '../types/subjectTypes';
+import { createSubject, subjectsFormatter } from '../services/subjectService';
+import { GetSubjectAllQuery, PutSubjectBody } from '../types/subjectTypes';
 
 export const getSubjectAll = async (
   req: Request<{}, {}, {}, GetSubjectAllQuery>,
@@ -37,6 +37,29 @@ export const getSubjectAll = async (
         grouped_subjects: formattedSubjects.groupedSubjects,
       },
     });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const putSubject = async (
+  req: Request<{}, {}, PutSubjectBody>,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const user_id = req.user_id!;
+    const { name, color } = req.body;
+
+    const subject = await createSubject({
+      name,
+      color,
+      users: {
+        connect: { user_id },
+      },
+    });
+
+    res.send({ success: true, data: { subject } });
   } catch (error) {
     next(error);
   }
