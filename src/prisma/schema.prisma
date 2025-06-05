@@ -141,7 +141,7 @@ model groups {
   created_at     Int
   max_members    Int             @db.SmallInt
   tags           String          @db.VarChar(300)
-  color          String?         @db.VarChar(9)
+  color          String?         @db.VarChar(20)
   goal_hr        Int             @db.SmallInt
   group_likes    group_likes[]
   group_members  group_members[]
@@ -222,7 +222,7 @@ model subjects {
   subject_id        String              @id @db.VarChar(10)
   name              String              @db.VarChar(20)
   user_id           String              @db.VarChar(10)
-  color             String              @db.VarChar(9)
+  color             String              @db.VarChar(20)
   created_at        Int
   subject_timelines subject_timelines[]
   users             users                @relation(fields: [user_id], references: [user_id], onUpdate: Restrict, map: "subjects_ibfk_1")
