@@ -47,3 +47,8 @@ export interface ActiveSubject {
 export interface GetSubjectAllQuery {
   timezone: string;
 }
+
+export interface PutSubjectBody {
+  name: string;
+  color: string;
+}

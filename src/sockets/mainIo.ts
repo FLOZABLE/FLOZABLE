@@ -97,19 +97,21 @@ export const registerMainIoEvents = () => {
             duration,
           });
 
-          for (let i = -12; i < 12; i++) {
-            redisClient.zincrby(`users:${i}:dayTotal`, duration, userId);
-            redisClient.zincrby(`users:${i}:weekTotal`, duration, userId);
-            redisClient.zincrby(`users:${i}:monthTotal`, duration, userId);
-          }
+          cacheUserStatus({ userId, startTime: now });
 
-          const test = await prisma.subject_timelines.create({
+          await prisma.subject_timelines.create({
             data: {
               subject_id: status.subject_id,
               start_time: status.start_time,
               duration,
             },
           });
+
+          for (let i = -12; i < 12; i++) {
+            redisClient.zincrby(`users:${i}:dayTotal`, duration, userId);
+            redisClient.zincrby(`users:${i}:weekTotal`, duration, userId);
+            redisClient.zincrby(`users:${i}:monthTotal`, duration, userId);
+          }
         } catch (err) {
           console.log(err);
         }

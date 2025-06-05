@@ -214,3 +214,12 @@ export const getCachedUserStatus = async (
     return null;
   }
 };
+
+export const delCachedUserStatus = async (userId: string) => {
+  const cacheKey = `user:${userId}:status`;
+  try {
+    await redisClient.del(cacheKey);
+  } catch (err) {
+    console.log(err);
+  }
+};
