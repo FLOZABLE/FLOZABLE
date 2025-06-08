@@ -1,7 +1,9 @@
 import { REDIS_TTL } from '../libs/constants';
 import prisma from '../libs/prisma';
 import redisClient from '../models/redisClient';
-import { UserInfo, UserStatus } from '../types/accountType';
+import { UserInfo, UserStatus } from '../types/accountTypes';
+import { Viewer } from '../types/otherTypes';
+import { RawRanking } from '../types/rankingTypes';
 
 interface GetCacheParams {
   update?: boolean;
@@ -18,7 +20,6 @@ export const getCachedUser = async ({
   query = true,
 }: GetCachedUserParams): Promise<UserInfo | null> => {
   const cacheKey = `user:${userId}`;
-
   let userInfo: UserInfo | null = null;
 
   try {
@@ -29,11 +30,10 @@ export const getCachedUser = async ({
         user_id: userId,
         name: cachedData.name,
         timezone: cachedData.timezone,
-        created_at: parseInt(cachedData.created_at),
+        created_at: Number(cachedData.created_at),
       };
     }
 
-    // If not found in Redis and allowed to query DB
     if (!userInfo && query) {
       const dbUser = await prisma.users.findUnique({
         where: { user_id: userId },
@@ -48,13 +48,7 @@ export const getCachedUser = async ({
       if (!dbUser) return null;
 
       if (update) {
-        await redisClient.hmset(cacheKey, {
-          user_id: dbUser.user_id,
-          name: dbUser.name || '',
-          timezone: dbUser.timezone || '',
-          created_at: dbUser.created_at.toString(),
-        });
-        await redisClient.expire(cacheKey, REDIS_TTL.USER_EXP);
+        await cacheUser(dbUser);
       }
 
       userInfo = dbUser;
@@ -62,8 +56,81 @@ export const getCachedUser = async ({
 
     return userInfo;
   } catch (err) {
-    console.log(err);
+    console.error(`Failed to get cached user: ${userId}`, err);
     return null;
+  }
+};
+interface GetCachedUsersParams extends GetCacheParams {
+  userIds: string[];
+}
+
+export const getCachedUsers = async ({
+  userIds,
+  update = false,
+  query = true,
+}: GetCachedUsersParams): Promise<UserInfo[]> => {
+  if (!userIds.length) return [];
+
+  const usersInfo: UserInfo[] = [];
+  const notCached: string[] = [];
+
+  try {
+    const pipeline = redisClient.pipeline();
+    userIds.forEach((id) => pipeline.hgetall(`user:${id}`));
+    const results = await pipeline.exec();
+    results?.forEach(([err, data], idx) => {
+      const userId = userIds[idx];
+
+      if (err || !data || Object.keys(data).length === 0) {
+        notCached.push(userId);
+        return;
+      }
+
+      const userData = data as UserInfo;
+
+      usersInfo.push({
+        user_id: userId,
+        name: userData.name,
+        timezone: userData.timezone,
+        created_at: Number(userData.created_at),
+      });
+    });
+    if (!notCached.length || !query) return usersInfo;
+
+    const dbUsers = await prisma.users.findMany({
+      where: { user_id: { in: notCached } },
+      select: {
+        user_id: true,
+        name: true,
+        timezone: true,
+        created_at: true,
+      },
+    });
+
+    if (update) {
+      await Promise.all(dbUsers.map(cacheUser));
+    }
+
+    usersInfo.push(...dbUsers);
+    return usersInfo;
+  } catch (err) {
+    console.error('Failed to get cached users:', err);
+    return usersInfo;
+  }
+};
+
+export const cacheUser = async (userInfo: UserInfo): Promise<void> => {
+  const cacheKey = `user:${userInfo.user_id}`;
+  try {
+    await redisClient.hmset(cacheKey, {
+      user_id: userInfo.user_id,
+      name: userInfo.name || '',
+      timezone: userInfo.timezone || '',
+      created_at: userInfo.created_at.toString(),
+    });
+    await redisClient.expire(cacheKey, REDIS_TTL.USER_EXP);
+  } catch (err) {
+    console.error(`Failed to cache user: ${userInfo.user_id}`, err);
   }
 };
 
@@ -207,7 +274,7 @@ export const getCachedUserStatus = async (
     return {
       subject_id: status.subject_id,
       name: status.name,
-      start_time: parseInt(status.start_time),
+      start_time: Number(status.start_time),
     };
   } catch (err) {
     console.log(err);
@@ -219,6 +286,52 @@ export const delCachedUserStatus = async (userId: string) => {
   const cacheKey = `user:${userId}:status`;
   try {
     await redisClient.del(cacheKey);
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+export const getCachedRanking = async (
+  viewer: Viewer,
+  timezoneOffset: number,
+): Promise<RawRanking[]> => {
+  try {
+    const cacheKey = `studytime:${viewer}:timezone:${timezoneOffset}`;
+    const rawRanking = await redisClient.zrevrange(
+      cacheKey,
+      0,
+      -1,
+      'WITHSCORES',
+    );
+
+    const rankings = [];
+
+    for (let i = 0; i < rawRanking.length; i += 2) {
+      const study_time = Number(rawRanking[i + 1]);
+      if (study_time) {
+        rankings.push({
+          user_id: rawRanking[i],
+          rank: Math.floor(i / 2) + 1,
+          study_time,
+        });
+      }
+    }
+    return rankings;
+  } catch (err) {
+    console.log(err);
+    return [];
+  }
+};
+
+export const cacheRanking = async (
+  userId: string,
+  viewer: Viewer,
+  timezoneOffset: number,
+  value: number,
+) => {
+  try {
+    const cacheKey = `studytime:${viewer}:timezone:${timezoneOffset}`;
+    redisClient.zincrby(cacheKey, value, userId);
   } catch (err) {
     console.log(err);
   }

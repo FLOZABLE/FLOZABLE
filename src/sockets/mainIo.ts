@@ -5,6 +5,7 @@ import prisma from '../libs/prisma';
 import { nowSec } from '../libs/utils';
 import redisClient from '../models/redisClient';
 import {
+  cacheRanking,
   cacheUserStatus,
   getCachedUserFriends,
   getCachedUserGroups,
@@ -108,9 +109,9 @@ export const registerMainIoEvents = () => {
           });
 
           for (let i = -12; i < 12; i++) {
-            redisClient.zincrby(`users:${i}:dayTotal`, duration, userId);
-            redisClient.zincrby(`users:${i}:weekTotal`, duration, userId);
-            redisClient.zincrby(`users:${i}:monthTotal`, duration, userId);
+            cacheRanking(userId, 'day', i, duration);
+            cacheRanking(userId, 'week', i, duration);
+            cacheRanking(userId, 'month', i, duration);
           }
         } catch (err) {
           console.log(err);
