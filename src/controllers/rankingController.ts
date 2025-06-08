@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import { DateTime } from 'luxon';
 
+import prisma from '../libs/prisma';
 import { getCachedRanking, getCachedUsers } from '../services/cacheService';
 import { GetRankingQuery, Ranking, RawRanking } from '../types/rankingTypes';
 
@@ -24,6 +25,24 @@ export const getRanking = async (
       const timezoneOffset = Math.floor(now.offset / 60);
       rawRankings = await getCachedRanking(viewer, timezoneOffset);
     } else {
+      const rankingsData = await prisma.ranking_details.findMany({
+        where: {
+          rankings: {
+            date: dateTime.toSeconds(),
+            mode: viewer,
+          },
+        },
+        orderBy: {
+          rank: 'asc',
+        },
+        select: {
+          rank: true,
+          user_id: true,
+          study_time: true,
+        },
+      });
+
+      rawRankings = rankingsData;
     }
     const users = await getCachedUsers({
       userIds: rawRankings.map((ranking) => ranking.user_id),

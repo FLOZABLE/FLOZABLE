@@ -4,6 +4,7 @@ import app from './app';
 import config from './config/config';
 import { initSocket } from './sockets/io';
 
+import './schedulers/rankingScheduler';
 import './sockets/index';
 
 import { registerMainIoEvents } from './sockets/mainIo';
