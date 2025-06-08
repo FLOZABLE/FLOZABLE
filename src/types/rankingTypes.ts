@@ -22,3 +22,13 @@ export interface GetRankingQuery {
   date: string;
   timezone: string;
 }
+
+export interface GetUserRankingParams {
+  user_id: string;
+}
+
+export interface GetUserRankingQuery {
+  viewer: Viewer;
+  date: string;
+  timezone: string;
+}

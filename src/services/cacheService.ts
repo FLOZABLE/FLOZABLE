@@ -10,6 +10,11 @@ interface GetCacheParams {
   query?: boolean;
 }
 
+interface GetViewTimezoneCacheParams extends GetCacheParams {
+  viewer: Viewer;
+  timezoneOffset: number;
+}
+
 interface GetCachedUserParams extends GetCacheParams {
   userId: string;
 }
@@ -291,10 +296,10 @@ export const delCachedUserStatus = async (userId: string) => {
   }
 };
 
-export const getCachedRanking = async (
-  viewer: Viewer,
-  timezoneOffset: number,
-): Promise<RawRanking[]> => {
+export const getCachedRanking = async ({
+  viewer,
+  timezoneOffset,
+}: GetViewTimezoneCacheParams): Promise<RawRanking[]> => {
   try {
     const cacheKey = `studytime:${viewer}:timezone:${timezoneOffset}`;
     const rawRanking = await redisClient.zrevrange(
@@ -346,5 +351,24 @@ export const delCacheRanking = async (
     redisClient.del(cacheKey);
   } catch (err) {
     console.log(err);
+  }
+};
+
+interface GetCachedUserRankingParams extends GetViewTimezoneCacheParams {
+  userId: string;
+}
+
+export const getCachedUserRanking = async ({
+  userId,
+  viewer,
+  timezoneOffset,
+}: GetCachedUserRankingParams): Promise<number | null> => {
+  try {
+    const cacheKey = `studytime:${viewer}:timezone:${timezoneOffset}`;
+    const rawRanking = await redisClient.zrevrank(cacheKey, userId);
+    return typeof rawRanking === 'number' ? rawRanking + 1 : null;
+  } catch (err) {
+    console.log(err);
+    return null;
   }
 };
