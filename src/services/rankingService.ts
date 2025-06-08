@@ -8,15 +8,20 @@ import { delCacheRanking, getCachedRanking } from './cacheService';
 
 export const updateRanking = async () => {
   try {
-    let now: DateTime<true | false> = DateTime.now();
     const allTimezones = moment.tz.names();
 
-    allTimezones.findIndex((timezone) => {
-      now = now.setZone(timezone);
-      return now.get('hour') === 0;
+    const matchedTimezone = moment.tz.names().find((timezone) => {
+      const zoned = DateTime.now().setZone(timezone);
+      return zoned.hour === 0;
     });
 
+    const now = DateTime.now().setZone(matchedTimezone);
     console.log('update ranking', now.toISO());
+
+    if (!matchedTimezone) {
+      console.error('No timezone matched midnight. Aborting ranking update.');
+      return;
+    }
 
     const timezoneOffset = Math.floor(now.offset / 60);
 
@@ -45,7 +50,7 @@ const insertRankings = async (
   try {
     const date = dateTime.toSeconds();
     const ranking_id = nanoid(10);
-    const rawRankings = await getCachedRanking(viewer, timezoneOffset);
+    const rawRankings = await getCachedRanking({ viewer, timezoneOffset });
 
     const newRanking = await prisma.rankings.create({
       data: {
