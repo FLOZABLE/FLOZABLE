@@ -336,3 +336,15 @@ export const cacheRanking = async (
     console.log(err);
   }
 };
+
+export const delCacheRanking = async (
+  viewer: Viewer,
+  timezoneOffset: number,
+) => {
+  try {
+    const cacheKey = `studytime:${viewer}:timezone:${timezoneOffset}`;
+    redisClient.del(cacheKey);
+  } catch (err) {
+    console.log(err);
+  }
+};
