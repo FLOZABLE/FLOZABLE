@@ -115,7 +115,6 @@ export const getUserRanking = async (
 
     const rankings = await Promise.all(
       dates.map(async (date) => {
-        console.log(now.toSeconds() - date.toSeconds());
         if (date.toSeconds() === now.toSeconds()) {
           const timezoneOffset = Math.floor(now.offset / 60);
           const currentRanking = await getCachedUserRanking({
@@ -123,7 +122,6 @@ export const getUserRanking = async (
             viewer,
             timezoneOffset,
           });
-          console.log('current', currentRanking);
           if (currentRanking) {
             return { date: date.toISO(), ranking: currentRanking };
           }

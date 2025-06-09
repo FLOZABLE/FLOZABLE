@@ -8,8 +8,6 @@ import { delCacheRanking, getCachedRanking } from './cacheService';
 
 export const updateRanking = async () => {
   try {
-    const allTimezones = moment.tz.names();
-
     const matchedTimezone = moment.tz.names().find((timezone) => {
       const zoned = DateTime.now().setZone(timezone);
       return zoned.hour === 0;

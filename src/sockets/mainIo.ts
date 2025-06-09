@@ -3,7 +3,6 @@ import { Namespace } from 'socket.io';
 
 import prisma from '../libs/prisma';
 import { nowSec } from '../libs/utils';
-import redisClient from '../models/redisClient';
 import {
   cacheRanking,
   cacheUserStatus,
