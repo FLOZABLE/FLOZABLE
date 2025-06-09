@@ -25,7 +25,7 @@ export const validate = (
       );
 
       res.status(StatusCodes.BAD_REQUEST).json({
-        message: 'Validation failed.',
+        message: errorMessages[0],
         errors: errorMessages,
       });
       return; // Explicitly stop here

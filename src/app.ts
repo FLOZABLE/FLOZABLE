@@ -6,6 +6,7 @@ import config from './config/config';
 import { errorHandler } from './middlewares/errorHandler';
 import accountRouter from './routes/accountRoutes';
 import authRouter from './routes/authRoutes';
+import groupRouter from './routes/groupRoutes';
 import rankingRouter from './routes/rankingRoutes';
 import subjectRoutes from './routes/subjectRoutes';
 
@@ -28,6 +29,7 @@ app.use('/auth', authRouter);
 app.use('/account', accountRouter);
 app.use('/subject', subjectRoutes);
 app.use('/ranking', rankingRouter);
+app.use('/group', groupRouter);
 
 // Global error handler (should be after routes)
 app.use(errorHandler);
