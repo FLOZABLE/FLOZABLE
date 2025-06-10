@@ -4,10 +4,11 @@ import {
   getGroups,
   getMyGroups,
   postJoinGroup,
+  putGroup,
 } from '../controllers/groupController';
 import { authMiddleware } from '../middlewares/authMiddleware';
 import { validate } from '../middlewares/validationMiddleWare';
-import { postJoinGroupSchema } from '../schemas/groupSchemas';
+import { postJoinGroupSchema, putGroupSchema } from '../schemas/groupSchemas';
 
 const groupRouter = Router();
 
@@ -20,6 +21,13 @@ groupRouter.post(
   authMiddleware,
   validate(postJoinGroupSchema, 'body'),
   postJoinGroup,
+);
+
+groupRouter.put(
+  '/',
+  authMiddleware,
+  validate(putGroupSchema, 'body'),
+  putGroup,
 );
 
 export default groupRouter;

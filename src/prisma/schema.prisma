@@ -36,6 +36,7 @@ model users {
   friends_friends_friend_idTousers                friends[]           @relation("friends_friend_idTousers")
   group_likes                                     group_likes[]
   group_members                                   group_members[]
+  led_groups                                      groups[]            @relation("groups_leader_fkey")
   notifications_notifications_user_idTousers      notifications[]     @relation("notifications_user_idTousers")
   notifications_notifications_from_user_idTousers notifications[]     @relation("notifications_from_user_idTousers")
   purchases                                       purchases[]
@@ -131,20 +132,24 @@ model group_members {
 }
 
 model groups {
-  group_id      String          @id @db.VarChar(10)
-  name          String          @db.VarChar(50)
-  leader        String          @db.VarChar(50)
-  visibility    Int             @default(1) @db.SmallInt
-  password      String          @db.VarChar(255)
-  salt          String?         @db.VarChar(100)
-  description   String          @db.VarChar(1000)
-  created_at    Int
-  max_members   Int             @db.SmallInt
-  tags          String          @db.VarChar(300)
-  color         String?         @db.VarChar(20)
-  goal_hr       Int             @db.SmallInt
+  group_id    String  @id @db.VarChar(10)
+  name        String  @db.VarChar(50)
+  leader      String  @db.VarChar(10)
+  visibility  Int     @default(1) @db.SmallInt
+  password    String? @db.VarChar(255)
+  description String  @db.VarChar(1000)
+  created_at  Int
+  max_members Int     @db.SmallInt
+  tags        String  @db.VarChar(300)
+  color       String? @db.VarChar(20)
+  goal_hr     Int     @db.SmallInt
+
   group_likes   group_likes[]
   group_members group_members[]
+
+  leader_user users @relation("groups_leader_fkey", fields: [leader], references: [user_id], onDelete: Restrict, onUpdate: Restrict)
+
+  @@index([leader], map: "leader")
 }
 
 model notifications {
