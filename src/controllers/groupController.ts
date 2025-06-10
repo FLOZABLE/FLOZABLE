@@ -1,10 +1,16 @@
 import { NextFunction, Request, Response } from 'express';
+import { nanoid } from 'nanoid';
 
+import { Prisma } from '../generated/prisma';
 import prisma from '../libs/prisma';
+import { bcryptHash, nowSec } from '../libs/utils';
 import { groupSelect } from '../queries/groupQueries';
-import { getCachedUserGroups } from '../services/cacheService';
+import {
+  delCachedUserGroups,
+  getCachedUserGroups,
+} from '../services/cacheService';
 import { formatGroups } from '../services/groupService';
-import { PostJoinGroupBody, RawGroup } from '../types/groupTypes';
+import { PostJoinGroupBody, PutGroupBody, RawGroup } from '../types/groupTypes';
 
 export const getGroups = async (
   req: Request,
@@ -48,8 +54,6 @@ export const postJoinGroup = async (
     const userId = req.user_id!;
     const { group_id, password } = req.body;
 
-    console.log(group_id, password);
-
     const rawGroup: RawGroup | null = await prisma.groups.findFirst({
       select: groupSelect,
       where: {
@@ -64,8 +68,93 @@ export const postJoinGroup = async (
 
     const [formattedGroup] = formatGroups([rawGroup]);
 
-    console.log(formattedGroup);
-    res.json({});
+    if (!formattedGroup.visibility) {
+    }
+
+    const joined_at = nowSec();
+
+    await prisma.group_members.create({
+      data: {
+        group_id,
+        joined_at,
+        user_id: userId,
+      },
+    });
+
+    res.json({ success: true });
+  } catch (error) {
+    if (
+      error instanceof Prisma.PrismaClientKnownRequestError &&
+      error.code === 'P2002'
+    ) {
+      // Unique constraint violation — user already joined
+      res.status(409).json({
+        success: false,
+        message: 'You have already joined this group.',
+      });
+      return;
+    }
+
+    next(error);
+  }
+};
+
+export const putGroup = async (
+  req: Request<{}, {}, PutGroupBody>,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const userId = req.user_id!;
+    const { name, password, description, max_members, color, goal_hr } =
+      req.body;
+
+    const tags = JSON.stringify(req.body.tags);
+    const visibility = req.body.visibility ? 1 : 0;
+
+    const group_id = nanoid(10);
+    const created_at = nowSec();
+
+    const hashed_password = password ? await bcryptHash(password) : null;
+
+    const newRawGroup = await prisma.groups.create({
+      data: {
+        group_id,
+        name,
+        description,
+        max_members,
+        tags,
+        color,
+        goal_hr,
+        visibility,
+        created_at,
+        leader: userId,
+        password: hashed_password,
+      },
+    });
+
+    const newMember = await prisma.group_members.create({
+      data: {
+        group_id,
+        joined_at: created_at,
+        user_id: userId,
+      },
+    });
+
+    const [newGroup] = formatGroups([
+      { ...newRawGroup, group_likes: [], group_members: [{ user_id: userId }] },
+    ]);
+    console.log(newGroup, newMember);
+
+    delCachedUserGroups(userId);
+
+    res.json({
+      success: true,
+      message: `Group ${newGroup.name} created`,
+      data: {
+        group: newGroup,
+      },
+    });
   } catch (error) {
     next(error);
   }

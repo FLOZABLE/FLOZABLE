@@ -1,5 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 
+import { Prisma } from '../generated/prisma';
+
 export interface AppError extends Error {
   status: number;
   description?: string;
@@ -9,6 +11,8 @@ export interface AppError extends Error {
   };
 }
 
+const isProd = process.env.NODE_ENV === 'production';
+
 export const errorHandler = (
   err: AppError,
   req: Request,
@@ -16,6 +20,15 @@ export const errorHandler = (
   next: NextFunction,
 ) => {
   console.error(err);
+
+  if (err instanceof Prisma.PrismaClientKnownRequestError && isProd) {
+    res.status(err.status || 500).json({
+      success: false,
+      code: err.status || 500,
+      message: 'Internal Server Error',
+    });
+    return;
+  }
 
   res.status(err.status || 500).json({
     success: false,
