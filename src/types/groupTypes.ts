@@ -3,7 +3,18 @@ import { groupSelect } from '../queries/groupQueries';
 
 export type PostJoinGroupBody = {
   group_id: string;
-  password: string | undefined;
+  password: string | null;
+};
+
+export type PutGroupBody = {
+  name: string;
+  password?: string | null;
+  description: string;
+  max_members: number;
+  tags: string[];
+  color: string;
+  goal_hr: number;
+  visibility: boolean;
 };
 
 export type RawGroup = Prisma.groupsGetPayload<{ select: typeof groupSelect }>;

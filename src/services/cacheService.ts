@@ -218,14 +218,37 @@ export const getCachedUserGroups = async ({
     const groupsList = dbGroups.map((group) => group.group_id);
 
     if (update) {
-      await redisClient.sadd(cacheKey, 'cached', ...groupsList);
-      await redisClient.expire(cacheKey, REDIS_TTL.USER_GROUPS_EXP);
+      cacheUserGroups(userId, groupsList);
     }
 
     return groupsList;
   } catch (err) {
     console.log(err);
     return [];
+  }
+};
+
+export const cacheUserGroups = async (
+  userId: string,
+  groupIds: string[],
+): Promise<void> => {
+  const cacheKey = `user:${userId}:groups`;
+
+  try {
+    await redisClient.sadd(cacheKey, 'cached', ...groupIds);
+    await redisClient.expire(cacheKey, REDIS_TTL.USER_GROUPS_EXP);
+  } catch (err) {
+    console.error(`Failed to cache groups: ${userId}`, err);
+  }
+};
+
+export const delCachedUserGroups = async (userId: string): Promise<void> => {
+  const cacheKey = `user:${userId}:groups`;
+
+  try {
+    await redisClient.del(cacheKey, 'cached');
+  } catch (err) {
+    console.error(`Failed to del groups: ${userId}`, err);
   }
 };
 
