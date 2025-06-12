@@ -1,5 +1,7 @@
 import Joi from 'joi';
 
+import { otherSchemas } from './otherSchemas';
+
 export const groupSchemas = {
   group_id: Joi.string().length(10).required().trim().messages({
     'string.length': 'Group id must be exactly 10 characters.',
@@ -65,8 +67,11 @@ export const groupSchemas = {
   }),
 };
 
-export const postJoinGroupSchema = Joi.object({
+export const postJoinGroupParamsSchema = Joi.object({
   group_id: groupSchemas.group_id,
+});
+
+export const postJoinGroupBodySchema = Joi.object({
   password: groupSchemas.password,
 });
 
@@ -89,4 +94,12 @@ export const putGroupSchema = Joi.object({
     });
   }
   return data;
+});
+
+export const getGroupMembersParamsSchema = Joi.object({
+  group_id: groupSchemas.group_id,
+});
+
+export const getGroupMembersQuerySchema = Joi.object({
+  timezone: otherSchemas.timezone,
 });

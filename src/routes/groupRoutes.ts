@@ -1,6 +1,7 @@
 import { Router } from 'express';
 
 import {
+  getGroupMembers,
   getGroups,
   getMyGroups,
   postJoinGroup,
@@ -8,7 +9,13 @@ import {
 } from '../controllers/groupController';
 import { authMiddleware } from '../middlewares/authMiddleware';
 import { validate } from '../middlewares/validationMiddleWare';
-import { postJoinGroupSchema, putGroupSchema } from '../schemas/groupSchemas';
+import {
+  getGroupMembersParamsSchema,
+  getGroupMembersQuerySchema,
+  postJoinGroupBodySchema,
+  postJoinGroupParamsSchema,
+  putGroupSchema,
+} from '../schemas/groupSchemas';
 
 const groupRouter = Router();
 
@@ -16,10 +23,18 @@ groupRouter.get('/all', getGroups);
 
 groupRouter.get('/mine', authMiddleware, getMyGroups);
 
-groupRouter.post(
-  '/join',
+groupRouter.get(
+  '/:group_id/members',
   authMiddleware,
-  validate(postJoinGroupSchema, 'body'),
+  validate(getGroupMembersParamsSchema, 'params'),
+  validate(getGroupMembersQuerySchema, 'query'),
+  getGroupMembers,
+);
+
+groupRouter.post(
+  '/:group_id/join',
+  authMiddleware,
+  validate(postJoinGroupParamsSchema, 'params'),
   postJoinGroup,
 );
 

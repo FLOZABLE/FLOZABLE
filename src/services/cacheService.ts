@@ -395,3 +395,22 @@ export const getCachedUserRanking = async ({
     return null;
   }
 };
+
+interface GetCachedUserStudyTimeParams extends GetViewTimezoneCacheParams {
+  userId: string;
+}
+
+export const getCachedUserStudyTime = async ({
+  userId,
+  viewer,
+  timezoneOffset,
+}: GetCachedUserStudyTimeParams): Promise<number> => {
+  try {
+    const cacheKey = `studytime:${viewer}:timezone:${timezoneOffset}`;
+    const studyTime = await redisClient.zscore(cacheKey, userId);
+    return typeof studyTime === 'number' ? studyTime : 0;
+  } catch (err) {
+    console.log(err);
+    return 0;
+  }
+};
