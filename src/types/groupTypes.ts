@@ -1,9 +1,20 @@
 import { Prisma } from '../generated/prisma';
 import { groupSelect } from '../queries/groupQueries';
 
-export type PostJoinGroupBody = {
+export type PostJoinGroupParams = {
   group_id: string;
+};
+
+export type PostJoinGroupBody = {
   password: string | null;
+};
+
+export type GetGroupMembersParams = {
+  group_id: string;
+};
+
+export type GetGroupMembersQuery = {
+  timezone: string;
 };
 
 export type PutGroupBody = {
