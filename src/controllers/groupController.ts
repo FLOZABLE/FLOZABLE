@@ -1,4 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
+import { DateTime } from 'luxon';
 import { nanoid } from 'nanoid';
 
 import { Prisma } from '../generated/prisma';
@@ -8,9 +9,18 @@ import { groupSelect } from '../queries/groupQueries';
 import {
   delCachedUserGroups,
   getCachedUserGroups,
+  getCachedUserStatus,
+  getCachedUserStudyTime,
 } from '../services/cacheService';
 import { formatGroups } from '../services/groupService';
-import { PostJoinGroupBody, PutGroupBody, RawGroup } from '../types/groupTypes';
+import {
+  GetGroupMembersParams,
+  GetGroupMembersQuery,
+  PostJoinGroupBody,
+  PostJoinGroupParams,
+  PutGroupBody,
+  RawGroup,
+} from '../types/groupTypes';
 
 export const getGroups = async (
   req: Request,
@@ -24,7 +34,10 @@ export const getGroups = async (
 
     const formattedGroups = formatGroups(rawGroups);
 
-    res.send({ data: { groups: formattedGroups, my_groups: [] } });
+    res.send({
+      success: true,
+      data: { groups: formattedGroups, my_groups: [] },
+    });
   } catch (error) {
     next(error);
   }
@@ -45,14 +58,81 @@ export const getMyGroups = async (
   }
 };
 
-export const postJoinGroup = async (
-  req: Request<{}, {}, PostJoinGroupBody>,
+export const getGroupMembers = async (
+  req: Request<GetGroupMembersParams, {}, {}, GetGroupMembersQuery>,
   res: Response,
   next: NextFunction,
 ) => {
   try {
     const userId = req.user_id!;
-    const { group_id, password } = req.body;
+    const { group_id } = req.params;
+
+    const { timezone } = req.query;
+
+    const userGroups = await getCachedUserGroups({ userId });
+
+    if (!userGroups.find((groupId) => groupId === group_id)) {
+      res.send({
+        success: false,
+        message: 'Not a member of this group',
+        status: 403,
+        error: {
+          reason: 'Not a member of this group',
+        },
+      });
+      return;
+    }
+
+    const rawGroupMembers = await prisma.group_members.findMany({
+      select: {
+        users: {
+          select: {
+            name: true,
+            user_id: true,
+          },
+        },
+      },
+      where: {
+        group_id,
+      },
+    });
+
+    const groupMembers = rawGroupMembers.map((member) => member.users);
+
+    const today = DateTime.now().setZone(timezone);
+    const timezoneOffset = Math.floor(today.offset / 60);
+
+    const members = await Promise.all(
+      groupMembers.map(async (member) => {
+        const studyTime = await getCachedUserStudyTime({
+          userId: member.user_id,
+          timezoneOffset,
+          viewer: 'day',
+        });
+        const activeSubject = await getCachedUserStatus(member.user_id);
+        return {
+          ...member,
+          study_time: studyTime,
+          active_subject: activeSubject,
+        };
+      }),
+    );
+
+    res.send({ data: { members } });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const postJoinGroup = async (
+  req: Request<PostJoinGroupParams, {}, PostJoinGroupBody>,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const userId = req.user_id!;
+    const { group_id } = req.params;
+    const { password } = req.body;
 
     const rawGroup: RawGroup | null = await prisma.groups.findFirst({
       select: groupSelect,
@@ -66,10 +146,12 @@ export const postJoinGroup = async (
       return;
     }
 
-    const [formattedGroup] = formatGroups([rawGroup]);
+    const [group] = formatGroups([rawGroup]);
 
-    if (!formattedGroup.visibility) {
+    if (!group.visibility) {
     }
+
+    group.members.push(userId);
 
     const joined_at = nowSec();
 
@@ -81,7 +163,11 @@ export const postJoinGroup = async (
       },
     });
 
-    res.json({ success: true });
+    res.json({
+      success: true,
+      message: `Joined group ${group.name}`,
+      data: { group },
+    });
   } catch (error) {
     if (
       error instanceof Prisma.PrismaClientKnownRequestError &&
