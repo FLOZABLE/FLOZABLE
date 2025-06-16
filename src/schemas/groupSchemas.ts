@@ -67,11 +67,11 @@ export const groupSchemas = {
   }),
 };
 
-export const postJoinGroupParamsSchema = Joi.object({
+export const postGroupJoinParamsSchema = Joi.object({
   group_id: groupSchemas.group_id,
 });
 
-export const postJoinGroupBodySchema = Joi.object({
+export const postGroupJoinBodySchema = Joi.object({
   password: groupSchemas.password,
 });
 
