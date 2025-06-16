@@ -9,20 +9,21 @@ import { groupSelect } from '../queries/groupQueries';
 import {
   delCachedUserGroups,
   getCachedUserGroups,
-  getCachedUserStatus,
-  getCachedUserStudyTime,
+  getCachedUsersStatus,
+  getCachedUsersStudyTime,
 } from '../services/cacheService';
 import { formatGroups } from '../services/groupService';
 import {
   GetGroupMembersParams,
   GetGroupMembersQuery,
-  PostJoinGroupBody,
-  PostJoinGroupParams,
+  PostGroupJoinBody,
+  PostGroupJoinParams,
+  PostLeaveGroupParams,
   PutGroupBody,
   RawGroup,
 } from '../types/groupTypes';
 
-export const getGroups = async (
+export const getGroupAll = async (
   req: Request,
   res: Response,
   next: NextFunction,
@@ -69,9 +70,12 @@ export const getGroupMembers = async (
 
     const { timezone } = req.query;
 
-    const userGroups = await getCachedUserGroups({ userId });
+    const date1 = Date.now();
 
-    if (!userGroups.find((groupId) => groupId === group_id)) {
+    const userGroups = await getCachedUserGroups({ userId });
+    const userGroupSet = new Set(userGroups);
+
+    if (!userGroupSet.has(group_id)) {
       res.send({
         success: false,
         message: 'Not a member of this group',
@@ -99,24 +103,38 @@ export const getGroupMembers = async (
 
     const groupMembers = rawGroupMembers.map((member) => member.users);
 
+    const memberIds = groupMembers.map((member) => member.user_id);
     const today = DateTime.now().setZone(timezone);
     const timezoneOffset = Math.floor(today.offset / 60);
 
-    const members = await Promise.all(
-      groupMembers.map(async (member) => {
-        const studyTime = await getCachedUserStudyTime({
-          userId: member.user_id,
-          timezoneOffset,
-          viewer: 'day',
-        });
-        const activeSubject = await getCachedUserStatus(member.user_id);
-        return {
-          ...member,
-          study_time: studyTime,
-          active_subject: activeSubject,
-        };
+    // 4. Fetch all enrichment data in parallel with bulk operations
+    const [studyTimes, statuses] = await Promise.all([
+      getCachedUsersStudyTime({
+        userIds: memberIds,
+        viewer: 'day',
+        timezoneOffset,
       }),
+      getCachedUsersStatus(memberIds),
+    ]);
+
+    // 5. Create Maps for efficient O(1) data merging
+    const studyTimeMap = new Map(
+      studyTimes.map((item) => [item.userId, item.studyTime]),
     );
+    const statusMap = new Map(
+      statuses.map((item) => [item.userId, item.status]),
+    );
+
+    // 6. Combine all data in a single, efficient loop
+    const members = groupMembers.map((member) => ({
+      ...member,
+      study_time: studyTimeMap.get(member.user_id) || 0,
+      active_subject: statusMap.get(member.user_id) || null,
+    }));
+
+    const date2 = Date.now();
+
+    console.log('result', group_id, memberIds.length, date2 - date1);
 
     res.send({ data: { members } });
   } catch (error) {
@@ -124,8 +142,8 @@ export const getGroupMembers = async (
   }
 };
 
-export const postJoinGroup = async (
-  req: Request<PostJoinGroupParams, {}, PostJoinGroupBody>,
+export const postGroupJoin = async (
+  req: Request<PostGroupJoinParams, {}, PostGroupJoinBody>,
   res: Response,
   next: NextFunction,
 ) => {
@@ -166,6 +184,46 @@ export const postJoinGroup = async (
     res.json({
       success: true,
       message: `Joined group ${group.name}`,
+      data: { group },
+    });
+  } catch (error) {
+    if (
+      error instanceof Prisma.PrismaClientKnownRequestError &&
+      error.code === 'P2002'
+    ) {
+      // Unique constraint violation — user already joined
+      res.status(409).json({
+        success: false,
+        message: 'You have already joined this group.',
+      });
+      return;
+    }
+
+    next(error);
+  }
+};
+
+export const postLeaveGroup = async (
+  req: Request<PostLeaveGroupParams>,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const userId = req.user_id!;
+    const { group_id } = req.params;
+
+    const group = await prisma.group_members.delete({
+      where: {
+        user_id_group_id: {
+          user_id: userId,
+          group_id: group_id,
+        },
+      },
+    });
+
+    res.json({
+      success: true,
+      message: `Left group`,
       data: { group },
     });
   } catch (error) {

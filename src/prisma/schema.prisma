@@ -129,6 +129,7 @@ model group_members {
 
   @@id([user_id, group_id])
   @@index([group_id], map: "group_id")
+  
 }
 
 model groups {

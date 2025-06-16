@@ -107,10 +107,6 @@ export const getUserRanking = async (
 
     const totalUsers = await prisma.users.count();
 
-    const dateTime = DateTime.fromISO(date, { zone: timezone })
-      .startOf('day')
-      .startOf(viewer);
-
     const now = DateTime.now().setZone(timezone).startOf('day').startOf(viewer);
 
     const rankings = await Promise.all(

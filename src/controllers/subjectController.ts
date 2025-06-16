@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 
+import { Prisma } from '../generated/prisma';
 import prisma from '../libs/prisma';
 import { createSubject, subjectsFormatter } from '../services/subjectService';
 import { GetSubjectAllQuery, PutSubjectBody } from '../types/subjectTypes';
@@ -61,6 +62,17 @@ export const putSubject = async (
 
     res.send({ success: true, data: { subject } });
   } catch (error) {
+    if (
+      error instanceof Prisma.PrismaClientKnownRequestError &&
+      error.code === 'P2002'
+    ) {
+      res.status(409).json({
+        success: false,
+        message: 'You already have subject with this name.',
+      });
+      return;
+    }
+
     next(error);
   }
 };
