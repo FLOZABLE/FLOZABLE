@@ -414,3 +414,101 @@ export const getCachedUserStudyTime = async ({
     return 0;
   }
 };
+
+/**
+ * Fetches study times for multiple users in a single Redis round-trip.
+ */
+export const getCachedUsersStudyTime = async ({
+  userIds,
+  viewer,
+  timezoneOffset,
+}: {
+  userIds: string[];
+  viewer: 'day';
+  timezoneOffset: number;
+}): Promise<{ userId: string; studyTime: number }[]> => {
+  if (userIds.length === 0) return [];
+
+  try {
+    const cacheKey = `studytime:${viewer}:timezone:${timezoneOffset}`;
+    const pipeline = redisClient.pipeline();
+    userIds.forEach((userId) => {
+      pipeline.zscore(cacheKey, userId);
+    });
+
+    const results = await pipeline.exec();
+
+    if (!results) {
+      console.error('Redis pipeline for study times failed, returning null.');
+      return userIds.map((userId) => ({ userId, studyTime: 0 }));
+    }
+
+    return userIds.map((userId, index) => {
+      const [error, score] = results[index];
+      const studyTime = typeof score === 'string' ? parseFloat(score) : 0;
+      return { userId, studyTime };
+    });
+  } catch (err) {
+    console.error('Error fetching bulk study times from Redis:', err);
+    // Return a default value to prevent the entire request from failing
+    return userIds.map((userId) => ({ userId, studyTime: 0 }));
+  }
+};
+
+/**
+ * Fetches statuses for multiple users in a single Redis round-trip.
+ */
+export const getCachedUsersStatus = async (
+  userIds: string[],
+): Promise<{ userId: string; status: UserStatus | null }[]> => {
+  if (userIds.length === 0) {
+    return [];
+  }
+
+  const pipeline = redisClient.pipeline();
+  userIds.forEach((userId) => {
+    pipeline.hgetall(`user:${userId}:status`);
+  });
+
+  // 1. Correctly type the result from `pipeline.exec()` as returning `unknown`.
+  //    This acknowledges that TypeScript can't know the shape of the data.
+  const results: [error: Error | null, result: unknown][] | null =
+    await pipeline.exec();
+
+  if (!results) {
+    console.error('Redis pipeline for user statuses failed, returning null.');
+    return userIds.map((userId) => ({ userId, status: null }));
+  }
+
+  return userIds.map((userId, index) => {
+    const [error, rawResult] = results[index];
+
+    // 2. Perform runtime checks to ensure we have a usable object.
+    if (error || typeof rawResult !== 'object' || rawResult === null) {
+      if (error) {
+        console.error(`Error in HGETALL pipeline for user ${userId}:`, error);
+      }
+      return { userId, status: null };
+    }
+
+    // 3. FIX: Use a type assertion (`as`) to tell the compiler the shape of the object.
+    //    This is the key step. We are guaranteeing the type based on our runtime checks
+    //    and our knowledge that `hgetall` returns a string-to-string record.
+    const statusHash = rawResult as Record<string, string>;
+
+    // 4. Now we can safely access properties because `statusHash` is correctly typed.
+    if (!statusHash.subject_id) {
+      // This handles cases where the hash exists but is empty.
+      return { userId, status: null };
+    }
+
+    return {
+      userId,
+      status: {
+        subject_id: statusHash.subject_id,
+        name: statusHash.name,
+        start_time: Number(statusHash.start_time),
+      },
+    };
+  });
+};

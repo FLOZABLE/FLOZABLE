@@ -1,22 +1,32 @@
 import { Prisma } from '../generated/prisma';
 import { groupSelect } from '../queries/groupQueries';
 
-export type PostJoinGroupParams = {
+//POST /group/:group_id/join
+export type PostGroupJoinParams = {
   group_id: string;
 };
 
-export type PostJoinGroupBody = {
+//POST /group/:group_id/join
+export type PostGroupJoinBody = {
   password: string | null;
 };
 
+//POST /group/:group_id/leave
+export type PostLeaveGroupParams = {
+  group_id: string;
+};
+
+//GET /group/:group_id/members
 export type GetGroupMembersParams = {
   group_id: string;
 };
 
+//GET /group/:group_id/members
 export type GetGroupMembersQuery = {
   timezone: string;
 };
 
+//PUT /group
 export type PutGroupBody = {
   name: string;
   password?: string | null;
