@@ -15,7 +15,11 @@ export async function bcryptHash(password: string) {
   return await bcrypt.hash(password, saltRounds);
 }
 
-export async function bcryptVerify(password: string, hash: string) {
+export async function bcryptVerify(
+  password: string | undefined | null,
+  hash: string | undefined | null,
+) {
+  if (!password || !hash) return false;
   return await bcrypt.compare(password, hash);
 }
 
