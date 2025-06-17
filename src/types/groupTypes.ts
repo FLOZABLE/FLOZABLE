@@ -12,8 +12,18 @@ export type PostGroupJoinBody = {
 };
 
 //POST /group/:group_id/leave
-export type PostLeaveGroupParams = {
+export type PostGroupLeaveParams = {
   group_id: string;
+};
+
+//POST /group/:group_id/like
+export type PostGroupLikeParams = {
+  group_id: string;
+};
+
+//POST /group/:group_id/like
+export type PostGroupLikeBody = {
+  like: boolean;
 };
 
 //GET /group/:group_id/members

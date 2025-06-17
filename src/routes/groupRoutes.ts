@@ -1,10 +1,12 @@
 import { Router } from 'express';
 
 import {
-  getGroupMembers,
   getGroupAll,
+  getGroupMembers,
   getMyGroups,
   postGroupJoin,
+  postGroupLeave,
+  postGroupLike,
   putGroup,
 } from '../controllers/groupController';
 import { authMiddleware } from '../middlewares/authMiddleware';
@@ -12,8 +14,8 @@ import { validate } from '../middlewares/validationMiddleWare';
 import {
   getGroupMembersParamsSchema,
   getGroupMembersQuerySchema,
-  postGroupJoinBodySchema,
   postGroupJoinParamsSchema,
+  postGroupLikeParamsSchema,
   putGroupSchema,
 } from '../schemas/groupSchemas';
 
@@ -36,6 +38,15 @@ groupRouter.post(
   authMiddleware,
   validate(postGroupJoinParamsSchema, 'params'),
   postGroupJoin,
+);
+
+groupRouter.post('/:group_id/leave', authMiddleware, postGroupLeave);
+
+groupRouter.post(
+  '/:group_id/like',
+  authMiddleware,
+  validate(postGroupLikeParamsSchema, 'params'),
+  postGroupLike,
 );
 
 groupRouter.put(

@@ -1,7 +1,7 @@
-import BaseJoi from 'joi';
+import Joi from 'joi';
 import JoiTimezone from 'joi-tz';
 
-const Joi = BaseJoi.extend(JoiTimezone);
+const TimezoneJoi = Joi.extend(JoiTimezone);
 
 export const otherSchemas = {
   viewer: Joi.string().valid('day', 'week', 'month').required().messages({
@@ -14,5 +14,9 @@ export const otherSchemas = {
     'string.empty': 'Date cannot be empty.',
     'string.isoDate': 'Date must be a valid ISO 8601 string.',
   }),
-  timezone: Joi.timezone().required(),
+  timezone: TimezoneJoi.timezone().required(),
+  like: Joi.boolean().required().messages({
+    'boolean.base': 'Like must be true or false.',
+    'any.required': 'Like is required.',
+  }),
 };
