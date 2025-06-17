@@ -9,9 +9,9 @@ export const groupSchemas = {
     'any.required': 'Group id is required.',
   }),
 
-  name: Joi.string().min(2).max(10).required().trim().messages({
+  name: Joi.string().min(2).max(20).required().trim().messages({
     'string.min': 'Group name must be at least 2 characters long.',
-    'string.max': 'Group name cannot exceed 10 characters.',
+    'string.max': 'Group name cannot exceed 20 characters.',
     'string.empty': 'Group name cannot be empty.',
     'any.required': 'Group name is required.',
   }),
@@ -75,25 +75,27 @@ export const postGroupJoinBodySchema = Joi.object({
   password: groupSchemas.password,
 });
 
+export const postGroupLikeParamsSchema = Joi.object({
+  group_id: groupSchemas.group_id,
+});
+
+export const postGroupLikeBodySchema = Joi.object({
+  like: otherSchemas.like,
+});
+
 export const putGroupSchema = Joi.object({
   name: groupSchemas.name,
-  password: Joi.string().allow('', null).optional(),
+  password: Joi.when('visibility', {
+    is: false,
+    then: groupSchemas.password,
+    otherwise: Joi.string().allow('', null).optional(),
+  }),
   description: groupSchemas.description,
   max_members: groupSchemas.max_members,
   tags: groupSchemas.tags,
   color: groupSchemas.color,
   goal_hr: groupSchemas.goal_hr,
   visibility: groupSchemas.visibility,
-}).custom((data, helpers) => {
-  if (
-    data.visibility === false &&
-    (!data.password || data.password.trim() === '')
-  ) {
-    return helpers.message({
-      custom: 'Please provide a password when the group is private.',
-    });
-  }
-  return data;
 });
 
 export const getGroupMembersParamsSchema = Joi.object({

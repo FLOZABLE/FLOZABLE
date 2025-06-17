@@ -4,10 +4,11 @@ import { nanoid } from 'nanoid';
 
 import { Prisma } from '../generated/prisma';
 import prisma from '../libs/prisma';
-import { bcryptHash, nowSec } from '../libs/utils';
+import { bcryptHash, bcryptVerify, nowSec } from '../libs/utils';
 import { groupSelect } from '../queries/groupQueries';
 import {
   delCachedUserGroups,
+  filterCachedUserGroups,
   getCachedUserGroups,
   getCachedUsersStatus,
   getCachedUsersStudyTime,
@@ -18,7 +19,9 @@ import {
   GetGroupMembersQuery,
   PostGroupJoinBody,
   PostGroupJoinParams,
-  PostLeaveGroupParams,
+  PostGroupLeaveParams,
+  PostGroupLikeBody,
+  PostGroupLikeParams,
   PutGroupBody,
   RawGroup,
 } from '../types/groupTypes';
@@ -152,8 +155,8 @@ export const postGroupJoin = async (
     const { group_id } = req.params;
     const { password } = req.body;
 
-    const rawGroup: RawGroup | null = await prisma.groups.findFirst({
-      select: groupSelect,
+    const rawGroup = await prisma.groups.findFirst({
+      select: { ...groupSelect, password: true },
       where: {
         group_id,
       },
@@ -167,11 +170,18 @@ export const postGroupJoin = async (
     const [group] = formatGroups([rawGroup]);
 
     if (!group.visibility) {
+      const valid = await bcryptVerify(password, rawGroup.password);
+      if (!valid) {
+        res.send({ success: false, message: 'Wrong password' });
+        return;
+      }
     }
 
     group.members.push(userId);
 
     const joined_at = nowSec();
+
+    await delCachedUserGroups(userId);
 
     await prisma.group_members.create({
       data: {
@@ -203,8 +213,8 @@ export const postGroupJoin = async (
   }
 };
 
-export const postLeaveGroup = async (
-  req: Request<PostLeaveGroupParams>,
+export const postGroupLeave = async (
+  req: Request<PostGroupLeaveParams>,
   res: Response,
   next: NextFunction,
 ) => {
@@ -221,24 +231,54 @@ export const postLeaveGroup = async (
       },
     });
 
+    filterCachedUserGroups(userId, group_id);
+
     res.json({
       success: true,
       message: `Left group`,
       data: { group },
     });
   } catch (error) {
-    if (
-      error instanceof Prisma.PrismaClientKnownRequestError &&
-      error.code === 'P2002'
-    ) {
-      // Unique constraint violation — user already joined
-      res.status(409).json({
-        success: false,
-        message: 'You have already joined this group.',
+    next(error);
+  }
+};
+
+export const postGroupLike = async (
+  req: Request<PostGroupLikeParams, {}, PostGroupLikeBody>,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const userId = req.user_id!;
+    const { group_id } = req.params;
+
+    const { like } = req.body;
+
+    if (like) {
+      await prisma.group_likes.create({
+        data: {
+          user_id: userId,
+          group_id,
+        },
       });
-      return;
+    } else {
+      await prisma.group_likes.delete({
+        where: {
+          user_id_group_id: {
+            user_id: userId,
+            group_id: group_id,
+          },
+        },
+      });
     }
 
+    filterCachedUserGroups(userId, group_id);
+
+    res.json({
+      success: true,
+      //message: like ? `Liked group` : '',
+    });
+  } catch (error) {
     next(error);
   }
 };
