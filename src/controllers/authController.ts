@@ -1,12 +1,29 @@
 import { NextFunction, Request, Response } from 'express';
+import { google } from 'googleapis';
+import { nanoid } from 'nanoid';
 
+import config from '../config/config';
 import { COOKIE_TTL } from '../libs/constants';
-import { createUser, loginUser } from '../services/authService';
-import { createSession } from '../services/sessionService';
+import prisma from '../libs/prisma';
+import {
+  createUser,
+  googleOauth2client,
+  loginUser,
+  setSessionCookie,
+} from '../services/authService';
+import {
+  createSession,
+  deleteSession,
+  getUserIdByToken,
+} from '../services/sessionService';
 import { createSubject } from '../services/subjectService';
-import { PostLoginBody, PostSignupBody } from '../types/authTypes';
+import {
+  GetAuthGoogleCallbackQuery,
+  PostAuthLoginBody,
+  PostSignupBody,
+} from '../types/authTypes';
 
-export const postSignup = async (
+export const postAuthSignup = async (
   req: Request<{}, {}, PostSignupBody>,
   res: Response,
   next: NextFunction,
@@ -31,8 +48,8 @@ export const postSignup = async (
   }
 };
 
-export const postLogin = async (
-  req: Request<{}, {}, PostLoginBody>,
+export const postAuthLogin = async (
+  req: Request<{}, {}, PostAuthLoginBody>,
   res: Response,
   next: NextFunction,
 ) => {
@@ -42,14 +59,119 @@ export const postLogin = async (
     const user = await loginUser({ email, password });
     const token = await createSession(user.user_id);
 
-    res.cookie('token', token, {
-      httpOnly: true,
-      secure: true,
-      sameSite: 'strict',
-      maxAge: COOKIE_TTL.LOGIN_TOKEN_EXP,
-    });
+    setSessionCookie(res, token);
 
     res.send({ success: true, token });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const postAuthLogout = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const userId = req.user_id!;
+
+    res.clearCookie('token');
+
+    deleteSession(userId);
+
+    res.send({ success: true });
+  } catch (error) {
+    next(error);
+  }
+};
+export const getAuthGoogleCallback = async (
+  req: Request<{}, {}, {}, GetAuthGoogleCallbackQuery>,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const { code, state } = req.query;
+    const decodedState = JSON.parse(decodeURIComponent(state));
+    const timezone = decodedState.timezone;
+
+    const auth = googleOauth2client();
+    const response = await auth?.getToken(code);
+
+    if (!auth || response?.res?.status !== 200 || !response.tokens) {
+      res.status(400).json({
+        success: false,
+        message:
+          'Failed to retrieve access token from Google. Please try signing in again.',
+        error: {
+          reason: 'OAuth token exchange failed',
+          status: response?.res?.status,
+        },
+      });
+      return;
+    }
+
+    auth.setCredentials(response.tokens);
+
+    const token =
+      req.headers.authorization?.split(' ')[1] || req.cookies?.token;
+    const userId = await getUserIdByToken(token);
+
+    // Existing logged-in user: link Google refresh token
+    if (userId) {
+      await prisma.users.update({
+        where: { user_id: userId },
+        data: { google_refresh_token: response.tokens.refresh_token },
+      });
+      return res.redirect(config.nextServer + '/dashboard/account');
+    }
+
+    // Not logged in: fetch user info from Google
+    const oauth2 = google.oauth2({ auth, version: 'v2' });
+    const userInfoResponse = await oauth2.userinfo.get();
+    const { email, name } = userInfoResponse.data;
+
+    if (!email) {
+      res.status(400).json({
+        success: false,
+        message: 'Failed to retrieve email from Google account.',
+        error: { reason: 'Missing email in Google user info' },
+      });
+      return;
+    }
+
+    const existingUser = await prisma.users.findFirst({
+      where: { email },
+      select: { user_id: true },
+    });
+
+    // Existing user: log in
+    if (existingUser?.user_id) {
+      const sessionToken = await createSession(existingUser.user_id);
+
+      setSessionCookie(res, sessionToken);
+
+      await prisma.users.update({
+        where: { user_id: existingUser.user_id },
+        data: { google_refresh_token: response.tokens.refresh_token },
+      });
+
+      return res.redirect(config.nextServer + '/dashboard/account');
+    }
+
+    // New user
+    const password = nanoid(10);
+    const newUser = await createUser({ name, email, timezone, password });
+
+    await createSubject({
+      name: 'others',
+      color: '#000000',
+      users: { connect: { user_id: newUser.user_id } },
+    });
+
+    const sessionToken = await createSession(newUser.user_id);
+    setSessionCookie(res, sessionToken);
+
+    return res.redirect(config.nextServer + '/dashboard/welcome');
   } catch (error) {
     next(error);
   }

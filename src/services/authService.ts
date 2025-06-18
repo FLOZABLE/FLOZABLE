@@ -1,16 +1,21 @@
 import crypto from 'crypto';
+import { Response } from 'express';
+import { google } from 'googleapis';
 import { nanoid } from 'nanoid';
 
+import config from '../config/config';
 import { Prisma } from '../generated/prisma/client';
+import { COOKIE_TTL } from '../libs/constants';
 import { AppErrorFactory } from '../libs/errors';
 import prisma from '../libs/prisma';
 import { bcryptHash, bcryptVerify, nowSec } from '../libs/utils';
 
 type CreateUserParams = Omit<
   Prisma.usersCreateInput,
-  'user_id' | 'hashed_password' | 'hashed_password_type' | 'created_at'
+  'name' | 'user_id' | 'hashed_password' | 'hashed_password_type' | 'created_at'
 > & {
   password: string;
+  name: string | undefined | null;
 };
 
 export const createUser = async ({
@@ -26,7 +31,7 @@ export const createUser = async ({
   const newUser = await prisma.users.create({
     data: {
       user_id,
-      name,
+      name: name ? name : user_id,
       email,
       timezone,
       hashed_password,
@@ -92,3 +97,26 @@ export const updateUserHash = async (
     },
   });
 };
+
+export function googleOauth2client() {
+  try {
+    const auth = new google.auth.OAuth2(
+      config.googleClientId,
+      config.googleClientSecret,
+      config.googleRedirectUri,
+    );
+    return auth;
+  } catch (err) {
+    console.log(err);
+    return null;
+  }
+}
+
+export function setSessionCookie(res: Response, token: string) {
+  res.cookie('token', token, {
+    httpOnly: true,
+    secure: true,
+    sameSite: 'strict',
+    maxAge: COOKIE_TTL.LOGIN_TOKEN_EXP,
+  });
+}

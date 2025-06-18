@@ -14,7 +14,8 @@ export const createSession = async (userId: string) => {
   return token;
 };
 
-export const getUserIdByToken = async (token: string) => {
+export const getUserIdByToken = async (token: string | undefined) => {
+  if (!token) return;
   return await redisClient.get(`session:${token}`);
 };
 
