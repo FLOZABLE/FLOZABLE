@@ -10,7 +10,6 @@ export const authMiddleware = async <Q = ParsedQs>(
 ) => {
   const token = req.headers.authorization?.split(' ')[1] || req.cookies?.token;
 
-  console.log(token);
   if (!token) {
     res.status(401).json({ error: 'Unauthorized: No token provided' });
     return;

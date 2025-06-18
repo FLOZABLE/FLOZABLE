@@ -5,7 +5,12 @@ export type PostSignupBody = {
   password: string;
 };
 
-export type PostLoginBody = {
+export type PostAuthLoginBody = {
   email: string;
   password: string;
+};
+
+export type GetAuthGoogleCallbackQuery = {
+  code: string;
+  state: string;
 };
