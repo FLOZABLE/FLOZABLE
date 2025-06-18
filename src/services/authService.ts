@@ -99,18 +99,29 @@ export const updateUserHash = async (
 };
 
 export function googleOauth2client() {
+  const auth = new google.auth.OAuth2(
+    config.googleClientId,
+    config.googleClientSecret,
+    config.googleRedirectUri,
+  );
+  return auth;
+}
+
+export const refreshGoogleAccessToken = async (refreshToken: string) => {
   try {
-    const auth = new google.auth.OAuth2(
-      config.googleClientId,
-      config.googleClientSecret,
-      config.googleRedirectUri,
-    );
-    return auth;
+    const auth = googleOauth2client();
+    auth.setCredentials({ refresh_token: refreshToken });
+
+    const { token } = await auth.getAccessToken();
+
+    if (!token) throw new Error('Failed to refresh access token');
+
+    return token;
   } catch (err) {
-    console.log(err);
+    console.error('Error refreshing Google access token:', err);
     return null;
   }
-}
+};
 
 export function setSessionCookie(res: Response, token: string) {
   res.cookie('token', token, {
