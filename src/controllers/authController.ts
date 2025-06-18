@@ -3,7 +3,6 @@ import { google } from 'googleapis';
 import { nanoid } from 'nanoid';
 
 import config from '../config/config';
-import { COOKIE_TTL } from '../libs/constants';
 import prisma from '../libs/prisma';
 import {
   createUser,
@@ -11,6 +10,7 @@ import {
   loginUser,
   setSessionCookie,
 } from '../services/authService';
+import { cacheUserGoogleAccessToken } from '../services/cacheService';
 import {
   createSession,
   deleteSession,
@@ -84,6 +84,7 @@ export const postAuthLogout = async (
     next(error);
   }
 };
+
 export const getAuthGoogleCallback = async (
   req: Request<{}, {}, {}, GetAuthGoogleCallbackQuery>,
   res: Response,
@@ -122,6 +123,7 @@ export const getAuthGoogleCallback = async (
         where: { user_id: userId },
         data: { google_refresh_token: response.tokens.refresh_token },
       });
+      cacheUserGoogleAccessToken(userId, response.tokens.access_token);
       return res.redirect(config.nextServer + '/dashboard/account');
     }
 
@@ -155,6 +157,11 @@ export const getAuthGoogleCallback = async (
         data: { google_refresh_token: response.tokens.refresh_token },
       });
 
+      cacheUserGoogleAccessToken(
+        existingUser.user_id,
+        response.tokens.access_token,
+      );
+
       return res.redirect(config.nextServer + '/dashboard/account');
     }
 
@@ -170,6 +177,8 @@ export const getAuthGoogleCallback = async (
 
     const sessionToken = await createSession(newUser.user_id);
     setSessionCookie(res, sessionToken);
+
+    cacheUserGoogleAccessToken(newUser.user_id, response.tokens.access_token);
 
     return res.redirect(config.nextServer + '/dashboard/welcome');
   } catch (error) {

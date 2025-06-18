@@ -4,6 +4,7 @@ import redisClient from '../models/redisClient';
 import { UserInfo, UserStatus } from '../types/accountTypes';
 import { Viewer } from '../types/otherTypes';
 import { RawRanking } from '../types/rankingTypes';
+import { googleOauth2client, refreshGoogleAccessToken } from './authService';
 
 interface GetCacheParams {
   update?: boolean;
@@ -421,6 +422,50 @@ export const getCachedUserStudyTime = async ({
   } catch (err) {
     console.log(err);
     return 0;
+  }
+};
+
+export const cacheUserGoogleAccessToken = async (
+  userId: string | undefined,
+  token: string | undefined | null,
+) => {
+  if (!token || !userId) return;
+
+  const key = `user:${userId}:google_access_token`;
+  await redisClient.set(key, token);
+  await redisClient.expire(key, REDIS_TTL.USER_GOOGLE_ACCESS_TOKEN);
+};
+
+export const getCacheUserGoogleAccessToken = async (userId: string) => {
+  const key = `user:${userId}:google_access_token`;
+
+  try {
+    const googleAccessToken = await redisClient.get(key);
+
+    if (googleAccessToken) {
+      return googleAccessToken;
+    }
+
+    const userInfo = await prisma.users.findFirst({
+      where: { user_id: userId },
+      select: { google_refresh_token: true },
+    });
+
+    if (!userInfo || !userInfo.google_refresh_token) {
+      return null;
+    }
+    const newAccessToken = await refreshGoogleAccessToken(
+      userInfo.google_refresh_token,
+    );
+
+    if (!newAccessToken) return null;
+
+    await redisClient.set(key, newAccessToken);
+
+    return newAccessToken;
+  } catch (err) {
+    console.log(err);
+    return null;
   }
 };
 

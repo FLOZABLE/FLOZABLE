@@ -4,6 +4,7 @@ export const REDIS_TTL = {
   USER_FRIENDS_EXP: 60 * 60, //1hour
   USER_GROUPS_EXP: 60 * 60, //1hour
   USER_STATUS_EXP: 60 * 60 * 5, //5 hour
+  USER_GOOGLE_ACCESS_TOKEN: 60 * 60 * 1, //1hour
 };
 
 export const COOKIE_TTL = {
