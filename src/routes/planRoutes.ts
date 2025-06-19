@@ -7,6 +7,7 @@ import {
   putPlan,
 } from '../controllers/planController';
 import { authMiddleware } from '../middlewares/authMiddleware';
+import { googleErrorHandler } from '../middlewares/errorHandler';
 import { validate } from '../middlewares/validationMiddleWare';
 import {
   deletePlanBodySchema,
@@ -24,6 +25,7 @@ planRouter.get(
   authMiddleware,
   validate(getPlanAllSchema, 'query'),
   getPlanAll,
+  googleErrorHandler,
 );
 
 planRouter.patch(
@@ -32,6 +34,7 @@ planRouter.patch(
   validate(patchPlanParamsSchema, 'params'),
   validate(patchPlanBodySchema, 'body'),
   patchPlan,
+  googleErrorHandler,
 );
 
 planRouter.delete(
@@ -40,6 +43,7 @@ planRouter.delete(
   validate(deletePlanParamsSchema, 'params'),
   validate(deletePlanBodySchema, 'body'),
   deletePlan,
+  googleErrorHandler,
 );
 
 planRouter.put(
@@ -47,6 +51,7 @@ planRouter.put(
   authMiddleware,
   validate(putPlanBodySchema, 'body'),
   putPlan,
+  googleErrorHandler,
 );
 
 export default planRouter;
