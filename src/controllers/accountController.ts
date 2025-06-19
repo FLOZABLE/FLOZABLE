@@ -1,9 +1,12 @@
+import { AxiosError } from 'axios';
 import { NextFunction, Request, Response } from 'express';
+import { GaxiosError } from 'gaxios';
 import { google, oauth2_v2 } from 'googleapis';
 
 import { AppErrorFactory } from '../libs/errors';
 import { googleOauth2client } from '../services/authService';
 import {
+  delCacheUserGoogleAccessToken,
   getCachedUser,
   getCachedUserFriends,
   getCacheUserGoogleAccessToken,
@@ -59,6 +62,12 @@ export const getAccountGoogle = async (
         oauth2.userinfo.get(),
       ]);
     } catch (err) {
+      if (err instanceof GaxiosError) {
+        if (err?.response?.data?.error === 'invalid_token') {
+          delCacheUserGoogleAccessToken(userId);
+        }
+      }
+
       const response = AppErrorFactory.googleOAuthFailed();
       res.status(response.status).send(response);
       return;

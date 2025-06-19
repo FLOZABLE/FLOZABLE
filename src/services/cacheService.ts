@@ -1,5 +1,6 @@
 import { REDIS_TTL } from '../libs/constants';
 import prisma from '../libs/prisma';
+import { nowSec } from '../libs/utils';
 import redisClient from '../models/redisClient';
 import { UserInfo, UserStatus } from '../types/accountTypes';
 import { Viewer } from '../types/otherTypes';
@@ -428,12 +429,16 @@ export const getCachedUserStudyTime = async ({
 export const cacheUserGoogleAccessToken = async (
   userId: string | undefined,
   token: string | undefined | null,
+  expiration: number | undefined | null,
 ) => {
-  if (!token || !userId) return;
+  if (!token || !userId || !expiration) return;
+
+  const now = nowSec();
+  const exp = Math.floor(expiration / 1000) - now;
 
   const key = `user:${userId}:google_access_token`;
   await redisClient.set(key, token);
-  await redisClient.expire(key, REDIS_TTL.USER_GOOGLE_ACCESS_TOKEN);
+  await redisClient.expire(key, exp);
 };
 
 export const getCacheUserGoogleAccessToken = async (userId: string) => {
@@ -467,6 +472,11 @@ export const getCacheUserGoogleAccessToken = async (userId: string) => {
     console.log(err);
     return null;
   }
+};
+
+export const delCacheUserGoogleAccessToken = async (userId: string) => {
+  const key = `user:${userId}:google_access_token`;
+  redisClient.del(key);
 };
 
 /**
