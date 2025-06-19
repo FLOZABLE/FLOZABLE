@@ -4,6 +4,7 @@ import {
   deletePlan,
   getPlanAll,
   patchPlan,
+  putPlan,
 } from '../controllers/planController';
 import { authMiddleware } from '../middlewares/authMiddleware';
 import { validate } from '../middlewares/validationMiddleWare';
@@ -13,6 +14,7 @@ import {
   getPlanAllSchema,
   patchPlanBodySchema,
   patchPlanParamsSchema,
+  putPlanBodySchema,
 } from '../schemas/planSchemas';
 
 const planRouter = Router();
@@ -38,6 +40,13 @@ planRouter.delete(
   validate(deletePlanParamsSchema, 'params'),
   validate(deletePlanBodySchema, 'body'),
   deletePlan,
+);
+
+planRouter.put(
+  '/',
+  authMiddleware,
+  validate(putPlanBodySchema, 'body'),
+  putPlan,
 );
 
 export default planRouter;

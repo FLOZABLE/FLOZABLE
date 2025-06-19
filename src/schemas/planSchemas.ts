@@ -74,3 +74,7 @@ export const deletePlanParamsSchema = Joi.object({
 export const deletePlanBodySchema = Joi.object({
   calendar_id: planSchemas.calendar_id,
 });
+
+export const putPlanBodySchema = Joi.object({
+  plan: planSchema.fork(['id', 'calendar_id', 'all_day'], (schema) => schema.optional()),
+});

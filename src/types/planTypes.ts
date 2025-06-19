@@ -43,3 +43,8 @@ export type DeletePlanParams = {
 export type DeletePlanBody = {
   calendar_id: string;
 };
+
+//PUT /plan
+export type PutPlanBody = {
+  plan: Omit<Plan, 'id'>;
+};
