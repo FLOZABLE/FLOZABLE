@@ -3,7 +3,6 @@ import { google } from 'googleapis';
 import { DateTime } from 'luxon';
 
 import { AppErrorFactory } from '../libs/errors';
-import prisma from '../libs/prisma';
 import { googleOauth2client } from '../services/authService';
 import { getCacheUserGoogleAccessToken } from '../services/cacheService';
 import { formatPlan } from '../services/planService';
@@ -14,6 +13,7 @@ import {
   GetPlanAllQuery,
   PatchPlanBody,
   PatchPlanParams,
+  PutPlanBody,
 } from '../types/planTypes';
 
 export const getPlanAll = async (
@@ -156,12 +156,8 @@ export const deletePlan = async (
     const { calendar_id } = req.body;
 
     const googleAccessToken = await getCacheUserGoogleAccessToken(userId);
-    const refreshToken = await prisma.users.findUnique({
-      where: { user_id: userId },
-      select: { google_refresh_token: true },
-    });
 
-    if (!googleAccessToken || !refreshToken?.google_refresh_token) {
+    if (!googleAccessToken) {
       const response = AppErrorFactory.tokenMissing();
       res.status(response.status).send(response);
       return;
@@ -170,7 +166,6 @@ export const deletePlan = async (
     const auth = googleOauth2client();
     auth.setCredentials({
       access_token: googleAccessToken,
-      refresh_token: refreshToken.google_refresh_token,
     });
 
     const calendarApi = google.calendar({ version: 'v3', auth });
@@ -184,6 +179,60 @@ export const deletePlan = async (
       success: true,
       status: 200,
       message: `Deleted the plan`,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const putPlan = async (
+  req: Request<{}, {}, PutPlanBody>,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const userId = req.user_id!;
+    const { plan } = req.body;
+
+    const googleAccessToken = await getCacheUserGoogleAccessToken(userId);
+
+    if (!googleAccessToken) {
+      const response = AppErrorFactory.tokenMissing();
+      res.status(response.status).send(response);
+      return;
+    }
+
+    const auth = googleOauth2client();
+    auth.setCredentials({
+      access_token: googleAccessToken,
+    });
+
+    const calendarApi = google.calendar({ version: 'v3', auth });
+
+    const response = await calendarApi.events.insert({
+      calendarId: 'primary',
+      requestBody: {
+        ...plan,
+        summary: plan.title,
+        start: { dateTime: plan.start },
+        end: { dateTime: plan.end },
+      },
+    });
+
+    const calendarResponse = await calendarApi.calendarList.get({
+      calendarId: 'primary',
+      auth,
+    });
+
+    const formattedPlan = formatPlan(calendarResponse.data, response.data);
+
+    res.status(200).send({
+      success: true,
+      status: 200,
+      message: 'Plan Saved!',
+      data: {
+        plan: formattedPlan,
+      },
     });
   } catch (error) {
     next(error);

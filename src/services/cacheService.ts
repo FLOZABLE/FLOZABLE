@@ -436,6 +436,8 @@ export const cacheUserGoogleAccessToken = async (
   const now = nowSec();
   const exp = Math.floor(expiration / 1000) - now;
 
+  if (exp <= 0) return;
+
   const key = `user:${userId}:google_access_token`;
   await redisClient.set(key, token);
   await redisClient.expire(key, exp);
