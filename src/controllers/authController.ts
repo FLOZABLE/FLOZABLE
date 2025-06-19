@@ -123,7 +123,11 @@ export const getAuthGoogleCallback = async (
         where: { user_id: userId },
         data: { google_refresh_token: response.tokens.refresh_token },
       });
-      cacheUserGoogleAccessToken(userId, response.tokens.access_token);
+      cacheUserGoogleAccessToken(
+        userId,
+        response.tokens.access_token,
+        response.tokens.expiry_date,
+      );
       return res.redirect(config.nextServer + '/dashboard/account');
     }
 
@@ -160,6 +164,7 @@ export const getAuthGoogleCallback = async (
       cacheUserGoogleAccessToken(
         existingUser.user_id,
         response.tokens.access_token,
+        response.tokens.expiry_date,
       );
 
       return res.redirect(config.nextServer + '/dashboard/account');
@@ -178,7 +183,11 @@ export const getAuthGoogleCallback = async (
     const sessionToken = await createSession(newUser.user_id);
     setSessionCookie(res, sessionToken);
 
-    cacheUserGoogleAccessToken(newUser.user_id, response.tokens.access_token);
+    cacheUserGoogleAccessToken(
+      newUser.user_id,
+      response.tokens.access_token,
+      response.tokens.expiry_date,
+    );
 
     return res.redirect(config.nextServer + '/dashboard/welcome');
   } catch (error) {

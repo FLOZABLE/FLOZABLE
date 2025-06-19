@@ -7,6 +7,7 @@ import { errorHandler } from './middlewares/errorHandler';
 import accountRouter from './routes/accountRoutes';
 import authRouter from './routes/authRoutes';
 import groupRouter from './routes/groupRoutes';
+import planRouter from './routes/planRoutes';
 import rankingRouter from './routes/rankingRoutes';
 import subjectRoutes from './routes/subjectRoutes';
 
@@ -30,6 +31,7 @@ app.use('/account', accountRouter);
 app.use('/subject', subjectRoutes);
 app.use('/ranking', rankingRouter);
 app.use('/group', groupRouter);
+app.use('/plan', planRouter);
 
 // Global error handler (should be after routes)
 app.use(errorHandler);
