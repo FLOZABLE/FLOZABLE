@@ -467,9 +467,13 @@ export const getCacheUserGoogleAccessToken = async (userId: string) => {
 
     if (!newAccessToken) return null;
 
-    await redisClient.set(key, newAccessToken);
+    await cacheUserGoogleAccessToken(
+      userId,
+      newAccessToken.token,
+      newAccessToken.expiry_date,
+    );
 
-    return newAccessToken;
+    return newAccessToken.token;
   } catch (err) {
     console.log(err);
     return null;

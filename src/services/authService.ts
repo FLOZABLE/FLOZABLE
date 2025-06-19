@@ -107,16 +107,23 @@ export function googleOauth2client() {
   return auth;
 }
 
-export const refreshGoogleAccessToken = async (refreshToken: string) => {
+export const refreshGoogleAccessToken = async (
+  refreshToken: string,
+): Promise<{ token: string; expiry_date: number } | null> => {
   try {
     const auth = googleOauth2client();
     auth.setCredentials({ refresh_token: refreshToken });
 
-    const { token } = await auth.getAccessToken();
+    const { credentials } = await auth.refreshAccessToken();
 
-    if (!token) throw new Error('Failed to refresh access token');
+    if (!credentials.access_token || !credentials.expiry_date) {
+      throw new Error('Missing token or expiry date in refresh response');
+    }
 
-    return token;
+    return {
+      token: credentials.access_token,
+      expiry_date: credentials.expiry_date,
+    };
   } catch (err) {
     console.error('Error refreshing Google access token:', err);
     return null;

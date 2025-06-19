@@ -54,24 +54,10 @@ export const getAccountGoogle = async (
       version: 'v2',
     });
 
-    let accessTokenInfo, userInfoResponse;
-
-    try {
-      [accessTokenInfo, userInfoResponse] = await Promise.all([
-        auth.getTokenInfo(googleAccessToken),
-        oauth2.userinfo.get(),
-      ]);
-    } catch (err) {
-      if (err instanceof GaxiosError) {
-        if (err?.response?.data?.error === 'invalid_token') {
-          delCacheUserGoogleAccessToken(userId);
-        }
-      }
-
-      const response = AppErrorFactory.googleOAuthFailed();
-      res.status(response.status).send(response);
-      return;
-    }
+    const [accessTokenInfo, userInfoResponse] = await Promise.all([
+      auth.getTokenInfo(googleAccessToken),
+      oauth2.userinfo.get(),
+    ]);
 
     const google_info: oauth2_v2.Schema$Userinfo & { scopes: string[] } = {
       ...userInfoResponse.data,
