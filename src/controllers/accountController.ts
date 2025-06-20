@@ -9,8 +9,14 @@ import {
   delCacheUserGoogleAccessToken,
   getCachedUser,
   getCachedUserFriends,
+  getCachedUserGroups,
   getCacheUserGoogleAccessToken,
 } from '../services/cacheService';
+import { getSubjects } from '../services/subjectService';
+import {
+  GetAccountProfileParams,
+  GetAccountProfileQuery,
+} from '../types/accountTypes';
 
 export const getAccount = async (
   req: Request,
@@ -65,6 +71,43 @@ export const getAccountGoogle = async (
     };
 
     res.send({ success: true, data: { google_info } });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getAccountProfile = async (
+  req: Request<GetAccountProfileParams, {}, {}, GetAccountProfileQuery>,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const userId = req.params.user_id;
+    const { timezone } = req.query;
+
+    const userInfo = await getCachedUser({ userId });
+    if (!userInfo) {
+      const response = AppErrorFactory.userNotFound();
+      res.status(response.status).send(response);
+      return;
+    }
+
+    const [friends, groups, subjects] = await Promise.all([
+      getCachedUserFriends({ userId }),
+      getCachedUserGroups({ userId }),
+      getSubjects(userId, timezone),
+    ]);
+
+    res.status(200).send({
+      success: true,
+      status: 200,
+      data: {
+        userinfo: { ...userInfo, groups },
+        friends,
+        subjects: subjects.subjects,
+        grouped_subjects: subjects.groupedSubjects,
+      },
+    });
   } catch (error) {
     next(error);
   }
