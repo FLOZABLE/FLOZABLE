@@ -56,6 +56,34 @@ type RawSubject = Prisma.subjectsGetPayload<{
   };
 }>;
 
+export const getSubjects = async (userId: string, timezone: string) => {
+  try {
+    const subjects = await prisma.subjects.findMany({
+      select: {
+        subject_id: true,
+        name: true,
+        color: true,
+        created_at: true,
+        subject_timelines: {
+          select: {
+            start_time: true,
+            duration: true,
+          },
+        },
+      },
+      where: {
+        user_id: userId,
+      },
+    });
+
+    const formattedSubjects = subjectsFormatter(subjects, timezone);
+    return formattedSubjects;
+  } catch (err) {
+    console.log(err);
+    return subjectsPlaceholder;
+  }
+};
+
 export const subjectsFormatter = (
   rawSubjects: RawSubject[],
   timezone: string,

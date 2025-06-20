@@ -1,15 +1,12 @@
 import Joi from 'joi';
 
+import { otherSchemas } from './otherSchemas';
+
 export const accountSchemas = {
   user_id: Joi.string().length(10).messages({
     'string.empty': 'User id cannot be empty.',
   }),
   name: Joi.string().min(2).max(10).messages({
-    'string.min': 'Name must be at least 2 characters long.',
-    'string.max': 'Name cannot exceed 20 characters.',
-    'string.empty': 'Name cannot be empty.',
-  }),
-  timezone: Joi.string().required().messages({
     'string.min': 'Name must be at least 2 characters long.',
     'string.max': 'Name cannot exceed 20 characters.',
     'string.empty': 'Name cannot be empty.',
@@ -32,3 +29,11 @@ export const accountSchemas = {
       'string.pattern.base': 'You need special characters.',
     }),
 };
+
+export const getAccountProfileParamsSchema = Joi.object({
+  user_id: accountSchemas.user_id,
+});
+
+export const getAccountProfileQuerySchema = Joi.object({
+  timezone: otherSchemas.timezone,
+});
