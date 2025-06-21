@@ -48,7 +48,7 @@ model users {
   website_settings                                website_settings[]
   website_usage                                   website_usage[]
 
-  //@@unique([email])
+  @@unique([email])
   @@map("users")
 }
 
@@ -129,7 +129,6 @@ model group_members {
 
   @@id([user_id, group_id])
   @@index([group_id], map: "group_id")
-  
 }
 
 model groups {
@@ -150,7 +149,7 @@ model groups {
 
   leader_user users @relation("groups_leader_fkey", fields: [leader], references: [user_id], onDelete: Restrict, onUpdate: Restrict)
 
-  @@index([leader], map: "leader")
+  @@index([group_id], map: "group_id")
 }
 
 model notifications {
@@ -259,7 +258,7 @@ model themes {
   users       users         @relation(fields: [user_id], references: [user_id], onDelete: Restrict, onUpdate: Restrict, map: "themes_ibfk_1")
   user_themes user_themes[]
 
-  @@index([user_id], map: "user_id")
+  @@index([theme_id], map: "theme_id")
 }
 
 model user_themes {
@@ -296,17 +295,7 @@ model website_usage {
   @@id([user_id, website])
 }
 
-enum plan_share_status {
-  pending
-  accepted
-}
-
 enum friends_status {
-  pending
-  accepted
-}
-
-enum subject_share_status {
   pending
   accepted
 }
