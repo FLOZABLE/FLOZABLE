@@ -35,7 +35,7 @@ export const postAuthSignup = async (
     const newSubject = await createSubject({
       name: 'others',
       color: '#000000',
-      users: {
+      user: {
         connect: { user_id: newUser.user_id },
       },
     });
@@ -177,7 +177,7 @@ export const getAuthGoogleCallback = async (
     await createSubject({
       name: 'others',
       color: '#000000',
-      users: { connect: { user_id: newUser.user_id } },
+      user: { connect: { user_id: newUser.user_id } },
     });
 
     const sessionToken = await createSession(newUser.user_id);
