@@ -9,28 +9,46 @@ datasource db {
 }
 
 model users {
-  user_id                                    String          @id @db.VarChar(10)
-  name                                       String          @db.VarChar(40)
-  email                                      String          @unique @db.VarChar(60)
-  timezone                                   String          @default("UTC") @db.VarChar(40)
-  created_at                                 Int
-  type                                       Int             @default(0) @db.SmallInt
-  key_salt                                   String?         @db.VarChar(64)
-  hashed_password                            String          @db.VarChar(64)
-  salt                                       String?         @db.VarChar(64)
-  iv                                         String?         @db.VarChar(32)
-  subscription                               Boolean?        @default(false)
-  google_refresh_token                       String?         @db.VarChar(150)
-  notification_endpoint                      String?         @db.VarChar(256)
-  notification_keys                          String?         @db.VarChar(150)
-  stripe_id                                  String?         @db.VarChar(25)
-  spotify_refresh_token                      String?         @db.VarChar(150)
-  verified                                   Boolean         @default(false)
-  level                                      Int             @default(1) @db.UnsignedSmallInt
-  current_streak                             Int             @default(0) @db.UnsignedSmallInt
-  hashed_password_type                       String          @default("pbkdf2") @db.VarChar(10)
-  notifications_notifications_user_idTousers notifications[] @relation("notifications_user_id")
-  users_notifications_sender_idTousers       notifications[] @relation("notifications_sender_id")
+  user_id               String   @id @db.VarChar(10)
+  name                  String   @db.VarChar(40)
+  email                 String   @unique @db.VarChar(60)
+  timezone              String   @default("UTC") @db.VarChar(40)
+  created_at            Int
+  type                  Int      @default(0) @db.SmallInt
+  key_salt              String?  @db.VarChar(64)
+  hashed_password       String   @db.VarChar(64)
+  hashed_password_type  String   @default("pbkdf2") @db.VarChar(10)
+  salt                  String?  @db.VarChar(64)
+  subscription          Boolean? @default(false)
+  google_refresh_token  String?  @db.VarChar(150)
+  notification_endpoint String?  @db.VarChar(256)
+  notification_keys     String?  @db.VarChar(150)
+  stripe_id             String?  @db.VarChar(25)
+  spotify_refresh_token String?  @db.VarChar(150)
+  verified              Boolean  @default(false)
+  level                 Int      @default(1) @db.UnsignedSmallInt
+  current_streak        Int      @default(0) @db.UnsignedSmallInt
+
+  chatroom_members  chatroom_members[]
+  chatroom_messages chatroom_messages[]
+  devices           devices[]
+  friends_user      friends[]           @relation("friends_user_idTousers")
+  friends_friend    friends[]           @relation("friends_friend_idTousers")
+
+  group_likes   group_likes[]
+  group_members group_members[]
+  led_groups    groups[]        @relation("groups_leader_fkey")
+
+  notifications_received notifications[] @relation("notifications_user_id")
+  notifications_sent     notifications[] @relation("notifications_sender_id")
+
+  ranking_details  ranking_details[]
+  subjects         subjects[]
+  theme_likes      theme_likes[]
+  themes           themes[]
+  user_themes      user_themes[]
+  website_settings website_settings[]
+  website_usage    website_usage[]
 
   @@map("users")
 }
@@ -38,6 +56,9 @@ model users {
 model chatroom_members {
   chatroom_id String @db.VarChar(10)
   user_id     String @db.VarChar(10)
+
+  chatroom chatrooms @relation(fields: [chatroom_id], references: [chatroom_id], onDelete: Cascade)
+  user     users     @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
 
   @@id([chatroom_id, user_id])
   @@index([user_id], map: "user_id")
@@ -50,6 +71,9 @@ model chatroom_messages {
   message     String @db.Text
   sent_at     Int
 
+  chatroom chatrooms @relation(fields: [chatroom_id], references: [chatroom_id], onDelete: Cascade)
+  user     users     @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
+
   @@index([chatroom_id], map: "chatroom_id")
   @@index([user_id], map: "user_id")
 }
@@ -58,6 +82,9 @@ model chatrooms {
   chatroom_id String @id @db.VarChar(10)
   name        String @db.VarChar(50)
   type        Int    @default(0) @db.TinyInt
+
+  members  chatroom_members[]
+  messages chatroom_messages[]
 }
 
 model devices {
@@ -68,6 +95,8 @@ model devices {
   brand              String? @db.VarChar(30)
   token              String  @db.VarChar(20)
   notification_token String? @db.VarChar(60)
+
+  user users @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
 
   @@id([device_id, user_id])
   @@index([user_id], map: "user_id")
@@ -80,6 +109,9 @@ model friends {
   status        friends_status @default(pending)
   date          Int
 
+  user   users @relation("friends_user_idTousers", fields: [user_id], references: [user_id], onDelete: Cascade)
+  friend users @relation("friends_friend_idTousers", fields: [friend_id], references: [user_id], onDelete: Cascade)
+
   @@unique([user_id, friend_id], map: "unique_friend_pair")
   @@index([friend_id], map: "friend_id")
 }
@@ -87,6 +119,9 @@ model friends {
 model group_likes {
   group_id String @db.VarChar(10)
   user_id  String @db.VarChar(10)
+
+  group groups @relation(fields: [group_id], references: [group_id], onDelete: Cascade)
+  user  users  @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
 
   @@id([user_id, group_id])
   @@index([group_id], map: "group_id")
@@ -96,6 +131,9 @@ model group_members {
   group_id  String @db.VarChar(10)
   user_id   String @db.VarChar(10)
   joined_at Int
+
+  group groups @relation(fields: [group_id], references: [group_id], onDelete: Cascade)
+  user  users  @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
 
   @@id([user_id, group_id])
   @@index([group_id], map: "group_id")
@@ -115,6 +153,10 @@ model groups {
   goal_hr       Int             @db.SmallInt
   notifications notifications[] @relation("notifications_group_id")
 
+  leader_user   users           @relation("groups_leader_fkey", fields: [leader], references: [user_id], onDelete: Cascade)
+  group_likes   group_likes[]
+  group_members group_members[]
+
   @@index([group_id], map: "group_id")
   @@index([leader], map: "leader")
 }
@@ -129,34 +171,13 @@ model notifications {
   type            notification_type
   is_read         Boolean           @default(false)
 
-  users_notifications_user_idTousers    users   @relation("notifications_user_id", fields: [user_id], references: [user_id], onDelete: Restrict, onUpdate: Restrict, map: "notifications_ibfk_1")
-  users_notifications_sender_idTousers  users?  @relation("notifications_sender_id", fields: [sender_id], references: [user_id], onDelete: Restrict, onUpdate: Restrict, map: "notifications_ibfk_2")
-  groups_notifications_group_idTogroups groups? @relation("notifications_group_id", fields: [group_id], references: [group_id], onDelete: Restrict, onUpdate: Restrict, map: "notifications_ibfk_3")
+  user   users   @relation("notifications_user_id", fields: [user_id], references: [user_id], onDelete: Cascade)
+  sender users?  @relation("notifications_sender_id", fields: [sender_id], references: [user_id], onDelete: Cascade)
+  group  groups? @relation("notifications_group_id", fields: [group_id], references: [group_id], onDelete: Cascade)
 
-  @@index([notification_id], map: "notification_id")
-  @@index([user_id], map: "user_id")
-  @@index([group_id], map: "group_id")
-}
-
-model products {
-  product_id String @db.VarChar(30)
-  price_id   String @db.VarChar(30)
-  cost       Int    @db.UnsignedSmallInt
-  interval   String @db.VarChar(15)
-  name       String @db.VarChar(40)
-
-  @@id([product_id, price_id])
-}
-
-model purchases {
-  purchase_id  String @id @db.VarChar(30)
-  user_id      String @db.VarChar(10)
-  price_id     String @db.VarChar(30)
-  product_id   String @db.VarChar(30)
-  purchased_at Int
-
-  @@index([product_id, price_id], map: "product_id")
-  @@index([user_id], map: "user_id")
+  @@index([user_id], map: "idx_notifications_user_id")
+  @@index([sender_id], map: "idx_notifications_sender_id")
+  @@index([group_id], map: "idx_notifications_group_id")
 }
 
 model ranking_details {
@@ -164,6 +185,9 @@ model ranking_details {
   user_id    String @db.VarChar(10)
   rank       Int
   study_time Int
+
+  ranking rankings @relation(fields: [ranking_id], references: [ranking_id], onDelete: Cascade)
+  user    users    @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
 
   @@id([ranking_id, user_id])
   @@index([user_id], map: "user_id")
@@ -176,17 +200,9 @@ model rankings {
   mode       String @db.VarChar(10)
   length     Int
 
+  details ranking_details[]
+
   @@unique([date, timezone, mode])
-}
-
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
-model subject_timelines {
-  subject_id String @db.VarChar(10)
-  start_time Int
-  duration   Int    @db.UnsignedSmallInt
-
-  @@unique([subject_id, start_time])
-  @@index([subject_id], map: "subject_id")
 }
 
 model subjects {
@@ -196,12 +212,29 @@ model subjects {
   color      String @db.VarChar(20)
   created_at Int
 
+  user              users               @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
+  subject_timelines subject_timelines[]
+
   @@unique([user_id, name], map: "user_id")
+}
+
+model subject_timelines {
+  subject_id String @db.VarChar(10)
+  start_time Int
+  duration   Int    @db.UnsignedSmallInt
+
+  subject subjects @relation(fields: [subject_id], references: [subject_id], onDelete: Cascade)
+
+  @@unique([subject_id, start_time])
+  @@index([subject_id], map: "subject_id")
 }
 
 model theme_likes {
   theme_id String @db.VarChar(10)
   user_id  String @db.VarChar(10)
+
+  theme themes @relation(fields: [theme_id], references: [theme_id], onDelete: Cascade)
+  user  users  @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
 
   @@id([user_id, theme_id])
   @@index([theme_id], map: "theme_id")
@@ -215,6 +248,10 @@ model themes {
   description String @db.VarChar(700)
   tags        String @default("") @db.VarChar(300)
 
+  user        users         @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
+  theme_likes theme_likes[]
+  used_users  user_themes[]
+
   @@index([theme_id], map: "theme_id")
   @@index([user_id], map: "user_id")
 }
@@ -223,6 +260,9 @@ model user_themes {
   user_id     String @db.VarChar(20)
   theme_id    String @db.VarChar(10)
   category_id Int?   @db.SmallInt
+
+  user  users  @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
+  theme themes @relation(fields: [theme_id], references: [theme_id], onDelete: Cascade)
 
   @@id([user_id, theme_id])
   @@index([theme_id], map: "theme_id")
@@ -236,6 +276,8 @@ model website_settings {
   timer       Boolean
   study_timer Boolean
 
+  user users @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
+
   @@id([user_id, website])
 }
 
@@ -245,6 +287,8 @@ model website_usage {
   visits   Int    @db.SmallInt
   duration Int    @db.SmallInt
   date     String @db.VarChar(10)
+
+  user users @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
 
   @@id([user_id, website])
 }

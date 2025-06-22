@@ -68,7 +68,7 @@ export const getGroupMembers = async (
   next: NextFunction,
 ) => {
   try {
-    const userId = req.user_id!;
+    /* const userId = req.user_id!;
     const { group_id } = req.params;
 
     const { timezone } = req.query;
@@ -92,7 +92,7 @@ export const getGroupMembers = async (
 
     const rawGroupMembers = await prisma.group_members.findMany({
       select: {
-        users: {
+        user_id: {
           select: {
             name: true,
             user_id: true,
@@ -137,9 +137,9 @@ export const getGroupMembers = async (
 
     const date2 = Date.now();
 
-    console.log('result', group_id, memberIds.length, date2 - date1);
+    console.log('result', group_id, memberIds.length, date2 - date1); */
 
-    res.send({ data: { members } });
+    res.send({ data: { members: [] } });
   } catch (error) {
     next(error);
   }
@@ -289,7 +289,7 @@ export const putGroup = async (
   next: NextFunction,
 ) => {
   try {
-    const userId = req.user_id!;
+    /* const userId = req.user_id!;
     const { name, password, description, max_members, color, goal_hr } =
       req.body;
 
@@ -330,13 +330,13 @@ export const putGroup = async (
     ]);
     console.log(newGroup, newMember);
 
-    delCachedUserGroups(userId);
+    delCachedUserGroups(userId); */
 
     res.json({
       success: true,
-      message: `Group ${newGroup.name} created`,
+      message: `Group {newGroup.name} created`,
       data: {
-        group: newGroup,
+        group: 'newGroup',
       },
     });
   } catch (error) {

@@ -38,7 +38,7 @@ export const getRanking = async (
     } else {
       const rankingsData = await prisma.ranking_details.findMany({
         where: {
-          rankings: {
+          ranking: {
             date: dateTime.toSeconds(),
             mode: viewer,
           },
@@ -87,7 +87,7 @@ export const getUserRanking = async (
     const dbUserRankings = await prisma.ranking_details.findMany({
       where: {
         user_id: userId,
-        rankings: {
+        ranking: {
           mode: viewer,
           date: {
             in: dates.map((date) => date.toSeconds()),
@@ -96,7 +96,7 @@ export const getUserRanking = async (
       },
       select: {
         rank: true,
-        rankings: {
+        ranking: {
           select: {
             date: true,
             length: true,
@@ -124,7 +124,7 @@ export const getUserRanking = async (
         }
 
         const rankingInfo = dbUserRankings.find(
-          (ranking) => ranking.rankings.date === date.toSeconds(),
+          (ranking) => ranking.ranking.date === date.toSeconds(),
         );
         if (rankingInfo) {
           return { date: date.toISO(), ranking: rankingInfo.rank };
