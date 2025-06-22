@@ -43,9 +43,7 @@ export const putSubject = async (
     const subject = await createSubject({
       name,
       color,
-      users: {
-        connect: { user_id },
-      },
+      user: { connect: { user_id } },
     });
 
     res.send({ success: true, data: { subject } });
