@@ -8,6 +8,7 @@ import accountRouter from './routes/accountRoutes';
 import authRouter from './routes/authRoutes';
 import friendRouter from './routes/friendRoutes';
 import groupRouter from './routes/groupRoutes';
+import notificationRouter from './routes/notificationRoutes';
 import planRouter from './routes/planRoutes';
 import rankingRouter from './routes/rankingRoutes';
 import subjectRoutes from './routes/subjectRoutes';
@@ -34,6 +35,7 @@ app.use('/ranking', rankingRouter);
 app.use('/group', groupRouter);
 app.use('/plan', planRouter);
 app.use('/friend', friendRouter);
+app.use('/notification', notificationRouter);
 
 // Global error handler (should be after routes)
 app.use(errorHandler);

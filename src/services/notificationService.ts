@@ -9,11 +9,13 @@ import { RawNotification } from '../types/notificationTypes';
 interface SendNotificationParams {
   notification: Omit<RawNotification, 'notification_id' | 'sent_at'>;
   sender?: UserInfo;
+  isDynamicMessage?: boolean;
 }
 
 export const sendNotification = async ({
   notification,
   sender,
+  isDynamicMessage,
 }: SendNotificationParams) => {
   try {
     const notification_id = nanoid(10);
@@ -24,6 +26,7 @@ export const sendNotification = async ({
         notification_id,
         sent_at,
         ...notification,
+        message: isDynamicMessage ? notification.message : null, //don't store message when it's dynamic message
       },
     });
 
@@ -32,7 +35,11 @@ export const sendNotification = async ({
     const mainIo = getMainIo();
     mainIo
       ?.to(newNotification.user_id)
-      .emit('notification', { ...newNotification, sender });
+      .emit('notification', {
+        ...newNotification,
+        message: notification.message,
+        sender,
+      });
   } catch (err) {
     console.log(err);
   }

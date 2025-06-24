@@ -189,7 +189,7 @@ export const getAuthGoogleCallback = async (
       response.tokens.expiry_date,
     );
 
-    return res.redirect(config.nextServer + '/dashboard/welcome');
+    return res.redirect(config.nextServer + '/dashboard?welcome=true');
   } catch (error) {
     next(error);
   }

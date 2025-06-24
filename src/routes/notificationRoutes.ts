@@ -1,16 +1,10 @@
 import { Router } from 'express';
 
-import { postFriendRequest } from '../controllers/friendController';
+import { getNotificationsAll } from '../controllers/notificationController';
 import { authMiddleware } from '../middlewares/authMiddleware';
-import { validate } from '../middlewares/validationMiddleWare';
-import { friendIdParamsSchema } from '../schemas/friendSchemas';
 
 const notificationRouter = Router();
 
-notificationRouter.post(
-  '/notification/all',
-  authMiddleware,
-  postFriendRequest,
-);
+notificationRouter.get('/all', authMiddleware, getNotificationsAll);
 
 export default notificationRouter;
