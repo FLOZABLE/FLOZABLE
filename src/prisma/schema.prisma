@@ -109,8 +109,9 @@ model friends {
   status        friends_status @default(pending)
   date          Int
 
-  user   users @relation("friends_user_idTousers", fields: [user_id], references: [user_id], onDelete: Cascade)
-  friend users @relation("friends_friend_idTousers", fields: [friend_id], references: [user_id], onDelete: Cascade)
+  user            users           @relation("friends_user_idTousers", fields: [user_id], references: [user_id], onDelete: Cascade)
+  friend          users           @relation("friends_friend_idTousers", fields: [friend_id], references: [user_id], onDelete: Cascade)
+  friend_requests notifications[] @relation("notifications_friend_request_id")
 
   @@unique([user_id, friend_id], map: "unique_friend_pair")
   @@index([friend_id], map: "friend_id")
@@ -162,18 +163,20 @@ model groups {
 }
 
 model notifications {
-  notification_id String            @id @db.VarChar(10)
-  user_id         String            @db.VarChar(10)
-  sender_id       String?           @db.VarChar(10)
-  group_id        String?           @db.VarChar(10)
-  sent_at         Int
-  message         String?           @db.VarChar(300)
-  type            notification_type
-  is_read         Boolean           @default(false)
+  notification_id   String            @id @db.VarChar(10)
+  user_id           String            @db.VarChar(10)
+  sender_id         String?           @db.VarChar(10)
+  group_id          String?           @db.VarChar(10)
+  friend_request_id String?           @db.VarChar(10)
+  sent_at           Int
+  message           String?           @db.VarChar(300)
+  type              notification_type
+  is_read           Boolean           @default(false)
 
-  user   users   @relation("notifications_user_id", fields: [user_id], references: [user_id], onDelete: Cascade)
-  sender users?  @relation("notifications_sender_id", fields: [sender_id], references: [user_id], onDelete: Cascade)
-  group  groups? @relation("notifications_group_id", fields: [group_id], references: [group_id], onDelete: Cascade)
+  user           users    @relation("notifications_user_id", fields: [user_id], references: [user_id], onDelete: Cascade)
+  sender         users?   @relation("notifications_sender_id", fields: [sender_id], references: [user_id], onDelete: Cascade)
+  group          groups?  @relation("notifications_group_id", fields: [group_id], references: [group_id], onDelete: Cascade)
+  friend_request friends? @relation("notifications_friend_request_id", fields: [friend_request_id], references: [friendship_id], onDelete: Cascade)
 
   @@index([user_id], map: "idx_notifications_user_id")
   @@index([sender_id], map: "idx_notifications_sender_id")
