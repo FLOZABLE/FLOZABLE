@@ -18,35 +18,65 @@ export const friendRequest = async (userId: string, friendId: string) => {
   }
 
   const users = await getCachedUsers({ userIds: [userId, friendId] });
-
-  const userInfo = users.find((user) => user.user_id === userId);
-  const friendInfo = users.find((user) => user.user_id === friendId);
+  const userInfo = users.find((u) => u.user_id === userId);
+  const friendInfo = users.find((u) => u.user_id === friendId);
 
   if (!userInfo || !friendInfo) {
     return AppErrorFactory.userNotFound();
   }
 
+  const [userA, userB] = [userId, friendId].sort(); // enforce bidirectional uniqueness
+
+  // check if friendship already exists
+  const existing = await prisma.friends.findFirst({
+    where: {
+      user_id: userA,
+      friend_id: userB,
+    },
+  });
+
+  if (existing) {
+    if (existing.status === 'pending') {
+      return {
+        success: false,
+        status: 409,
+        message: `Friend request already sent.`,
+      };
+    } else if (existing.status === 'accepted') {
+      return {
+        success: false,
+        status: 409,
+        message: `${friendInfo.name} is already your friend.`,
+      };
+    }
+  }
+
   const friendship_id = nanoid(10);
   const now = nowSec();
 
-  const [userA, userB] = [userId, friendId].sort(); // alphabetical or numerical sort
-
   try {
+    // Create new friend request (pending status)
     const newFriend = await prisma.friends.create({
       data: {
         friendship_id,
         user_id: userA,
         friend_id: userB,
+        status: 'pending',
         date: now,
       },
     });
 
-    sendNotification({
+    // Send friend request notification
+    await sendNotification({
       notification: {
         user_id: friendId,
         sender_id: userId,
         type: 'friend_request',
+        friend_request_id: newFriend.friendship_id,
+        title: `New friend request`,
+        message: `${userInfo.name} sent friend request`,
       },
+      sender: userInfo,
     });
 
     return {
@@ -55,17 +85,7 @@ export const friendRequest = async (userId: string, friendId: string) => {
       message: `Sent friend request to ${friendInfo.name}!`,
     };
   } catch (err) {
-    if (
-      err instanceof Prisma.PrismaClientKnownRequestError &&
-      err.code === 'P2002'
-    ) {
-      // Unique constraint violation — user already joined
-      return {
-        success: false,
-        message: `You have already sent friend request to ${friendInfo.name}`,
-      };
-    }
-    const response = AppErrorFactory.unknownServerError();
-    return response;
+    console.error(err);
+    return AppErrorFactory.unknownServerError();
   }
 };
