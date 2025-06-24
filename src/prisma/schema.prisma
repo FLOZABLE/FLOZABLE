@@ -169,6 +169,7 @@ model notifications {
   group_id          String?           @db.VarChar(10)
   friend_request_id String?           @db.VarChar(10)
   sent_at           Int
+  title             String?           @db.VarChar(100)
   message           String?           @db.VarChar(300)
   type              notification_type
   is_read           Boolean           @default(false)
