@@ -1,6 +1,7 @@
 import Joi from 'joi';
 
 import { accountSchemas } from './accountSchemas';
+import { otherSchemas } from './otherSchemas';
 
 export const friendSchemas = {
   friendship_id: Joi.string().length(10).messages({
@@ -16,6 +17,11 @@ export const friendIdParamsSchema = Joi.object({
   friend_id: accountSchemas.user_id,
 });
 
+// GET /friend/all/status
+export const getFriendAllStatusSchema = Joi.object({
+  timezone: otherSchemas.timezone,
+});
+
 export const friendshipIdParamsSchema = Joi.object({
   friendship_id: friendSchemas.friendship_id,
 });
@@ -26,7 +32,6 @@ export const postFriendRequestBodySchema = Joi.object({
 });
 
 // POST /friend/:friend_id/request/reply
-
 export const postFriendRequestReplyBodySchema = Joi.object({
   accepted: friendSchemas.accepted,
 });
