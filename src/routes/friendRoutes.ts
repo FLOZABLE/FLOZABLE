@@ -3,6 +3,7 @@ import { Router } from 'express';
 import {
   deleteFriend,
   getFriendAll,
+  getFriendAllStatus,
   postFriendRequest,
   postFriendRequestReply,
 } from '../controllers/friendController';
@@ -11,12 +12,20 @@ import { validate } from '../middlewares/validationMiddleWare';
 import {
   friendIdParamsSchema,
   friendshipIdParamsSchema,
+  getFriendAllStatusSchema,
   postFriendRequestReplyBodySchema,
 } from '../schemas/friendSchemas';
 
 const friendRouter = Router();
 
 friendRouter.get('/all', authMiddleware, getFriendAll);
+
+friendRouter.get(
+  '/all/status',
+  authMiddleware,
+  validate(getFriendAllStatusSchema, 'query'),
+  getFriendAllStatus,
+);
 
 friendRouter.delete(
   '/:friend_id',

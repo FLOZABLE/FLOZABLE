@@ -87,17 +87,17 @@ export const registerMainIoEvents = () => {
 
           const duration = now - status.start_time;
 
+          const newStatus = await cacheUserStatus({ userId, startTime: now });
+
           mainIo?.to(userId).emit('mystudy:stop', {
             stopped_subject_id: status.subject_id,
             duration,
           });
           mainIo?.to([...friends, ...groups, userId]).emit('study:stop', {
             user_id: userId,
-            status,
+            status: newStatus,
             duration,
           });
-
-          cacheUserStatus({ userId, startTime: now });
 
           await prisma.subject_timelines.create({
             data: {
