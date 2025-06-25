@@ -1,10 +1,9 @@
 import { nanoid } from 'nanoid';
 
-import { Prisma } from '../generated/prisma';
 import { AppErrorFactory } from '../libs/errors';
 import prisma from '../libs/prisma';
 import { nowSec } from '../libs/utils';
-import { getCachedUsers } from './cacheService';
+import { delCachedUserFriends, getCachedUsers } from './cacheService';
 import { sendNotification } from './notificationService';
 
 export const friendRequest = async (userId: string, friendId: string) => {
@@ -86,6 +85,81 @@ export const friendRequest = async (userId: string, friendId: string) => {
     };
   } catch (err) {
     console.error(err);
+    return AppErrorFactory.unknownServerError();
+  }
+};
+
+export const replyFriendRequest = async (
+  userId: string,
+  friendshipId: string,
+  isAccepted: boolean,
+) => {
+  try {
+    const friendship = await prisma.friends.findUnique({
+      where: {
+        friendship_id: friendshipId,
+      },
+      include: {
+        user: {
+          select: { user_id: true, name: true },
+        },
+        friend: {
+          select: { user_id: true, name: true },
+        },
+      },
+    });
+
+    if (!friendship) {
+      return {
+        success: false,
+        status: 404,
+        message: 'Friend request not found',
+      };
+    }
+
+    const target =
+      friendship.user_id === userId ? friendship.friend : friendship.user;
+    const targetName = target.name;
+
+    if (isAccepted) {
+      await prisma.friends.update({
+        where: {
+          friendship_id: friendshipId,
+        },
+        data: {
+          status: 'accepted',
+        },
+      });
+
+      await prisma.notifications.deleteMany({
+        where: {
+          friend_request_id: friendshipId,
+          user_id: userId,
+        },
+      });
+
+      await delCachedUserFriends(userId);
+
+      return {
+        success: true,
+        status: 200,
+        message: `You and ${targetName} are now friends!`,
+      };
+    } else {
+      await prisma.friends.delete({
+        where: {
+          friendship_id: friendshipId,
+        },
+      });
+
+      return {
+        success: true,
+        status: 200,
+        message: 'Declined friend request!',
+      };
+    }
+  } catch (err) {
+    console.log(err);
     return AppErrorFactory.unknownServerError();
   }
 };
