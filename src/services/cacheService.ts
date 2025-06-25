@@ -89,7 +89,7 @@ export const getCachedUsers = async ({
       const userId = userIds[idx];
 
       if (err || !data || Object.keys(data).length === 0) {
-        notCached.push(userId);
+        if (userId) notCached.push(userId);
         return;
       }
 
@@ -192,6 +192,16 @@ export const getCachedUserFriends = async ({
   }
 };
 
+export const delCachedUserFriends = async (userId: string): Promise<void> => {
+  const cacheKey = `user:${userId}:friends`;
+
+  try {
+    await redisClient.del(cacheKey);
+  } catch (err) {
+    console.error(`Failed to del friends: ${userId}`, err);
+  }
+};
+
 interface GetCachedUserGroupsParams extends GetCacheParams {
   userId: string;
 }
@@ -248,7 +258,7 @@ export const delCachedUserGroups = async (userId: string): Promise<void> => {
   const cacheKey = `user:${userId}:groups`;
 
   try {
-    await redisClient.del(cacheKey, 'cached');
+    await redisClient.del(cacheKey);
   } catch (err) {
     console.error(`Failed to del groups: ${userId}`, err);
   }
