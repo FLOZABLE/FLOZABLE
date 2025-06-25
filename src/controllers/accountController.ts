@@ -1,12 +1,9 @@
-import { AxiosError } from 'axios';
 import { NextFunction, Request, Response } from 'express';
-import { GaxiosError } from 'gaxios';
 import { google, oauth2_v2 } from 'googleapis';
 
 import { AppErrorFactory } from '../libs/errors';
 import { googleOauth2client } from '../services/authService';
 import {
-  delCacheUserGoogleAccessToken,
   getCachedUser,
   getCachedUserFriends,
   getCachedUserGroups,
@@ -28,9 +25,8 @@ export const getAccount = async (
     const userId = req.user_id!;
 
     const userinfo = await getCachedUser({ userId });
-    const friends = await getCachedUserFriends({ userId });
 
-    res.send({ success: true, data: { userinfo, friends } });
+    res.send({ success: true, data: { userinfo } });
   } catch (error) {
     next(error);
   }

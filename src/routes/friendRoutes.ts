@@ -1,6 +1,8 @@
 import { Router } from 'express';
 
 import {
+  deleteFriend,
+  getFriendAll,
   postFriendRequest,
   postFriendRequestReply,
 } from '../controllers/friendController';
@@ -13,6 +15,15 @@ import {
 } from '../schemas/friendSchemas';
 
 const friendRouter = Router();
+
+friendRouter.get('/all', authMiddleware, getFriendAll);
+
+friendRouter.delete(
+  '/:friend_id',
+  authMiddleware,
+  validate(friendIdParamsSchema, 'params'),
+  deleteFriend,
+);
 
 friendRouter.post(
   '/:friend_id/request',

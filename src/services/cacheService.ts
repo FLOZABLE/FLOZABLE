@@ -202,6 +202,15 @@ export const delCachedUserFriends = async (userId: string): Promise<void> => {
   }
 };
 
+export const filterCachedUserFriends = async (
+  userId: string,
+  friendId: string,
+): Promise<void> => {
+  const cacheKey = `user:${userId}:friends`;
+
+  await redisClient.srem(cacheKey, friendId);
+};
+
 interface GetCachedUserGroupsParams extends GetCacheParams {
   userId: string;
 }
