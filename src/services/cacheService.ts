@@ -314,6 +314,13 @@ export const cacheUserStatus = async ({
     );
   } catch (err) {
     console.log(err);
+  } finally {
+    return {
+      user_id: userId,
+      subject_id: subjectId,
+      name,
+      start_time: startTime,
+    };
   }
 };
 
