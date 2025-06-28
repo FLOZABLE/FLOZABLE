@@ -31,7 +31,17 @@ export const postAuthSignup = async (
   try {
     const { name, email, timezone, password } = req.body;
 
-    const newUser = await createUser({ name, email, timezone, password });
+    const newUserResponse = await createUser({
+      name,
+      email,
+      timezone,
+      password,
+    });
+    if (!newUserResponse.success) {
+      res.send(newUserResponse);
+    }
+    const newUser = newUserResponse.data;
+
     const newSubject = await createSubject({
       name: 'others',
       color: '#000000',
@@ -40,7 +50,9 @@ export const postAuthSignup = async (
       },
     });
 
-    console.log(newUser, newSubject);
+    const token = await createSession(newUser.user_id);
+
+    setSessionCookie(res, token);
 
     res.send({ success: true });
   } catch (error) {
@@ -172,7 +184,15 @@ export const getAuthGoogleCallback = async (
 
     // New user
     const password = nanoid(10);
-    const newUser = await createUser({ name, email, timezone, password });
+    const newUserResponse = await createUser({
+      name,
+      email,
+      timezone,
+      password,
+    });
+
+    if (!newUserResponse.success) return res.redirect(config.nextServer);
+    const newUser = newUserResponse.data;
 
     await createSubject({
       name: 'others',
