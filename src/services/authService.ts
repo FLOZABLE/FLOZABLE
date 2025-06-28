@@ -28,19 +28,44 @@ export const createUser = async ({
   const user_id = nanoid(10);
   const hashed_password = await bcryptHash(password);
 
-  const newUser = await prisma.users.create({
-    data: {
-      user_id,
-      name: name ? name : user_id,
-      email,
-      timezone,
-      hashed_password,
-      hashed_password_type: 'bcrypt',
-      created_at,
-    },
-  });
+  try {
+    const newUser = await prisma.users.create({
+      data: {
+        user_id,
+        name: name ? name : user_id,
+        email,
+        timezone,
+        hashed_password,
+        hashed_password_type: 'bcrypt',
+        created_at,
+      },
+    });
 
-  return newUser;
+    return {
+      success: true,
+      status: 201,
+      data: newUser,
+      message: 'Account created successfully!',
+    };
+  } catch (err) {
+    if (
+      err instanceof Prisma.PrismaClientKnownRequestError &&
+      err.code === 'P2002' &&
+      typeof err.meta?.target === 'string' &&
+      err.meta?.target.includes('users_email_key')
+    ) {
+      return {
+        success: false,
+        status: 409,
+        message: 'This email is already registered.',
+        error: { reason: 'DUPLICATE_EMAIL' },
+        data: null,
+      };
+    }
+
+    console.error('Failed to create user:', err);
+    return AppErrorFactory.unknownServerError();
+  }
 };
 
 type LoginUserParam = {
