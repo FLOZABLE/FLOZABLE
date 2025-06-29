@@ -71,7 +71,7 @@ export const getFriendAllStatus = async (
     const formattedFriends = friends.map((friend) => ({
       ...friend,
       study_time: studyTimeMap.get(friend.user_id) || 0,
-      active_subject: statusMap.get(friend.user_id) || null,
+      status: statusMap.get(friend.user_id) || null,
     }));
 
     res.send({ success: true, data: { friends: formattedFriends } });
