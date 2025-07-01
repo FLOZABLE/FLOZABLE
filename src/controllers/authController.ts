@@ -37,10 +37,12 @@ export const postAuthSignup = async (
       timezone,
       password,
     });
-    if (!newUserResponse.success) {
+    const newUser = newUserResponse.data?.user;
+
+    if (!newUserResponse.success || !newUser) {
       res.send(newUserResponse);
+      return;
     }
-    const newUser = newUserResponse.data;
 
     const newSubject = await createSubject({
       name: 'others',
@@ -191,8 +193,10 @@ export const getAuthGoogleCallback = async (
       password,
     });
 
-    if (!newUserResponse.success) return res.redirect(config.nextServer);
-    const newUser = newUserResponse.data;
+    const newUser = newUserResponse.data?.user;
+
+    if (!newUserResponse.success || !newUser)
+      return res.redirect(config.nextServer);
 
     await createSubject({
       name: 'others',

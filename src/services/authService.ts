@@ -1,6 +1,7 @@
 import crypto from 'crypto';
 import { Response } from 'express';
 import { google } from 'googleapis';
+import { HttpError } from 'http-errors';
 import { nanoid } from 'nanoid';
 
 import config from '../config/config';
@@ -23,7 +24,13 @@ export const createUser = async ({
   email,
   timezone,
   password,
-}: CreateUserParams) => {
+}: CreateUserParams): Promise<{
+  success: boolean;
+  status: number;
+  data: null | { user: Prisma.usersUncheckedCreateInput };
+  message: string;
+  error: HttpError | null;
+}> => {
   const created_at = nowSec();
   const user_id = nanoid(10);
   const hashed_password = await bcryptHash(password);
@@ -44,8 +51,9 @@ export const createUser = async ({
     return {
       success: true,
       status: 201,
-      data: newUser,
+      data: { user: newUser },
       message: 'Account created successfully!',
+      error: null,
     };
   } catch (err) {
     if (
@@ -58,13 +66,19 @@ export const createUser = async ({
         success: false,
         status: 409,
         message: 'This email is already registered.',
-        error: { reason: 'DUPLICATE_EMAIL' },
+        error: AppErrorFactory.userAlreadyExists(),
         data: null,
       };
     }
 
     console.error('Failed to create user:', err);
-    return AppErrorFactory.unknownServerError();
+    return {
+      success: false,
+      status: 500,
+      message: 'Failed to create account due to server error.',
+      error: AppErrorFactory.unknownServerError(),
+      data: null,
+    };
   }
 };
 
