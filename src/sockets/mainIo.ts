@@ -6,6 +6,7 @@ import { nowSec } from '../libs/utils';
 import {
   cacheRanking,
   cacheUserStatus,
+  delCachedUserStatus,
   getCachedUserFriends,
   getCachedUserGroups,
   getCachedUserStatus,
@@ -36,6 +37,27 @@ export const registerMainIoEvents = () => {
       console.log('socket connected', userId);
 
       socket.join(userId);
+
+      const now = nowSec();
+
+      const [groups, friends] = await Promise.all([
+        getCachedUserGroups({ userId }),
+        getCachedUserFriends({ userId }),
+      ]);
+
+      const newStatus = await cacheUserStatus({
+        userId,
+        startTime: now,
+      });
+
+      mainIo?.to([...friends, ...groups, userId]).emit('study:start', {
+        user_id: userId,
+        subject: newStatus,
+      });
+
+      mainIo?.to(userId).emit('mystudy:start', {
+        subject: newStatus,
+      });
 
       socket.on('study:start', async (subject_id: string) => {
         const now = nowSec();
@@ -111,6 +133,59 @@ export const registerMainIoEvents = () => {
             cacheRanking(userId, 'day', i, duration);
             cacheRanking(userId, 'week', i, duration);
             cacheRanking(userId, 'month', i, duration);
+          }
+        } catch (err) {
+          console.log(err);
+        }
+      });
+
+      socket.on('disconnect', async (reason) => {
+        try {
+          const device = socket.handshake.query?.device;
+          console.log('disconnection', device);
+
+          //won't terminate if it's mobile or chrome extension
+          if (device === 'mobile' || device === 'chrome-extension') return;
+
+          const now = nowSec();
+
+          const [status, groups, friends] = await Promise.all([
+            getCachedUserStatus(userId),
+            getCachedUserGroups({ userId }),
+            getCachedUserFriends({ userId }),
+          ]);
+
+          const duration = status ? now - status.start_time : 0;
+
+          await delCachedUserStatus(userId);
+
+          mainIo?.to([...friends, ...groups, userId]).emit('study:stop', {
+            user_id: userId,
+            status: null,
+            duration,
+          });
+
+          if (status) {
+            mainIo?.to(userId).emit('mystudy:stop', {
+              stopped_subject_id: status.subject_id,
+              duration,
+            });
+
+            if (duration && status.subject_id !== '0') {
+              await prisma.subject_timelines.create({
+                data: {
+                  subject_id: status.subject_id,
+                  start_time: status.start_time,
+                  duration,
+                },
+              });
+
+              for (let i = -12; i < 12; i++) {
+                cacheRanking(userId, 'day', i, duration);
+                cacheRanking(userId, 'week', i, duration);
+                cacheRanking(userId, 'month', i, duration);
+              }
+            }
           }
         } catch (err) {
           console.log(err);
