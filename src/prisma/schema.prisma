@@ -79,9 +79,12 @@ model chatroom_messages {
 }
 
 model chatrooms {
-  chatroom_id String @id @db.VarChar(10)
-  name        String @db.VarChar(50)
-  type        Int    @default(0) @db.TinyInt
+  chatroom_id String        @id @db.VarChar(10)
+  name        String        @db.VarChar(50)
+  type        chatroom_type @default(group)
+  group_id    String?       @db.VarChar(10)
+
+  group groups? @relation(fields: [group_id], references: [group_id], onDelete: Cascade)
 
   members  chatroom_members[]
   messages chatroom_messages[]
@@ -154,9 +157,10 @@ model groups {
   goal_hr       Int             @db.SmallInt
   notifications notifications[] @relation("notifications_group_id")
 
-  leader_user   users           @relation("groups_leader_fkey", fields: [leader], references: [user_id], onDelete: Cascade)
-  group_likes   group_likes[]
-  group_members group_members[]
+  leader_user     users           @relation("groups_leader_fkey", fields: [leader], references: [user_id], onDelete: Cascade)
+  group_likes     group_likes[]
+  group_members   group_members[]
+  group_chatrooms chatrooms[]
 
   @@index([group_id], map: "group_id")
   @@index([leader], map: "leader")
@@ -308,4 +312,9 @@ enum notification_type {
   group_invite
   chat_request
   global
+}
+
+enum chatroom_type {
+  group
+  room
 }
