@@ -3,6 +3,7 @@ import prisma from '../libs/prisma';
 import { nowSec } from '../libs/utils';
 import redisClient from '../models/redisClient';
 import { UserInfo, UserStatus } from '../types/accountTypes';
+import { ChatStatus } from '../types/chatTypes';
 import { Viewer } from '../types/otherTypes';
 import { RawRanking } from '../types/rankingTypes';
 import { googleOauth2client, refreshGoogleAccessToken } from './authService';
@@ -67,6 +68,7 @@ export const getCachedUser = async ({
     return null;
   }
 };
+
 interface GetCachedUsersParams extends GetCacheParams {
   userIds: string[];
 }
@@ -503,6 +505,38 @@ export const getCacheUserGoogleAccessToken = async (userId: string) => {
   } catch (err) {
     console.log(err);
     return null;
+  }
+};
+
+export const getCachedUserChatStatus = async (
+  userId: string,
+): Promise<ChatStatus> => {
+  const cacheKey = `user:${userId}:chatstatus`;
+
+  try {
+    const chatrooms = await redisClient.hgetall(cacheKey);
+    const formattedChatrooms: ChatStatus = {};
+    Object.keys(chatrooms).map((key) => {
+      const chatroomId = key.split(':')[1];
+
+      if (!formattedChatrooms[chatroomId]) {
+        formattedChatrooms[chatroomId] = {
+          unreads: 0,
+          last_read_message_id: null,
+        };
+      }
+
+      if (key.includes('unreads')) {
+        formattedChatrooms[chatroomId].unreads = parseInt(chatrooms[key]);
+      } else {
+        formattedChatrooms[chatroomId].last_read_message_id = chatrooms[key];
+      }
+    });
+
+    return formattedChatrooms;
+  } catch (err) {
+    console.error(`Failed to get cached user chat status: ${userId}`, err);
+    return {};
   }
 };
 
