@@ -57,8 +57,8 @@ model chatroom_members {
   chatroom_id String @db.VarChar(10)
   user_id     String @db.VarChar(10)
 
-  chatroom chatrooms @relation(fields: [chatroom_id], references: [chatroom_id], onDelete: Cascade)
-  user     users     @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
+  chatroom chatrooms @relation(fields: [chatroom_id], references: [chatroom_id], onDelete: Cascade, onUpdate: Cascade)
+  user     users     @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: Cascade)
 
   @@id([chatroom_id, user_id])
   @@index([user_id], map: "user_id")
@@ -71,8 +71,8 @@ model chatroom_messages {
   message     String @db.Text
   sent_at     Int
 
-  chatroom chatrooms @relation(fields: [chatroom_id], references: [chatroom_id], onDelete: Cascade)
-  user     users     @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
+  chatroom chatrooms @relation(fields: [chatroom_id], references: [chatroom_id], onDelete: Cascade, onUpdate: Cascade)
+  user     users     @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: Cascade)
 
   @@index([chatroom_id], map: "chatroom_id")
   @@index([user_id], map: "user_id")
@@ -84,7 +84,7 @@ model chatrooms {
   type        chatroom_type @default(group)
   group_id    String?       @db.VarChar(10)
 
-  group groups? @relation(fields: [group_id], references: [group_id], onDelete: Cascade)
+  group groups? @relation(fields: [group_id], references: [group_id], onDelete: Cascade, onUpdate: Cascade)
 
   members  chatroom_members[]
   messages chatroom_messages[]
@@ -99,7 +99,7 @@ model devices {
   token              String  @db.VarChar(20)
   notification_token String? @db.VarChar(60)
 
-  user users @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
+  user users @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: Cascade)
 
   @@id([device_id, user_id])
   @@index([user_id], map: "user_id")
@@ -112,8 +112,8 @@ model friends {
   status        friends_status @default(pending)
   date          Int
 
-  user            users           @relation("friends_user_idTousers", fields: [user_id], references: [user_id], onDelete: Cascade)
-  friend          users           @relation("friends_friend_idTousers", fields: [friend_id], references: [user_id], onDelete: Cascade)
+  user            users           @relation("friends_user_idTousers", fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: Cascade)
+  friend          users           @relation("friends_friend_idTousers", fields: [friend_id], references: [user_id], onDelete: Cascade, onUpdate: Cascade)
   friend_requests notifications[] @relation("notifications_friend_request_id")
 
   @@unique([user_id, friend_id], map: "unique_friend_pair")
@@ -124,8 +124,8 @@ model group_likes {
   group_id String @db.VarChar(10)
   user_id  String @db.VarChar(10)
 
-  group groups @relation(fields: [group_id], references: [group_id], onDelete: Cascade)
-  user  users  @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
+  group groups @relation(fields: [group_id], references: [group_id], onDelete: Cascade, onUpdate: Cascade)
+  user  users  @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: Cascade)
 
   @@id([user_id, group_id])
   @@index([group_id], map: "group_id")
@@ -136,8 +136,8 @@ model group_members {
   user_id   String @db.VarChar(10)
   joined_at Int
 
-  group groups @relation(fields: [group_id], references: [group_id], onDelete: Cascade)
-  user  users  @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
+  group groups @relation(fields: [group_id], references: [group_id], onDelete: Cascade, onUpdate: Cascade)
+  user  users  @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: Cascade)
 
   @@id([user_id, group_id])
   @@index([group_id], map: "group_id")
@@ -157,7 +157,7 @@ model groups {
   goal_hr       Int             @db.SmallInt
   notifications notifications[] @relation("notifications_group_id")
 
-  leader_user     users           @relation("groups_leader_fkey", fields: [leader], references: [user_id], onDelete: Cascade)
+  leader_user     users           @relation("groups_leader_fkey", fields: [leader], references: [user_id], onDelete: Cascade, onUpdate: Cascade)
   group_likes     group_likes[]
   group_members   group_members[]
   group_chatrooms chatrooms[]
@@ -178,10 +178,10 @@ model notifications {
   type              notification_type
   is_read           Boolean           @default(false)
 
-  user           users    @relation("notifications_user_id", fields: [user_id], references: [user_id], onDelete: Cascade)
-  sender         users?   @relation("notifications_sender_id", fields: [sender_id], references: [user_id], onDelete: Cascade)
-  group          groups?  @relation("notifications_group_id", fields: [group_id], references: [group_id], onDelete: Cascade)
-  friend_request friends? @relation("notifications_friend_request_id", fields: [friend_request_id], references: [friendship_id], onDelete: Cascade)
+  user           users    @relation("notifications_user_id", fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: Cascade)
+  sender         users?   @relation("notifications_sender_id", fields: [sender_id], references: [user_id], onDelete: Cascade, onUpdate: Cascade)
+  group          groups?  @relation("notifications_group_id", fields: [group_id], references: [group_id], onDelete: Cascade, onUpdate: Cascade)
+  friend_request friends? @relation("notifications_friend_request_id", fields: [friend_request_id], references: [friendship_id], onDelete: Cascade, onUpdate: Cascade)
 
   @@index([user_id], map: "idx_notifications_user_id")
   @@index([sender_id], map: "idx_notifications_sender_id")
@@ -194,8 +194,8 @@ model ranking_details {
   rank       Int
   study_time Int
 
-  ranking rankings @relation(fields: [ranking_id], references: [ranking_id], onDelete: Cascade)
-  user    users    @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
+  ranking rankings @relation(fields: [ranking_id], references: [ranking_id], onDelete: Cascade, onUpdate: Cascade)
+  user    users    @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: Cascade)
 
   @@id([ranking_id, user_id])
   @@index([user_id], map: "user_id")
@@ -220,7 +220,7 @@ model subjects {
   color      String @db.VarChar(20)
   created_at Int
 
-  user              users               @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
+  user              users               @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: Cascade)
   subject_timelines subject_timelines[]
 
   @@unique([user_id, name], map: "user_id")
@@ -231,7 +231,7 @@ model subject_timelines {
   start_time Int
   duration   Int    @db.UnsignedSmallInt
 
-  subject subjects @relation(fields: [subject_id], references: [subject_id], onDelete: Cascade)
+  subject subjects @relation(fields: [subject_id], references: [subject_id], onDelete: Cascade, onUpdate: Cascade)
 
   @@unique([subject_id, start_time])
   @@index([subject_id], map: "subject_id")
@@ -241,8 +241,8 @@ model theme_likes {
   theme_id String @db.VarChar(10)
   user_id  String @db.VarChar(10)
 
-  theme themes @relation(fields: [theme_id], references: [theme_id], onDelete: Cascade)
-  user  users  @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
+  theme themes @relation(fields: [theme_id], references: [theme_id], onDelete: Cascade, onUpdate: Cascade)
+  user  users  @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: Cascade)
 
   @@id([user_id, theme_id])
   @@index([theme_id], map: "theme_id")
@@ -256,7 +256,7 @@ model themes {
   description String @db.VarChar(700)
   tags        String @default("") @db.VarChar(300)
 
-  user        users         @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
+  user        users         @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: Cascade)
   theme_likes theme_likes[]
   used_users  user_themes[]
 
@@ -269,8 +269,8 @@ model user_themes {
   theme_id    String @db.VarChar(10)
   category_id Int?   @db.SmallInt
 
-  user  users  @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
-  theme themes @relation(fields: [theme_id], references: [theme_id], onDelete: Cascade)
+  user  users  @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: Cascade)
+  theme themes @relation(fields: [theme_id], references: [theme_id], onDelete: Cascade, onUpdate: Cascade)
 
   @@id([user_id, theme_id])
   @@index([theme_id], map: "theme_id")
@@ -284,7 +284,7 @@ model website_settings {
   timer       Boolean
   study_timer Boolean
 
-  user users @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
+  user users @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: Cascade)
 
   @@id([user_id, website])
 }
@@ -296,7 +296,7 @@ model website_usage {
   duration Int    @db.SmallInt
   date     String @db.VarChar(10)
 
-  user users @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
+  user users @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: Cascade)
 
   @@id([user_id, website])
 }

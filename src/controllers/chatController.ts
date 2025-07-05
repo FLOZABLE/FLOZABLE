@@ -9,7 +9,7 @@ export const getChatRoomAll = async (
 ) => {
   try {
     const userId = req.user_id!;
-    
+
     const chatrooms = await prisma.chatrooms.findMany({
       where: {
         members: {
@@ -38,7 +38,7 @@ export const getChatRoomAll = async (
 
     const formattedChatrooms = chatrooms.map((c) => ({
       chatroom_id: c.chatroom_id,
-      type: c.type === 1 ? 'group' : 'room', // or keep raw c.type if you prefer
+      type: c.type,
       name: c.group?.name || c.name, // use group name if exists, fallback to chatroom name
       members: c.members.map((m) => m.user_id).join(','),
     }));
