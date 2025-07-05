@@ -1,4 +1,5 @@
 import { createInterface } from 'readline';
+import { nanoid } from 'nanoid';
 
 import prisma from '../libs/prisma';
 
@@ -9,43 +10,56 @@ const readline = createInterface({
 
 readline.question(
   `
-  SELECT Option
-  1: update chatrooms
-  `,
+  SELECT OPTION:
+  1: Update chatrooms
+  Your choice: `,
   async (rawOption) => {
-    const option = parseInt(rawOption);
+    const option = parseInt(rawOption.trim());
     if (option === 1) {
-      updateChatrooms();
+      await updateChatrooms();
+    } else {
+      console.log('Invalid option selected.');
     }
+
+    readline.close();
+    process.exit(0);
   },
 );
 
 const updateChatrooms = async () => {
   try {
+    console.log('Fetching chatrooms...');
     const chatrooms = await prisma.chatrooms.findMany({
-      select: {
-        members: true,
-        chatroom_id: true,
-      },
+      select: { members: true, chatroom_id: true },
     });
-    const groupChatrooms: string[] = [];
-    chatrooms.map((chatroom) => {
-      console.log(chatroom.members);
-      if (!chatroom.members.length) {
-        //possibly group
-        groupChatrooms.push(chatroom.chatroom_id);
-      }
-    });
+
+    const possibleGroupChatrooms: string[] = chatrooms
+      .filter((chatroom) => chatroom.members.length === 0)
+      .map((chatroom) => chatroom.chatroom_id);
+
+    if (!possibleGroupChatrooms.length) {
+      console.log('No group chatrooms found needing update.');
+      return;
+    }
+
+    console.log(
+      `Possible group chatrooms to update: ${possibleGroupChatrooms.join(', ')}`,
+    );
 
     const groups = await prisma.groups.findMany({
       where: {
-        group_id: { in: groupChatrooms },
+        group_id: { in: possibleGroupChatrooms },
       },
     });
 
-    groups.map((group) => {
-      prisma.chatrooms.update({
+    console.log(`Found ${groups.length} groups to update.`);
+
+    for (const group of groups) {
+      const newChatroomId = nanoid(10);
+
+      await prisma.chatrooms.update({
         data: {
+          chatroom_id: newChatroomId,
           group_id: group.group_id,
           type: 'group',
         },
@@ -53,10 +67,14 @@ const updateChatrooms = async () => {
           chatroom_id: group.group_id,
         },
       });
-    });
 
-    console.log(groups);
+      console.log(
+        `Updated chatroom for group: ${group.name} (new chatroom_id: ${newChatroomId})`,
+      );
+    }
+
+    console.log('All updates complete!');
   } catch (err) {
-    console.log(err);
+    console.error('Error updating chatrooms:', err);
   }
 };
