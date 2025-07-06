@@ -1,5 +1,6 @@
 import { createInterface } from 'readline';
 import { nanoid } from 'nanoid';
+import pMap from 'p-map';
 
 import prisma from '../libs/prisma';
 
@@ -52,29 +53,38 @@ const updateChatrooms = async () => {
       },
     });
 
-    console.log(`Found ${groups.length} groups to update.`);
-
-    for (const group of groups) {
-      const newChatroomId = nanoid(10);
-
-      await prisma.chatrooms.update({
-        data: {
-          chatroom_id: newChatroomId,
-          group_id: group.group_id,
-          type: 'group',
-        },
-        where: {
-          chatroom_id: group.group_id,
-        },
-      });
-
-      console.log(
-        `Updated chatroom for group: ${group.name} (new chatroom_id: ${newChatroomId})`,
-      );
+    if (!groups.length) {
+      console.log('No matching groups found for these chatrooms.');
+      return;
     }
 
-    console.log('All updates complete!');
+    console.log(`Found ${groups.length} groups to update.`);
+
+    await pMap(
+      groups,
+      async (group) => {
+        const newChatroomId = nanoid(10);
+
+        await prisma.chatrooms.update({
+          data: {
+            chatroom_id: newChatroomId,
+            group_id: group.group_id,
+            type: 'group',
+          },
+          where: {
+            chatroom_id: group.group_id,
+          },
+        });
+
+        console.log(
+          `Updated chatroom for group: ${group.name} (new chatroom_id: ${newChatroomId})`,
+        );
+      },
+      { concurrency: 1 }, // Safely update up to 10 chatrooms in parallel
+    );
+
+    console.log('🎉 All updates complete!');
   } catch (err) {
-    console.error('Error updating chatrooms:', err);
+    console.error('❌ Error updating chatrooms:', err);
   }
 };
