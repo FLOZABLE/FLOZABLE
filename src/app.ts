@@ -6,6 +6,7 @@ import config from './config/config';
 import { errorHandler } from './middlewares/errorHandler';
 import accountRouter from './routes/accountRoutes';
 import authRouter from './routes/authRoutes';
+import chatRouter from './routes/chatRoutes';
 import friendRouter from './routes/friendRoutes';
 import groupRouter from './routes/groupRoutes';
 import notificationRouter from './routes/notificationRoutes';
@@ -36,6 +37,7 @@ app.use('/group', groupRouter);
 app.use('/plan', planRouter);
 app.use('/friend', friendRouter);
 app.use('/notification', notificationRouter);
+app.use('/chat', chatRouter);
 
 // Global error handler (should be after routes)
 app.use(errorHandler);

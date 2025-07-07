@@ -1,4 +1,4 @@
-import { NextFunction, Request } from 'express';
+import { NextFunction, Request, Response } from 'express';
 
 import prisma from '../libs/prisma';
 
@@ -10,13 +10,18 @@ export const getChatRoomAll = async (
   try {
     const userId = req.user_id!;
 
-    const chatrooms = await prisma.chatrooms.findMany({
+    const rawChatrooms = await prisma.chatrooms.findMany({
       where: {
-        members: {
-          some: {
-            user_id: userId,
+        OR: [
+          {
+            members: { some: { user_id: userId } },
           },
-        },
+          {
+            group: {
+              group_members: { some: { user_id: userId } },
+            },
+          },
+        ],
       },
       select: {
         chatroom_id: true,
@@ -36,12 +41,16 @@ export const getChatRoomAll = async (
       },
     });
 
-    const formattedChatrooms = chatrooms.map((c) => ({
+    const chatrooms = rawChatrooms.map((c) => ({
       chatroom_id: c.chatroom_id,
       type: c.type,
       name: c.group?.name || c.name, // use group name if exists, fallback to chatroom name
       members: c.members.map((m) => m.user_id).join(','),
     }));
+
+    console.log(chatrooms);
+
+    res.send({ success: true, data: { chatrooms } });
   } catch (error) {
     next(error);
   }
