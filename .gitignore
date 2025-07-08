@@ -1,6 +1,8 @@
 .env.production
 .env.development
 .env.test
+.env
+
 test.txt
 node_modules
 subjects.csv
@@ -8,3 +10,6 @@ plans.csv
 public/img/profile-images/*
 
 /config/*
+_*
+
+/src/generated/prisma

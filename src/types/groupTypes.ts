@@ -1,0 +1,60 @@
+import { Prisma } from '../generated/prisma';
+import { groupSelect } from '../queries/groupQueries';
+
+//POST /group/:group_id/join
+export type PostGroupJoinParams = {
+  group_id: string;
+};
+
+//POST /group/:group_id/join
+export type PostGroupJoinBody = {
+  password: string | null;
+};
+
+//POST /group/:group_id/leave
+export type PostGroupLeaveParams = {
+  group_id: string;
+};
+
+//POST /group/:group_id/like
+export type PostGroupLikeParams = {
+  group_id: string;
+};
+
+//POST /group/:group_id/like
+export type PostGroupLikeBody = {
+  like: boolean;
+};
+
+//GET /group/:group_id/members
+export type GetGroupMembersParams = {
+  group_id: string;
+};
+
+//GET /group/:group_id/members
+export type GetGroupMembersQuery = {
+  timezone: string;
+};
+
+//PUT /group
+export type PutGroupBody = {
+  name: string;
+  password?: string | null;
+  description: string;
+  max_members: number;
+  tags: string[];
+  color: string;
+  goal_hr: number;
+  visibility: boolean;
+};
+
+export type RawGroup = Prisma.groupsGetPayload<{ select: typeof groupSelect }>;
+
+export type Group = Omit<
+  RawGroup,
+  'group_members' | 'group_likes' | 'visibility'
+> & {
+  members: string[];
+  likes: string[];
+  visibility: boolean;
+};
