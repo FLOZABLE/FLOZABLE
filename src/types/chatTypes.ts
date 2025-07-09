@@ -4,3 +4,7 @@ export interface ChatStatus {
     last_read_message_id: string | null;
   };
 }
+
+export interface ChatroomIdParams {
+  chatroom_id: string;
+}
