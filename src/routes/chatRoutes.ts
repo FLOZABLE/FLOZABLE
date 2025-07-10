@@ -1,6 +1,10 @@
 import { Router } from 'express';
 
-import { getChatRoomAll } from '../controllers/chatController';
+import {
+  getChatRoomAll,
+  getChatRoomMembers,
+  getChatRoomMessages,
+} from '../controllers/chatController';
 import { authMiddleware } from '../middlewares/authMiddleware';
 import { validate } from '../middlewares/validationMiddleWare';
 import {
@@ -16,15 +20,15 @@ chatRouter.get(
   '/room/:chatroom_id/messages',
   authMiddleware,
   validate(chatroomIdParamsSchema, 'params'),
-  validate(getChatroomMessagesQuerySchema, 'params'),
-  getChatRoomAll,
+  validate(getChatroomMessagesQuerySchema, 'query'),
+  getChatRoomMessages,
 );
 
 chatRouter.get(
   '/room/:chatroom_id/members',
   authMiddleware,
   validate(chatroomIdParamsSchema, 'params'),
-  getChatRoomAll,
+  getChatRoomMembers,
 );
 
 export default chatRouter;
