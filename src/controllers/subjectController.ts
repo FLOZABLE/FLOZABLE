@@ -1,12 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 
 import { Prisma } from '../generated/prisma';
-import prisma from '../libs/prisma';
-import {
-  createSubject,
-  getSubjects,
-  subjectsFormatter,
-} from '../services/subjectService';
+import { createSubject, getSubjects } from '../services/subjectService';
 import { GetSubjectAllQuery, PutSubjectBody } from '../types/subjectTypes';
 
 export const getSubjectAll = async (

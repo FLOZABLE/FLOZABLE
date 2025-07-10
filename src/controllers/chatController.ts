@@ -96,11 +96,26 @@ export const getChatRoomMessages = async (
 ) => {
   try {
     const userId = req.user_id!;
-
     const chatroomId = req.params.chatroom_id;
-
     const offset = parseInt(req.query.offset);
     const length = parseInt(req.query.length);
+
+    const chatroom = await prisma.chatrooms.findFirst({
+      where: {
+        chatroom_id: chatroomId,
+        OR: [
+          { members: { some: { user_id: userId } } },
+          { group: { group_members: { some: { user_id: userId } } } },
+        ],
+      },
+      select: { chatroom_id: true },
+    });
+
+    if (!chatroom) {
+      const error = AppErrorFactory.chatroomAccessDenied();
+      res.status(error.status).send(error);
+      return;
+    }
 
     const messages = await prisma.chatroom_messages.findMany({
       where: {
@@ -134,55 +149,48 @@ export const getChatRoomMembers = async (
     const userId = req.user_id!;
     const chatroomId = req.params.chatroom_id;
 
-    const chatroom = await prisma.chatrooms.findUnique({
-      where: { chatroom_id: chatroomId },
-      select: { type: true, group_id: true },
-    });
-
-    if (!chatroom) {
-      const error = AppErrorFactory.chatroomNotFound();
-      res.status(error.status).send(error);
-      return;
-    }
-
-    if (chatroom.type === 'group') {
-      if (!chatroom.group_id) {
-        const error = AppErrorFactory.unknownServerError();
-        res.status(error.status).send(error);
-        return;
-      }
-
-      const groupMembers = await prisma.group_members.findMany({
-        where: { group_id: chatroom.group_id },
-        select: {
-          user: {
-            select: { user_id: true, name: true },
+    const chatroom = await prisma.chatrooms.findFirst({
+      where: {
+        chatroom_id: chatroomId,
+        OR: [
+          { members: { some: { user_id: userId } } },
+          { group: { group_members: { some: { user_id: userId } } } },
+        ],
+      },
+      select: {
+        type: true,
+        group_id: true,
+        group: {
+          select: {
+            group_members: {
+              select: {
+                user: {
+                  select: { user_id: true, name: true },
+                },
+              },
+            },
           },
         },
-      });
-
-      const members = groupMembers.map((m) => m.user);
-      res.send({ success: true, data: { members } });
-      return;
-    }
-
-    // Default to 'room' chatroom type
-    const roomMembers = await prisma.chatroom_members.findMany({
-      where: { chatroom_id: chatroomId },
-      select: {
-        user: {
-          select: { user_id: true, name: true },
+        members: {
+          select: {
+            user: {
+              select: { user_id: true, name: true },
+            },
+          },
         },
       },
     });
 
-    const members = roomMembers.map((m) => m.user);
-
-    if (!members.find((member) => member.user_id === userId)) {
-      const response = AppErrorFactory.chatroomAccessDenied();
-      res.status(response.status).send(response);
+    if (!chatroom) {
+      const error = AppErrorFactory.chatroomAccessDenied();
+      res.status(error.status).send(error);
       return;
     }
+
+    const members =
+      chatroom.type === 'group'
+        ? (chatroom.group?.group_members.map((m) => m.user) ?? [])
+        : chatroom.members.map((m) => m.user);
 
     res.send({ success: true, data: { members } });
   } catch (error) {
