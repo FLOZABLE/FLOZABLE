@@ -27,7 +27,7 @@ import {
 } from '../types/groupTypes';
 
 export const getGroupAll = async (
-  req: Request,
+  _req: Request,
   res: Response,
   next: NextFunction,
 ) => {

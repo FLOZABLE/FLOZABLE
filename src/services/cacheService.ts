@@ -6,7 +6,7 @@ import { UserInfo, UserStatus } from '../types/accountTypes';
 import { ChatStatus } from '../types/chatTypes';
 import { Viewer } from '../types/otherTypes';
 import { RawRanking } from '../types/rankingTypes';
-import { googleOauth2client, refreshGoogleAccessToken } from './authService';
+import { refreshGoogleAccessToken } from './authService';
 
 interface GetCacheParams {
   update?: boolean;
@@ -540,9 +540,118 @@ export const getCachedUserChatStatus = async (
   }
 };
 
+export const updateChatroomUnreadStatus = async ({
+  roomId,
+  messageId,
+  senderId,
+  allMemberIds,
+}: {
+  roomId: string;
+  messageId: string;
+  senderId: string;
+  allMemberIds: string[];
+}) => {
+  const pipeline = redisClient.pipeline();
+
+  const otherMemberIds = allMemberIds.filter((id) => id !== senderId);
+
+  // Increment unreads for other members
+  for (const memberId of otherMemberIds) {
+    const cacheKey = `user:${memberId}:chatstatus`;
+    pipeline.hincrby(cacheKey, `room:${roomId}:unreads`, 1);
+    pipeline.expire(cacheKey, REDIS_TTL.USER_CHAT_STATUS_EXP);
+  }
+
+  // Set sender’s last read message and reset unread count
+  const senderKey = `user:${senderId}:chatstatus`;
+  pipeline.hset(senderKey, `room:${roomId}:last_read_message`, messageId);
+  pipeline.hset(senderKey, `room:${roomId}:unreads`, 0);
+  pipeline.expire(senderKey, REDIS_TTL.USER_CHAT_STATUS_EXP);
+
+  await pipeline.exec();
+};
+
 export const delCacheUserGoogleAccessToken = async (userId: string) => {
   const key = `user:${userId}:google_access_token`;
   redisClient.del(key);
+};
+
+export const getCachedChatroomMembers = async (
+  chatroomId: string,
+): Promise<string[]> => {
+  const key = `chatroom:${chatroomId}:members`;
+
+  try {
+    if (!chatroomId) return [];
+
+    const cachedMembers = await redisClient.smembers(key);
+    if (cachedMembers.length > 0) {
+      return cachedMembers.filter((m) => m !== 'cached');
+    }
+
+    const chatroom = await prisma.chatrooms.findUnique({
+      where: { chatroom_id: chatroomId },
+      select: {
+        type: true,
+        group_id: true,
+        group: {
+          select: {
+            group_members: {
+              select: {
+                user_id: true,
+              },
+            },
+          },
+        },
+        members: {
+          select: {
+            user_id: true,
+          },
+        },
+      },
+    });
+
+    if (!chatroom) return [];
+
+    const members =
+      chatroom.type === 'group'
+        ? (chatroom.group?.group_members.map((m) => m.user_id) ?? [])
+        : chatroom.members.map((m) => m.user_id);
+
+    if (members.length > 0) {
+      await redisClient.sadd(key, 'cached', ...members);
+      await redisClient.expire(key, REDIS_TTL.CHAT_MEMBERS_EXP);
+    }
+
+    return members;
+  } catch (err) {
+    console.error('Error fetching chatroom members:', err);
+    return [];
+  }
+};
+
+export const isChatroomMember = async (
+  userId: string,
+  chatroomId: string,
+): Promise<boolean> => {
+  const key = `chatroom:${chatroomId}:members`;
+
+  try {
+    if (!userId || !chatroomId) return false;
+
+    const isCached = await redisClient.sismember(key, 'cached');
+
+    if (isCached) {
+      const isMember = await redisClient.sismember(key, userId);
+      return isMember === 1;
+    }
+
+    const members = await getCachedChatroomMembers(chatroomId);
+    return members.includes(userId);
+  } catch (err) {
+    console.error('Error checking chatroom membership:', err);
+    return false;
+  }
 };
 
 /**
@@ -574,7 +683,7 @@ export const getCachedUsersStudyTime = async ({
     }
 
     return userIds.map((userId, index) => {
-      const [error, score] = results[index];
+      const [_error, score] = results[index];
       const studyTime = typeof score === 'string' ? parseFloat(score) : 0;
       return { userId, studyTime };
     });

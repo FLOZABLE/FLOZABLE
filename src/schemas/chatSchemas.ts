@@ -1,8 +1,5 @@
 import Joi from 'joi';
 
-import { accountSchemas } from './accountSchemas';
-import { otherSchemas } from './otherSchemas';
-
 export const chatSchemas = {
   chatroom_id: Joi.string().length(10).required().trim().messages({
     'string.length': 'Chatroom id must be exactly 10 characters.',
