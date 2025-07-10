@@ -1,5 +1,7 @@
 import Joi from 'joi';
 
+import { accountSchemas } from './accountSchemas';
+
 export const chatSchemas = {
   chatroom_id: Joi.string().length(10).required().trim().messages({
     'string.length': 'Chatroom id must be exactly 10 characters.',
@@ -21,6 +23,11 @@ export const chatSchemas = {
     'number.max': 'Length cannot exceed 60.',
     'any.required': 'Length is required.',
   }),
+
+  accepted: Joi.boolean().required().messages({
+    'boolean.base': 'Accepted must be true or false.',
+    'any.required': 'Accepted is required.',
+  }),
 };
 
 export const chatroomIdParamsSchema = Joi.object({
@@ -30,4 +37,13 @@ export const chatroomIdParamsSchema = Joi.object({
 export const getChatroomMessagesQuerySchema = Joi.object({
   offset: chatSchemas.offset,
   length: chatSchemas.length,
+});
+
+export const postChatRequestBodySchema = Joi.object({
+  target_id: accountSchemas.user_id,
+});
+
+export const postChatRequestReplyBodySchema = Joi.object({
+  target_id: accountSchemas.user_id,
+  accepted: chatSchemas.accepted,
 });

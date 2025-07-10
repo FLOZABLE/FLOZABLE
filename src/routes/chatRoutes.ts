@@ -4,12 +4,16 @@ import {
   getChatRoomAll,
   getChatRoomMembers,
   getChatRoomMessages,
+  postChatRequest,
+  postChatRequestReply,
 } from '../controllers/chatController';
 import { authMiddleware } from '../middlewares/authMiddleware';
 import { validate } from '../middlewares/validationMiddleWare';
 import {
   chatroomIdParamsSchema,
   getChatroomMessagesQuerySchema,
+  postChatRequestBodySchema,
+  postChatRequestReplyBodySchema,
 } from '../schemas/chatSchemas';
 
 const chatRouter = Router();
@@ -29,6 +33,20 @@ chatRouter.get(
   authMiddleware,
   validate(chatroomIdParamsSchema, 'params'),
   getChatRoomMembers,
+);
+
+chatRouter.post(
+  '/request',
+  authMiddleware,
+  validate(postChatRequestBodySchema, 'body'),
+  postChatRequest,
+);
+
+chatRouter.post(
+  '/request/reply',
+  authMiddleware,
+  validate(postChatRequestReplyBodySchema, 'body'),
+  postChatRequestReply,
 );
 
 export default chatRouter;
