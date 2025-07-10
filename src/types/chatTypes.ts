@@ -8,3 +8,8 @@ export interface ChatStatus {
 export interface ChatroomIdParams {
   chatroom_id: string;
 }
+
+export interface GetChatRoomMessagesQuery {
+  offset: string;
+  length: string;
+}

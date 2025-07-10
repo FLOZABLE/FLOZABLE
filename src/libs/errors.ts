@@ -98,6 +98,12 @@ export const AppErrorFactory = {
       code: 'CHATROOM_NOT_FOUND',
     }),
 
+  chatroomAccessDenied: () =>
+    createHttpError(403, 'You do not have access to this chatroom', {
+      reason: 'User is not a member of the chatroom or group',
+      code: 'CHATROOM_ACCESS_DENIED',
+    }),
+
   // --- General / Fallback ---
   unknownServerError: () =>
     createHttpError(500, 'Something went wrong', {

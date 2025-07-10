@@ -2,7 +2,8 @@ import { NextFunction, Request, Response } from 'express';
 
 import { AppErrorFactory } from '../libs/errors';
 import prisma from '../libs/prisma';
-import { ChatroomIdParams } from '../types/chatTypes';
+import { getCachedUserChatStatus } from '../services/cacheService';
+import { ChatroomIdParams, GetChatRoomMessagesQuery } from '../types/chatTypes';
 
 export const getChatRoomAll = async (
   req: Request,
@@ -45,8 +46,22 @@ export const getChatRoomAll = async (
             user_id: true,
           },
         },
+        messages: {
+          orderBy: {
+            sent_at: 'desc',
+          },
+          take: 1,
+          select: {
+            message_id: true,
+            message: true,
+            sent_at: true,
+            user_id: true,
+          },
+        },
       },
     });
+
+    const chatStatus = await getCachedUserChatStatus(userId);
 
     const chatrooms = rawChatrooms.map((c) => ({
       chatroom_id: c.chatroom_id,
@@ -56,7 +71,17 @@ export const getChatRoomAll = async (
         c.type === 'group'
           ? c.group?.group_members.map((member) => member.user_id)
           : c.members,
+      last_message: c.messages?.[0] || null,
+      last_read: chatStatus[c.chatroom_id]?.last_read_message_id || null,
+      unreads: chatStatus[c.chatroom_id]?.unreads || 0,
     }));
+
+    chatrooms.sort((a, b) => {
+      if (!a.last_message && !b.last_message) return 0; // Both are null
+      if (!a.last_message) return 1; // a is null, should go to the end
+      if (!b.last_message) return -1; // b is null, should go to the end
+      return b.last_message.sent_at - a.last_message.sent_at; // Both have a last_message, compare normally
+    });
 
     res.send({ success: true, data: { chatrooms } });
   } catch (error) {
@@ -65,14 +90,36 @@ export const getChatRoomAll = async (
 };
 
 export const getChatRoomMessages = async (
-  req: Request,
+  req: Request<ChatroomIdParams, {}, {}, GetChatRoomMessagesQuery>,
   res: Response,
   next: NextFunction,
 ) => {
   try {
     const userId = req.user_id!;
 
-    res.send({ success: true, data: {} });
+    const chatroomId = req.params.chatroom_id;
+
+    const offset = parseInt(req.query.offset);
+    const length = parseInt(req.query.length);
+
+    const messages = await prisma.chatroom_messages.findMany({
+      where: {
+        chatroom_id: chatroomId,
+      },
+      orderBy: {
+        sent_at: 'desc',
+      },
+      skip: offset,
+      take: length,
+      select: {
+        message_id: true,
+        user_id: true,
+        message: true,
+        sent_at: true,
+      },
+    });
+
+    res.send({ success: true, data: { messages } });
   } catch (error) {
     next(error);
   }
@@ -130,6 +177,13 @@ export const getChatRoomMembers = async (
     });
 
     const members = roomMembers.map((m) => m.user);
+
+    if (!members.find((member) => member.user_id === userId)) {
+      const response = AppErrorFactory.chatroomAccessDenied();
+      res.status(response.status).send(response);
+      return;
+    }
+
     res.send({ success: true, data: { members } });
   } catch (error) {
     next(error);

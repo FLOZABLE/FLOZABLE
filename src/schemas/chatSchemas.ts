@@ -10,19 +10,18 @@ export const chatSchemas = {
     'any.required': 'Chatroom id is required.',
   }),
 
-  offset: Joi.number().integer().min(1).max(12).required().messages({
+  offset: Joi.number().integer().min(0).required().messages({
     'number.base': 'Offset must be a number.',
     'number.integer': 'Offset must be an integer.',
-    'number.min': 'Offset must be at least 1.',
-    'number.max': 'Offset cannot exceed 12.',
+    'number.min': 'Offset must be at least 0.',
     'any.required': 'Offset is required.',
   }),
 
-  length: Joi.number().integer().min(1).max(12).required().messages({
+  length: Joi.number().integer().min(1).max(60).required().messages({
     'number.base': 'Length must be a number.',
     'number.integer': 'Length must be an integer.',
     'number.min': 'Length must be at least 1.',
-    'number.max': 'Length cannot exceed 12.',
+    'number.max': 'Length cannot exceed 60.',
     'any.required': 'Length is required.',
   }),
 };
