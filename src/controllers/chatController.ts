@@ -87,6 +87,7 @@ export const getChatRoomAll = async (
         last_message: c.messages?.[0] || null,
         last_read: chatStatus[c.chatroom_id]?.last_read_message_id ?? null,
         unreads: chatStatus[c.chatroom_id]?.unreads ?? 0,
+        group_id: c.group?.group_id || null,
       };
     });
 
