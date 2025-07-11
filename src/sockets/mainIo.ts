@@ -11,6 +11,8 @@ import {
   getCachedChatroomMembers,
   getCachedUserFriends,
   getCachedUserGroups,
+  isChatroomMember,
+  setUserChatroomStatus,
   updateChatroomUnreadStatus,
 } from '../services/cacheService';
 import { formatGroups } from '../services/groupService';
@@ -160,6 +162,41 @@ export const registerMainIoEvents = () => {
           });
         } catch (err) {
           console.error('chat:send error:', err);
+        }
+      });
+
+      socket.on('chat:read', async (roomId) => {
+        try {
+          if (!userId || !roomId) return;
+
+          const isMember = await isChatroomMember(userId, roomId);
+
+          if (!isMember) return;
+
+          const lastMessage = await prisma.chatroom_messages.findFirst({
+            where: {
+              chatroom_id: roomId,
+            },
+            orderBy: {
+              sent_at: 'desc',
+            },
+            take: 1,
+            select: {
+              message_id: true,
+              message: true,
+              sent_at: true,
+              user_id: true,
+            },
+          });
+
+          setUserChatroomStatus({
+            userId,
+            roomId,
+            messageId: lastMessage?.message_id,
+            unreads: 0,
+          });
+        } catch (err) {
+          console.log(err);
         }
       });
 

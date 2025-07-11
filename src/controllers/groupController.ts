@@ -7,11 +7,13 @@ import prisma from '../libs/prisma';
 import { bcryptHash, bcryptVerify, nowSec } from '../libs/utils';
 import { groupSelect } from '../queries/groupQueries';
 import {
+  delCachedChatroomMembers,
   delCachedUserGroups,
   filterCachedUserGroups,
   getCachedUserGroups,
   getCachedUsersStatus,
   getCachedUsersStudyTime,
+  remCachedChatroomMember,
 } from '../services/cacheService';
 import { formatGroups } from '../services/groupService';
 import {
@@ -144,7 +146,6 @@ export const getGroupMembers = async (
     next(error);
   }
 };
-
 export const postGroupJoin = async (
   req: Request<PostGroupJoinParams, {}, PostGroupJoinBody>,
   res: Response,
@@ -155,41 +156,45 @@ export const postGroupJoin = async (
     const { group_id } = req.params;
     const { password } = req.body;
 
+    // Fetch group with password and selected fields
     const rawGroup = await prisma.groups.findFirst({
       select: { ...groupSelect, password: true },
-      where: {
-        group_id,
-      },
+      where: { group_id },
     });
 
     if (!rawGroup) {
-      res.json({ success: false, message: 'Group not found' });
+      res.status(404).json({ success: false, message: 'Group not found' });
       return;
     }
 
     const [group] = formatGroups([rawGroup]);
 
+    // If group is private, verify password
     if (!group.visibility) {
-      const valid = await bcryptVerify(password, rawGroup.password);
-      if (!valid) {
-        res.send({ success: false, message: 'Wrong password' });
+      const isValidPassword = await bcryptVerify(password, rawGroup.password);
+      if (!isValidPassword) {
+        res.status(401).json({ success: false, message: 'Wrong password' });
         return;
       }
     }
 
-    group.members.push(userId);
+    const groupChatroom = await prisma.chatrooms.findFirst({
+      where: { group_id },
+      select: { chatroom_id: true },
+    });
 
     const joined_at = nowSec();
 
-    await delCachedUserGroups(userId);
-
-    await prisma.group_members.create({
-      data: {
-        group_id,
-        joined_at,
-        user_id: userId,
-      },
-    });
+    // Parallel cache deletion (if chatroom exists)
+    await Promise.all([
+      prisma.group_members.create({
+        data: { group_id, user_id: userId, joined_at },
+      }),
+      delCachedUserGroups(userId),
+      groupChatroom?.chatroom_id
+        ? delCachedChatroomMembers(groupChatroom.chatroom_id)
+        : null,
+    ]);
 
     res.json({
       success: true,
@@ -201,7 +206,6 @@ export const postGroupJoin = async (
       error instanceof Prisma.PrismaClientKnownRequestError &&
       error.code === 'P2002'
     ) {
-      // Unique constraint violation — user already joined
       res.status(409).json({
         success: false,
         message: 'You have already joined this group.',
@@ -232,6 +236,15 @@ export const postGroupLeave = async (
     });
 
     filterCachedUserGroups(userId, group_id);
+
+    const groupChatroom = await prisma.chatrooms.findFirst({
+      where: { group_id },
+      select: { chatroom_id: true },
+    });
+
+    if (groupChatroom) {
+      remCachedChatroomMember(userId, groupChatroom.chatroom_id);
+    }
 
     res.json({
       success: true,
@@ -317,7 +330,7 @@ export const putGroup = async (
       },
     });
 
-    const newMember = await prisma.group_members.create({
+    await prisma.group_members.create({
       data: {
         group_id,
         joined_at: created_at,
@@ -325,18 +338,29 @@ export const putGroup = async (
       },
     });
 
+    //create chatroom for group
+    const chatroom_id = nanoid(10);
+
+    prisma.chatrooms.create({
+      data: {
+        chatroom_id,
+        name,
+        type: 'group',
+        group_id,
+      },
+    });
+
     const [newGroup] = formatGroups([
       { ...newRawGroup, group_likes: [], group_members: [{ user_id: userId }] },
     ]);
-    console.log(newGroup, newMember);
 
     delCachedUserGroups(userId);
 
     res.json({
       success: true,
-      message: `Group {newGroup.name} created`,
+      message: `Group ${newGroup.name} created`,
       data: {
-        group: 'newGroup',
+        group: newGroup,
       },
     });
   } catch (error) {
