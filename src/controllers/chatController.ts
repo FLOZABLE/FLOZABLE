@@ -97,8 +97,6 @@ export const getChatRoomAll = async (
       return b.last_message.sent_at - a.last_message.sent_at; // Both have a last_message, compare normally
     });
 
-    console.log('sss', chatrooms);
-
     res.send({ success: true, data: { chatrooms } });
   } catch (error) {
     next(error);
