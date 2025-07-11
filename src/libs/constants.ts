@@ -5,6 +5,7 @@ export const REDIS_TTL = {
   USER_GROUPS_EXP: 60 * 60, //1hour
   USER_STATUS_EXP: 60 * 60 * 5, //5 hour
   USER_CHAT_STATUS_EXP: 60 * 60 * 24 * 30, //30days
+  USER_ACTIVE_GROUP_EXP: 60 * 60 * 24 * 30, //30days
   USER_GOOGLE_ACCESS_TOKEN: 60 * 60 * 1, //1hour
   CHAT_MEMBERS_EXP: 60 * 60 * 1, //1hour
 };

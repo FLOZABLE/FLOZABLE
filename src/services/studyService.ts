@@ -90,6 +90,8 @@ export const handleStudyStop = async (
         status: null,
         duration,
       });
+      
+      mainIo?.to(friends).emit('group:member:offline', { user_id: userId });
     } else {
       const newStatus = await cacheUserStatus({ userId, startTime: now });
 

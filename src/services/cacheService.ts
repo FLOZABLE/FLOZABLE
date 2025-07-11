@@ -2,7 +2,7 @@ import { REDIS_TTL } from '../libs/constants';
 import prisma from '../libs/prisma';
 import { nowSec } from '../libs/utils';
 import redisClient from '../models/redisClient';
-import { UserInfo, UserStatus } from '../types/accountTypes';
+import { UserActiveGroup, UserInfo, UserStatus } from '../types/accountTypes';
 import { ChatStatus } from '../types/chatTypes';
 import { Viewer } from '../types/otherTypes';
 import { RawRanking } from '../types/rankingTypes';
@@ -310,10 +310,7 @@ export const cacheUserStatus = async ({
       name,
     );
 
-    redisClient.expire(
-      `user:${userId}:activeSubject`,
-      REDIS_TTL.USER_STATUS_EXP,
-    );
+    redisClient.expire(cacheKey, REDIS_TTL.USER_STATUS_EXP);
   } catch (err) {
     console.log(err);
   } finally {
@@ -356,6 +353,67 @@ export const delCachedUserStatus = async (userId: string) => {
   } catch (err) {
     console.log(err);
   }
+};
+
+interface CacheUserActiveGroupParams {
+  userId: string;
+  groupId: string;
+  time: number;
+  name: string;
+}
+
+export const cacheUserActiveGroup = async ({
+  userId,
+  groupId,
+  time,
+  name,
+}: CacheUserActiveGroupParams) => {
+  const cacheKey = `user:${userId}:activegroup`;
+
+  try {
+    await redisClient.hset(
+      cacheKey,
+      'group_id',
+      groupId,
+      'time',
+      time.toString(),
+      'name',
+      name,
+    );
+
+    redisClient.expire(cacheKey, REDIS_TTL.USER_ACTIVE_GROUP_EXP);
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+export const getCachedUserActiveGroup = async (
+  userId: string,
+): Promise<UserActiveGroup | null> => {
+  const cacheKey = `user:${userId}:activegroup`;
+
+  try {
+    const status = await redisClient.hgetall(cacheKey);
+    if (!status || Object.keys(status).length === 0) {
+      return null;
+    }
+    if (!(status.group_id && status.name && status.time)) return null;
+
+    return {
+      group_id: status.group_id,
+      name: status.name,
+      time: Number(status.time),
+    };
+  } catch (err) {
+    console.log(err);
+    return null;
+  }
+};
+
+export const delCachedUserActiveGroup = async (userId: string) => {
+  const cacheKey = `user:${userId}:activegroup`;
+
+  await redisClient.del(cacheKey);
 };
 
 export const getCachedRanking = async ({

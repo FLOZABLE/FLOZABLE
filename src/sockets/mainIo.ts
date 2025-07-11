@@ -4,11 +4,16 @@ import { Namespace } from 'socket.io';
 
 import prisma from '../libs/prisma';
 import { nowSec } from '../libs/utils';
+import { groupSelect } from '../queries/groupQueries';
 import {
+  delCachedUserActiveGroup,
   delCachedUserStatus,
   getCachedChatroomMembers,
+  getCachedUserFriends,
+  getCachedUserGroups,
   updateChatroomUnreadStatus,
 } from '../services/cacheService';
+import { formatGroups } from '../services/groupService';
 import { getUserIdByToken } from '../services/sessionService';
 import { handleStudyStart, handleStudyStop } from '../services/studyService';
 import { getIO } from './io';
@@ -72,6 +77,48 @@ export const registerMainIoEvents = () => {
 
       socket.join(chatSocketIds);
 
+      socket.on('group:change', async (groupId: string | null) => {
+        try {
+          const [groups, friends] = await Promise.all([
+            getCachedUserGroups({ userId }),
+            getCachedUserFriends({ userId }),
+          ]);
+
+          if (groupId === null) {
+            groups.map((group) => {
+              socket.leave(group);
+            });
+            delCachedUserActiveGroup(userId);
+            if (friends.length) {
+              mainIo
+                ?.to(friends)
+                .emit('group:member:offline', { user_id: userId });
+            }
+            return;
+          }
+
+          if (!friends.length) return;
+
+          const rawGroup = await prisma.groups.findFirst({
+            where: {
+              group_id: groupId,
+              group_members: { some: { user_id: userId } },
+            },
+            select: groupSelect,
+          });
+
+          if (!rawGroup) return;
+
+          const [group] = formatGroups([rawGroup]);
+
+          mainIo
+            ?.to(friends)
+            .emit('group:member:online', { user_id: userId, group });
+        } catch (err) {
+          console.log(err);
+        }
+      });
+
       socket.on('study:start', async (subject_id: string) => {
         handleStudyStart(userId, subject_id);
       });
@@ -127,6 +174,8 @@ export const registerMainIoEvents = () => {
           await delCachedUserStatus(userId);
 
           handleStudyStop(userId, true);
+
+          await delCachedUserActiveGroup(userId);
         } catch (err) {
           console.log(err);
         }
