@@ -629,6 +629,40 @@ export const updateChatroomUnreadStatus = async ({
   await pipeline.exec();
 };
 
+interface SetUserChatroomStatusParams {
+  userId: string;
+  roomId: string;
+  messageId?: string | undefined;
+  unreads?: number;
+}
+
+export const setUserChatroomStatus = async ({
+  userId,
+  roomId,
+  messageId,
+  unreads,
+}: SetUserChatroomStatusParams) => {
+  const cacheKey = `user:${userId}:chatstatus`;
+
+  if (messageId) {
+    await redisClient.hset(
+      cacheKey,
+      `room:${roomId}:last_read_message`,
+      messageId,
+    );
+  }
+
+  if (typeof unreads === 'number') {
+    await redisClient.hset(
+      cacheKey,
+      `room:${roomId}:unreads`,
+      unreads.toString(),
+    );
+  }
+
+  await redisClient.expire(cacheKey, REDIS_TTL.USER_CHAT_STATUS_EXP);
+};
+
 export const delCacheUserGoogleAccessToken = async (userId: string) => {
   const key = `user:${userId}:google_access_token`;
   redisClient.del(key);
@@ -710,6 +744,21 @@ export const isChatroomMember = async (
     console.error('Error checking chatroom membership:', err);
     return false;
   }
+};
+
+export const remCachedChatroomMember = async (
+  userId: string,
+  chatroomId: string,
+) => {
+  const key = `chatroom:${chatroomId}:members`;
+
+  redisClient.srem(key, userId);
+};
+
+export const delCachedChatroomMembers = async (chatroomId: string) => {
+  const key = `chatroom:${chatroomId}:members`;
+
+  redisClient.del(key);
 };
 
 /**
