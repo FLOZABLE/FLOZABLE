@@ -5,6 +5,7 @@ import config from './config/config';
 import { initSocket } from './sockets/io';
 
 import './schedulers/rankingScheduler';
+import './schedulers/botScheduler';
 import './sockets/index';
 
 import { registerMainIoEvents } from './sockets/mainIo';
