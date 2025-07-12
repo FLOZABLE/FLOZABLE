@@ -208,10 +208,9 @@ export const registerMainIoEvents = () => {
           //won't terminate if it's mobile or chrome extension
           if (device === 'mobile' || device === 'chrome-extension') return;
 
+          await handleStudyStop(userId, true);
+
           await delCachedUserStatus(userId);
-
-          handleStudyStop(userId, true);
-
           await delCachedUserActiveGroup(userId);
         } catch (err) {
           console.log(err);
