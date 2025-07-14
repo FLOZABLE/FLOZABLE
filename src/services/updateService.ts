@@ -3,6 +3,7 @@ import { nanoid } from 'nanoid';
 import pMap from 'p-map';
 
 import prisma from '../libs/prisma';
+import { deleteKeysByPattern } from './cacheService';
 
 const readline = createInterface({
   input: process.stdin,
@@ -13,11 +14,14 @@ readline.question(
   `
   SELECT OPTION:
   1: Update chatrooms
+  2: Clean redis
   Your choice: `,
   async (rawOption) => {
     const option = parseInt(rawOption.trim());
     if (option === 1) {
       await updateChatrooms();
+    } else if (option === 2) {
+      await updateRedis();
     } else {
       console.log('Invalid option selected.');
     }
@@ -86,5 +90,15 @@ const updateChatrooms = async () => {
     console.log('🎉 All updates complete!');
   } catch (err) {
     console.error('❌ Error updating chatrooms:', err);
+  }
+};
+
+const updateRedis = async () => {
+  try {
+    deleteKeysByPattern('*sess*');
+    deleteKeysByPattern('*activeSubject*');
+    deleteKeysByPattern('*:subject:*');
+  } catch (err) {
+    console.log(err);
   }
 };

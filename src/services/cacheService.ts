@@ -858,3 +858,40 @@ export const getCachedUsersStatus = async (
     };
   });
 };
+
+export async function deleteKeysByPattern(pattern: string) {
+  let cursor = '0';
+  let keysToDelete = [];
+
+  try {
+    do {
+      // Use SCAN to get keys matching the pattern in batches
+      // The 'scan' command returns a tuple: [new_cursor, [keys_array]]
+      const [nextCursor, keys] = await redisClient.scan(
+        cursor,
+        'MATCH',
+        pattern,
+        'COUNT',
+        100,
+      ); // COUNT is a hint
+      cursor = nextCursor;
+
+      if (keys.length > 0) {
+        keysToDelete.push(...keys);
+        // It's generally more efficient to delete keys in batches using DEL
+        // The DEL command can take multiple keys as arguments: DEL key1 key2 ...
+        await redisClient.del(...keys); // Delete the keys immediately as they are found
+        console.log(
+          `Deleted ${keys.length} keys in this batch. Total found so far: ${keysToDelete.length}`,
+        );
+      }
+    } while (cursor !== '0');
+
+    console.log(`\nFinished deleting keys matching pattern: '${pattern}'`);
+    console.log(`Total keys found and deleted: ${keysToDelete.length}`);
+  } catch (error) {
+    console.error('Error deleting keys:', error);
+  } finally {
+    redisClient.quit();
+  }
+}
