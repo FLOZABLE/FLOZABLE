@@ -8,70 +8,67 @@ import redisClient from '../models/redisClient';
 import { delCachedUserStatus } from './cacheService';
 import { handleStudyStart, handleStudyStop } from './studyService';
 
-export const botsSelector = async (numbers: number) => {
+const REDIS_ACTIVE_BOTS_KEY = 'activebots';
+
+export const botsSelector = async (count: number) => {
   try {
     const bots = await prisma.users.findMany({
-      where: {
-        type: -1,
-      },
+      where: { type: -1 },
       select: {
         user_id: true,
         subjects: {
           take: 1,
-          select: {
-            subject_id: true,
-          },
+          select: { subject_id: true },
         },
       },
     });
 
-    const now = DateTime.now();
+    if (!bots.length || count <= 0) return;
 
-    const activeBots = await redisClient.smembers('activebots');
+    const now = DateTime.now().toSeconds();
+    const activeBots = new Set(
+      await redisClient.smembers(REDIS_ACTIVE_BOTS_KEY),
+    );
+    const selected = new Set<string>();
 
-    for (let i = 0; i < numbers; i++) {
+    while (selected.size < count && selected.size < bots.length) {
       const index = randomIntInRange(0, bots.length - 1);
-      if (!bots[index]) continue;
-
-      // Prevents the same bot from being added
-      if (activeBots.includes(bots[index].user_id)) continue;
-      activeBots.push(bots[index].user_id);
-
       const bot = bots[index];
 
+      if (!bot || activeBots.has(bot.user_id) || selected.has(bot.user_id))
+        continue;
+
+      selected.add(bot.user_id);
+
+      const startOffset = randomIntInRange(
+        BOT_OPTIONS.MIN_START_DELAY,
+        BOT_OPTIONS.MAX_START_DELAY,
+      );
       const duration = randomIntInRange(
         BOT_OPTIONS.MIN_STUDY,
         BOT_OPTIONS.MAX_STUDY,
       );
 
-      const start =
-        randomIntInRange(
-          BOT_OPTIONS.MIN_START_DELAY,
-          BOT_OPTIONS.MAX_START_DELAY,
-        ) + now.toSeconds();
+      const startDate = DateTime.fromSeconds(now + startOffset);
+      const stopDate = startDate.plus({ seconds: duration });
 
-      const startDate = DateTime.fromSeconds(start);
-      const stopDate = DateTime.fromSeconds(startDate.toSeconds() + duration);
+      console.log(
+        `Scheduling bot ${bot.user_id} from ${startDate.toISO()} to ${stopDate.toISO()}`,
+      );
 
-      console.log(startDate.toISO());
-
-      // Schedule bot start and stop jobs
       scheduleJob(startDate.toJSDate(), () =>
         botStartStudy(bot.user_id, bot.subjects),
       );
       scheduleJob(stopDate.toJSDate(), () => botStopStudy(bot.user_id));
-
-      bots.splice(index, 1);
     }
 
-    console.log(`scheduled ${activeBots.length} bots`, numbers);
-
-    // Update active bot list in Redis if there are new active bots
-    if (activeBots.length) {
-      redisClient.sadd('activebots', activeBots);
+    if (selected.size > 0) {
+      await redisClient.sadd(REDIS_ACTIVE_BOTS_KEY, ...Array.from(selected));
     }
+
+    console.log(`Scheduled ${selected.size} bot(s). Requested: ${count}`);
   } catch (err) {
-    console.log(err);
+    console.error('Failed to schedule bots:', err);
   }
 };
 
@@ -80,37 +77,35 @@ const botStartStudy = async (
   subjects: { subject_id: string }[],
 ) => {
   try {
-    if (!subjects.length) {
-      console.log(`bot - ${userId}: no subject`);
-      return;
-    }
+    if (!subjects.length) return console.log(`Bot ${userId} has no subjects.`);
+
     const subject = subjects[randomIntInRange(0, subjects.length - 1)];
-    console.log(`bot - ${userId}: study start`);
-    handleStudyStart(userId, subject.subject_id);
+    console.log(`Bot ${userId} starts studying ${subject.subject_id}`);
+    await handleStudyStart(userId, subject.subject_id);
   } catch (err) {
-    console.log(err);
+    console.error(`Failed to start study for bot ${userId}:`, err);
   }
 };
 
 const botStopStudy = async (userId: string) => {
   try {
-    console.log(`bot - ${userId}: study stop`);
-
+    console.log(`Bot ${userId} stops studying.`);
     await handleStudyStop(userId, true);
-
     await delCachedUserStatus(userId);
   } catch (err) {
-    console.log(err);
+    console.error(`Failed to stop study for bot ${userId}:`, err);
   }
 };
 
 export const stopAllBots = async () => {
-  const activeBots = await redisClient.smembers('activebots');
-  await Promise.all(
-    activeBots.map(async (botId) => {
-      await botStopStudy(botId);
-    }),
-  );
+  try {
+    const activeBots = await redisClient.smembers(REDIS_ACTIVE_BOTS_KEY);
 
-  redisClient.del('activebots');
+    await Promise.all(activeBots.map((botId) => botStopStudy(botId)));
+
+    await redisClient.del(REDIS_ACTIVE_BOTS_KEY);
+    console.log('Stopped all bots.');
+  } catch (err) {
+    console.error('Error stopping all bots:', err);
+  }
 };

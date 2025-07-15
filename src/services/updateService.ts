@@ -98,6 +98,11 @@ const updateRedis = async () => {
     deleteKeysByPattern('*sess*');
     deleteKeysByPattern('*activeSubject*');
     deleteKeysByPattern('*:subject:*');
+    deleteKeysByPattern('*:friends:*');
+    deleteKeysByPattern('*:activeGroup*');
+    deleteKeysByPattern('*:googleAccessToken*');
+    deleteKeysByPattern('*:messages*');
+    deleteKeysByPattern('*:subject:*');
   } catch (err) {
     console.log(err);
   }
