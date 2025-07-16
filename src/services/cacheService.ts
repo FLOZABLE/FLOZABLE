@@ -891,7 +891,66 @@ export async function deleteKeysByPattern(pattern: string) {
     console.log(`Total keys found and deleted: ${keysToDelete.length}`);
   } catch (error) {
     console.error('Error deleting keys:', error);
-  } finally {
-    redisClient.quit();
+  }
+}
+
+export async function renameKeysByPattern(
+  oldPattern: string,
+  renameFunction: (val: string) => string | null,
+) {
+  let cursor = '0';
+  let renamedCount = 0;
+  let skippedCount = 0;
+
+  console.log(`Starting key renaming for pattern: '${oldPattern}'`);
+
+  try {
+    do {
+      const [nextCursor, keys] = await redisClient.scan(
+        cursor,
+        'MATCH',
+        oldPattern,
+        'COUNT',
+        100,
+      );
+
+      cursor = nextCursor;
+
+      if (keys.length > 0) {
+        // Use a Redis Pipeline for atomic batch operations.
+        // This is much more efficient than sending RENAME commands one by one.
+        const pipeline = redisClient.pipeline();
+        let batchRenamed = 0;
+
+        for (const oldKey of keys) {
+          const newKey = renameFunction(oldKey);
+
+          if (newKey && oldKey !== newKey) {
+            // Ensure new key is valid and different
+            pipeline.rename(oldKey, newKey);
+            batchRenamed++;
+          } else {
+            // console.log(`Skipping key (no valid new name or name unchanged): ${oldKey}`);
+            skippedCount++;
+          }
+        }
+
+        if (batchRenamed > 0) {
+          await pipeline.exec(); // Execute the pipeline
+          renamedCount += batchRenamed;
+          console.log(`Processed batch: Renamed ${batchRenamed} keys.`);
+          // You can inspect 'results' array if you need to check each RENAME operation's success/failure
+          // Each element in results is [error, result_of_command]
+        } else {
+          console.log(`Processed batch: No keys to rename in this batch.`);
+        }
+      }
+    } while (cursor !== '0');
+
+    console.log(`\nFinished renaming keys.`);
+    console.log(`Total keys found and renamed: ${renamedCount}`);
+    console.log(`Total keys skipped: ${skippedCount}`);
+  } catch (error) {
+    console.error('Error during key renaming:', error);
   }
 }
