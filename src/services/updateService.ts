@@ -3,7 +3,7 @@ import { nanoid } from 'nanoid';
 import pMap from 'p-map';
 
 import prisma from '../libs/prisma';
-import { deleteKeysByPattern } from './cacheService';
+import { deleteKeysByPattern, renameKeysByPattern } from './cacheService';
 
 const readline = createInterface({
   input: process.stdin,
@@ -95,15 +95,46 @@ const updateChatrooms = async () => {
 
 const updateRedis = async () => {
   try {
-    deleteKeysByPattern('*sess*');
-    deleteKeysByPattern('*activeSubject*');
-    deleteKeysByPattern('*:subject:*');
-    deleteKeysByPattern('*:friends:*');
-    deleteKeysByPattern('*:activeGroup*');
-    deleteKeysByPattern('*:googleAccessToken*');
-    deleteKeysByPattern('*:messages*');
-    deleteKeysByPattern('*:subject:*');
+    //deletion
+    await deleteKeysByPattern('*sess*');
+    await deleteKeysByPattern('*activeSubject*');
+    await deleteKeysByPattern('*:subject:*');
+    await deleteKeysByPattern('*:friends:*');
+    await deleteKeysByPattern('*:activeGroup*');
+    await deleteKeysByPattern('*:googleAccessToken*');
+    await deleteKeysByPattern('*:messages*');
+    await deleteKeysByPattern('activeBots');
+
+    await renameKeysByPattern('users:*:*Total', mapStudyTimeKey);
   } catch (err) {
     console.log(err);
   }
 };
+
+function mapStudyTimeKey(oldKey: string) {
+  const parts = oldKey.split(':');
+  // Expected format: users:<viewerId>:<period>Total
+  // Length should be 3. First part 'users'. Last part ends with 'Total'.
+  const timezoneOffset = Number(parts[1]);
+  if (
+    parts.length === 3 &&
+    parts[0] === 'users' &&
+    parts[2].endsWith('Total') &&
+    typeof timezoneOffset === 'number'
+  ) {
+    const period = parts[2].replace('Total', ''); // Extracts 'day', 'week', or 'month'
+
+    // Validate the period
+    const validPeriods = ['day', 'week', 'month'];
+    if (!validPeriods.includes(period)) {
+      console.log(
+        `Skipping key '${oldKey}': Invalid period detected '${period}'`,
+      );
+      return null;
+    }
+
+    const newKey = `studytime:${period}:timezone:${timezoneOffset}`;
+    return newKey;
+  }
+  return null; // Key doesn't match the expected format for this specific rename
+}
