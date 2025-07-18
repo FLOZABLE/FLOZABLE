@@ -4,6 +4,7 @@ import { createInterface } from 'readline';
 import { nanoid } from 'nanoid';
 import pMap from 'p-map';
 
+import { Prisma } from '../generated/prisma';
 import prisma from '../libs/prisma';
 import { deleteKeysByPattern, renameKeysByPattern } from './cacheService';
 
@@ -151,9 +152,10 @@ function mapStudyTimeKey(oldKey: string) {
   return null; // Key doesn't match the expected format for this specific rename
 }
 
+const outputDirectory = path.resolve('./tmp/sql/tables');
+
 const migrateMariadb = async () => {
   const fullDumpFilePath = path.resolve('./tmp/sql/flozable_test2.sql');
-  const outputDirectory = path.resolve('./tmp/sql/tables');
 
   await splitSqlDump(fullDumpFilePath, outputDirectory, false)
     .then(() => console.log('Successfully split the SQL dump.'))
@@ -274,3 +276,152 @@ async function splitSqlDump(
   );
   console.log('Summary of tables exported and their line counts:', tableCounts);
 }
+
+/**
+ * Executes a single SQL file against the database using Prisma's $executeRaw.
+ * @param filePath The absolute path to the SQL file containing INSERT statements.
+ * @returns A Promise that resolves if successful, or rejects with an error.
+ */ async function executeSqlFileWithPrisma(
+  filePath: string,
+  fileName: string, // Pass filename for better logging
+): Promise<void> {
+  console.log(`  - Importing ${fileName} using Prisma...`);
+  try {
+    let sqlContent = await fs.promises.readFile(filePath, { encoding: 'utf8' });
+
+    // Step 1: Remove BOM if present (often invisible, can cause parsing issues)
+    if (sqlContent.charCodeAt(0) === 0xfeff) {
+      // BOM character
+      sqlContent = sqlContent.slice(1);
+      console.log(`    Removed BOM from ${fileName}`);
+    }
+
+    // Step 2: Aggressively clean comments and empty lines
+    let cleanedSqlContent = sqlContent
+      // Remove any lines that are solely comments
+      .split('\n')
+      .filter(
+        (line) =>
+          !line.trim().startsWith('--') && !line.trim().startsWith('/*'),
+      )
+      .map((line) => line.replace(/\/\*.*?\*\//g, '').trim()) // Remove inline multi-line comments
+      .filter((line) => line.length > 0) // Remove empty lines after cleaning
+      .join('\n'); // Rejoin the lines
+
+    // Final trim to remove any leading/trailing whitespace around the entire content
+    cleanedSqlContent = cleanedSqlContent.trim();
+
+    if (cleanedSqlContent.length === 0) {
+      console.warn(
+        `    No executable SQL content found in ${fileName}. Skipping.`,
+      );
+      return;
+    }
+
+    // --- CRITICAL FIX HERE: Use Prisma.raw() to pass a plain string as raw SQL ---
+    // Prisma.raw() is designed to take a single string argument and treat it as exact raw SQL.
+    const sqlQuery = Prisma.raw(cleanedSqlContent);
+
+    // Now execute the raw SQL query object
+    const affectedRows = await prisma.$executeRaw(sqlQuery);
+
+    console.log(
+      `    Successfully imported ${fileName}. Affected rows: ${affectedRows}`,
+    );
+  } catch (error: any) {
+    throw new Error(`Failed to import ${fileName}: ${error.message}`);
+  }
+}
+
+/**
+ * Imports all .sql files from a given directory into the database using Prisma.
+ * @param sqlFilesDirectory The absolute path to the directory containing the .sql files.
+ */
+async function importAllSqlFilesWithPrisma(
+  sqlFilesDirectory: string,
+): Promise<void> {
+  console.log(`Starting import of SQL files from: ${sqlFilesDirectory}`);
+
+  try {
+    const files = await fs.promises.readdir(sqlFilesDirectory);
+    const sqlFiles = files.filter((file) => file.endsWith('.sql')).sort(); // Sort for consistent order
+
+    if (sqlFiles.length === 0) {
+      console.warn('No .sql files found in the specified directory.');
+      return;
+    }
+
+    // --- IMPORTANT: Foreign Key Checks ---
+    // For large imports or imports where data order is uncertain, temporarily
+    // disabling foreign key checks is highly recommended to avoid errors.
+    // This is done via raw SQL commands sent through Prisma.
+    console.log('\n--- Disabling Foreign Key Checks ---');
+    try {
+      await prisma.$executeRaw(Prisma.sql`SET FOREIGN_KEY_CHECKS=0;`); // Use Prisma.sql here too
+      console.log('Foreign key checks disabled.');
+    } catch (e: any) {
+      console.error(
+        'Failed to disable foreign key checks (might not be supported by your DB/driver or already disabled):',
+        e.message,
+      );
+    }
+    console.log('------------------------------------\n');
+
+    let successCount = 0;
+    let failCount = 0;
+    const failedFiles: string[] = [];
+
+    for (const file of sqlFiles) {
+      const filePath = path.join(sqlFilesDirectory, file);
+      try {
+        await executeSqlFileWithPrisma(filePath, file);
+        successCount++;
+      } catch (error: any) {
+        console.error(`Error importing ${file}: ${error.message}`);
+        failedFiles.push(file);
+        failCount++;
+      }
+    }
+
+    // --- IMPORTANT: Re-enabling Foreign Key Checks ---
+    console.log('\n--- Re-enabling Foreign Key Checks ---');
+    try {
+      await prisma.$executeRaw(Prisma.sql`SET FOREIGN_KEY_CHECKS=1;`); // Use Prisma.sql here too
+      console.log('Foreign key checks re-enabled.');
+    } catch (e: any) {
+      console.error('Failed to re-enable foreign key checks:', e.message);
+    }
+    console.log('------------------------------------\n');
+
+    console.log('\n--- Import Summary ---');
+    console.log(`Total files processed: ${sqlFiles.length}`);
+    console.log(`Successfully imported: ${successCount}`);
+    console.log(`Failed to import: ${failCount}`);
+    if (failedFiles.length > 0) {
+      console.log('Files that failed to import:', failedFiles);
+    }
+    console.log('--------------------');
+  } catch (error: any) {
+    console.error(
+      'An unrecoverable error occurred during the import process:',
+      error.message || error,
+    );
+  } finally {
+    // Disconnect Prisma Client after all operations are complete
+    await prisma.$disconnect();
+  }
+}
+
+// --- Usage Example ---
+// IMPORTANT: Replace with the actual absolute path to your directory of split .sql files
+// This should be the output directory from your `split_dump.ts` script where `includeSchemaStatements` was `false`.
+
+// Run the import function
+importAllSqlFilesWithPrisma(outputDirectory)
+  .then(() => console.log('Prisma-based import process finished.'))
+  .catch((err) =>
+    console.error(
+      'Prisma-based import process terminated with unhandled error:',
+      err,
+    ),
+  );
