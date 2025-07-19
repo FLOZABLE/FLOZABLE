@@ -18,7 +18,10 @@ readline.question(
   SELECT OPTION:
   1: Update chatrooms
   2: Clean redis
-  3: Migrate mariadb
+  3: Mariadb - split files
+  4: Mariadb - update files
+  5: Mariadb - insert
+
   Your choice: `,
   async (rawOption) => {
     const option = parseInt(rawOption.trim());
@@ -27,7 +30,26 @@ readline.question(
     } else if (option === 2) {
       await updateRedis();
     } else if (option === 3) {
-      await migrateMariadb();
+      const fullDumpFilePath = path.resolve('./tmp/sql/flozable_test2.sql');
+      await splitSqlDump(fullDumpFilePath, outputDirectory, false)
+        .then(() => console.log('Successfully split the SQL dump.'))
+        .catch((err) => console.error('Failed to split SQL dump:', err));
+    } else if (option === 4) {
+      const inputSqlFile = path.resolve('./tmp/sql/tables/chatrooms.sql');
+      const outputSqlFile = path.resolve('./tmp/sql/tables/chatrooms.sql');
+
+      await updateChatroomsSql(inputSqlFile, outputSqlFile)
+        .then(() =>
+          console.log('Chatrooms SQL simple transformation script finished.'),
+        )
+        .catch((err) =>
+          console.error(
+            'Chatrooms SQL simple transformation script failed:',
+            err,
+          ),
+        );
+    } else if (option === 5) {
+      await mariadbApplyUpdate(outputDirectory);
     } else {
       console.log('Invalid option selected.');
     }
@@ -153,14 +175,6 @@ function mapStudyTimeKey(oldKey: string) {
 }
 
 const outputDirectory = path.resolve('./tmp/sql/tables');
-
-const migrateMariadb = async () => {
-  const fullDumpFilePath = path.resolve('./tmp/sql/flozable_test2.sql');
-
-  await splitSqlDump(fullDumpFilePath, outputDirectory, false)
-    .then(() => console.log('Successfully split the SQL dump.'))
-    .catch((err) => console.error('Failed to split SQL dump:', err));
-};
 
 async function splitSqlDump(
   inputFilePath: string,
@@ -337,9 +351,7 @@ async function splitSqlDump(
  * Imports all .sql files from a given directory into the database using Prisma.
  * @param sqlFilesDirectory The absolute path to the directory containing the .sql files.
  */
-async function importAllSqlFilesWithPrisma(
-  sqlFilesDirectory: string,
-): Promise<void> {
+async function mariadbApplyUpdate(sqlFilesDirectory: string): Promise<void> {
   console.log(`Starting import of SQL files from: ${sqlFilesDirectory}`);
 
   try {
@@ -412,16 +424,47 @@ async function importAllSqlFilesWithPrisma(
   }
 }
 
-// --- Usage Example ---
-// IMPORTANT: Replace with the actual absolute path to your directory of split .sql files
-// This should be the output directory from your `split_dump.ts` script where `includeSchemaStatements` was `false`.
+/**
+ * Performs simple string replacements to transform chatrooms data in an SQL file.
+ * Specifically:
+ * - Replaces ',1)' with ",'room', NULL)"
+ * - Replaces ',0)' with ",'group', NULL)"
+ * @param inputFilePath The absolute path to the original chatrooms.sql file.
+ * @param outputFilePath The absolute path for the transformed output file.
+ */
+async function updateChatroomsSql(
+  inputFilePath: string,
+  outputFilePath: string,
+): Promise<void> {
+  console.log(`Starting simple transformation of: ${inputFilePath}`);
+  console.log(`Writing transformed content to: ${outputFilePath}`);
 
-// Run the import function
-importAllSqlFilesWithPrisma(outputDirectory)
-  .then(() => console.log('Prisma-based import process finished.'))
-  .catch((err) =>
-    console.error(
-      'Prisma-based import process terminated with unhandled error:',
-      err,
-    ),
-  );
+  try {
+    // Read the entire file content as a single string
+    let fileContent = await fs.promises.readFile(inputFilePath, {
+      encoding: 'utf8',
+    });
+
+    // --- NEW REPLACEMENT: Replace NULL in name field with empty string ---
+    // This needs to happen first to target the specific NULL in the second position
+    fileContent = fileContent.replace(/,NULL,/g, ',"",'); // Replace all occurrences of ,NULL,
+
+    // Perform replacements globally
+    // Important: Do '1' first, then '0' to avoid partial matches if numbers could be longer.
+    // For single digits 0 and 1, order doesn't strictly matter, but it's good practice.
+    fileContent = fileContent.replace(/,1\)/g, ",'room', NULL)"); // Replace all occurrences of ',1)'
+    fileContent = fileContent.replace(/,0\)/g, ",'group', NULL)"); // Replace all occurrences of ',0)'
+
+    // Write the modified content to the output file
+    await fs.promises.writeFile(outputFilePath, fileContent, {
+      encoding: 'utf8',
+    });
+
+    console.log(
+      `Simple transformation complete. Output saved to: ${outputFilePath}`,
+    );
+  } catch (error: any) {
+    console.error(`Error during simple transformation: ${error.message}`);
+    throw error;
+  }
+}
