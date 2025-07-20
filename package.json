@@ -43,6 +43,7 @@
     "typescript": "^5.8.3"
   },
   "dependencies": {
+    "@eslint/plugin-kit": "^0.3.3",
     "@prisma/client": "^6.11.1",
     "@types/luxon": "^3.6.2",
     "@types/node-schedule": "^2.1.7",
