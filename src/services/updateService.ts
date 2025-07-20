@@ -13,6 +13,8 @@ const readline = createInterface({
   output: process.stdout,
 });
 
+const tablesPath = path.resolve('./tmp/sql/tables/');
+
 readline.question(
   `
   SELECT OPTION:
@@ -35,10 +37,7 @@ readline.question(
         .then(() => console.log('Successfully split the SQL dump.'))
         .catch((err) => console.error('Failed to split SQL dump:', err));
     } else if (option === 4) {
-      const inputSqlFile = path.resolve('./tmp/sql/tables/chatrooms.sql');
-      const outputSqlFile = path.resolve('./tmp/sql/tables/chatrooms.sql');
-
-      await updateChatroomsSql(inputSqlFile, outputSqlFile)
+      await updateChatroomsSql()
         .then(() =>
           console.log('Chatrooms SQL simple transformation script finished.'),
         )
@@ -47,6 +46,25 @@ readline.question(
             'Chatrooms SQL simple transformation script failed:',
             err,
           ),
+        );
+      await updateGroupMembersSql(1728730426)
+        .then(() =>
+          console.log(
+            'Group members SQL simple transformation script finished.',
+          ),
+        )
+        .catch((err) =>
+          console.error(
+            'Group members SQL simple transformation script failed:',
+            err,
+          ),
+        );
+      await updateGroupsSql()
+        .then(() =>
+          console.log('Groups SQL simple transformation script finished.'),
+        )
+        .catch((err) =>
+          console.error('Groups SQL simple transformation script failed:', err),
         );
     } else if (option === 5) {
       await mariadbApplyUpdate(outputDirectory);
@@ -432,10 +450,9 @@ async function mariadbApplyUpdate(sqlFilesDirectory: string): Promise<void> {
  * @param inputFilePath The absolute path to the original chatrooms.sql file.
  * @param outputFilePath The absolute path for the transformed output file.
  */
-async function updateChatroomsSql(
-  inputFilePath: string,
-  outputFilePath: string,
-): Promise<void> {
+async function updateChatroomsSql(): Promise<void> {
+  const inputFilePath = path.join(tablesPath, 'chatrooms.sql');
+  const outputFilePath = path.join(tablesPath, 'chatrooms.sql');
   console.log(`Starting simple transformation of: ${inputFilePath}`);
   console.log(`Writing transformed content to: ${outputFilePath}`);
 
@@ -456,6 +473,65 @@ async function updateChatroomsSql(
     fileContent = fileContent.replace(/,0\)/g, ",'group', NULL)"); // Replace all occurrences of ',0)'
 
     // Write the modified content to the output file
+    await fs.promises.writeFile(outputFilePath, fileContent, {
+      encoding: 'utf8',
+    });
+
+    console.log(
+      `Simple transformation complete. Output saved to: ${outputFilePath}`,
+    );
+  } catch (error: any) {
+    console.error(`Error during simple transformation: ${error.message}`);
+    throw error;
+  }
+}
+
+async function updateGroupMembersSql(defaultJoined: number): Promise<void> {
+  const inputFilePath = path.join(tablesPath, 'group_members.sql');
+  const outputFilePath = path.join(tablesPath, 'group_members.sql');
+
+  console.log(`Starting simple transformation of: ${inputFilePath}`);
+  console.log(`Writing transformed content to: ${outputFilePath}`);
+
+  try {
+    // Read the entire file content as a single string
+    let fileContent = await fs.promises.readFile(inputFilePath, {
+      encoding: 'utf8',
+    });
+
+    fileContent = fileContent.replace(/,NULL/g, `,${defaultJoined}`);
+
+    await fs.promises.writeFile(outputFilePath, fileContent, {
+      encoding: 'utf8',
+    });
+
+    console.log(
+      `Simple transformation complete. Output saved to: ${outputFilePath}`,
+    );
+  } catch (error: any) {
+    console.error(`Error during simple transformation: ${error.message}`);
+    throw error;
+  }
+}
+
+async function updateGroupsSql(): Promise<void> {
+  const inputFilePath = path.join(tablesPath, 'groups.sql');
+  const outputFilePath = path.join(tablesPath, 'groups.sql');
+
+  console.log(`Starting simple transformation of: ${inputFilePath}`);
+  console.log(`Writing transformed content to: ${outputFilePath}`);
+
+  try {
+    // Read the entire file content as a single string
+    let fileContent = await fs.promises.readFile(inputFilePath, {
+      encoding: 'utf8',
+    });
+
+    fileContent = fileContent.replace(/,'[a-zA-Z0-9]{64,}',/g, ',');
+    fileContent = fileContent.replace(/,'[a-zA-Z0-9]{64,}',/g, ',NULL,');
+
+    fileContent = fileContent.replace(/,0,/g, ',1,');
+
     await fs.promises.writeFile(outputFilePath, fileContent, {
       encoding: 'utf8',
     });
