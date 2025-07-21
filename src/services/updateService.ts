@@ -532,6 +532,8 @@ async function updateGroupsSql(): Promise<void> {
 
     fileContent = fileContent.replace(/,0,/g, ',1,');
 
+    fileContent = fileContent.replace(/,\s*(?:NULL|'[^']*?'|\d+)\)/g, ')');
+
     await fs.promises.writeFile(outputFilePath, fileContent, {
       encoding: 'utf8',
     });
