@@ -33,7 +33,15 @@ readline.question(
       await updateRedis();
     } else if (option === 3) {
       const fullDumpFilePath = path.resolve('./tmp/sql/flozable_test2.sql');
-      await splitSqlDump(fullDumpFilePath, outputDirectory, false)
+      await splitSqlDump(fullDumpFilePath, outputDirectory, false, [
+        'notifications',
+        'old_friends',
+        'plans',
+        'products',
+        'purchases',
+        'plan_share',
+        'subject_shares',
+      ])
         .then(() => console.log('Successfully split the SQL dump.'))
         .catch((err) => console.error('Failed to split SQL dump:', err));
     } else if (option === 4) {
@@ -198,6 +206,7 @@ async function splitSqlDump(
   inputFilePath: string,
   outputDir: string,
   includeSchema: boolean = false,
+  filteredList: string[] = [], // The list of table names to skip
 ): Promise<void> {
   // Regex to capture the table name from the dump comment
   // Matches: -- Dumping data for table `tablename`
@@ -208,6 +217,9 @@ async function splitSqlDump(
   console.log(`Starting to split SQL dump: ${inputFilePath}`);
   console.log(`Output directory: ${outputDir}`);
   console.log(`Include schema (CREATE TABLE statements): ${includeSchema}`);
+  console.log(
+    `Filtered tables (will be skipped): [${filteredList.join(', ')}]`,
+  );
 
   try {
     await fs.promises.mkdir(outputDir, { recursive: true });
@@ -226,6 +238,7 @@ async function splitSqlDump(
   let currentFileWriter: fs.WriteStream | null = null;
   let lineCount = 0;
   const tableCounts: { [tableName: string]: number } = {};
+  const skippedTableNames: Set<string> = new Set(); // To track genuinely skipped tables
 
   for await (const line of rl) {
     lineCount++;
@@ -241,9 +254,10 @@ async function splitSqlDump(
       newTableDetected = true;
     } else if (schemaMatch && !currentTableName) {
       // Only use schema marker if no table is currently being processed
-      // This helps capture the very first table's schema
+      // This helps capture the very first table's schema structure comment
       detectedTableName = schemaMatch[1];
-      // newTableDetected will be true below if detectedTableName is set
+      // newTableDetected will implicitly be true if detectedTableName is set
+      if (detectedTableName) newTableDetected = true;
     }
 
     if (newTableDetected && detectedTableName) {
@@ -257,26 +271,32 @@ async function splitSqlDump(
         }
       }
 
-      currentTableName = detectedTableName;
-      tableCounts[currentTableName] = 0;
-      const outputFilePath = path.join(outputDir, `${currentTableName}.sql`);
-      currentFileWriter = fs.createWriteStream(outputFilePath);
-      console.log(`Writing to: ${currentTableName}.sql`);
+      currentTableName = detectedTableName; // Always update to know which table block we're currently in
 
-      // Write header for the new file (optional but good practice)
-      currentFileWriter.write(`-- Data for table \`${currentTableName}\`\n\n`);
+      if (filteredList.includes(currentTableName)) {
+        console.log(`Skipping table '${currentTableName}' (in filtered list).`);
+        currentFileWriter = null; // Set to null to prevent writing lines for this table
+        skippedTableNames.add(currentTableName); // Add to skipped set for summary
+      } else {
+        // This is a table we want to export
+        tableCounts[currentTableName] = 0; // Initialize count for the new table
+        const outputFilePath = path.join(outputDir, `${currentTableName}.sql`);
+        currentFileWriter = fs.createWriteStream(outputFilePath);
+        console.log(`Writing to: ${currentTableName}.sql`);
+
+        // Write header for the new file (optional but good practice)
+        currentFileWriter.write(
+          `-- Data for table \`${currentTableName}\`\n\n`,
+        );
+      }
     }
 
-    // Write the current line to the appropriate file
+    // Write the current line to the appropriate file *only if* currentFileWriter is active (not null)
     if (currentFileWriter) {
       // If we are *not* including schema, skip schema related lines for already started tables
-      // The logic for schema is a bit tricky with `mysqldump` as schema comes *before* data.
-      // For a dump with --no-create-info, this is easier.
-      // For a full dump, if includeSchema is false, we try to skip schema lines.
-      // This part might need fine-tuning depending on the exact dump structure.
       if (!includeSchema) {
         // Skip comments and SET statements that usually precede data blocks for full dump
-        if (line.startsWith('--') && !dataMatch) continue; // Skip all comments that aren't the data marker
+        if (line.startsWith('--') && !dataMatch && !schemaMatch) continue; // Skip all comments that aren't markers
         if (
           line.startsWith('SET') ||
           line.startsWith('/*!') ||
@@ -288,6 +308,7 @@ async function splitSqlDump(
 
       currentFileWriter.write(line + '\n');
       if (currentTableName) {
+        // currentTableName will not be null if currentFileWriter is not null
         tableCounts[currentTableName]++;
       }
     }
@@ -307,6 +328,14 @@ async function splitSqlDump(
     `\nSQL dump splitting complete. Total lines processed: ${lineCount}`,
   );
   console.log('Summary of tables exported and their line counts:', tableCounts);
+  if (skippedTableNames.size > 0) {
+    console.log(
+      'Tables skipped (not exported):',
+      Array.from(skippedTableNames).join(', '),
+    );
+  } else {
+    console.log('No tables were skipped.');
+  }
 }
 
 /**
