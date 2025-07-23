@@ -40,7 +40,7 @@ readline.question(
         'products',
         'purchases',
         'plan_share',
-        'subject_shares',
+        'subject_share',
       ])
         .then(() => console.log('Successfully split the SQL dump.'))
         .catch((err) => console.error('Failed to split SQL dump:', err));
@@ -74,8 +74,32 @@ readline.question(
         .catch((err) =>
           console.error('Groups SQL simple transformation script failed:', err),
         );
+
+      await updateChatroomMessagesSql()
+        .then(() =>
+          console.log(
+            'Chatroom messages SQL simple transformation script finished.',
+          ),
+        )
+        .catch((err) =>
+          console.error(
+            'Chatroom messages SQL simple transformation script failed:',
+            err,
+          ),
+        );
+
+      await updateSubjectsSql()
+        .then(() =>
+          console.log('Subjects SQL simple transformation script finished.'),
+        )
+        .catch((err) =>
+          console.error(
+            'Subjects SQL simple transformation script failed:',
+            err,
+          ),
+        );
     } else if (option === 5) {
-      await mariadbApplyUpdate(outputDirectory);
+      await mariadbApplyUpdate(outputDirectory, ['subject_timelines']);
     } else {
       console.log('Invalid option selected.');
     }
@@ -340,11 +364,16 @@ async function splitSqlDump(
 
 /**
  * Executes a single SQL file against the database using Prisma's $executeRaw.
+ * It now splits large files into individual statements to avoid connection issues.
  * @param filePath The absolute path to the SQL file containing INSERT statements.
+ * @param fileName The name of the file for better logging.
+ * @param ignoreInsertTables An array of table names for which INSERT statements should become INSERT IGNORE.
  * @returns A Promise that resolves if successful, or rejects with an error.
- */ async function executeSqlFileWithPrisma(
+ */
+async function executeSqlFileWithPrisma(
   filePath: string,
   fileName: string, // Pass filename for better logging
+  ignoreInsertTables: string[] = [], // NEW: Array of tables for INSERT IGNORE
 ): Promise<void> {
   console.log(`  - Importing ${fileName} using Prisma...`);
   try {
@@ -358,12 +387,15 @@ async function splitSqlDump(
     }
 
     // Step 2: Aggressively clean comments and empty lines
+    // This cleaning is crucial for robust semicolon splitting later
     let cleanedSqlContent = sqlContent
       // Remove any lines that are solely comments
       .split('\n')
       .filter(
         (line) =>
-          !line.trim().startsWith('--') && !line.trim().startsWith('/*'),
+          !line.trim().startsWith('--') &&
+          !line.trim().startsWith('/*') && // Catches lines starting with multi-line comments
+          !line.trim().startsWith('#'), // Also common for single-line comments in some SQL dumps
       )
       .map((line) => line.replace(/\/\*.*?\*\//g, '').trim()) // Remove inline multi-line comments
       .filter((line) => line.length > 0) // Remove empty lines after cleaning
@@ -379,17 +411,83 @@ async function splitSqlDump(
       return;
     }
 
-    // --- CRITICAL FIX HERE: Use Prisma.raw() to pass a plain string as raw SQL ---
-    // Prisma.raw() is designed to take a single string argument and treat it as exact raw SQL.
-    const sqlQuery = Prisma.raw(cleanedSqlContent);
+    // --- NEW STRATEGY: SPLIT AND EXECUTE INDIVIDUAL STATEMENTS ---
+    // SQL statements are typically delimited by a semicolon ';'.
+    // We split by ';' then filter out any empty strings and trim whitespace.
+    // We must add the semicolon back before execution as `split` removes it.
+    const statements = cleanedSqlContent
+      .split(';')
+      .map((s) => s.trim())
+      .filter((s) => s.length > 0);
 
-    // Now execute the raw SQL query object
-    const affectedRows = await prisma.$executeRaw(sqlQuery);
+    if (statements.length === 0) {
+      console.warn(
+        `    No executable SQL statements found in ${fileName} after splitting by semicolon. Skipping.`,
+      );
+      return;
+    }
 
     console.log(
-      `    Successfully imported ${fileName}. Affected rows: ${affectedRows}`,
+      `    Executing ${statements.length} statements from ${fileName}...`,
+    );
+
+    let affectedRowsTotal = 0;
+    // Normalize ignoreInsertTables for case-insensitive comparison
+    const ignoreTablesLowerCase = ignoreInsertTables.map((name) =>
+      name.toLowerCase(),
+    );
+
+    for (const [index, statement] of statements.entries()) {
+      try {
+        let currentStatement = statement; // Use a mutable variable for the statement
+
+        // Check if this statement is an INSERT INTO operation
+        // and if its table is in the ignoreInsertTables list
+        // Uses a regex to capture the table name (handles `table_name` or table_name)
+        const insertMatch = currentStatement.match(/^INSERT INTO `?(\w+)`?/i);
+
+        if (insertMatch && insertMatch[1]) {
+          const tableNameInSql = insertMatch[1]; // Captured table name (e.g., 'subject_timelines')
+
+          // Compare in a case-insensitive manner
+          if (ignoreTablesLowerCase.includes(tableNameInSql.toLowerCase())) {
+            // Replace "INSERT INTO" with "INSERT IGNORE INTO" at the beginning of the statement
+            currentStatement = currentStatement.replace(
+              /^INSERT INTO/i,
+              'INSERT IGNORE INTO',
+            );
+            console.log(
+              `      Modified: Applying INSERT IGNORE for table '${tableNameInSql}' in ${fileName}, statement ${index + 1}`,
+            );
+          }
+        }
+
+        // Use Prisma.raw() for each individual statement
+        // Add the semicolon back as it's the statement terminator
+        const sqlQuery = Prisma.raw(currentStatement + ';');
+        const affected = await prisma.$executeRaw(sqlQuery);
+        affectedRowsTotal += Number(affected); // Ensure affectedRows is treated as a number
+      } catch (stmtError: any) {
+        console.error(
+          `      Error in ${fileName}, statement ${
+            index + 1
+          }/${statements.length}: ${stmtError.message}\n      Failed Statement (first 200 chars): ${statement.substring(
+            0,
+            200,
+          )}...`,
+        );
+        // Re-throw the error so the main `mariadbApplyUpdate` function can catch it and log the file as failed.
+        throw new Error(
+          `Statement ${index + 1} failed in ${fileName}: ${stmtError.message}`,
+        );
+      }
+    }
+
+    console.log(
+      `    Successfully imported ${fileName}. Total affected rows: ${affectedRowsTotal}`,
     );
   } catch (error: any) {
+    // This catch block handles errors from file reading or initial cleaning/splitting
     throw new Error(`Failed to import ${fileName}: ${error.message}`);
   }
 }
@@ -397,8 +495,12 @@ async function splitSqlDump(
 /**
  * Imports all .sql files from a given directory into the database using Prisma.
  * @param sqlFilesDirectory The absolute path to the directory containing the .sql files.
+ * @param ignoreList An optional array of table names for which INSERT statements should become INSERT IGNORE.
  */
-async function mariadbApplyUpdate(sqlFilesDirectory: string): Promise<void> {
+async function mariadbApplyUpdate(
+  sqlFilesDirectory: string,
+  ignoreList: string[] = [],
+): Promise<void> {
   console.log(`Starting import of SQL files from: ${sqlFilesDirectory}`);
 
   try {
@@ -433,7 +535,8 @@ async function mariadbApplyUpdate(sqlFilesDirectory: string): Promise<void> {
     for (const file of sqlFiles) {
       const filePath = path.join(sqlFilesDirectory, file);
       try {
-        await executeSqlFileWithPrisma(filePath, file);
+        // Pass the ignoreList to executeSqlFileWithPrisma
+        await executeSqlFileWithPrisma(filePath, file, ignoreList);
         successCount++;
       } catch (error: any) {
         console.error(`Error importing ${file}: ${error.message}`);
@@ -561,7 +664,84 @@ async function updateGroupsSql(): Promise<void> {
 
     fileContent = fileContent.replace(/,0,/g, ',1,');
 
-    fileContent = fileContent.replace(/,\s*(?:NULL|'[^']*?'|\d+)\)/g, ')');
+    //fileContent = fileContent.replace(/,\s*(?:NULL|'[^']*?'|\d+)\)/g, ')');
+
+    //fileContent = fileContent.replace(/,\s*\d+\s*\)\s*,?$/gm, '),');
+    fileContent = fileContent.replace(/(.*),\s*(NULL|\d+)\s*(\)\s*[;,]?\s*)$/gim, '$1$3');
+
+    await fs.promises.writeFile(outputFilePath, fileContent, {
+      encoding: 'utf8',
+    });
+
+    console.log(
+      `Simple transformation complete. Output saved to: ${outputFilePath}`,
+    );
+  } catch (error: any) {
+    console.error(`Error during simple transformation: ${error.message}`);
+    throw error;
+  }
+}
+
+async function updateChatroomMessagesSql(): Promise<void> {
+  const inputFilePath = path.join(tablesPath, 'chatroom_messages.sql');
+  const outputFilePath = path.join(tablesPath, 'chatroom_messages.sql');
+
+  console.log(`Starting simple transformation of: ${inputFilePath}`);
+  console.log(`Writing transformed content to: ${outputFilePath}`);
+
+  try {
+    // Read the entire file content as a single string
+    let fileContent = await fs.promises.readFile(inputFilePath, {
+      encoding: 'utf8',
+    });
+
+    fileContent = fileContent.replace(/\\'/g, "''");
+    // This regex attempts to remove semicolons from unclosed string literals
+    // followed by a comma or parenthesis. Highly speculative and may break.
+    fileContent = fileContent.replace(/(?<=\'[^\']*?);(?=[^\']*?[,\)])/g, '');
+
+    fileContent = fileContent.replace(/\[/g, ''); // Your existing line
+    fileContent = fileContent.replace(/\]/g, ''); // Your existing line
+
+    fileContent = fileContent.replace(
+      /'((?:[^']|'')*);((?:[^']|'')*)'/g,
+      "'$1$2'",
+    );
+
+    fileContent = fileContent.replace('rgebpodjih;', '');
+
+    await fs.promises.writeFile(outputFilePath, fileContent, {
+      encoding: 'utf8',
+    });
+
+    console.log(
+      `Simple transformation complete. Output saved to: ${outputFilePath}`,
+    );
+  } catch (error: any) {
+    console.error(`Error during simple transformation: ${error.message}`);
+    throw error;
+  }
+}
+
+async function updateSubjectsSql(): Promise<void> {
+  const inputFilePath = path.join(tablesPath, 'subjects.sql');
+  const outputFilePath = path.join(tablesPath, 'subjects.sql');
+
+  console.log(`Starting simple transformation of: ${inputFilePath}`);
+  console.log(`Writing transformed content to: ${outputFilePath}`);
+
+  try {
+    // Read the entire file content as a single string
+    let fileContent = await fs.promises.readFile(inputFilePath, {
+      encoding: 'utf8',
+    });
+
+    fileContent = fileContent.replace(/,NULL,/g, ',');
+
+    fileContent = fileContent.replace(
+      /(^.*?'others',\s*)('[^']*(?:''[^']*)*?'\s*),\s*'others',\s*('[^']*(?:''[^']*)*?')(\s*,\s*\d+\)\s*,?\s*$)/gm,
+      '$1$2,$3$4',
+    );
 
     await fs.promises.writeFile(outputFilePath, fileContent, {
       encoding: 'utf8',
