@@ -98,6 +98,17 @@ readline.question(
             err,
           ),
         );
+
+        await updateUsersSql()
+        .then(() =>
+          console.log('Users SQL simple transformation script finished.'),
+        )
+        .catch((err) =>
+          console.error(
+            'Users SQL simple transformation script failed:',
+            err,
+          ),
+        );
     } else if (option === 5) {
       await mariadbApplyUpdate(outputDirectory, ['subject_timelines']);
     } else {
@@ -753,5 +764,118 @@ async function updateSubjectsSql(): Promise<void> {
   } catch (error: any) {
     console.error(`Error during simple transformation: ${error.message}`);
     throw error;
+  }
+}
+
+/**
+ * Updates an INSERT statement for the `users` table to match the new schema.
+ * It removes the `iv` field and inserts a new `hashed_password_type` field.
+ *
+ * @param sqlContent The entire content of the users.sql file.
+ * @returns The updated SQL content as a string.
+ */
+function updateUsersInsertStatement(sqlContent: string): string {
+  // Regex to match the full INSERT statement for `users`
+  const insertRegex = /^(INSERT INTO `users` VALUES)([\s\S]*?)(\s*);/im;
+  const match = sqlContent.match(insertRegex);
+
+  if (!match) {
+    console.warn('Could not find a valid INSERT statement for `users` in the SQL content. Skipping update.');
+    return sqlContent;
+  }
+
+  const [_, insertHeader, valuesContent, finalSemicolon] = match;
+
+  // This regex finds each full tuple string, e.g., `(..., ...)` or `(..., ...),`
+  const tupleRegex = /\([^)]+\)\s*[,;]?/gi;
+  const tupleStrings = valuesContent.match(tupleRegex);
+
+  if (!tupleStrings) {
+    console.warn('No data tuples found in the VALUES section. Skipping update.');
+    return sqlContent;
+  }
+
+  const updatedTuples = tupleStrings.map((tupleString, index) => {
+    // 1. Extract the content inside the parentheses
+    const contentMatch = tupleString.match(/^\((.*)\)/);
+    if (!contentMatch) {
+      console.warn(`Skipping malformed tuple at index ${index}: ${tupleString.trim()}`);
+      return tupleString;
+    }
+    const tupleContent = contentMatch[1];
+    
+    // 2. Robustly split the content into fields, respecting quoted strings and NULL/numbers
+    const fields = tupleContent.match(/('[^']*'|NULL|-?\d+)/g) || [];
+    
+    if (fields.length !== 19) {
+      console.warn(`Skipping tuple at index ${index} due to unexpected field count: ${fields.length}.`);
+      return tupleString;
+    }
+
+    // --- Apply data transformations first ---
+    
+    // 1. Replace empty email with a generated one
+    const userId = fields[0].replace(/'/g, ''); // user_id is the 1st field (index 0)
+    const emailField = fields[2].replace(/'/g, ''); // email is the 3rd field (index 2)
+    if (emailField === '') {
+        fields[2] = `'${userId}@flozable.com'`;
+    }
+
+    // 2. Replace NULL hashed passwords
+    // hashed_password is the 8th field (index 7)
+    if (fields[7] === 'NULL') {
+      const newPassword = nanoid(10);
+      fields[7] = `'${newPassword}'`;
+    }
+
+    // --- Apply the schema structural changes: ---
+    
+    // 1. Remove the old `iv` field (position 10, which is at index 9)
+    fields.splice(9, 1);
+    
+    // 2. Insert the new `hashed_password_type` field (at position 9, index 8)
+    fields.splice(8, 0, `'pbkdf2'`);
+    
+    // 3. Re-join the fields and restore the parentheses and the terminator
+    const terminatorMatch = tupleString.match(/\s*([,;]?\s*)$/);
+    const terminator = terminatorMatch ? terminatorMatch[1] : '';
+    
+    return `(${fields.join(', ')})` + terminator;
+  });
+
+  // Join the updated tuples back together, preserving newlines
+  const joinedContent = updatedTuples.join('\n');
+  
+  return `${insertHeader}\n${joinedContent}${finalSemicolon}`;
+}
+
+
+/**
+ * Main function to update a users.sql file and save the result.
+ * @param filePath The path to the users.sql file.
+ * @returns A Promise that resolves when the update is complete.
+ */
+export async function updateUsersSql(): Promise<void> {
+  const inputFilePath = path.join(tablesPath, 'users.sql');
+  const outputFilePath = path.join(tablesPath, 'users.sql');
+
+  console.log(`Starting simple transformation of: ${inputFilePath}`);
+  console.log(`Writing transformed content to: ${outputFilePath}`);
+  try {
+    const sqlContent = await fs.promises.readFile(inputFilePath, {
+      encoding: 'utf8',
+    });
+
+    const updatedContent = updateUsersInsertStatement(sqlContent);
+
+    await fs.promises.writeFile(outputFilePath, updatedContent, {
+      encoding: 'utf8',
+    });
+
+    console.log(`Successfully updated and saved to: ${outputFilePath}`);
+  } catch (error) {
+    console.error(
+      `Failed to update SQL file: ${error instanceof Error ? error.message : String(error)}`,
+    );
   }
 }
