@@ -92,6 +92,18 @@ export const AppErrorFactory = {
       code: 'USER_ALREADY_EXISTS',
     }),
 
+  chatroomNotFound: () =>
+    createHttpError(404, 'Chatroom not found', {
+      reason: 'The specified chatroom_id does not exist in the database',
+      code: 'CHATROOM_NOT_FOUND',
+    }),
+
+  chatroomAccessDenied: () =>
+    createHttpError(403, 'You do not have access to this chatroom', {
+      reason: 'User is not a member of the chatroom or group',
+      code: 'CHATROOM_ACCESS_DENIED',
+    }),
+
   // --- General / Fallback ---
   unknownServerError: () =>
     createHttpError(500, 'Something went wrong', {

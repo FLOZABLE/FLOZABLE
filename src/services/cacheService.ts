@@ -2,11 +2,11 @@ import { REDIS_TTL } from '../libs/constants';
 import prisma from '../libs/prisma';
 import { nowSec } from '../libs/utils';
 import redisClient from '../models/redisClient';
-import { UserInfo, UserStatus } from '../types/accountTypes';
+import { UserActiveGroup, UserInfo, UserStatus } from '../types/accountTypes';
 import { ChatStatus } from '../types/chatTypes';
 import { Viewer } from '../types/otherTypes';
 import { RawRanking } from '../types/rankingTypes';
-import { googleOauth2client, refreshGoogleAccessToken } from './authService';
+import { refreshGoogleAccessToken } from './authService';
 
 interface GetCacheParams {
   update?: boolean;
@@ -310,10 +310,7 @@ export const cacheUserStatus = async ({
       name,
     );
 
-    redisClient.expire(
-      `user:${userId}:activeSubject`,
-      REDIS_TTL.USER_STATUS_EXP,
-    );
+    redisClient.expire(cacheKey, REDIS_TTL.USER_STATUS_EXP);
   } catch (err) {
     console.log(err);
   } finally {
@@ -356,6 +353,67 @@ export const delCachedUserStatus = async (userId: string) => {
   } catch (err) {
     console.log(err);
   }
+};
+
+interface CacheUserActiveGroupParams {
+  userId: string;
+  groupId: string;
+  time: number;
+  name: string;
+}
+
+export const cacheUserActiveGroup = async ({
+  userId,
+  groupId,
+  time,
+  name,
+}: CacheUserActiveGroupParams) => {
+  const cacheKey = `user:${userId}:activegroup`;
+
+  try {
+    await redisClient.hset(
+      cacheKey,
+      'group_id',
+      groupId,
+      'time',
+      time.toString(),
+      'name',
+      name,
+    );
+
+    redisClient.expire(cacheKey, REDIS_TTL.USER_ACTIVE_GROUP_EXP);
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+export const getCachedUserActiveGroup = async (
+  userId: string,
+): Promise<UserActiveGroup | null> => {
+  const cacheKey = `user:${userId}:activegroup`;
+
+  try {
+    const status = await redisClient.hgetall(cacheKey);
+    if (!status || Object.keys(status).length === 0) {
+      return null;
+    }
+    if (!(status.group_id && status.name && status.time)) return null;
+
+    return {
+      group_id: status.group_id,
+      name: status.name,
+      time: Number(status.time),
+    };
+  } catch (err) {
+    console.log(err);
+    return null;
+  }
+};
+
+export const delCachedUserActiveGroup = async (userId: string) => {
+  const cacheKey = `user:${userId}:activegroup`;
+
+  await redisClient.del(cacheKey);
 };
 
 export const getCachedRanking = async ({
@@ -540,8 +598,166 @@ export const getCachedUserChatStatus = async (
   }
 };
 
+export const updateChatroomUnreadStatus = async ({
+  roomId,
+  messageId,
+  senderId,
+  allMemberIds,
+}: {
+  roomId: string;
+  messageId: string;
+  senderId: string;
+  allMemberIds: string[];
+}) => {
+  const pipeline = redisClient.pipeline();
+
+  const otherMemberIds = allMemberIds.filter((id) => id !== senderId);
+
+  // Increment unreads for other members
+  for (const memberId of otherMemberIds) {
+    const cacheKey = `user:${memberId}:chatstatus`;
+    pipeline.hincrby(cacheKey, `room:${roomId}:unreads`, 1);
+    pipeline.expire(cacheKey, REDIS_TTL.USER_CHAT_STATUS_EXP);
+  }
+
+  // Set sender’s last read message and reset unread count
+  const senderKey = `user:${senderId}:chatstatus`;
+  pipeline.hset(senderKey, `room:${roomId}:last_read_message`, messageId);
+  pipeline.hset(senderKey, `room:${roomId}:unreads`, 0);
+  pipeline.expire(senderKey, REDIS_TTL.USER_CHAT_STATUS_EXP);
+
+  await pipeline.exec();
+};
+
+interface SetUserChatroomStatusParams {
+  userId: string;
+  roomId: string;
+  messageId?: string | undefined;
+  unreads?: number;
+}
+
+export const setUserChatroomStatus = async ({
+  userId,
+  roomId,
+  messageId,
+  unreads,
+}: SetUserChatroomStatusParams) => {
+  const cacheKey = `user:${userId}:chatstatus`;
+
+  if (messageId) {
+    await redisClient.hset(
+      cacheKey,
+      `room:${roomId}:last_read_message`,
+      messageId,
+    );
+  }
+
+  if (typeof unreads === 'number') {
+    await redisClient.hset(
+      cacheKey,
+      `room:${roomId}:unreads`,
+      unreads.toString(),
+    );
+  }
+
+  await redisClient.expire(cacheKey, REDIS_TTL.USER_CHAT_STATUS_EXP);
+};
+
 export const delCacheUserGoogleAccessToken = async (userId: string) => {
   const key = `user:${userId}:google_access_token`;
+  redisClient.del(key);
+};
+
+export const getCachedChatroomMembers = async (
+  chatroomId: string,
+): Promise<string[]> => {
+  const key = `chatroom:${chatroomId}:members`;
+
+  try {
+    if (!chatroomId) return [];
+
+    const cachedMembers = await redisClient.smembers(key);
+    if (cachedMembers.length > 0) {
+      return cachedMembers.filter((m) => m !== 'cached');
+    }
+
+    const chatroom = await prisma.chatrooms.findUnique({
+      where: { chatroom_id: chatroomId },
+      select: {
+        type: true,
+        group_id: true,
+        group: {
+          select: {
+            group_members: {
+              select: {
+                user_id: true,
+              },
+            },
+          },
+        },
+        members: {
+          select: {
+            user_id: true,
+          },
+        },
+      },
+    });
+
+    if (!chatroom) return [];
+
+    const members =
+      chatroom.type === 'group'
+        ? (chatroom.group?.group_members.map((m) => m.user_id) ?? [])
+        : chatroom.members.map((m) => m.user_id);
+
+    if (members.length > 0) {
+      await redisClient.sadd(key, 'cached', ...members);
+      await redisClient.expire(key, REDIS_TTL.CHAT_MEMBERS_EXP);
+    }
+
+    return members;
+  } catch (err) {
+    console.error('Error fetching chatroom members:', err);
+    return [];
+  }
+};
+
+export const isChatroomMember = async (
+  userId: string,
+  chatroomId: string,
+): Promise<boolean> => {
+  const key = `chatroom:${chatroomId}:members`;
+
+  try {
+    if (!userId || !chatroomId) return false;
+
+    const isCached = await redisClient.sismember(key, 'cached');
+
+    if (isCached) {
+      const isMember = await redisClient.sismember(key, userId);
+      return isMember === 1;
+    }
+
+    const members = await getCachedChatroomMembers(chatroomId);
+    return members.includes(userId);
+  } catch (err) {
+    console.error('Error checking chatroom membership:', err);
+    return false;
+  }
+};
+
+export const remCachedChatroomMember = async (
+  userId: string,
+  chatroomId: string,
+) => {
+  const key = `chatroom:${chatroomId}:members`;
+
+  redisClient.srem(key, userId);
+};
+
+export const delCachedChatroomMembers = async (chatroomId: string) => {
+  const key = `chatroom:${chatroomId}:members`;
+
   redisClient.del(key);
 };
 
@@ -574,7 +790,7 @@ export const getCachedUsersStudyTime = async ({
     }
 
     return userIds.map((userId, index) => {
-      const [error, score] = results[index];
+      const [_error, score] = results[index];
       const studyTime = typeof score === 'string' ? parseFloat(score) : 0;
       return { userId, studyTime };
     });
@@ -642,3 +858,99 @@ export const getCachedUsersStatus = async (
     };
   });
 };
+
+export async function deleteKeysByPattern(pattern: string) {
+  let cursor = '0';
+  let keysToDelete = [];
+
+  try {
+    do {
+      // Use SCAN to get keys matching the pattern in batches
+      // The 'scan' command returns a tuple: [new_cursor, [keys_array]]
+      const [nextCursor, keys] = await redisClient.scan(
+        cursor,
+        'MATCH',
+        pattern,
+        'COUNT',
+        100,
+      ); // COUNT is a hint
+      cursor = nextCursor;
+
+      if (keys.length > 0) {
+        keysToDelete.push(...keys);
+        // It's generally more efficient to delete keys in batches using DEL
+        // The DEL command can take multiple keys as arguments: DEL key1 key2 ...
+        await redisClient.del(...keys); // Delete the keys immediately as they are found
+        console.log(
+          `Deleted ${keys.length} keys in this batch. Total found so far: ${keysToDelete.length}`,
+        );
+      }
+    } while (cursor !== '0');
+
+    console.log(`\nFinished deleting keys matching pattern: '${pattern}'`);
+    console.log(`Total keys found and deleted: ${keysToDelete.length}`);
+  } catch (error) {
+    console.error('Error deleting keys:', error);
+  }
+}
+
+export async function renameKeysByPattern(
+  oldPattern: string,
+  renameFunction: (val: string) => string | null,
+) {
+  let cursor = '0';
+  let renamedCount = 0;
+  let skippedCount = 0;
+
+  console.log(`Starting key renaming for pattern: '${oldPattern}'`);
+
+  try {
+    do {
+      const [nextCursor, keys] = await redisClient.scan(
+        cursor,
+        'MATCH',
+        oldPattern,
+        'COUNT',
+        100,
+      );
+
+      cursor = nextCursor;
+
+      if (keys.length > 0) {
+        // Use a Redis Pipeline for atomic batch operations.
+        // This is much more efficient than sending RENAME commands one by one.
+        const pipeline = redisClient.pipeline();
+        let batchRenamed = 0;
+
+        for (const oldKey of keys) {
+          const newKey = renameFunction(oldKey);
+
+          if (newKey && oldKey !== newKey) {
+            // Ensure new key is valid and different
+            pipeline.rename(oldKey, newKey);
+            batchRenamed++;
+          } else {
+            // console.log(`Skipping key (no valid new name or name unchanged): ${oldKey}`);
+            skippedCount++;
+          }
+        }
+
+        if (batchRenamed > 0) {
+          await pipeline.exec(); // Execute the pipeline
+          renamedCount += batchRenamed;
+          console.log(`Processed batch: Renamed ${batchRenamed} keys.`);
+          // You can inspect 'results' array if you need to check each RENAME operation's success/failure
+          // Each element in results is [error, result_of_command]
+        } else {
+          console.log(`Processed batch: No keys to rename in this batch.`);
+        }
+      }
+    } while (cursor !== '0');
+
+    console.log(`\nFinished renaming keys.`);
+    console.log(`Total keys found and renamed: ${renamedCount}`);
+    console.log(`Total keys skipped: ${skippedCount}`);
+  } catch (error) {
+    console.error('Error during key renaming:', error);
+  }
+}

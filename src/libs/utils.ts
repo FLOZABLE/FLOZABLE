@@ -58,3 +58,8 @@ export function getDates({
 
   return dates;
 }
+
+export function randomIntInRange(min: number, max: number) {
+  const randomVal = Math.floor(Math.random() * (max - min + 1)) + min;
+  return randomVal;
+}
