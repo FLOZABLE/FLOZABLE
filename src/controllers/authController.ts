@@ -44,7 +44,7 @@ export const postAuthSignup = async (
       return;
     }
 
-    const newSubject = await createSubject({
+    await createSubject({
       name: 'others',
       color: '#000000',
       user: {

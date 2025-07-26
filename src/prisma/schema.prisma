@@ -65,7 +65,7 @@ model chatroom_members {
 }
 
 model chatroom_messages {
-  message_id  String @id @db.VarChar(8)
+  message_id  String @id @db.VarChar(10)
   chatroom_id String @db.VarChar(10)
   user_id     String @db.VarChar(10)
   message     String @db.Text

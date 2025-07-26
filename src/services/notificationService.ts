@@ -30,16 +30,12 @@ export const sendNotification = async ({
       },
     });
 
-    newNotification;
-
     const mainIo = getMainIo();
-    mainIo
-      ?.to(newNotification.user_id)
-      .emit('notification', {
-        ...newNotification,
-        message: notification.message,
-        sender,
-      });
+    mainIo?.to(newNotification.user_id).emit('notification', {
+      ...newNotification,
+      message: notification.message,
+      sender,
+    });
   } catch (err) {
     console.log(err);
   }

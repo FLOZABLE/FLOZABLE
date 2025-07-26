@@ -90,6 +90,8 @@ export const handleStudyStop = async (
         status: null,
         duration,
       });
+
+      mainIo?.to(friends).emit('group:member:offline', { user_id: userId });
     } else {
       const newStatus = await cacheUserStatus({ userId, startTime: now });
 
@@ -107,6 +109,7 @@ export const handleStudyStop = async (
       });
 
       if (duration && status.subject_id !== '0') {
+        console.log(status, userId);
         await prisma.subject_timelines.create({
           data: {
             subject_id: status.subject_id,

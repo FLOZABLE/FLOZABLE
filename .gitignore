@@ -13,3 +13,6 @@ public/img/profile-images/*
 _*
 
 /src/generated/prisma
+
+
+tmp/*
