@@ -12,6 +12,12 @@ export interface UserStatus {
   start_time: number;
 }
 
+export interface UserActiveGroup {
+  group_id: string;
+  name: string;
+  time: number;
+}
+
 //GET /account/:user_id/profile
 export type GetAccountProfileParams = {
   user_id: string;
