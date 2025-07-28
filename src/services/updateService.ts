@@ -99,15 +99,12 @@ readline.question(
           ),
         );
 
-        await updateUsersSql()
+      await updateUsersSql()
         .then(() =>
           console.log('Users SQL simple transformation script finished.'),
         )
         .catch((err) =>
-          console.error(
-            'Users SQL simple transformation script failed:',
-            err,
-          ),
+          console.error('Users SQL simple transformation script failed:', err),
         );
     } else if (option === 5) {
       await mariadbApplyUpdate(outputDirectory, ['subject_timelines']);
@@ -678,7 +675,10 @@ async function updateGroupsSql(): Promise<void> {
     //fileContent = fileContent.replace(/,\s*(?:NULL|'[^']*?'|\d+)\)/g, ')');
 
     //fileContent = fileContent.replace(/,\s*\d+\s*\)\s*,?$/gm, '),');
-    fileContent = fileContent.replace(/(.*),\s*(NULL|\d+)\s*(\)\s*[;,]?\s*)$/gim, '$1$3');
+    fileContent = fileContent.replace(
+      /(.*),\s*(NULL|\d+)\s*(\)\s*[;,]?\s*)$/gim,
+      '$1$3',
+    );
 
     await fs.promises.writeFile(outputFilePath, fileContent, {
       encoding: 'utf8',
@@ -780,7 +780,9 @@ function updateUsersInsertStatement(sqlContent: string): string {
   const match = sqlContent.match(insertRegex);
 
   if (!match) {
-    console.warn('Could not find a valid INSERT statement for `users` in the SQL content. Skipping update.');
+    console.warn(
+      'Could not find a valid INSERT statement for `users` in the SQL content. Skipping update.',
+    );
     return sqlContent;
   }
 
@@ -791,7 +793,9 @@ function updateUsersInsertStatement(sqlContent: string): string {
   const tupleStrings = valuesContent.match(tupleRegex);
 
   if (!tupleStrings) {
-    console.warn('No data tuples found in the VALUES section. Skipping update.');
+    console.warn(
+      'No data tuples found in the VALUES section. Skipping update.',
+    );
     return sqlContent;
   }
 
@@ -799,26 +803,30 @@ function updateUsersInsertStatement(sqlContent: string): string {
     // 1. Extract the content inside the parentheses
     const contentMatch = tupleString.match(/^\((.*)\)/);
     if (!contentMatch) {
-      console.warn(`Skipping malformed tuple at index ${index}: ${tupleString.trim()}`);
+      console.warn(
+        `Skipping malformed tuple at index ${index}: ${tupleString.trim()}`,
+      );
       return tupleString;
     }
     const tupleContent = contentMatch[1];
-    
+
     // 2. Robustly split the content into fields, respecting quoted strings and NULL/numbers
     const fields = tupleContent.match(/('[^']*'|NULL|-?\d+)/g) || [];
-    
+
     if (fields.length !== 19) {
-      console.warn(`Skipping tuple at index ${index} due to unexpected field count: ${fields.length}.`);
+      console.warn(
+        `Skipping tuple at index ${index} due to unexpected field count: ${fields.length}.`,
+      );
       return tupleString;
     }
 
     // --- Apply data transformations first ---
-    
+
     // 1. Replace empty email with a generated one
     const userId = fields[0].replace(/'/g, ''); // user_id is the 1st field (index 0)
     const emailField = fields[2].replace(/'/g, ''); // email is the 3rd field (index 2)
     if (emailField === '') {
-        fields[2] = `'${userId}@flozable.com'`;
+      fields[2] = `'${userId}@flozable.com'`;
     }
 
     // 2. Replace NULL hashed passwords
@@ -829,26 +837,25 @@ function updateUsersInsertStatement(sqlContent: string): string {
     }
 
     // --- Apply the schema structural changes: ---
-    
+
     // 1. Remove the old `iv` field (position 10, which is at index 9)
     fields.splice(9, 1);
-    
+
     // 2. Insert the new `hashed_password_type` field (at position 9, index 8)
     fields.splice(8, 0, `'pbkdf2'`);
-    
+
     // 3. Re-join the fields and restore the parentheses and the terminator
     const terminatorMatch = tupleString.match(/\s*([,;]?\s*)$/);
     const terminator = terminatorMatch ? terminatorMatch[1] : '';
-    
+
     return `(${fields.join(', ')})` + terminator;
   });
 
   // Join the updated tuples back together, preserving newlines
   const joinedContent = updatedTuples.join('\n');
-  
+
   return `${insertHeader}\n${joinedContent}${finalSemicolon}`;
 }
-
 
 /**
  * Main function to update a users.sql file and save the result.

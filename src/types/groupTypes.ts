@@ -1,4 +1,5 @@
 import { Prisma } from '../generated/prisma';
+
 import { groupSelect } from '../queries/groupQueries';
 
 //POST /group/:group_id/join

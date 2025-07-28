@@ -1,4 +1,5 @@
 import { Prisma } from '../generated/prisma';
+
 import { UserInfo } from './accountTypes';
 import { Viewer } from './otherTypes';
 

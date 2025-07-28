@@ -1,8 +1,8 @@
+import { Prisma } from '../generated/prisma';
 import _ from 'lodash';
 import { DateTime } from 'luxon';
 import { nanoid } from 'nanoid';
 
-import { Prisma } from '../generated/prisma/client';
 import prisma from '../libs/prisma';
 import { nowSec } from '../libs/utils';
 import {
