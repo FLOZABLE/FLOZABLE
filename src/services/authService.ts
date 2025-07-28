@@ -1,11 +1,11 @@
 import crypto from 'crypto';
+import { Prisma } from '../generated/prisma';
 import { Response } from 'express';
 import { google } from 'googleapis';
 import { HttpError } from 'http-errors';
 import { nanoid } from 'nanoid';
 
 import config from '../config/config';
-import { Prisma } from '../generated/prisma/client';
 import { COOKIE_TTL } from '../libs/constants';
 import { AppErrorFactory } from '../libs/errors';
 import prisma from '../libs/prisma';

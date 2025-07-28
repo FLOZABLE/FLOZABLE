@@ -1,6 +1,6 @@
+import { Prisma } from '../generated/prisma';
 import { NextFunction, Request, Response } from 'express';
 
-import { Prisma } from '../generated/prisma';
 import { createSubject, getSubjects } from '../services/subjectService';
 import { GetSubjectAllQuery, PutSubjectBody } from '../types/subjectTypes';
 
