@@ -23,12 +23,16 @@ const app = express();
 
 app.set('trust proxy', 1);
 
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
+const publicLimiter = rateLimit({
+  windowMs: 1 * 60 * 1000,
   max: 100,
 });
 
-app.use(limiter);
+const apiLimiter = rateLimit({
+  windowMs: 1 * 60 * 1000,
+  max: 100,
+  message: 'Too many requests from this IP, please try again later.',
+});
 
 app.use(express.json({ limit: '5mb' }));
 
@@ -58,12 +62,12 @@ const cspOptions = {
 
 app.use(helmet.contentSecurityPolicy(cspOptions));
 
-app.use(express.static(path.join(__dirname, '/public')));
 app.disable('etag');
 app.use(morgan('combined'));
 app.use(compression());
 
 app.use(
+  publicLimiter,
   express.static(path.join(__dirname, '/public'), {
     maxAge: '1d',
     etag: false,
@@ -71,15 +75,15 @@ app.use(
 );
 
 // Routes
-app.use('/auth', authRouter);
-app.use('/account', accountRouter);
-app.use('/subject', subjectRoutes);
-app.use('/ranking', rankingRouter);
-app.use('/group', groupRouter);
-app.use('/plan', planRouter);
-app.use('/friend', friendRouter);
-app.use('/notification', notificationRouter);
-app.use('/chat', chatRouter);
+app.use('/auth', apiLimiter, authRouter);
+app.use('/account', apiLimiter, accountRouter);
+app.use('/subject', apiLimiter, subjectRoutes);
+app.use('/ranking', apiLimiter, rankingRouter);
+app.use('/group', apiLimiter, groupRouter);
+app.use('/plan', apiLimiter, planRouter);
+app.use('/friend', apiLimiter, friendRouter);
+app.use('/notification', apiLimiter, notificationRouter);
+app.use('/chat', apiLimiter, chatRouter);
 
 app.use('/{*any}', (_req, res, _next) => {
   res.status(404).json({ error: 'Route not found' });
