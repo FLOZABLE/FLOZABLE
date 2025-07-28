@@ -16,3 +16,7 @@ _*
 
 
 tmp/*
+
+dist
+
+/src/public/img/profile-images/*

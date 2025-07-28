@@ -30,10 +30,10 @@ export const getRanking = async (
 
     const now = DateTime.now().setZone(timezone).startOf('day').startOf(viewer);
 
+    const timezoneOffset = Math.floor(now.offset / 60);
     let rawRankings: RawRanking[] = [];
     if (now.toSeconds() === dateTime.toSeconds()) {
       //today/this week/this month = cached
-      const timezoneOffset = Math.floor(now.offset / 60);
       rawRankings = await getCachedRanking({ viewer, timezoneOffset });
     } else {
       const rankingsData = await prisma.ranking_details.findMany({
@@ -41,6 +41,7 @@ export const getRanking = async (
           ranking: {
             date: dateTime.toSeconds(),
             mode: viewer,
+            //timezone: timezoneOffset.toString(),
           },
         },
         orderBy: {
@@ -52,6 +53,8 @@ export const getRanking = async (
           study_time: true,
         },
       });
+
+      console.log(rankingsData, dateTime.toSeconds(), viewer);
 
       rawRankings = rankingsData;
     }
