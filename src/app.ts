@@ -1,6 +1,11 @@
+import path from 'path';
+import compression from 'compression';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import express from 'express';
+import rateLimit from 'express-rate-limit';
+import helmet from 'helmet';
+import morgan from 'morgan';
 
 import config from './config/config';
 import { errorHandler } from './middlewares/errorHandler';
@@ -16,6 +21,21 @@ import subjectRoutes from './routes/subjectRoutes';
 
 const app = express();
 
+app.set('trust proxy', 1);
+
+const publicLimiter = rateLimit({
+  windowMs: 1 * 60 * 1000,
+  max: 100,
+});
+
+const apiLimiter = rateLimit({
+  windowMs: 1 * 60 * 1000,
+  max: 100,
+  message: 'Too many requests from this IP, please try again later.',
+});
+
+app.use(express.json({ limit: '5mb' }));
+
 app.use(express.json());
 
 app.use(cookieParser());
@@ -28,16 +48,46 @@ app.use(
   }),
 );
 
+app.use(helmet());
+
+const cspOptions = {
+  directives: {
+    defaultSrc: ["'self'"],
+    scriptSrc: ["'self'"],
+    frameSrc: ["'self'"],
+    'img-src': ["'self'"],
+    'form-action': ["'self'"],
+  },
+};
+
+app.use(helmet.contentSecurityPolicy(cspOptions));
+
+app.disable('etag');
+app.use(morgan('combined'));
+app.use(compression());
+
+app.use(
+  publicLimiter,
+  express.static(path.join(__dirname, '/public'), {
+    maxAge: '1d',
+    etag: false,
+  }),
+);
+
 // Routes
-app.use('/auth', authRouter);
-app.use('/account', accountRouter);
-app.use('/subject', subjectRoutes);
-app.use('/ranking', rankingRouter);
-app.use('/group', groupRouter);
-app.use('/plan', planRouter);
-app.use('/friend', friendRouter);
-app.use('/notification', notificationRouter);
-app.use('/chat', chatRouter);
+app.use('/auth', apiLimiter, authRouter);
+app.use('/account', apiLimiter, accountRouter);
+app.use('/subject', apiLimiter, subjectRoutes);
+app.use('/ranking', apiLimiter, rankingRouter);
+app.use('/group', apiLimiter, groupRouter);
+app.use('/plan', apiLimiter, planRouter);
+app.use('/friend', apiLimiter, friendRouter);
+app.use('/notification', apiLimiter, notificationRouter);
+app.use('/chat', apiLimiter, chatRouter);
+
+app.use('/{*any}', (_req, res, _next) => {
+  res.status(404).json({ error: 'Route not found' });
+});
 
 // Global error handler (should be after routes)
 app.use(errorHandler);
