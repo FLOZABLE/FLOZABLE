@@ -63,8 +63,13 @@ const cspOptions = {
 app.use(helmet.contentSecurityPolicy(cspOptions));
 
 app.disable('etag');
-app.use(morgan('combined'));
 app.use(compression());
+// Use Morgan with a skip function
+app.use(
+  morgan('combined', {
+    skip: (req, _res) => /\.(jpe?g|png|gif|webp|svg)$/i.test(req.originalUrl),
+  }),
+);
 
 app.use(
   publicLimiter,
