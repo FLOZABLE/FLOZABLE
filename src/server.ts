@@ -9,6 +9,7 @@ import './schedulers/botScheduler';
 import './sockets/index';
 
 import { registerMainIoEvents } from './sockets/mainIo';
+import { registerMediaIoIoEvents } from './sockets/mediaIo';
 
 const server = http.createServer(app);
 
@@ -20,3 +21,4 @@ server.listen(config.port, () => {
 initSocket(server);
 
 registerMainIoEvents();
+registerMediaIoIoEvents();
