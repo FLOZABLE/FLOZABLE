@@ -3,9 +3,9 @@ import * as mediasoup from 'mediasoup';
 import { types as mediasoupTypes } from 'mediasoup';
 import { Namespace } from 'socket.io';
 
-import { getIO } from './io';
 import { getCachedUserGroups } from '../services/cacheService';
 import { getUserIdByToken } from '../services/sessionService';
+import { getIO } from './io';
 
 const mediaCodecs: mediasoupTypes.RtpCodecCapability[] = [
   {
@@ -265,7 +265,7 @@ export const registerMediaIoIoEvents = async () => {
     return;
   }
 
-  mediaIo = io.of('/');
+  mediaIo = io.of('/media');
 
   mediaIo.on('connection', async (socket) => {
     try {
@@ -295,6 +295,8 @@ export const registerMediaIoIoEvents = async () => {
 
           if (!groups.includes(groupId)) return;
 
+          activeGroup = groupId;
+
           socket.join(groupId);
         } catch (err) {
           console.log(err);
@@ -309,6 +311,7 @@ export const registerMediaIoIoEvents = async () => {
        */
       socket.on('getRouterRtpCapabilities', async (callback) => {
         try {
+          console.log(activeGroup)
           if (!activeGroup) return;
 
           const router = await getRouter(activeGroup, worker);
