@@ -143,6 +143,11 @@ export const cacheUser = async (userInfo: UserInfo): Promise<void> => {
   }
 };
 
+export const delCachedUser = async (userId: string): Promise<void> => {
+  const cacheKey = `user:${userId}`;
+  redisClient.del(cacheKey);
+};
+
 interface GetCachedUserFriendsParams extends GetCacheParams {
   userId: string;
 }

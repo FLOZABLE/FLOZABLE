@@ -26,3 +26,14 @@ export type GetAccountProfileParams = {
 export type GetAccountProfileQuery = {
   timezone: string;
 };
+
+//PATCH /account/info
+export type PatchAccountInfoBody = {
+  name: string;
+  email: string;
+};
+
+//PATCH /account/password
+export type PatchAccountPasswordBody = {
+  password: string;
+};

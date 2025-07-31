@@ -2,8 +2,10 @@ import { NextFunction, Request, Response } from 'express';
 import { google, oauth2_v2 } from 'googleapis';
 
 import { AppErrorFactory } from '../libs/errors';
+import prisma from '../libs/prisma';
 import { googleOauth2client } from '../services/authService';
 import {
+  delCachedUser,
   getCachedUser,
   getCachedUserFriends,
   getCachedUserGroups,
@@ -13,6 +15,7 @@ import { getSubjects } from '../services/subjectService';
 import {
   GetAccountProfileParams,
   GetAccountProfileQuery,
+  PatchAccountInfoBody,
 } from '../types/accountTypes';
 
 export const getAccount = async (
@@ -22,6 +25,47 @@ export const getAccount = async (
 ) => {
   try {
     //! can be used because it passed the middleware
+    const userId = req.user_id!;
+
+    const userinfo = await getCachedUser({ userId });
+
+    res.send({ success: true, data: { userinfo } });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const patchAccountInfo = async (
+  req: Request<{}, {}, PatchAccountInfoBody>,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const userId = req.user_id!;
+
+    const { name, email } = req.body;
+
+    console.log(name, email);
+
+    await prisma.users.update({
+      where: { user_id: userId },
+      data: { name, email },
+    });
+
+    delCachedUser(userId);
+
+    res.send({ success: true });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const patchAccountPassword = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
     const userId = req.user_id!;
 
     const userinfo = await getCachedUser({ userId });
