@@ -37,3 +37,12 @@ export const getAccountProfileParamsSchema = Joi.object({
 export const getAccountProfileQuerySchema = Joi.object({
   timezone: otherSchemas.timezone,
 });
+
+export const patchAccountInfoBodySchema = Joi.object({
+  name: accountSchemas.name,
+  email: accountSchemas.email,
+});
+
+export const patchAccountPasswordBodySchema = Joi.object({
+  password: accountSchemas.password,
+});
