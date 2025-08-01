@@ -45,8 +45,6 @@ export const patchAccountInfo = async (
 
     const { name, email } = req.body;
 
-    console.log(name, email);
-
     await prisma.users.update({
       where: { user_id: userId },
       data: { name, email },
