@@ -3,6 +3,7 @@ import { google, oauth2_v2 } from 'googleapis';
 
 import { AppErrorFactory } from '../libs/errors';
 import prisma from '../libs/prisma';
+import { bcryptHash } from '../libs/utils';
 import { googleOauth2client } from '../services/authService';
 import {
   delCachedUser,
@@ -16,6 +17,7 @@ import {
   GetAccountProfileParams,
   GetAccountProfileQuery,
   PatchAccountInfoBody,
+  PatchAccountPasswordBody,
 } from '../types/accountTypes';
 
 export const getAccount = async (
@@ -52,23 +54,30 @@ export const patchAccountInfo = async (
 
     delCachedUser(userId);
 
-    res.send({ success: true });
+    res.send({ success: true, message: "Account information updated" });
   } catch (error) {
     next(error);
   }
 };
 
 export const patchAccountPassword = async (
-  req: Request,
+  req: Request<{}, {}, PatchAccountPasswordBody>,
   res: Response,
   next: NextFunction,
 ) => {
   try {
     const userId = req.user_id!;
 
-    const userinfo = await getCachedUser({ userId });
+    const { password } = req.body;
 
-    res.send({ success: true, data: { userinfo } });
+    const hashed_password = await bcryptHash(password);
+
+    await prisma.users.update({
+      where: { user_id: userId },
+      data: { hashed_password, salt: null, hashed_password_type: 'bcrypt' },
+    });
+
+    res.send({ success: true, message: "Account password updated" });
   } catch (error) {
     next(error);
   }
