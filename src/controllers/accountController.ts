@@ -83,6 +83,19 @@ export const patchAccountPassword = async (
   }
 };
 
+/* export const putAccountProfileImage = async (
+  req: Request<{}>,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const userId = req.user_id!;
+
+  } catch (error) {
+    next(error);
+  }
+}; */
+
 export const getAccountGoogle = async (
   req: Request,
   res: Response,
