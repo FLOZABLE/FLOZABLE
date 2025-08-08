@@ -1,3 +1,5 @@
+import * as fs from 'fs';
+import path from 'path';
 import { NextFunction, Request, Response } from 'express';
 import { google, oauth2_v2 } from 'googleapis';
 
@@ -54,7 +56,7 @@ export const patchAccountInfo = async (
 
     delCachedUser(userId);
 
-    res.send({ success: true, message: "Account information updated" });
+    res.send({ success: true, message: 'Account information updated' });
   } catch (error) {
     next(error);
   }
@@ -77,13 +79,13 @@ export const patchAccountPassword = async (
       data: { hashed_password, salt: null, hashed_password_type: 'bcrypt' },
     });
 
-    res.send({ success: true, message: "Account password updated" });
+    res.send({ success: true, message: 'Account password updated' });
   } catch (error) {
     next(error);
   }
 };
 
-/* export const putAccountProfileImage = async (
+export const putAccountProfileImage = async (
   req: Request<{}>,
   res: Response,
   next: NextFunction,
@@ -91,10 +93,44 @@ export const patchAccountPassword = async (
   try {
     const userId = req.user_id!;
 
+    console.log(userId, req.file?.path);
+
+    if (!req.file) {
+      res.status(400).json({ success: false, message: 'No file uploaded.' });
+      return;
+    }
+
+    const newFilename = `${userId}.jpeg`;
+    // Use the UPLOAD_DIR constant for the destination path
+    const newFilePath = path.join(
+      __dirname,
+      '../public/img/profile-images',
+      newFilename,
+    );
+
+    fs.rename(req.file.path, newFilePath, (err) => {
+      if (err) {
+        console.error('File renaming failed:', err);
+        // Clean up the temporary file in case of an error.
+        fs.unlinkSync(req.file!.path);
+        return res
+          .status(500)
+          .json({ success: false, message: 'Failed to save file.' });
+      }
+
+      console.log(`File uploaded successfully as: ${newFilePath}`);
+      return res.status(200).json({
+        success: true,
+        message: `Profile image changed".`,
+      });
+    });
   } catch (error) {
+    if (req.file?.path) {
+      fs.unlinkSync(req.file.path);
+    }
     next(error);
   }
-}; */
+};
 
 export const getAccountGoogle = async (
   req: Request,
