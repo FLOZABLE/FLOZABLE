@@ -6,9 +6,11 @@ import {
   getAccountProfile,
   patchAccountInfo,
   patchAccountPassword,
+  putAccountProfileImage,
 } from '../controllers/accountController';
 import { authMiddleware } from '../middlewares/authMiddleware';
 import { googleErrorHandler } from '../middlewares/errorHandler';
+import { uploadMiddleware } from '../middlewares/uploadMiddleware';
 import { validate } from '../middlewares/validationMiddleWare';
 import {
   getAccountProfileParamsSchema,
@@ -26,6 +28,13 @@ accountRouter.patch(
   authMiddleware,
   validate(patchAccountInfoBodySchema, 'body'),
   patchAccountInfo,
+);
+
+accountRouter.put(
+  '/profile/image',
+  authMiddleware,
+  uploadMiddleware.single('file'),
+  putAccountProfileImage,
 );
 
 accountRouter.patch(
