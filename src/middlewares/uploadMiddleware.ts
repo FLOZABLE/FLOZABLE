@@ -1,18 +1,23 @@
 // --- Multer Storage Configuration ---
 
+import * as fs from 'fs';
 import path from 'path';
 import multer from 'multer';
 
-const UPLOAD_DIR = path.join(__dirname, '/public/img/profile-images');
+const UPLOAD_DIR = path.join(__dirname, '../public/img/profile-images');
 const MAX_FILE_SIZE_MB = 5;
 
-// This configures how files are stored.
+if (!fs.existsSync(UPLOAD_DIR)) {
+  fs.mkdirSync(UPLOAD_DIR, { recursive: true });
+}
+
 const storage = multer.diskStorage({
   destination: (_req, _file, cb) => {
     cb(null, UPLOAD_DIR);
   },
   filename: (_req, file, cb) => {
-    // Generate a unique filename to prevent overwriting existing files
+    // Generate a unique filename to prevent collisions.
+    // We'll rename it later in the controller.
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
     cb(
       null,
@@ -29,7 +34,6 @@ export const uploadMiddleware = multer({
   },
   fileFilter: (_req, file, cb) => {
     // Basic file type validation (e.g., allow only images or documents)
-    // You can customize this based on your needs.
     const allowedMimeTypes = [
       'image/jpeg',
       'image/png',
