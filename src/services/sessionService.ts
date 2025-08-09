@@ -22,3 +22,13 @@ export const getUserIdByToken = async (token: string | undefined) => {
 export const deleteSession = async (token: string) => {
   await redisClient.del(`session:${token}`);
 };
+
+export const extendSession = async (token: string | undefined) => {
+  if (!token) return;
+  
+  await redisClient.expire(
+    `session:${token}`,
+    REDIS_TTL.SESSION_EXTENDED_EXP,
+    'GT',
+  );
+};
