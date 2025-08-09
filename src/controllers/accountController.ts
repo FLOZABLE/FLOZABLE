@@ -14,6 +14,7 @@ import {
   getCachedUserGroups,
   getCacheUserGoogleAccessToken,
 } from '../services/cacheService';
+import { extendSession } from '../services/sessionService';
 import { getSubjects } from '../services/subjectService';
 import {
   GetAccountProfileParams,
@@ -30,6 +31,11 @@ export const getAccount = async (
   try {
     //! can be used because it passed the middleware
     const userId = req.user_id!;
+
+    const token =
+      req.headers.authorization?.split(' ')[1] || req.cookies?.token;
+
+    extendSession(token);
 
     const userinfo = await getCachedUser({ userId });
 
