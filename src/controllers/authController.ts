@@ -4,6 +4,7 @@ import { nanoid } from 'nanoid';
 
 import config from '../config/config';
 import prisma from '../libs/prisma';
+import { nowSec } from '../libs/utils';
 import {
   createUser,
   googleOauth2client,
@@ -19,7 +20,9 @@ import {
 import { createSubject } from '../services/subjectService';
 import {
   GetAuthGoogleCallbackQuery,
+  PostAuthLoginAppBody,
   PostAuthLoginBody,
+  PostAuthTokenVerifyBody,
   PostSignupBody,
 } from '../types/authTypes';
 
@@ -76,6 +79,52 @@ export const postAuthLogin = async (
     setSessionCookie(res, token);
 
     res.send({ success: true, token });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const postAuthLoginApp = async (
+  req: Request<{}, {}, PostAuthLoginAppBody>,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const { email, password, device_id, device_name, brand } = req.body;
+
+    const user = await loginUser({ email, password });
+    const token = await createSession(user.user_id);
+
+    await prisma.devices.deleteMany({
+      where: {
+        device_id,
+      },
+    });
+
+    const created_at = nowSec();
+
+    const userId = user.user_id;
+
+    prisma.devices.create({
+      data: {
+        device_id,
+        user_id: userId,
+        brand,
+        name: device_name,
+        token,
+        created_at,
+      },
+    });
+
+    setSessionCookie(res, token);
+
+    res.send({
+      success: true,
+      data: {
+        user_id: userId,
+        token,
+      },
+    });
   } catch (error) {
     next(error);
   }
@@ -214,6 +263,37 @@ export const getAuthGoogleCallback = async (
     );
 
     return res.redirect(config.nextServer + '/dashboard?welcome=true');
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const postAuthTokenVerify = async (
+  req: Request<{}, {}, PostAuthTokenVerifyBody>,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const userId = req.user_id!;
+
+    const { token, device_id } = req.body;
+
+    const device = await prisma.devices.findFirst({
+      where: {
+        device_id,
+        token,
+        user_id: userId,
+      },
+    });
+
+    console.log(device, req.body);
+
+    if (!device) {
+      res.send();
+      return;
+    }
+
+    res.send({ success: true });
   } catch (error) {
     next(error);
   }
