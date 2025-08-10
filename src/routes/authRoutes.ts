@@ -3,15 +3,19 @@ import { Router } from 'express';
 import {
   getAuthGoogleCallback,
   postAuthLogin,
+  postAuthLoginApp,
   postAuthLogout,
   postAuthSignup,
+  postAuthTokenVerify,
 } from '../controllers/authController';
 import { authMiddleware } from '../middlewares/authMiddleware';
 import { validate } from '../middlewares/validationMiddleWare';
 import {
   getAuthGoogleCallbackSchema,
+  postAuthLoginAppSchema,
   postAuthLoginSchema,
   postAuthSignupSchema,
+  postAuthTokenVerifySchema,
 } from '../schemas/authSchemas';
 
 const authRouter = Router();
@@ -23,6 +27,18 @@ authRouter.post(
 );
 
 authRouter.post('/login', validate(postAuthLoginSchema, 'body'), postAuthLogin);
+
+authRouter.post(
+  '/login/app',
+  validate(postAuthLoginAppSchema, 'body'),
+  postAuthLoginApp,
+);
+
+authRouter.post(
+  '/token/verify',
+  validate(postAuthTokenVerifySchema, 'body'),
+  postAuthTokenVerify,
+);
 
 authRouter.post('/logout', authMiddleware, postAuthLogout);
 

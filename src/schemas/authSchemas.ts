@@ -1,6 +1,7 @@
 import Joi from 'joi';
 
 import { accountSchemas } from './accountSchemas';
+import { deviceSchemas } from './deviceSchemas';
 import { googleSchemas } from './googleSchemas';
 import { otherSchemas } from './otherSchemas';
 
@@ -16,6 +17,19 @@ export const postAuthSignupSchema = Joi.object({
 export const postAuthLoginSchema = Joi.object({
   email: accountSchemas.email,
   password: accountSchemas.password,
+});
+
+export const postAuthLoginAppSchema = Joi.object({
+  email: accountSchemas.email,
+  password: accountSchemas.password,
+  brand: deviceSchemas.brand,
+  device_name: deviceSchemas.name,
+  device_id: deviceSchemas.device_id,
+});
+
+export const postAuthTokenVerifySchema = Joi.object({
+  device_id: deviceSchemas.device_id,
+  token: deviceSchemas.token,
 });
 
 export const getAuthGoogleCallbackSchema = Joi.object({
