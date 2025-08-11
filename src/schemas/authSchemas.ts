@@ -14,6 +14,16 @@ export const postAuthSignupSchema = Joi.object({
   timezone: otherSchemas.timezone,
 });
 
+export const postAuthSignupAppSchema = Joi.object({
+  email: accountSchemas.email,
+  name: accountSchemas.name,
+  password: accountSchemas.password,
+  timezone: otherSchemas.timezone,
+  brand: deviceSchemas.brand,
+  device_name: deviceSchemas.name,
+  device_id: deviceSchemas.device_id,
+});
+
 export const postAuthLoginSchema = Joi.object({
   email: accountSchemas.email,
   password: accountSchemas.password,

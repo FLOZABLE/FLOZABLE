@@ -23,6 +23,7 @@ import {
   PostAuthLoginAppBody,
   PostAuthLoginBody,
   PostAuthTokenVerifyBody,
+  PostSignupAppBody,
   PostSignupBody,
 } from '../types/authTypes';
 
@@ -60,6 +61,65 @@ export const postAuthSignup = async (
     setSessionCookie(res, token);
 
     res.send({ success: true });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const postAuthSignupApp = async (
+  req: Request<{}, {}, PostSignupAppBody>,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const { name, email, timezone, password, brand, device_id, device_name } =
+      req.body;
+
+    const newUserResponse = await createUser({
+      name,
+      email,
+      timezone,
+      password,
+    });
+    const newUser = newUserResponse.data?.user;
+
+    if (!newUserResponse.success || !newUser) {
+      res.send(newUserResponse);
+      return;
+    }
+
+    await createSubject({
+      name: 'others',
+      color: '#000000',
+      user: {
+        connect: { user_id: newUser.user_id },
+      },
+    });
+
+    const token = await createSession(newUser.user_id);
+
+    const created_at = nowSec();
+
+    await prisma.devices.create({
+      data: {
+        device_id,
+        user_id: newUser.user_id,
+        brand,
+        name: device_name,
+        token,
+        created_at,
+      },
+    });
+
+    setSessionCookie(res, token);
+
+    res.send({
+      success: true,
+      data: {
+        user_id: newUser.user_id,
+        token,
+      },
+    });
   } catch (error) {
     next(error);
   }
@@ -105,7 +165,7 @@ export const postAuthLoginApp = async (
 
     const userId = user.user_id;
 
-    prisma.devices.create({
+    await prisma.devices.create({
       data: {
         device_id,
         user_id: userId,
@@ -286,7 +346,7 @@ export const postAuthTokenVerify = async (
       },
     });
 
-    console.log(device, req.body);
+    console.log(device, req.body, userId);
 
     if (!device) {
       res.send();
