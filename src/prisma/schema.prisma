@@ -96,7 +96,7 @@ model devices {
   created_at         Int
   name               String? @db.VarChar(30)
   brand              String? @db.VarChar(30)
-  token              String  @db.VarChar(20)
+  token              String  @db.VarChar(32)
   notification_token String? @db.VarChar(60)
 
   user users @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: Cascade)

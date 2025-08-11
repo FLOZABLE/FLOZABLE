@@ -6,6 +6,7 @@ import {
   postAuthLoginApp,
   postAuthLogout,
   postAuthSignup,
+  postAuthSignupApp,
   postAuthTokenVerify,
 } from '../controllers/authController';
 import { authMiddleware } from '../middlewares/authMiddleware';
@@ -14,6 +15,7 @@ import {
   getAuthGoogleCallbackSchema,
   postAuthLoginAppSchema,
   postAuthLoginSchema,
+  postAuthSignupAppSchema,
   postAuthSignupSchema,
   postAuthTokenVerifySchema,
 } from '../schemas/authSchemas';
@@ -26,6 +28,12 @@ authRouter.post(
   postAuthSignup,
 );
 
+authRouter.post(
+  '/signup/app',
+  validate(postAuthSignupAppSchema, 'body'),
+  postAuthSignupApp,
+);
+
 authRouter.post('/login', validate(postAuthLoginSchema, 'body'), postAuthLogin);
 
 authRouter.post(
@@ -36,6 +44,7 @@ authRouter.post(
 
 authRouter.post(
   '/token/verify',
+  authMiddleware,
   validate(postAuthTokenVerifySchema, 'body'),
   postAuthTokenVerify,
 );
