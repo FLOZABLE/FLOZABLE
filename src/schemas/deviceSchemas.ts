@@ -24,9 +24,9 @@ export const deviceSchemas = {
     'string.max': 'Device brand cannot exceed 30 characters.',
   }),
 
-  token: Joi.string().max(20).messages({
+  token: Joi.string().max(32).messages({
     'string.empty': 'Token cannot be empty.',
-    'string.max': 'Token cannot exceed 20 characters.',
+    'string.max': 'Token cannot exceed 32 characters.',
   }),
 
   notification_token: Joi.string().max(60).allow(null).messages({
