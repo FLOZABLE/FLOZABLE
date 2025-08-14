@@ -57,7 +57,17 @@ export const getMyGroups = async (
   try {
     const userId = req.user_id!;
 
-    const myGroups = await getCachedUserGroups({ userId });
+    const myGroupIds = await getCachedUserGroups({ userId });
+
+    const myGroups: RawGroup[] = await prisma.groups.findMany({
+      select: groupSelect,
+      where: {
+        group_id: {
+          in: myGroupIds,
+        },
+      },
+    });
+
     res.send({ data: { groups: myGroups } });
   } catch (error) {
     next(error);
