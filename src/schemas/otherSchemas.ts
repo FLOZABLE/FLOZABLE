@@ -19,4 +19,10 @@ export const otherSchemas = {
     'boolean.base': 'Like must be true or false.',
     'any.required': 'Like is required.',
   }),
+  query: Joi.string().min(2).max(20).required().trim().messages({
+    'string.min': 'Query must be at least 2 characters long.',
+    'string.max': 'Query cannot exceed 20 characters.',
+    'string.empty': 'Query cannot be empty.',
+    'any.required': 'Query is required.',
+  }),
 };

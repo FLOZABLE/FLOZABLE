@@ -11,6 +11,11 @@ export interface GetFriendAllStatusQuery {
   timezone: string;
 }
 
+// GET /friend/search
+export interface GetFriendSearchQuery {
+  query: string;
+}
+
 // POST /friend/:friend_Id/request/reply
 export interface PostFriendRequestReplyBody {
   accepted: boolean;
