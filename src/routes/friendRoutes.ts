@@ -4,6 +4,7 @@ import {
   deleteFriend,
   getFriendAll,
   getFriendAllStatus,
+  getFriendSearch,
   postFriendRequest,
   postFriendRequestReply,
 } from '../controllers/friendController';
@@ -13,6 +14,7 @@ import {
   friendIdParamsSchema,
   friendshipIdParamsSchema,
   getFriendAllStatusSchema,
+  getFriendSearchSchema,
   postFriendRequestReplyBodySchema,
 } from '../schemas/friendSchemas';
 
@@ -25,6 +27,12 @@ friendRouter.get(
   authMiddleware,
   validate(getFriendAllStatusSchema, 'query'),
   getFriendAllStatus,
+);
+
+friendRouter.get(
+  '/search',
+  validate(getFriendSearchSchema, 'query'),
+  getFriendSearch,
 );
 
 friendRouter.delete(

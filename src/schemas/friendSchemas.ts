@@ -13,6 +13,10 @@ export const friendSchemas = {
   }),
 };
 
+export const friendshipIdParamsSchema = Joi.object({
+  friendship_id: friendSchemas.friendship_id,
+});
+
 export const friendIdParamsSchema = Joi.object({
   friend_id: accountSchemas.user_id,
 });
@@ -22,8 +26,9 @@ export const getFriendAllStatusSchema = Joi.object({
   timezone: otherSchemas.timezone,
 });
 
-export const friendshipIdParamsSchema = Joi.object({
-  friendship_id: friendSchemas.friendship_id,
+// GET /friend/search
+export const getFriendSearchSchema = Joi.object({
+  query: otherSchemas.query,
 });
 
 // POST /friend/:friend_id/request
