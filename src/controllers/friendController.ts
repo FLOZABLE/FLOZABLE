@@ -14,6 +14,7 @@ import {
   FriendIdParams,
   FriendshipIdParams,
   GetFriendAllStatusQuery,
+  GetFriendSearchQuery,
   PostFriendRequestReplyBody,
 } from '../types/friendTypes';
 
@@ -75,6 +76,35 @@ export const getFriendAllStatus = async (
     }));
 
     res.send({ success: true, data: { friends: formattedFriends } });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getFriendSearch = async (
+  req: Request<{}, {}, {}, GetFriendSearchQuery>,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const { query } = req.query;
+
+    console.log(query, 'query');
+
+    const users = await prisma.users.findMany({
+      where: {
+        name: {
+          contains: query,
+        },
+      },
+      select: {
+        user_id: true,
+        name: true,
+        timezone: true,
+      },
+      take: 10,
+    });
+    res.send({ success: true, data: { users } });
   } catch (error) {
     next(error);
   }
