@@ -59,7 +59,7 @@ export const getMyGroups = async (
 
     const myGroupIds = await getCachedUserGroups({ userId });
 
-    const myGroups: RawGroup[] = await prisma.groups.findMany({
+    const rawMyGroups: RawGroup[] = await prisma.groups.findMany({
       select: groupSelect,
       where: {
         group_id: {
@@ -68,7 +68,9 @@ export const getMyGroups = async (
       },
     });
 
-    res.send({ data: { groups: myGroups } });
+    const formattedMyGroups = formatGroups(rawMyGroups);
+
+    res.send({ data: { groups: formattedMyGroups } });
   } catch (error) {
     next(error);
   }
@@ -208,6 +210,7 @@ export const postGroupJoin = async (
 
     res.json({
       success: true,
+      status: 200,
       message: `Joined group ${group.name}`,
       data: { group },
     });
