@@ -18,6 +18,7 @@ import notificationRouter from './routes/notificationRoutes';
 import planRouter from './routes/planRoutes';
 import rankingRouter from './routes/rankingRoutes';
 import subjectRoutes from './routes/subjectRoutes';
+import themeRouter from './routes/themeRoutes';
 
 const app = express();
 
@@ -90,6 +91,7 @@ app.use('/plan', apiLimiter, planRouter);
 app.use('/friend', apiLimiter, friendRouter);
 app.use('/notification', apiLimiter, notificationRouter);
 app.use('/chat', apiLimiter, chatRouter);
+app.use('/theme', apiLimiter, themeRouter);
 
 app.use('/{*any}', (_req, res, _next) => {
   res.status(404).json({ error: 'Route not found' });
