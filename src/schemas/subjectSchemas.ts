@@ -1,6 +1,6 @@
 import Joi from 'joi';
 
-export const subjectSchema = {
+export const subjectSchemas = {
   subject_id: Joi.string().length(10).messages({
     'string.empty': 'Subject id cannot be empty.',
   }),
@@ -17,6 +17,6 @@ export const subjectSchema = {
 };
 
 export const putSubjectSchema = Joi.object({
-  name: subjectSchema.name,
-  color: subjectSchema.color,
+  name: subjectSchemas.name,
+  color: subjectSchemas.color,
 });
