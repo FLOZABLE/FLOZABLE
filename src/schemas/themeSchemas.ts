@@ -38,3 +38,11 @@ export const putThemeSchema = Joi.object({
   tags: themeSchema.tags,
   video_id: themeSchema.video_id,
 });
+
+export const postThemeSaveSchema = Joi.object({
+  theme_id: themeSchema.theme_id,
+});
+
+export const postThemeUnsaveSchema = Joi.object({
+  theme_id: themeSchema.theme_id,
+});
