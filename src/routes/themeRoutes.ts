@@ -3,6 +3,7 @@ import { Router } from 'express';
 import {
   getThemeAll,
   getThemeMine,
+  postThemeLike,
   postThemeSave,
   postThemeUnsave,
   putTheme,
@@ -10,6 +11,7 @@ import {
 import { authMiddleware } from '../middlewares/authMiddleware';
 import { validate } from '../middlewares/validationMiddleWare';
 import {
+  postThemeLikeSchema,
   postThemeSaveSchema,
   postThemeUnsaveSchema,
   putThemeSchema,
@@ -40,6 +42,13 @@ themeRouter.post(
   authMiddleware,
   validate(postThemeUnsaveSchema, 'body'),
   postThemeUnsave,
+);
+
+themeRouter.post(
+  '/like',
+  authMiddleware,
+  validate(postThemeLikeSchema, 'body'),
+  postThemeLike,
 );
 
 export default themeRouter;
