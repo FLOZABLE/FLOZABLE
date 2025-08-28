@@ -2,7 +2,10 @@ import { NextFunction, Request, Response } from 'express';
 import { nanoid } from 'nanoid';
 
 import prisma from '../libs/prisma';
+import { themeSelect } from '../queries/themeQueries';
+import { formatThemes } from '../services/themeService';
 import {
+  PostThemeLikeBody,
   PostThemeSaveBody,
   PostThemeUnsaveBody,
   PutThemeBody,
@@ -15,20 +18,11 @@ export const getThemeAll = async (
 ) => {
   try {
     const rawThemes = await prisma.themes.findMany({
-      select: {
-        theme_id: true,
-        theme_likes: true,
-        name: true,
-        description: true,
-        video_id: true,
-        tags: true,
-      },
+      select: themeSelect,
     });
 
-    const themes = rawThemes.map((rawTheme) => ({
-      ...rawTheme,
-      tags: rawTheme.tags.split(','),
-    }));
+    const themes = formatThemes(rawThemes);
+
     res.send({ success: true, data: { themes } });
   } catch (error) {
     next(error);
@@ -44,23 +38,18 @@ export const getThemeMine = async (
     const userId = req.user_id;
 
     const rawThemes = await prisma.themes.findMany({
-      select: {
-        theme_id: true,
-        theme_likes: true,
-        name: true,
-        description: true,
-        video_id: true,
-        tags: true,
-      },
       where: {
-        user_id: userId,
+        used_users: {
+          some: {
+            user_id: userId,
+          },
+        },
       },
+      select: themeSelect,
     });
 
-    const themes = rawThemes.map((rawTheme) => ({
-      ...rawTheme,
-      tags: rawTheme.tags.split(','),
-    }));
+    const themes = formatThemes(rawThemes);
+
     res.send({ success: true, data: { themes } });
   } catch (error) {
     next(error);
@@ -74,6 +63,7 @@ export const putTheme = async (
 ) => {
   try {
     const { name, description, tags, video_id } = req.body;
+    console.log(video_id);
     const theme_id = nanoid(10);
     const userId = req.user_id!;
 
@@ -132,6 +122,8 @@ export const postThemeUnsave = async (
 
     const { theme_id } = req.body;
 
+    console.log(theme_id, userId);
+
     await prisma.user_themes.deleteMany({
       where: {
         user_id: userId,
@@ -140,6 +132,43 @@ export const postThemeUnsave = async (
     });
 
     res.send({ success: true, message: 'Theme unsaved' });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const postThemeLike = async (
+  req: Request<{}, {}, PostThemeLikeBody>,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const userId = req.user_id!;
+    const { like, theme_id } = req.body;
+
+    console.log(like, 'gd', theme_id, userId);
+
+    if (like) {
+      await prisma.theme_likes.create({
+        data: {
+          user_id: userId,
+          theme_id,
+        },
+      });
+    } else {
+      await prisma.theme_likes.delete({
+        where: {
+          user_id_theme_id: {
+            theme_id,
+            user_id: userId,
+          },
+        },
+      });
+    }
+
+    res.json({
+      success: true,
+    });
   } catch (error) {
     next(error);
   }

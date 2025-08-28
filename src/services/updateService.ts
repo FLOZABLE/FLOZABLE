@@ -23,6 +23,7 @@ readline.question(
   3: Mariadb - split files
   4: Mariadb - update files
   5: Mariadb - insert
+  6: Fix missing chatrooms
 
   Your choice: `,
   async (rawOption) => {
@@ -108,6 +109,8 @@ readline.question(
         );
     } else if (option === 5) {
       await mariadbApplyUpdate(outputDirectory, ['subject_timelines']);
+    } else if (option === 6) {
+      await fixMissingChatrooms();
     } else {
       console.log('Invalid option selected.');
     }
@@ -886,3 +889,58 @@ export async function updateUsersSql(): Promise<void> {
     );
   }
 }
+
+/**
+ * Finds all groups that do not have a chatroom and creates one for each.
+ */
+
+const fixMissingChatrooms = async () => {
+  try {
+    // 1. Find all groups that do not have any associated chatrooms
+    const groupsWithoutChatroom = await prisma.groups.findMany({
+      where: {
+        group_chatrooms: {
+          none: {}, // Filter for groups where the group_chatrooms relationship is empty
+        },
+      },
+      select: {
+        group_id: true,
+        name: true,
+        leader: true,
+      },
+    });
+
+    if (groupsWithoutChatroom.length === 0) {
+      console.log('All groups have chatrooms. No action needed.');
+      return { success: true, message: 'All groups have chatrooms.' };
+    }
+
+    console.log(
+      `Found ${groupsWithoutChatroom.length} groups without chatrooms. Creating now...`,
+    );
+
+    // 2. Iterate over each group and create a new chatroom for it
+    for (const group of groupsWithoutChatroom) {
+      const chatroom_id = nanoid(10);
+      await prisma.chatrooms.create({
+        data: {
+          chatroom_id,
+          name: group.name,
+          type: 'group',
+          group_id: group.group_id,
+        },
+      });
+    }
+
+    return {
+      success: true,
+      message: 'Successfully created chatrooms for all missing groups.',
+    };
+  } catch (error) {
+    console.error('Error in backfillGroupChatrooms:', error);
+    return {
+      success: false,
+      message: 'An unexpected error occurred during backfill.',
+    };
+  }
+};
