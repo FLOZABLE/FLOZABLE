@@ -1,5 +1,7 @@
 import Joi from 'joi';
 
+import { otherSchemas } from './otherSchemas';
+
 export const themeSchema = {
   theme_id: Joi.string().length(10).messages({
     'string.empty': 'Theme id cannot be empty.',
@@ -45,4 +47,9 @@ export const postThemeSaveSchema = Joi.object({
 
 export const postThemeUnsaveSchema = Joi.object({
   theme_id: themeSchema.theme_id,
+});
+
+export const postThemeLikeSchema = Joi.object({
+  theme_id: themeSchema.theme_id,
+  like: otherSchemas.like,
 });

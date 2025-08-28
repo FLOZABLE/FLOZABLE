@@ -99,6 +99,8 @@ export const registerMainIoEvents = () => {
             return;
           }
 
+          socket.join(groupId);
+
           if (!friends.length) return;
 
           const rawGroup = await prisma.groups.findFirst({

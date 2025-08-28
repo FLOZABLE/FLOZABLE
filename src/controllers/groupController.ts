@@ -16,6 +16,7 @@ import {
   remCachedChatroomMember,
 } from '../services/cacheService';
 import { formatGroups } from '../services/groupService';
+import { getMainIo } from '../sockets/mainIo';
 import {
   GetGroupMembersParams,
   GetGroupMembersQuery,
@@ -208,6 +209,16 @@ export const postGroupJoin = async (
         : null,
     ]);
 
+    if (groupChatroom) {
+      const mainIo = getMainIo();
+
+      const sockets = await mainIo?.in(userId).fetchSockets();
+
+      sockets?.forEach((socket) => {
+        socket.join(`chatroom:${groupChatroom.chatroom_id}`);
+      });
+    }
+
     res.json({
       success: true,
       status: 200,
@@ -354,13 +365,21 @@ export const putGroup = async (
     //create chatroom for group
     const chatroom_id = nanoid(10);
 
-    prisma.chatrooms.create({
+    await prisma.chatrooms.create({
       data: {
         chatroom_id,
         name,
         type: 'group',
         group_id,
       },
+    });
+
+    const mainIo = getMainIo();
+
+    const sockets = await mainIo?.in(userId).fetchSockets();
+
+    sockets?.forEach((socket) => {
+      socket.join(`chatroom:${chatroom_id}`);
     });
 
     const [newGroup] = formatGroups([
