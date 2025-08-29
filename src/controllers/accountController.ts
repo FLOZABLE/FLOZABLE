@@ -149,7 +149,7 @@ export const getAccountGoogle = async (
     const googleAccessToken = await getCacheUserGoogleAccessToken(userId);
 
     if (!googleAccessToken) {
-      const response = AppErrorFactory.tokenMissing();
+      const response = AppErrorFactory.tokenMissing('');
       res.status(response.status).send(response);
       return;
     }
