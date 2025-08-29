@@ -10,9 +10,12 @@ import {
   delCachedChatroomMembers,
   delCachedUserGroups,
   filterCachedUserGroups,
+  getCachedUser,
   getCachedUserGroups,
   getCachedUsersStatus,
   getCachedUsersStudyTime,
+  getCachedUserStatus,
+  getCachedUserStudyTime,
   remCachedChatroomMember,
 } from '../services/cacheService';
 import { formatGroups } from '../services/groupService';
@@ -167,7 +170,7 @@ export const postGroupJoin = async (
   try {
     const userId = req.user_id!;
     const { group_id } = req.params;
-    const { password } = req.body;
+    const { password, timezone } = req.body;
 
     // Fetch group with password and selected fields
     const rawGroup = await prisma.groups.findFirst({
@@ -209,9 +212,30 @@ export const postGroupJoin = async (
         : null,
     ]);
 
-    if (groupChatroom) {
-      const mainIo = getMainIo();
+    const mainIo = getMainIo();
 
+    const today = DateTime.now().setZone(timezone);
+    const timezoneOffset = Math.floor(today.offset / 60);
+
+    const [studyTime, status, userInfo] = await Promise.all([
+      getCachedUserStudyTime({
+        userId: userId,
+        viewer: 'day',
+        timezoneOffset,
+      }),
+      getCachedUserStatus(userId),
+      getCachedUser({ userId }),
+    ]);
+
+    const member = {
+      ...userInfo,
+      study_time: studyTime,
+      status,
+    };
+
+    mainIo?.to(group_id).emit('group:new_member', { member });
+
+    if (groupChatroom) {
       const sockets = await mainIo?.in(userId).fetchSockets();
 
       sockets?.forEach((socket) => {

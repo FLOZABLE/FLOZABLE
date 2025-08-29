@@ -1,5 +1,4 @@
 import { Prisma } from '../generated/prisma';
-
 import { groupSelect } from '../queries/groupQueries';
 
 //POST /group/:group_id/join
@@ -10,6 +9,7 @@ export type PostGroupJoinParams = {
 //POST /group/:group_id/join
 export type PostGroupJoinBody = {
   password: string | null;
+  timezone: string;
 };
 
 //POST /group/:group_id/leave

@@ -14,8 +14,8 @@ export const AppErrorFactory = {
       code: 'AUTH_INVALID_PASSWORD',
     }),
 
-  tokenMissing: () =>
-    createHttpError(401, 'Authentication token is missing', {
+  tokenMissing: (message: string = 'Authentication token is missing') =>
+    createHttpError(401, message, {
       reason: 'No token provided in headers or cookies',
       code: 'AUTH_TOKEN_MISSING',
     }),

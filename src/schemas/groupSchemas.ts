@@ -73,6 +73,7 @@ export const postGroupJoinParamsSchema = Joi.object({
 
 export const postGroupJoinBodySchema = Joi.object({
   password: groupSchemas.password,
+  timezone: otherSchemas.timezone,
 });
 
 export const postGroupLikeParamsSchema = Joi.object({
