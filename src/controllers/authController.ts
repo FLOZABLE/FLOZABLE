@@ -20,6 +20,7 @@ import {
 import { createSubject } from '../services/subjectService';
 import {
   GetAuthGoogleCallbackQuery,
+  PostAuthAppGoogleBody,
   PostAuthLoginAppBody,
   PostAuthLoginBody,
   PostAuthTokenVerifyBody,
@@ -165,6 +166,148 @@ export const postAuthLoginApp = async (
 
     const userId = user.user_id;
 
+    await prisma.devices.create({
+      data: {
+        device_id,
+        user_id: userId,
+        brand,
+        name: device_name,
+        token,
+        created_at,
+      },
+    });
+
+    setSessionCookie(res, token);
+
+    res.send({
+      success: true,
+      data: {
+        user_id: userId,
+        token,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * Handles Google authentication for mobile applications.
+ *
+ * This function processes the authorization code from a mobile app's Google login flow.
+ * It handles three cases:
+ * 1. The Google account's email already exists in the database. The user is logged in.
+ * 2. The Google account's email is new. A new user account is created.
+ * 3. The OAuth token exchange fails. An error response is returned.
+ *
+ * All flows result in a session token being created and a new device record being
+ * stored in the database, with any old device records for the same device ID being removed first.
+ *
+ * @param req The Express request object containing the Google auth code and device info.
+ * @param res The Express response object.
+ * @param next The Express next function for error handling.
+ */
+export const postAuthAppGoogle = async (
+  req: Request<{}, {}, PostAuthAppGoogleBody>,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const { code, timezone, device_id, device_name, brand } = req.body;
+
+    const auth = googleOauth2client();
+    const response = await auth?.getToken(code);
+
+    if (!auth || response?.res?.status !== 200 || !response.tokens) {
+      res.status(400).json({
+        success: false,
+        message:
+          'Failed to retrieve access token from Google. Please try signing in again.',
+        error: {
+          reason: 'OAuth token exchange failed',
+          status: response?.res?.status,
+        },
+      });
+      return;
+    }
+
+    auth.setCredentials(response.tokens);
+
+    // Fetch user info from Google
+    const oauth2 = google.oauth2({ auth, version: 'v2' });
+    const userInfoResponse = await oauth2.userinfo.get();
+    const { email, name } = userInfoResponse.data;
+
+    if (!email) {
+      res.status(400).json({
+        success: false,
+        message: 'Failed to retrieve email from Google account.',
+        error: { reason: 'Missing email in Google user info' },
+      });
+      return;
+    }
+
+    let userId: string;
+
+    // Check if user already exists
+    const existingUser = await prisma.users.findFirst({
+      where: { email },
+      select: { user_id: true },
+    });
+
+    if (existingUser?.user_id) {
+      // Case 1: Existing user
+      userId = existingUser.user_id;
+
+      await prisma.users.update({
+        where: { user_id: userId },
+        data: { google_refresh_token: response.tokens.refresh_token },
+      });
+    } else {
+      // Case 2: New user
+      const password = nanoid(10);
+      const newUserResponse = await createUser({
+        name,
+        email,
+        timezone,
+        password,
+      });
+      const newUser = newUserResponse.data?.user;
+
+      if (!newUserResponse.success || !newUser) {
+        res.status(400).json({
+          success: false,
+          message: 'Failed to create new user account.',
+        });
+        return;
+      }
+      userId = newUser.user_id;
+
+      // Create a default subject for the new user
+      await createSubject({
+        name: 'others',
+        color: '#000000',
+        user: { connect: { user_id: userId } },
+      });
+    }
+
+    // Common logic for both new and existing users
+    const token = await createSession(userId);
+    cacheUserGoogleAccessToken(
+      userId,
+      response.tokens.access_token,
+      response.tokens.expiry_date,
+    );
+
+    // Remove any previous device records for this device ID to prevent duplicates
+    await prisma.devices.deleteMany({
+      where: {
+        device_id,
+      },
+    });
+
+    // Create a new device record
+    const created_at = nowSec();
     await prisma.devices.create({
       data: {
         device_id,

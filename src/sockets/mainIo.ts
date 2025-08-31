@@ -34,8 +34,10 @@ export const registerMainIoEvents = () => {
   mainIo.on('connection', async (socket) => {
     try {
       const cookies = socket.handshake.headers.cookie;
+      console.log(cookies, 'cookie');
       if (!cookies) return;
       const parsedCookies = cookie.parse(cookies);
+      console.log(parsedCookies);
       if (!parsedCookies.token) return;
       const userId = await getUserIdByToken(parsedCookies.token);
       if (!userId) return;

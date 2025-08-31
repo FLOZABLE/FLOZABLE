@@ -31,3 +31,8 @@ export interface GetAuthGoogleCallbackQuery {
   code: string;
   state: string;
 }
+
+export interface PostAuthAppGoogleBody extends PostAuthLoginAppBody {
+  code: string;
+  timezone: string;
+}
