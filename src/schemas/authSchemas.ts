@@ -46,3 +46,10 @@ export const getAuthGoogleCallbackSchema = Joi.object({
   code: googleSchemas.code,
   state: googleSchemas.state,
 }).unknown(true);
+
+export const postAuthGoogleAppSchema = Joi.object({
+  code: googleSchemas.code,
+  brand: deviceSchemas.brand,
+  device_name: deviceSchemas.name,
+  device_id: deviceSchemas.device_id,
+});
