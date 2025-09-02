@@ -2,6 +2,7 @@ import { Router } from 'express';
 
 import {
   getAuthGoogleCallback,
+  postAuthAppGoogle,
   postAuthLogin,
   postAuthLoginApp,
   postAuthLogout,
@@ -13,6 +14,7 @@ import { authMiddleware } from '../middlewares/authMiddleware';
 import { validate } from '../middlewares/validationMiddleWare';
 import {
   getAuthGoogleCallbackSchema,
+  postAuthGoogleAppSchema,
   postAuthLoginAppSchema,
   postAuthLoginSchema,
   postAuthSignupAppSchema,
@@ -55,6 +57,12 @@ authRouter.get(
   '/google/callback',
   validate(getAuthGoogleCallbackSchema, 'query'),
   getAuthGoogleCallback,
+);
+
+authRouter.post(
+  '/google/app',
+  validate(postAuthGoogleAppSchema, 'body'),
+  postAuthAppGoogle,
 );
 
 export default authRouter;
