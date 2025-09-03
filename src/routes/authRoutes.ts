@@ -2,6 +2,7 @@ import { Router } from 'express';
 
 import {
   getAuthGoogleCallback,
+  getAuthToken,
   postAuthAppGoogle,
   postAuthLogin,
   postAuthLoginApp,
@@ -64,5 +65,7 @@ authRouter.post(
   validate(postAuthGoogleAppSchema, 'body'),
   postAuthAppGoogle,
 );
+
+authRouter.get('/token', authMiddleware, getAuthToken);
 
 export default authRouter;
