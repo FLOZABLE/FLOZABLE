@@ -25,13 +25,13 @@ const app = express();
 app.set('trust proxy', 1);
 
 const publicLimiter = rateLimit({
-  windowMs: 1 * 60 * 1000,
-  max: 100,
+  windowMs: 1 * 30 * 1000,
+  max: 200,
 });
 
 const apiLimiter = rateLimit({
-  windowMs: 1 * 60 * 1000,
-  max: 100,
+  windowMs: 1 * 30 * 1000,
+  max: 200,
   message: 'Too many requests from this IP, please try again later.',
 });
 

@@ -311,7 +311,7 @@ export const registerMediaIoIoEvents = async () => {
        */
       socket.on('getRouterRtpCapabilities', async (callback) => {
         try {
-          console.log(activeGroup)
+          console.log(activeGroup);
           if (!activeGroup) return;
 
           const router = await getRouter(activeGroup, worker);
@@ -412,6 +412,7 @@ export const registerMediaIoIoEvents = async () => {
               producer.close();
             });
 
+            //mediaIo?.to(activeGroup).emit(`newProducer:${userId}`, kind.audio ? "audio" : "video");
             mediaIo?.to(activeGroup).emit(`newProducer:${userId}`, kind);
 
             // Send back to the client the Producer's id
@@ -506,7 +507,10 @@ export const registerMediaIoIoEvents = async () => {
           roomProducers.map((producer) => {
             mediaIo
               ?.to(userId)
-              .emit(`newProducer:${producer.user_id}`, producer.kind);
+              .emit(
+                `newProducer:${producer.user_id}`,
+                producer.kind.audio ? 'audio' : 'video',
+              );
           });
         } catch (err) {
           console.log(err);
