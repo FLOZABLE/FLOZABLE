@@ -65,10 +65,21 @@ export const groupSchemas = {
     'boolean.base': 'Visibility must be true or false.',
     'any.required': 'Visibility is required.',
   }),
+
+  offset: Joi.number().integer().min(0).required().messages({
+    'number.base': 'Offset must be a number.',
+    'number.integer': 'Offset must be an integer.',
+    'number.min': 'Offset must be at least 0.',
+    'any.required': 'Offset is required.',
+  }),
 };
 
-export const postGroupJoinParamsSchema = Joi.object({
-  group_id: groupSchemas.group_id,
+export const getGroupsSchema = Joi.object({
+  query: Joi.alternatives().try(
+    groupSchemas.name.optional(),
+    Joi.string().valid(''),
+  ),
+  offset: groupSchemas.offset,
 });
 
 export const postGroupJoinBodySchema = Joi.object({
@@ -76,7 +87,7 @@ export const postGroupJoinBodySchema = Joi.object({
   timezone: otherSchemas.timezone,
 });
 
-export const postGroupLikeParamsSchema = Joi.object({
+export const groupIdParamsSchema = Joi.object({
   group_id: groupSchemas.group_id,
 });
 
@@ -97,10 +108,6 @@ export const putGroupSchema = Joi.object({
   color: groupSchemas.color,
   goal_hr: groupSchemas.goal_hr,
   visibility: groupSchemas.visibility,
-});
-
-export const getGroupMembersParamsSchema = Joi.object({
-  group_id: groupSchemas.group_id,
 });
 
 export const getGroupMembersQuerySchema = Joi.object({

@@ -3,6 +3,7 @@ import { DateTime } from 'luxon';
 import { nanoid } from 'nanoid';
 
 import { Prisma } from '../generated/prisma';
+import { AppErrorFactory } from '../libs/errors';
 import prisma from '../libs/prisma';
 import { bcryptHash, bcryptVerify, nowSec } from '../libs/utils';
 import { groupSelect } from '../queries/groupQueries';
@@ -23,6 +24,8 @@ import { getMainIo } from '../sockets/mainIo';
 import {
   GetGroupMembersParams,
   GetGroupMembersQuery,
+  GetGroupParams,
+  GetGroupsQuery,
   PostGroupJoinBody,
   PostGroupJoinParams,
   PostGroupLeaveParams,
@@ -32,6 +35,44 @@ import {
   RawGroup,
 } from '../types/groupTypes';
 
+export const getGroup = async (
+  req: Request<GetGroupParams>,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const { group_id } = req.params;
+
+    const rawGroup: RawGroup | null = await prisma.groups.findFirst({
+      select: groupSelect,
+      where: {
+        group_id,
+      },
+    });
+
+    if (!rawGroup) {
+      const response = AppErrorFactory.groupNotFound();
+      res.status(response.status).send(response);
+      return;
+    }
+
+    const [formattedGroup] = formatGroups([rawGroup]);
+
+    res.send({
+      success: true,
+      data: { group: formattedGroup },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * Deprecated
+ * @param _req
+ * @param res
+ * @param next
+ */
 export const getGroupAll = async (
   _req: Request,
   res: Response,
@@ -47,6 +88,48 @@ export const getGroupAll = async (
     res.send({
       success: true,
       data: { groups: formattedGroups, my_groups: [] },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getGroups = async (
+  req: Request<{}, {}, {}, GetGroupsQuery>,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const { query } = req.query;
+    const offset = parseInt(req.query.offset);
+
+    console.log(query, 'query');
+
+    const rawGroups: RawGroup[] = await prisma.groups.findMany({
+      select: groupSelect,
+      where: {
+        OR: [
+          {
+            name: {
+              contains: query,
+            },
+          },
+          {
+            tags: {
+              contains: query,
+            },
+          },
+        ],
+      },
+      take: 30,
+      skip: offset,
+    });
+
+    const formattedGroups = formatGroups(rawGroups);
+
+    res.send({
+      success: true,
+      data: { groups: formattedGroups },
     });
   } catch (error) {
     next(error);

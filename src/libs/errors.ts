@@ -104,6 +104,12 @@ export const AppErrorFactory = {
       code: 'CHATROOM_ACCESS_DENIED',
     }),
 
+  groupNotFound: () =>
+    createHttpError(404, 'Group not found', {
+      reason: 'The specified group does not exist in the database',
+      code: 'GROUP_NOT_FOUND',
+    }),
+
   // --- General / Fallback ---
   unknownServerError: () =>
     createHttpError(500, 'Something went wrong', {

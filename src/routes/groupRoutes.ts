@@ -1,8 +1,9 @@
 import { Router } from 'express';
 
 import {
-  getGroupAll,
+  getGroup,
   getGroupMembers,
+  getGroups,
   getMyGroups,
   postGroupJoin,
   postGroupLeave,
@@ -12,23 +13,24 @@ import {
 import { authMiddleware } from '../middlewares/authMiddleware';
 import { validate } from '../middlewares/validationMiddleWare';
 import {
-  getGroupMembersParamsSchema,
   getGroupMembersQuerySchema,
-  postGroupJoinParamsSchema,
-  postGroupLikeParamsSchema,
+  getGroupsSchema,
+  groupIdParamsSchema,
   putGroupSchema,
 } from '../schemas/groupSchemas';
 
 const groupRouter = Router();
 
-groupRouter.get('/all', getGroupAll);
+//groupRouter.get('/all', getGroupAll);
+
+groupRouter.get('/search', validate(getGroupsSchema, 'query'), getGroups);
 
 groupRouter.get('/mine', authMiddleware, getMyGroups);
 
 groupRouter.get(
   '/:group_id/members',
   authMiddleware,
-  validate(getGroupMembersParamsSchema, 'params'),
+  validate(groupIdParamsSchema, 'params'),
   validate(getGroupMembersQuerySchema, 'query'),
   getGroupMembers,
 );
@@ -36,7 +38,7 @@ groupRouter.get(
 groupRouter.post(
   '/:group_id/join',
   authMiddleware,
-  validate(postGroupJoinParamsSchema, 'params'),
+  validate(groupIdParamsSchema, 'params'),
   postGroupJoin,
 );
 
@@ -45,8 +47,14 @@ groupRouter.post('/:group_id/leave', authMiddleware, postGroupLeave);
 groupRouter.post(
   '/:group_id/like',
   authMiddleware,
-  validate(postGroupLikeParamsSchema, 'params'),
+  validate(groupIdParamsSchema, 'params'),
   postGroupLike,
+);
+
+groupRouter.get(
+  '/:group_id',
+  validate(groupIdParamsSchema, 'params'),
+  getGroup,
 );
 
 groupRouter.put(

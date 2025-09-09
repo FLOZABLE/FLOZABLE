@@ -4,7 +4,7 @@ export const subjectSchemas = {
   subject_id: Joi.string().length(10).messages({
     'string.empty': 'Subject id cannot be empty.',
   }),
-  name: Joi.string().min(2).max(10).messages({
+  name: Joi.string().min(2).max(20).messages({
     'string.min': 'Subject name must be at least 2 characters long.',
     'string.max': 'Subject name cannot exceed 20 characters.',
     'string.empty': 'Subject name cannot be empty.',
