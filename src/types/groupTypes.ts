@@ -1,6 +1,11 @@
 import { Prisma } from '../generated/prisma';
 import { groupSelect } from '../queries/groupQueries';
 
+//GET /group/:group_id
+export type GetGroupParams = {
+  group_id: string;
+};
+
 //POST /group/:group_id/join
 export type PostGroupJoinParams = {
   group_id: string;
@@ -25,6 +30,12 @@ export type PostGroupLikeParams = {
 //POST /group/:group_id/like
 export type PostGroupLikeBody = {
   like: boolean;
+};
+
+//GET /group/search
+export type GetGroupsQuery = {
+  query: string;
+  offset: string;
 };
 
 //GET /group/:group_id/members
