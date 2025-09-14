@@ -18,11 +18,6 @@ export interface UserActiveGroup {
   time: number;
 }
 
-//GET /account/:user_id/profile
-export type GetAccountProfileParams = {
-  user_id: string;
-};
-
 export type GetAccountProfileQuery = {
   timezone: string;
 };
