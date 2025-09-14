@@ -3,7 +3,6 @@ import { Router } from 'express';
 import {
   getAccount,
   getAccountGoogle,
-  getAccountProfile,
   patchAccountInfo,
   patchAccountPassword,
   putAccountProfileImage,
@@ -13,8 +12,6 @@ import { googleErrorHandler } from '../middlewares/errorHandler';
 import { uploadMiddleware } from '../middlewares/uploadMiddleware';
 import { validate } from '../middlewares/validationMiddleWare';
 import {
-  getAccountProfileParamsSchema,
-  getAccountProfileQuerySchema,
   patchAccountInfoBodySchema,
   patchAccountPasswordBodySchema,
 } from '../schemas/accountSchemas';
@@ -49,13 +46,6 @@ accountRouter.get(
   authMiddleware,
   getAccountGoogle,
   googleErrorHandler,
-);
-
-accountRouter.get(
-  '/:user_id/profile/',
-  validate(getAccountProfileParamsSchema, 'params'),
-  validate(getAccountProfileQuerySchema, 'query'),
-  getAccountProfile,
 );
 
 export default accountRouter;

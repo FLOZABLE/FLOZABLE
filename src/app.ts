@@ -19,6 +19,7 @@ import planRouter from './routes/planRoutes';
 import rankingRouter from './routes/rankingRoutes';
 import subjectRoutes from './routes/subjectRoutes';
 import themeRouter from './routes/themeRoutes';
+import userRouter from './routes/userRoutes';
 
 const app = express();
 
@@ -92,6 +93,7 @@ app.use('/friend', apiLimiter, friendRouter);
 app.use('/notification', apiLimiter, notificationRouter);
 app.use('/chat', apiLimiter, chatRouter);
 app.use('/theme', apiLimiter, themeRouter);
+app.use('/user', apiLimiter, userRouter);
 
 app.use('/{*any}', (_req, res, _next) => {
   res.status(404).json({ error: 'Route not found' });
