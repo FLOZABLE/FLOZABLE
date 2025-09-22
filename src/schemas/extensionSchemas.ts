@@ -1,12 +1,16 @@
 import Joi from 'joi';
 
 export const extensionSchemas = {
-  website: Joi.string().min(2).max(20).required().trim().messages({
-    'string.min': 'Website must be at least 2 characters long.',
-    'string.max': 'Website cannot exceed 20 characters.',
-    'string.empty': 'Website cannot be empty.',
-    'any.required': 'Website is required.',
-  }),
+  website: Joi.string()
+    .domain({ tlds: { allow: true } }) // validate against real TLDs
+    .min(4)
+    .required()
+    .messages({
+      'string.min': 'Website must be at least 4 characters long.',
+      'string.empty': 'Website cannot be empty.',
+      'any.required': 'Website is required.',
+      'string.domain': 'Please enter a valid domain (e.g., example.com).',
+    }),
 
   block: Joi.boolean().required().messages({
     'boolean.base': 'Block must be true or false.',
@@ -30,6 +34,10 @@ export const extensionSchemas = {
 };
 
 export const putExtensionSettingSchema = Joi.object({
+  website: extensionSchemas.website,
+});
+
+export const patchExtensionSettingSchema = Joi.object({
   website: extensionSchemas.website,
   block: extensionSchemas.block,
   study_block: extensionSchemas.study_block,
