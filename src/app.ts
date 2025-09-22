@@ -12,6 +12,7 @@ import { errorHandler } from './middlewares/errorHandler';
 import accountRouter from './routes/accountRoutes';
 import authRouter from './routes/authRoutes';
 import chatRouter from './routes/chatRoutes';
+import extensionRouter from './routes/extensionRoutes';
 import friendRouter from './routes/friendRoutes';
 import groupRouter from './routes/groupRoutes';
 import notificationRouter from './routes/notificationRoutes';
@@ -94,6 +95,7 @@ app.use('/notification', apiLimiter, notificationRouter);
 app.use('/chat', apiLimiter, chatRouter);
 app.use('/theme', apiLimiter, themeRouter);
 app.use('/user', apiLimiter, userRouter);
+app.use('/extension', apiLimiter, extensionRouter);
 
 app.use('/{*any}', (_req, res, _next) => {
   res.status(404).json({ error: 'Route not found' });
