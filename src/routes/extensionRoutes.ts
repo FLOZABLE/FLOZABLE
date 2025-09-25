@@ -1,6 +1,7 @@
 import { Router } from 'express';
 
 import {
+  deleteExtensionSetting,
   getExtensionSettings,
   getExtensionToken,
   patchExtensionSetting,
@@ -9,6 +10,7 @@ import {
 import { authMiddleware } from '../middlewares/authMiddleware';
 import { validate } from '../middlewares/validationMiddleWare';
 import {
+  deleteExtensionSettingSchema,
   patchExtensionSettingSchema,
   putExtensionSettingSchema,
 } from '../schemas/extensionSchemas';
@@ -31,6 +33,13 @@ extensionRouter.patch(
   authMiddleware,
   validate(patchExtensionSettingSchema, 'body'),
   patchExtensionSetting,
+);
+
+extensionRouter.delete(
+  '/setting',
+  authMiddleware,
+  validate(deleteExtensionSettingSchema, 'body'),
+  deleteExtensionSetting,
 );
 
 export default extensionRouter;

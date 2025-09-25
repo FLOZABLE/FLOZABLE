@@ -15,3 +15,8 @@ export interface PatchExtensionSetting {
   timer: boolean;
   study_timer: boolean;
 }
+
+// DELETE /extension/setting
+export interface DeleteExtensionSetting {
+  website: string;
+}

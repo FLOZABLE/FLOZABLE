@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from 'express';
 
 import prisma from '../libs/prisma';
 import {
+  DeleteExtensionSetting,
   PatchExtensionSetting,
   PutExtensionSetting,
 } from '../types/extensionTypes';
@@ -119,6 +120,34 @@ export const patchExtensionSetting = async (
       data: {
         setting: websiteSetting,
       },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const deleteExtensionSetting = async (
+  req: Request<{}, {}, DeleteExtensionSetting>,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const userId = req.user_id!;
+
+    const { website } = req.body;
+
+    const websiteSetting = await prisma.website_settings.delete({
+      where: {
+        user_id_website: {
+          user_id: userId,
+          website,
+        },
+      },
+    });
+
+    res.send({
+      success: true,
+      message: `Setting for ${websiteSetting.website} deleted`,
     });
   } catch (error) {
     next(error);

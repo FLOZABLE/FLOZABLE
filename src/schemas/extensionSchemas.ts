@@ -44,3 +44,7 @@ export const patchExtensionSettingSchema = Joi.object({
   timer: extensionSchemas.timer,
   study_timer: extensionSchemas.study_timer,
 });
+
+export const deleteExtensionSettingSchema = Joi.object({
+  website: extensionSchemas.website,
+});
