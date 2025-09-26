@@ -3,7 +3,6 @@ import { Router } from 'express';
 import {
   deleteExtensionSetting,
   getExtensionSettings,
-  getExtensionToken,
   patchExtensionSetting,
   putExtensionSetting,
 } from '../controllers/extensionController';
@@ -16,8 +15,6 @@ import {
 } from '../schemas/extensionSchemas';
 
 const extensionRouter = Router();
-
-extensionRouter.get('/token', authMiddleware, getExtensionToken);
 
 extensionRouter.get('/setting/all', authMiddleware, getExtensionSettings);
 

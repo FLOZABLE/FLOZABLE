@@ -1,26 +1,14 @@
 import { NextFunction, Request, Response } from 'express';
 
+import { Prisma } from '../generated/prisma';
 import prisma from '../libs/prisma';
+import { websiteSettingSelect } from '../queries/extensionQueries';
+import { getMainIo } from '../sockets/mainIo';
 import {
   DeleteExtensionSetting,
   PatchExtensionSetting,
   PutExtensionSetting,
 } from '../types/extensionTypes';
-
-export const getExtensionToken = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
-  try {
-    const token =
-      req.headers.authorization?.split(' ')[1] || req.cookies?.token;
-
-    res.send({ success: true, data: { token } });
-  } catch (error) {
-    next(error);
-  }
-};
 
 export const getExtensionSettings = async (
   req: Request,
@@ -34,13 +22,7 @@ export const getExtensionSettings = async (
       where: {
         user_id: userId,
       },
-      select: {
-        website: true,
-        block: true,
-        study_block: true,
-        timer: true,
-        study_timer: true,
-      },
+      select: websiteSettingSelect,
     });
 
     res.send({
@@ -73,7 +55,13 @@ export const putExtensionSetting = async (
         study_timer: true,
         user_id: userId,
       },
+      select: websiteSettingSelect,
     });
+
+    const mainIo = getMainIo();
+    mainIo
+      ?.to(userId)
+      .emit('website_setting_created', { data: { setting: websiteSetting } });
 
     res.send({
       success: true,
@@ -81,8 +69,20 @@ export const putExtensionSetting = async (
       data: {
         setting: websiteSetting,
       },
+      select: websiteSettingSelect,
     });
   } catch (error) {
+    if (
+      error instanceof Prisma.PrismaClientKnownRequestError &&
+      error.code === 'P2002'
+    ) {
+      res.status(409).json({
+        success: false,
+        message: 'You have already added this website.',
+      });
+      return;
+    }
+
     next(error);
   }
 };
@@ -112,7 +112,13 @@ export const patchExtensionSetting = async (
         study_timer,
         user_id: userId,
       },
+      select: websiteSettingSelect,
     });
+
+    const mainIo = getMainIo();
+    mainIo
+      ?.to(userId)
+      .emit('website_setting_updated', { data: { setting: websiteSetting } });
 
     res.send({
       success: true,
@@ -144,6 +150,9 @@ export const deleteExtensionSetting = async (
         },
       },
     });
+
+    const mainIo = getMainIo();
+    mainIo?.to(userId).emit('website_setting_deleted', { data: { website } });
 
     res.send({
       success: true,
