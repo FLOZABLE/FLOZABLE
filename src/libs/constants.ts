@@ -1,6 +1,6 @@
 export const REDIS_TTL = {
   SESSION_EXP: 60 * 60 * 24 * 30, //30 days
-  SESSION_EXTENDED_EXP: 60 * 60 * 24 * 10, //30 days
+  SESSION_EXTENDED_EXP: 60 * 60 * 24 * 10, //10 days
   USER_EXP: 60 * 60, //1 hour
   USER_FRIENDS_EXP: 60 * 60, //1hour
   USER_GROUPS_EXP: 60 * 60, //1hour
