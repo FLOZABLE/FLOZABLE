@@ -339,11 +339,11 @@ export const postAuthLogout = async (
   next: NextFunction,
 ) => {
   try {
-    const userId = req.user_id!;
-
+    const token =
+      req.headers.authorization?.split(' ')[1] || req.cookies?.token;
     res.clearCookie('token');
 
-    deleteSession(userId);
+    deleteSession(token);
 
     res.send({ success: true });
   } catch (error) {
