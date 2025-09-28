@@ -11,6 +11,7 @@ export const createSession = async (userId: string) => {
     'EX',
     REDIS_TTL.SESSION_EXP,
   );
+  //console.log(token, 'token');
   return token;
 };
 
@@ -19,13 +20,16 @@ export const getUserIdByToken = async (token: string | undefined) => {
   return await redisClient.get(`session:${token}`);
 };
 
-export const deleteSession = async (token: string) => {
+export const deleteSession = async (token: string | undefined) => {
+  if (!token) return;
   await redisClient.del(`session:${token}`);
 };
 
 export const extendSession = async (token: string | undefined) => {
   if (!token) return;
-  
+
+  //console.log('extend token', token);
+
   await redisClient.expire(
     `session:${token}`,
     REDIS_TTL.SESSION_EXTENDED_EXP,
