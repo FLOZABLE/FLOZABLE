@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import type { ParsedQs } from 'qs';
 
+import { AppErrorFactory } from '../libs/errors';
 import { getUserIdByToken } from '../services/sessionService';
 
 export const authMiddleware = async <Q = ParsedQs>(
@@ -11,13 +12,15 @@ export const authMiddleware = async <Q = ParsedQs>(
   const token = req.headers.authorization?.split(' ')[1] || req.cookies?.token;
 
   if (!token) {
-    res.status(401).json({ error: 'Unauthorized: No token provided' });
+    const response = AppErrorFactory.userNotFound();
+    res.status(response.statusCode).send(response);
     return;
   }
 
   const userId = await getUserIdByToken(token);
   if (!userId) {
-    res.status(401).json({ error: 'Unauthorized: Invalid or expired token' });
+    const response = AppErrorFactory.tokenInvalid();
+    res.status(response.statusCode).send(response);
     return;
   }
 

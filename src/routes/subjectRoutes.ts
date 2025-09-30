@@ -8,6 +8,7 @@ import { putSubjectSchema } from '../schemas/subjectSchemas';
 const subjectRoutes = Router();
 
 subjectRoutes.get('/all', authMiddleware, getSubjectAll);
+
 subjectRoutes.put(
   '/',
   authMiddleware,
