@@ -42,7 +42,12 @@ groupRouter.post(
   postGroupJoin,
 );
 
-groupRouter.post('/:group_id/leave', authMiddleware, postGroupLeave);
+groupRouter.post(
+  '/:group_id/leave',
+  authMiddleware,
+  validate(groupIdParamsSchema, 'params'),
+  postGroupLeave,
+);
 
 groupRouter.post(
   '/:group_id/like',
