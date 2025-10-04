@@ -326,6 +326,8 @@ export const postGroupJoin = async (
       });
     }
 
+    group.members.push(userId);
+
     res.json({
       success: true,
       status: 200,
