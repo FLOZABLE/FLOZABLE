@@ -29,12 +29,19 @@ app.set('trust proxy', 1);
 const publicLimiter = rateLimit({
   windowMs: 1 * 30 * 1000,
   max: 200,
+  message: {
+    success: false,
+    message: 'Too many requests from this IP, please try again later.',
+  },
 });
 
 const apiLimiter = rateLimit({
   windowMs: 1 * 30 * 1000,
   max: 200,
-  message: 'Too many requests from this IP, please try again later.',
+  message: {
+    success: false,
+    message: 'Too many requests from this IP, please try again later.',
+  },
 });
 
 app.use(express.json({ limit: '5mb' }));
