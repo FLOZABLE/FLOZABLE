@@ -13,6 +13,7 @@ const mediaCodecs: mediasoupTypes.RtpCodecCapability[] = [
     mimeType: 'audio/opus',
     clockRate: 48000,
     channels: 2,
+    preferredPayloadType: 0,
   },
   {
     kind: 'video',
@@ -21,6 +22,7 @@ const mediaCodecs: mediasoupTypes.RtpCodecCapability[] = [
     parameters: {
       'x-google-start-bitrate': 1000,
     },
+    preferredPayloadType: 0,
   },
 ];
 
