@@ -4,7 +4,80 @@ import { nanoid } from 'nanoid';
 
 import prisma from '../libs/prisma';
 import { Viewer } from '../types/otherTypes';
-import { delCacheRanking, getCachedRanking } from './cacheService';
+import { Ranking, RawRanking } from '../types/rankingTypes';
+import {
+  delCacheRanking,
+  getCachedRanking,
+  getCachedUsers,
+} from './cacheService';
+
+interface GetRankingsProps {
+  timezone: string;
+  viewer: Viewer;
+  date: string;
+  userIds?: string[];
+}
+
+export const getRankings = async ({
+  timezone,
+  viewer,
+  date,
+  userIds,
+}: GetRankingsProps) => {
+  try {
+    const dateTime = DateTime.fromISO(date, { zone: timezone })
+      .startOf('day')
+      .startOf(viewer);
+
+    const now = DateTime.now().setZone(timezone).startOf('day').startOf(viewer);
+
+    const timezoneOffset = Math.floor(now.offset / 60);
+    let rawRankings: RawRanking[] = [];
+    if (now.toSeconds() === dateTime.toSeconds()) {
+      //today/this week/this month = cached
+      rawRankings = await getCachedRanking({ viewer, timezoneOffset });
+    } else {
+      const rankingsData = await prisma.ranking_details.findMany({
+        where: {
+          ranking: {
+            date: dateTime.toSeconds(),
+            mode: viewer,
+            //timezone: timezoneOffset.toString(),
+          },
+          user_id: { in: userIds },
+        },
+        orderBy: {
+          rank: 'asc',
+        },
+        select: {
+          rank: true,
+          user_id: true,
+          study_time: true,
+        },
+      });
+
+      console.log(rankingsData, dateTime.toSeconds(), viewer);
+
+      rawRankings = rankingsData;
+    }
+    const users = await getCachedUsers({
+      userIds: rawRankings.map((ranking) => ranking.user_id),
+    });
+
+    const rankings: Ranking[] = rawRankings
+      .map((ranking) => {
+        const user = users.find((user) => user.user_id === ranking.user_id);
+        if (!user) return null;
+        return { ...user, ...ranking, date: dateTime.toISODate() };
+      })
+      .filter((r): r is Ranking => !!r);
+
+    return rankings;
+  } catch (err) {
+    console.log(err);
+    return [];
+  }
+};
 
 export const updateRanking = async () => {
   try {

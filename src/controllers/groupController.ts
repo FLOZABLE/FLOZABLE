@@ -13,7 +13,6 @@ import {
   filterCachedUserGroups,
   getCachedUser,
   getCachedUserGroups,
-  getCachedUsers,
   getCachedUsersStatus,
   getCachedUsersStudyTime,
   getCachedUserStatus,
@@ -21,6 +20,7 @@ import {
   remCachedChatroomMember,
 } from '../services/cacheService';
 import { formatGroups } from '../services/groupService';
+import { getRankings } from '../services/rankingService';
 import { getMainIo } from '../sockets/mainIo';
 import {
   GetGroupLeaderboardQuery,
@@ -37,7 +37,6 @@ import {
   PutGroupBody,
   RawGroup,
 } from '../types/groupTypes';
-import { Ranking } from '../types/rankingTypes';
 
 export const getGroup = async (
   req: Request<GetGroupParams>,
@@ -261,8 +260,6 @@ export const getGroupLeaderboard = async (
 
     const { date, timezone } = req.query;
 
-    const dateTime = DateTime.fromISO(date).setZone(timezone);
-
     const groupMembers = await prisma.group_members.findMany({
       where: {
         group_id,
@@ -280,37 +277,12 @@ export const getGroupLeaderboard = async (
       return;
     }
 
-    const rawRankings = await prisma.ranking_details.findMany({
-      where: {
-        ranking: {
-          date: dateTime.toSeconds(),
-          mode: 'day',
-        },
-        user_id: {
-          in: groupMemberIds,
-        },
-      },
-      orderBy: {
-        rank: 'asc',
-      },
-      select: {
-        rank: true,
-        user_id: true,
-        study_time: true,
-      },
-    });
-
-    const users = await getCachedUsers({
+    const rankings = await getRankings({
+      timezone,
+      date,
+      viewer: 'day',
       userIds: groupMemberIds,
     });
-
-    const rankings: Ranking[] = rawRankings
-      .map((ranking) => {
-        const user = users.find((user) => user.user_id === ranking.user_id);
-        if (!user) return null;
-        return { ...user, ...ranking, date: dateTime.toISODate() };
-      })
-      .filter((r): r is Ranking => !!r);
 
     res.send({ data: { rankings: rankings } });
   } catch (error) {
