@@ -2,6 +2,7 @@ import { Router } from 'express';
 
 import {
   getGroup,
+  getGroupLeaderboard,
   getGroupMembers,
   getGroups,
   getMyGroups,
@@ -13,6 +14,7 @@ import {
 import { authMiddleware } from '../middlewares/authMiddleware';
 import { validate } from '../middlewares/validationMiddleWare';
 import {
+  getGroupLeaderboardQuerySchema,
   getGroupMembersQuerySchema,
   getGroupsSchema,
   groupIdParamsSchema,
@@ -33,6 +35,14 @@ groupRouter.get(
   validate(groupIdParamsSchema, 'params'),
   validate(getGroupMembersQuerySchema, 'query'),
   getGroupMembers,
+);
+
+groupRouter.get(
+  '/:group_id/leaderboard',
+  authMiddleware,
+  validate(groupIdParamsSchema, 'params'),
+  validate(getGroupLeaderboardQuerySchema, 'query'),
+  getGroupLeaderboard,
 );
 
 groupRouter.post(

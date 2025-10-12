@@ -13,6 +13,7 @@ import {
   filterCachedUserGroups,
   getCachedUser,
   getCachedUserGroups,
+  getCachedUsers,
   getCachedUsersStatus,
   getCachedUsersStudyTime,
   getCachedUserStatus,
@@ -22,6 +23,8 @@ import {
 import { formatGroups } from '../services/groupService';
 import { getMainIo } from '../sockets/mainIo';
 import {
+  GetGroupLeaderboardQuery,
+  GetGroupLeaderboarParams,
   GetGroupMembersParams,
   GetGroupMembersQuery,
   GetGroupParams,
@@ -34,6 +37,7 @@ import {
   PutGroupBody,
   RawGroup,
 } from '../types/groupTypes';
+import { Ranking } from '../types/rankingTypes';
 
 export const getGroup = async (
   req: Request<GetGroupParams>,
@@ -245,6 +249,75 @@ export const getGroupMembers = async (
     next(error);
   }
 };
+
+export const getGroupLeaderboard = async (
+  req: Request<GetGroupLeaderboarParams, {}, {}, GetGroupLeaderboardQuery>,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const userId = req.user_id!;
+    const { group_id } = req.params;
+
+    const { date, timezone } = req.query;
+
+    const dateTime = DateTime.fromISO(date).setZone(timezone);
+
+    const groupMembers = await prisma.group_members.findMany({
+      where: {
+        group_id,
+      },
+      select: {
+        user_id: true,
+      },
+    });
+
+    const groupMemberIds = groupMembers.map((member) => member.user_id);
+
+    if (!groupMemberIds.includes(userId)) {
+      const response = AppErrorFactory.groupAccessDenied();
+      res.status(response.statusCode).send(response);
+      return;
+    }
+
+    const rawRankings = await prisma.ranking_details.findMany({
+      where: {
+        ranking: {
+          date: dateTime.toSeconds(),
+          mode: 'day',
+        },
+        user_id: {
+          in: groupMemberIds,
+        },
+      },
+      orderBy: {
+        rank: 'asc',
+      },
+      select: {
+        rank: true,
+        user_id: true,
+        study_time: true,
+      },
+    });
+
+    const users = await getCachedUsers({
+      userIds: groupMemberIds,
+    });
+
+    const rankings: Ranking[] = rawRankings
+      .map((ranking) => {
+        const user = users.find((user) => user.user_id === ranking.user_id);
+        if (!user) return null;
+        return { ...user, ...ranking, date: dateTime.toISODate() };
+      })
+      .filter((r): r is Ranking => !!r);
+
+    res.send({ data: { rankings: rankings } });
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const postGroupJoin = async (
   req: Request<PostGroupJoinParams, {}, PostGroupJoinBody>,
   res: Response,
