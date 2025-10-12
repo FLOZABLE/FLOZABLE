@@ -22,7 +22,7 @@ const mediaCodecs: mediasoupTypes.RtpCodecCapability[] = [
     parameters: {
       'x-google-start-bitrate': 1000,
     },
-    preferredPayloadType: 0,
+    preferredPayloadType: 1,
   },
 ];
 

@@ -43,6 +43,17 @@ export type GetGroupMembersParams = {
   group_id: string;
 };
 
+//GET /group/:group_id/leaderboard
+export type GetGroupLeaderboarParams = {
+  group_id: string;
+};
+
+//GET /group/:group_id/leaderboard
+export type GetGroupLeaderboardQuery = {
+  date: string;
+  timezone: string;
+};
+
 //GET /group/:group_id/members
 export type GetGroupMembersQuery = {
   timezone: string;

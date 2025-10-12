@@ -110,6 +110,12 @@ export const AppErrorFactory = {
       code: 'GROUP_NOT_FOUND',
     }),
 
+  groupAccessDenied: () =>
+    createHttpError(403, 'You do not have access to this group', {
+      reason: 'User is not a member of the group',
+      code: 'GROUP_ACCESS_DENIED',
+    }),
+
   // --- General / Fallback ---
   unknownServerError: () =>
     createHttpError(500, 'Something went wrong', {
