@@ -3,17 +3,12 @@ import { DateTime } from 'luxon';
 
 import prisma from '../libs/prisma';
 import { getDates } from '../libs/utils';
-import {
-  getCachedRanking,
-  getCachedUserRanking,
-  getCachedUsers,
-} from '../services/cacheService';
+import { getCachedUserRanking } from '../services/cacheService';
+import { getRankings } from '../services/rankingService';
 import {
   GetRankingQuery,
   GetUserRankingParams,
   GetUserRankingQuery,
-  Ranking,
-  RawRanking,
 } from '../types/rankingTypes';
 
 export const getRanking = async (
@@ -24,51 +19,7 @@ export const getRanking = async (
   try {
     const { viewer, date, timezone } = req.query;
 
-    const dateTime = DateTime.fromISO(date, { zone: timezone })
-      .startOf('day')
-      .startOf(viewer);
-
-    const now = DateTime.now().setZone(timezone).startOf('day').startOf(viewer);
-
-    const timezoneOffset = Math.floor(now.offset / 60);
-    let rawRankings: RawRanking[] = [];
-    if (now.toSeconds() === dateTime.toSeconds()) {
-      //today/this week/this month = cached
-      rawRankings = await getCachedRanking({ viewer, timezoneOffset });
-    } else {
-      const rankingsData = await prisma.ranking_details.findMany({
-        where: {
-          ranking: {
-            date: dateTime.toSeconds(),
-            mode: viewer,
-            //timezone: timezoneOffset.toString(),
-          },
-        },
-        orderBy: {
-          rank: 'asc',
-        },
-        select: {
-          rank: true,
-          user_id: true,
-          study_time: true,
-        },
-      });
-
-      console.log(rankingsData, dateTime.toSeconds(), viewer);
-
-      rawRankings = rankingsData;
-    }
-    const users = await getCachedUsers({
-      userIds: rawRankings.map((ranking) => ranking.user_id),
-    });
-
-    const rankings: Ranking[] = rawRankings
-      .map((ranking) => {
-        const user = users.find((user) => user.user_id === ranking.user_id);
-        if (!user) return null;
-        return { ...user, ...ranking, date: dateTime.toISODate() };
-      })
-      .filter((r): r is Ranking => !!r);
+    const rankings = await getRankings({ viewer, date, timezone });
 
     res.send({ data: { rankings } });
   } catch (error) {
