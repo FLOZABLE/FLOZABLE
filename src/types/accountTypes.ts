@@ -6,6 +6,9 @@ export interface UserInfo
     'user_id' | 'name' | 'timezone' | 'created_at'
   > {}
 
+export interface BasicUserInfo
+  extends Pick<Prisma.usersCreateInput, 'user_id' | 'name'> {}
+
 export interface UserStatus {
   subject_id: string;
   name: string;
