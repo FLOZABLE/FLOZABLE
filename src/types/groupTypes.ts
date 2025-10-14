@@ -1,5 +1,6 @@
 import { Prisma } from '../generated/prisma';
 import { groupSelect } from '../queries/groupQueries';
+import { Viewer } from './otherTypes';
 
 //GET /group/:group_id
 export type GetGroupParams = {
@@ -52,6 +53,7 @@ export type GetGroupLeaderboarParams = {
 export type GetGroupLeaderboardQuery = {
   date: string;
   timezone: string;
+  viewer: Viewer;
 };
 
 //GET /group/:group_id/members

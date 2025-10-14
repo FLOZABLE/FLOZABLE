@@ -117,4 +117,5 @@ export const getGroupMembersQuerySchema = Joi.object({
 export const getGroupLeaderboardQuerySchema = Joi.object({
   date: otherSchemas.date,
   timezone: otherSchemas.timezone,
+  viewer: otherSchemas.viewer,
 });
