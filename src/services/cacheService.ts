@@ -13,11 +13,6 @@ interface GetCacheParams {
   query?: boolean;
 }
 
-interface GetViewTimezoneCacheParams extends GetCacheParams {
-  viewer: Viewer;
-  timezoneOffset: number;
-}
-
 interface GetCachedUserParams extends GetCacheParams {
   userId: string;
 }
@@ -421,12 +416,60 @@ export const delCachedUserActiveGroup = async (userId: string) => {
   await redisClient.del(cacheKey);
 };
 
+interface GetViewTimezoneCacheParams extends GetCacheParams {
+  viewer: Viewer;
+  timezoneOffset: number;
+  userIds?: string[] | undefined;
+}
+
 export const getCachedRanking = async ({
   viewer,
   timezoneOffset,
+  userIds,
 }: GetViewTimezoneCacheParams): Promise<RawRanking[]> => {
   try {
     const cacheKey = `studytime:${viewer}:timezone:${timezoneOffset}`;
+
+    if (userIds && userIds.length > 0) {
+      const pipeline = redisClient.pipeline();
+      userIds.forEach((userId) => {
+        pipeline.zscore(cacheKey, userId);
+        pipeline.zrevrank(cacheKey, userId);
+      });
+      const results = await pipeline.exec();
+
+      if (!results) return [];
+
+      const rankings: RawRanking[] = [];
+      for (let i = 0; i < userIds.length; i++) {
+        const scoreResult = results[i * 2];
+        const rankResult = results[i * 2 + 1];
+        const userId = userIds[i];
+
+        if (
+          !scoreResult ||
+          !rankResult ||
+          scoreResult[0] ||
+          rankResult[0] ||
+          scoreResult[1] === null ||
+          rankResult[1] === null ||
+          typeof rankResult[1] !== 'number'
+        ) {
+          continue;
+        }
+
+        const study_time = Number(scoreResult[1]);
+        const rank = rankResult[1] + 1;
+
+        rankings.push({
+          user_id: userId,
+          rank,
+          study_time,
+        });
+      }
+      return rankings;
+    }
+
     const rawRanking = await redisClient.zrevrange(
       cacheKey,
       0,
