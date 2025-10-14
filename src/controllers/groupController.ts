@@ -258,7 +258,7 @@ export const getGroupLeaderboard = async (
     const userId = req.user_id!;
     const { group_id } = req.params;
 
-    const { date, timezone } = req.query;
+    const { date, timezone, viewer } = req.query;
 
     const groupMembers = await prisma.group_members.findMany({
       where: {
@@ -280,11 +280,11 @@ export const getGroupLeaderboard = async (
     const rankings = await getRankings({
       timezone,
       date,
-      viewer: 'day',
+      viewer,
       userIds: groupMemberIds,
     });
 
-    res.send({ data: { rankings: rankings } });
+    res.send({ data: { leaderboard: rankings } });
   } catch (error) {
     next(error);
   }
