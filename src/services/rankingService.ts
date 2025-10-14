@@ -35,7 +35,7 @@ export const getRankings = async ({
     let rawRankings: RawRanking[] = [];
     if (now.toSeconds() === dateTime.toSeconds()) {
       //today/this week/this month = cached
-      rawRankings = await getCachedRanking({ viewer, timezoneOffset });
+      rawRankings = await getCachedRanking({ viewer, timezoneOffset, userIds });
     } else {
       const rankingsData = await prisma.ranking_details.findMany({
         where: {
