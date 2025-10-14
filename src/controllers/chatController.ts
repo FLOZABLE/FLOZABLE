@@ -295,6 +295,7 @@ export const postChatRequest = async (
         message: `${sender.name} sent you a chat request.`,
       },
       sender,
+      isDynamicMessage: true,
     });
 
     res.send({

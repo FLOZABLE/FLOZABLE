@@ -3,7 +3,11 @@ import { nanoid } from 'nanoid';
 import { AppErrorFactory } from '../libs/errors';
 import prisma from '../libs/prisma';
 import { nowSec } from '../libs/utils';
-import { delCachedUserFriends, getCachedUsers } from './cacheService';
+import {
+  delCachedUserFriends,
+  getCachedUser,
+  getCachedUsers,
+} from './cacheService';
 import { sendNotification } from './notificationService';
 
 export const friendRequest = async (userId: string, friendId: string) => {
@@ -73,9 +77,10 @@ export const friendRequest = async (userId: string, friendId: string) => {
         type: 'friend_request',
         friend_request_id: newFriend.friendship_id,
         title: `New friend request`,
-        message: `${userInfo.name} sent friend request`,
+        message: `${userInfo.name} sent you a friend request`,
       },
       sender: userInfo,
+      isDynamicMessage: true,
     });
 
     return {
@@ -117,6 +122,17 @@ export const replyFriendRequest = async (
       };
     }
 
+    /* const [target, userInfo] =
+      friendship.user_id === userId
+        ? [friendship.friend, friendship.user]
+        : [friendship.user, friendship.friend]; */
+    const userInfo = await getCachedUser({ userId });
+
+    if (!userInfo) {
+      const response = AppErrorFactory.userNotFound();
+      return response;
+    }
+
     const target =
       friendship.user_id === userId ? friendship.friend : friendship.user;
     const targetName = target.name;
@@ -139,6 +155,21 @@ export const replyFriendRequest = async (
       });
 
       await delCachedUserFriends(userId);
+      await delCachedUserFriends(target.user_id);
+
+      // Send friend request notification
+      await sendNotification({
+        notification: {
+          user_id: target.user_id,
+          sender_id: userId,
+          type: 'friend_accepted',
+          friend_request_id: friendshipId,
+          title: `New friend`,
+          message: `${userInfo.name} accepted you friend request`,
+        },
+        sender: userInfo,
+        isDynamicMessage: true,
+      });
 
       return {
         success: true,
