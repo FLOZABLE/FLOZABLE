@@ -467,6 +467,7 @@ export const getCachedRanking = async ({
           study_time,
         });
       }
+      rankings.sort((a, b) => b.study_time - a.study_time);
       return rankings;
     }
 
