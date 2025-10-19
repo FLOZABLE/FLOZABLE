@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 
 import prisma from '../libs/prisma';
+import { NotificationIdParams } from '../types/notificationTypes';
 
 export const getNotificationsAll = async (
   req: Request,
@@ -82,6 +83,29 @@ export const getNotificationsAll = async (
     });
 
     res.send({ success: true, status: 200, data: { notifications } });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const deleteNotification = async (
+  req: Request<NotificationIdParams>,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const userId = req.user_id!;
+
+    const { notification_id } = req.params;
+
+    await prisma.notifications.delete({
+      where: {
+        notification_id,
+        user_id: userId,
+      },
+    });
+
+    res.send({ success: true, status: 200, message: 'Deleted notification' });
   } catch (error) {
     next(error);
   }
