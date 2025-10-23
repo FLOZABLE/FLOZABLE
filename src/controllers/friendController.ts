@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from 'express';
 import { DateTime } from 'luxon';
 
 import prisma from '../libs/prisma';
+import { nowSec } from '../libs/utils';
 import { groupSelect } from '../queries/groupQueries';
 import {
   filterCachedUserFriends,
@@ -110,6 +111,13 @@ export const getFriendAllStatus = async (
           : null,
       };
     });
+
+    const now = nowSec();
+
+    formattedFriends.sort(
+      (a, b) =>
+        (a.status?.start_time || now + 1) - (b.status?.start_time || now + 1),
+    );
 
     res.send({ success: true, data: { friends: formattedFriends } });
   } catch (error) {
