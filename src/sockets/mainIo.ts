@@ -6,6 +6,7 @@ import prisma from '../libs/prisma';
 import { nowSec } from '../libs/utils';
 import { groupSelect } from '../queries/groupQueries';
 import {
+  cacheUserActiveGroup,
   delCachedUserActiveGroup,
   delCachedUserStatus,
   getCachedChatroomMembers,
@@ -126,6 +127,15 @@ export const registerMainIoEvents = () => {
           mainIo
             ?.to(friends)
             .emit('group:member:online', { user_id: userId, group });
+
+          const now = nowSec();
+
+          await cacheUserActiveGroup({
+            userId,
+            groupId,
+            time: now,
+            name: group.name,
+          });
         } catch (err) {
           console.log(err);
         }
