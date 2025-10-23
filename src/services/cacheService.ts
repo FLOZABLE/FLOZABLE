@@ -410,6 +410,58 @@ export const getCachedUserActiveGroup = async (
   }
 };
 
+/**
+ * Fetches active groups for multiple users in a single Redis round-trip.
+ */
+export const getCachedUsersActiveGroup = async (
+  userIds: string[],
+): Promise<{ userId: string; activeGroup: UserActiveGroup | null }[]> => {
+  if (userIds.length === 0) {
+    return [];
+  }
+
+  const pipeline = redisClient.pipeline();
+  userIds.forEach((userId) => {
+    pipeline.hgetall(`user:${userId}:activegroup`);
+  });
+
+  // Execute pipeline and type it as unknown since Redis returns raw data
+  const results: [error: Error | null, result: unknown][] | null =
+    await pipeline.exec();
+
+  if (!results) {
+    console.error('Redis pipeline for user active groups failed.');
+    return userIds.map((userId) => ({ userId, activeGroup: null }));
+  }
+
+  return userIds.map((userId, index) => {
+    const [error, rawResult] = results[index];
+
+    if (error || typeof rawResult !== 'object' || rawResult === null) {
+      if (error) {
+        console.error(`Error in HGETALL pipeline for user ${userId}:`, error);
+      }
+      return { userId, activeGroup: null };
+    }
+
+    const groupHash = rawResult as Record<string, string>;
+
+    if (!groupHash.group_id) {
+      // Handle empty hash
+      return { userId, activeGroup: null };
+    }
+
+    return {
+      userId,
+      activeGroup: {
+        group_id: groupHash.group_id,
+        name: groupHash.name,
+        time: Number(groupHash.time),
+      },
+    };
+  });
+};
+
 export const delCachedUserActiveGroup = async (userId: string) => {
   const cacheKey = `user:${userId}:activegroup`;
 
