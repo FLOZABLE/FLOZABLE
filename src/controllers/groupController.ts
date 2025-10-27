@@ -463,8 +463,6 @@ export const postGroupLike = async (
       });
     }
 
-    filterCachedUserGroups(userId, group_id);
-
     res.json({
       success: true,
       //message: like ? `Liked group` : '',
