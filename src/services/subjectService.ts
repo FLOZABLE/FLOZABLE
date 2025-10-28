@@ -88,128 +88,105 @@ export const subjectsFormatter = (
   rawSubjects: RawSubject[],
   timezone: string,
 ): { subjects: Subject[]; groupedSubjects: GroupedSubjects } => {
-  try {
-    if (!rawSubjects.length) return subjectsPlaceholder;
+  if (!rawSubjects.length) return subjectsPlaceholder;
 
-    rawSubjects.sort((a, b) => a.created_at - b.created_at);
-    const dayStart = DateTime.fromSeconds(rawSubjects[0].created_at, {
-      zone: timezone,
-    }).startOf('day');
-    const weekStart = dayStart.startOf('week');
-    const monthStart = dayStart.startOf('month');
+  rawSubjects.sort((a, b) => a.created_at - b.created_at);
+  const dayStart = DateTime.fromSeconds(rawSubjects[0].created_at, {
+    zone: timezone,
+  }).startOf('day');
+  const weekStart = dayStart.startOf('week');
+  const monthStart = dayStart.startOf('month');
 
-    const now = DateTime.now().setZone(timezone).startOf('day');
+  const now = DateTime.now().setZone(timezone).startOf('day');
 
-    const daysLength = now.diff(dayStart, 'days').days + 1;
-    const weeksLength = now.startOf('week').diff(weekStart, 'weeks').weeks + 1;
-    const monthsLength =
-      now.startOf('month').diff(monthStart, 'months').months + 1;
+  const daysLength = Math.max(0, now.diff(dayStart, 'days').days + 1);
+  const weeksLength = Math.max(
+    0,
+    now.startOf('week').diff(weekStart, 'weeks').weeks + 1,
+  );
+  const monthsLength = Math.max(
+    0,
+    now.startOf('month').diff(monthStart, 'months').months + 1,
+  );
 
-    const { dataArray: dayData, timelineArray: dayTimeline } = arrayGenerator(
-      daysLength,
-      dayStart,
-      'day',
-    );
+  const { dataArray: dayData, timelineArray: dayTimeline } = arrayGenerator(
+    daysLength,
+    dayStart,
+    'day',
+  );
+  const { dataArray: weekData, timelineArray: weekTimeline } = arrayGenerator(
+    weeksLength,
+    weekStart,
+    'week',
+  );
+  const { dataArray: monthData, timelineArray: monthTimeline } =
+    arrayGenerator(monthsLength, monthStart, 'month');
 
-    const { dataArray: weekData, timelineArray: weekTimeline } = arrayGenerator(
-      weeksLength,
-      weekStart,
-      'week',
-    );
+  const groupedSubjects: GroupedSubjects = {
+    day: { timeline: dayTimeline, total: dayData },
+    week: { timeline: weekTimeline, total: weekData },
+    month: { timeline: monthTimeline, total: monthData },
+  };
 
-    const { dataArray: monthData, timelineArray: monthTimeline } =
-      arrayGenerator(monthsLength, monthStart, 'month');
+  const subjectsMap = new Map<string, Subject>();
 
-    const groupedSubjects: GroupedSubjects = {
+  for (const rawSubject of rawSubjects) {
+    const subject: Subject = {
+      ...rawSubject,
       day: {
-        timeline: _.cloneDeep(dayTimeline),
-        total: _.cloneDeep(dayData),
-        //focus: _.cloneDeep(dayData),
+        timeline: dayTimeline.map((t) => ({ ...t, data: [] })),
+        total: dayData.map((d) => ({ ...d, data: 0 })),
       },
       week: {
-        timeline: _.cloneDeep(weekTimeline),
-        total: _.cloneDeep(weekData),
-        //focus: _.cloneDeep(weekData),
+        timeline: weekTimeline.map((t) => ({ ...t, data: [] })),
+        total: weekData.map((d) => ({ ...d, data: 0 })),
       },
       month: {
-        timeline: _.cloneDeep(monthTimeline),
-        total: _.cloneDeep(monthData),
-        //focus: _.cloneDeep(monthData),
+        timeline: monthTimeline.map((t) => ({ ...t, data: [] })),
+        total: monthData.map((d) => ({ ...d, data: 0 })),
       },
+      timeline: rawSubject.subject_timelines.map((timeline) => [
+        timeline.start_time,
+        timeline.duration,
+      ]),
     };
+    subjectsMap.set(rawSubject.subject_id, subject);
 
-    const subjects: Subject[] = [];
+    for (const [start, duration] of subject.timeline) {
+      const end = start + duration;
+      const endDateTime = DateTime.fromSeconds(end, { zone: timezone });
 
-    rawSubjects.forEach((rawSubject) => {
-      // Initialize subject's timelines
-      const subject: Subject = {
-        ...rawSubject,
-        day: {
-          timeline: _.cloneDeep(dayTimeline),
-          total: _.cloneDeep(dayData),
-          //focus: _.cloneDeep(dayData),
-        },
-        week: {
-          timeline: _.cloneDeep(weekTimeline),
-          total: _.cloneDeep(weekData),
-          //focus: _.cloneDeep(weekData),
-        },
-        month: {
-          timeline: _.cloneDeep(monthTimeline),
-          total: _.cloneDeep(monthData),
-          //focus: _.cloneDeep(monthData),
-        },
-        timeline: rawSubject.subject_timelines.map((timeline) => [
-          timeline.start_time,
-          timeline.duration,
-        ]),
-      };
+      const dayIndex = Math.floor(endDateTime.diff(dayStart, 'days').days);
+      if (dayIndex >= 0 && dayIndex < daysLength) {
+        subject.day.timeline[dayIndex].data.push([start, end]);
+        subject.day.total[dayIndex].data += duration;
+        groupedSubjects.day.timeline[dayIndex].data.push([start, end]);
+        groupedSubjects.day.total[dayIndex].data += duration;
+      }
 
-      subject.timeline.forEach(([start, duration]) => {
-        const end = start + duration;
-        const endDateTime = DateTime.fromSeconds(end, {
-          zone: timezone,
-        }).startOf('day');
+      const weekIndex = Math.floor(
+        endDateTime.startOf('week').diff(weekStart, 'weeks').weeks,
+      );
+      if (weekIndex >= 0 && weekIndex < weeksLength) {
+        subject.week.timeline[weekIndex].data.push([start, end]);
+        subject.week.total[weekIndex].data += duration;
+        groupedSubjects.week.timeline[weekIndex].data.push([start, end]);
+        groupedSubjects.week.total[weekIndex].data += duration;
+      }
 
-        const dayIndex = endDateTime.diff(dayStart, 'day').days;
-        if (dayIndex >= 0 && dayIndex < daysLength) {
-          subject.day.timeline[dayIndex].data.push([start, end]);
-          subject.day.total[dayIndex].data += duration;
-
-          groupedSubjects.day.timeline[dayIndex].data.push([start, end]);
-          groupedSubjects.day.total[dayIndex].data += duration;
-        }
-
-        const weekIndex = endDateTime
-          .startOf('week')
-          .diff(weekStart, 'week').weeks;
-        if (weekIndex >= 0 && weekIndex < weeksLength) {
-          subject.week.timeline[weekIndex].data.push([start, end]);
-          subject.week.total[weekIndex].data += duration;
-
-          groupedSubjects.week.timeline[weekIndex].data.push([start, end]);
-          groupedSubjects.week.total[weekIndex].data += duration;
-        }
-
-        const monthIndex = endDateTime
-          .startOf('month')
-          .diff(monthStart, 'month').months;
-        if (monthIndex >= 0 && monthIndex < monthsLength) {
-          subject.month.timeline[monthIndex].data.push([start, end]);
-          subject.month.total[monthIndex].data += duration;
-
-          groupedSubjects.month.timeline[monthIndex].data.push([start, end]);
-          groupedSubjects.month.total[monthIndex].data += duration;
-        }
-      });
-      subjects.push(subject);
-    });
-
-    return { subjects, groupedSubjects };
-  } catch (err) {
-    console.log(err);
-    return subjectsPlaceholder;
+      const monthIndex = Math.floor(
+        endDateTime.startOf('month').diff(monthStart, 'months').months,
+      );
+      if (monthIndex >= 0 && monthIndex < monthsLength) {
+        subject.month.timeline[monthIndex].data.push([start, end]);
+        subject.month.total[monthIndex].data += duration;
+        groupedSubjects.month.timeline[monthIndex].data.push([start, end]);
+        groupedSubjects.month.total[monthIndex].data += duration;
+      }
+    }
   }
+
+  return { subjects: Array.from(subjectsMap.values()), groupedSubjects };
 };
 
 function arrayGenerator(

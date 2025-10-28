@@ -300,6 +300,18 @@ export const postGroupJoin = async (
     const { group_id } = req.params;
     const { password, timezone } = req.body;
 
+    const existingMember = await prisma.group_members.findFirst({
+      where: { user_id: userId, group_id },
+    });
+
+    if (existingMember) {
+      res.status(409).json({
+        success: false,
+        message: 'You have already joined this group.',
+      });
+      return;
+    }
+
     // Fetch group with password and selected fields
     const rawGroup = await prisma.groups.findFirst({
       select: { ...groupSelect, password: true },
