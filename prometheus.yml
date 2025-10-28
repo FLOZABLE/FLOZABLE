@@ -1,0 +1,17 @@
+# prometheus.yml
+global:
+  scrape_interval: 15s 
+  evaluation_interval: 15s
+
+scrape_configs:
+  # Prometheus monitoring its own metrics
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+
+  # --- FIX: Target for your Node.js App ---
+  - job_name: 'flozable_nodejs_app'
+    static_configs:
+      - targets: ['host.docker.internal:3000'] 
+      # host.docker.internal: reaches the Mac host
+      # :3000: is the port where your Node.js server is running
