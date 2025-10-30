@@ -9,6 +9,7 @@ import { bcryptHash } from '../libs/utils';
 import { googleOauth2client } from '../services/authService';
 import {
   delCachedUser,
+  deleteUserRedisData,
   getCachedUser,
   getCacheUserGoogleAccessToken,
 } from '../services/cacheService';
@@ -35,6 +36,55 @@ export const getAccount = async (
     const userinfo = await getCachedUser({ userId });
 
     res.send({ success: true, data: { userinfo } });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const deleteAccount = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const userId = req.user_id!;
+
+    // 1. **Delete Related Records:** Delete all records where userId is a foreign key.
+    //    We use a transaction to ensure atomicity (all or nothing).
+    await prisma.$transaction([
+      // Delete from all simple one-to-many/many-to-many join tables first
+      prisma.chatroom_members.deleteMany({ where: { user_id: userId } }),
+      prisma.chatroom_messages.deleteMany({ where: { user_id: userId } }),
+      prisma.devices.deleteMany({ where: { user_id: userId } }),
+      // Handle friends: delete where user is sender OR receiver
+      prisma.friends.deleteMany({
+        where: { OR: [{ user_id: userId }, { friend_id: userId }] },
+      }),
+      prisma.group_likes.deleteMany({ where: { user_id: userId } }),
+      prisma.group_members.deleteMany({ where: { user_id: userId } }),
+      // Notifications: If you changed 'onDelete: Cascade' to 'SetNull' on 'sender_id',
+      // this only deletes notifications *to* the user.
+      prisma.notifications.deleteMany({ where: { user_id: userId } }),
+      prisma.ranking_details.deleteMany({ where: { user_id: userId } }),
+      prisma.subjects.deleteMany({ where: { user_id: userId } }),
+      prisma.theme_likes.deleteMany({ where: { user_id: userId } }),
+      prisma.themes.deleteMany({ where: { user_id: userId } }), // Deletes themes created by user
+      prisma.user_themes.deleteMany({ where: { user_id: userId } }),
+      prisma.website_settings.deleteMany({ where: { user_id: userId } }),
+      prisma.website_usage.deleteMany({ where: { user_id: userId } }),
+
+      // 2. **Delete Parent Record (users):** This will also delete groups where the user is the leader,
+      //    due to the `onDelete: Cascade` you set on the `groups` model.
+      prisma.users.delete({
+        where: {
+          user_id: userId,
+        },
+      }),
+    ]);
+
+    await deleteUserRedisData(userId);
+
+    res.send({ success: true, message: 'Account deleted' });
   } catch (error) {
     next(error);
   }

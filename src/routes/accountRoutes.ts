@@ -1,6 +1,7 @@
 import { Router } from 'express';
 
 import {
+  deleteAccount,
   getAccount,
   getAccountGoogle,
   patchAccountInfo,
@@ -19,6 +20,8 @@ import {
 const accountRouter = Router();
 
 accountRouter.get('/', authMiddleware, getAccount);
+
+accountRouter.delete('/', authMiddleware, deleteAccount);
 
 accountRouter.patch(
   '/info',
