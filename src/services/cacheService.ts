@@ -1055,3 +1055,44 @@ export async function renameKeysByPattern(
     console.error('Error during key renaming:', error);
   }
 }
+
+export const deleteUserRedisData = async (userId: string) => {
+  const pattern = `*${userId}*`;
+  let cursor = '0'; // Start the cursor at '0'
+
+  do {
+    // 1. Use the SCAN command to fetch a small batch of keys
+    // The 'scan' command returns a tuple: [nextCursor, keysArray]
+    const [nextCursor, keys] = await redisClient.scan(
+      cursor,
+      'MATCH',
+      pattern,
+      'COUNT',
+      1000,
+    );
+
+    // Check if keys were found in this iteration
+    if (keys.length > 0) {
+      // 2. Use a pipeline to execute all DEL commands in one go
+      // UNLINK is preferred over DEL for large keys as it's non-blocking, but DEL works too.
+      // Assuming 'redisClient' is an instance of 'ioredis' or similar with pipeline support.
+      const pipeline = redisClient.pipeline();
+      keys.forEach((key) => {
+        // Use .del() if UNLINK is not supported or if you prefer a hard delete
+        pipeline.unlink(key);
+      });
+
+      // 3. Execute the batch delete
+      await pipeline.exec();
+    }
+
+    // Update the cursor for the next iteration
+    cursor = nextCursor;
+
+    // Continue looping until the cursor returns '0', meaning the scan is complete
+  } while (cursor !== '0');
+
+  console.log(
+    `Successfully deleted all Redis keys matching pattern: ${pattern}`,
+  );
+};

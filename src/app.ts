@@ -9,10 +9,6 @@ import morgan from 'morgan';
 
 import config from './config/config';
 import { errorHandler } from './middlewares/errorHandler';
-import {
-  metricsEndpoint,
-  metricsMiddleware,
-} from './middlewares/metricsMiddleware';
 import accountRouter from './routes/accountRoutes';
 import authRouter from './routes/authRoutes';
 import chatRouter from './routes/chatRoutes';
@@ -27,7 +23,6 @@ import themeRouter from './routes/themeRoutes';
 import userRouter from './routes/userRoutes';
 
 const app = express();
-
 
 app.set('trust proxy', 1);
 
@@ -109,14 +104,11 @@ app.use('/theme', apiLimiter, themeRouter);
 app.use('/user', apiLimiter, userRouter);
 app.use('/extension', apiLimiter, extensionRouter);
 
-app.get('/metrics', metricsEndpoint);
-
 app.use('/{*any}', (_req, res, _next) => {
   res.status(404).json({ error: 'Route not found' });
 });
 
 // Global error handler (should be after routes)
 app.use(errorHandler);
-app.use(metricsMiddleware);
 
 export default app;
