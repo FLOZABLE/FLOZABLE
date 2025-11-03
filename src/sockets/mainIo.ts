@@ -53,7 +53,10 @@ export const registerMainIoEvents = () => {
 
       socket.join(userId);
 
-      handleStudyStart(userId);
+      const device = socket.handshake.query?.device;
+      if (device !== 'mobile' && device !== 'chrome-extension') {
+        handleStudyStart(userId);
+      }
 
       //join socket for chatrooms
       const chatrooms = await prisma.chatrooms.findMany({

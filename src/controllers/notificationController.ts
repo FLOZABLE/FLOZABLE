@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from 'express';
 
 import prisma from '../libs/prisma';
 import { NotificationIdParams } from '../types/notificationTypes';
+import { PutNotificationTokenBody } from './../types/notificationTypes';
 
 export const getNotificationsAll = async (
   req: Request,
@@ -106,6 +107,36 @@ export const deleteNotification = async (
     });
 
     res.send({ success: true, status: 200, message: 'Deleted notification' });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const putNotificationToken = async (
+  req: Request<{}, {}, PutNotificationTokenBody>,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const userId = req.user_id!;
+
+    const { token, device_id } = req.body;
+
+    console.log(token, device_id, userId);
+
+    await prisma.devices.update({
+      where: {
+        device_id_user_id: {
+          device_id,
+          user_id: userId,
+        },
+      },
+      data: {
+        notification_token: token,
+      },
+    });
+
+    res.send({ success: true, status: 200 });
   } catch (error) {
     next(error);
   }
