@@ -46,27 +46,13 @@ export const getUserProfile = async (
   }
 };
 
-/* export const getUserStatus = async (
+/* export const postUserPing = async (
   req: Request<UserIdParams, {}, {}, GetUserStatusQuery>,
   res: Response,
   next: NextFunction,
 ) => {
   try {
-    const userId = req.params.user_id;
-    const { timezone } = req.query;
-
-    const
-
-    res.status(200).send({
-      success: true,
-      status: 200,
-      data: {
-        userinfo: { ...userInfo, groups },
-        friends,
-        subjects: subjects.subjects,
-        grouped_subjects: subjects.groupedSubjects,
-      },
-    });
+    
   } catch (error) {
     next(error);
   }
