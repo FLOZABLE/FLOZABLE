@@ -3,6 +3,7 @@ import { google } from 'googleapis';
 import { nanoid } from 'nanoid';
 
 import config from '../config/config';
+import { AppErrorFactory } from '../libs/errors';
 import prisma from '../libs/prisma';
 import { nowSec } from '../libs/utils';
 import {
@@ -489,10 +490,9 @@ export const postAuthTokenVerify = async (
       },
     });
 
-    console.log(device, req.body, userId);
-
     if (!device) {
-      res.send();
+      const response = AppErrorFactory.tokenInvalid();
+      res.status(response.statusCode).send(response);
       return;
     }
 

@@ -1,7 +1,10 @@
 import { NextFunction, Request, Response } from 'express';
 
 import prisma from '../libs/prisma';
-import { NotificationIdParams } from '../types/notificationTypes';
+import {
+  NotificationIdParams,
+  PostNotificationTokenBody,
+} from '../types/notificationTypes';
 import { PutNotificationTokenBody } from './../types/notificationTypes';
 
 export const getNotificationsAll = async (
@@ -112,6 +115,40 @@ export const deleteNotification = async (
   }
 };
 
+export const postNotificationToken = async (
+  req: Request<{}, {}, PostNotificationTokenBody>,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const userId = req.user_id!;
+
+    const { device_id } = req.body;
+
+    const device = await prisma.devices.findUnique({
+      where: {
+        device_id_user_id: {
+          device_id,
+          user_id: userId,
+        },
+      },
+      select: {
+        notification_token: true,
+      },
+    });
+
+    res.send({
+      success: true,
+      status: 200,
+      data: {
+        token: device?.notification_token,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const putNotificationToken = async (
   req: Request<{}, {}, PutNotificationTokenBody>,
   res: Response,
@@ -121,8 +158,6 @@ export const putNotificationToken = async (
     const userId = req.user_id!;
 
     const { token, device_id } = req.body;
-
-    console.log(token, device_id, userId);
 
     await prisma.devices.update({
       where: {
