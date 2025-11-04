@@ -12,11 +12,13 @@ import {
   getCachedChatroomMembers,
   getCachedUserFriends,
   getCachedUserGroups,
+  getCachedUserNotificationTokens,
   isChatroomMember,
   setUserChatroomStatus,
   updateChatroomUnreadStatus,
 } from '../services/cacheService';
 import { formatGroups } from '../services/groupService';
+import { sendPushNotifications } from '../services/notificationService';
 import { getUserIdByToken } from '../services/sessionService';
 import { handleStudyStart, handleStudyStop } from '../services/studyService';
 import { getIO } from './io';
@@ -36,6 +38,8 @@ export const registerMainIoEvents = () => {
     try {
       const cookies = socket.handshake.headers.cookie;
       let token: string = socket.handshake.query.token as string;
+
+      //console.log(cookies, 'gd', token)
 
       if (cookies) {
         const parsedCookies = cookie.parse(cookies);
@@ -183,6 +187,28 @@ export const registerMainIoEvents = () => {
             messageId: message_id,
             senderId: userId,
             allMemberIds: members,
+          });
+
+          const tokens = await getCachedUserNotificationTokens({
+            userId: userId,
+          });
+
+          console.log('tokens', tokens);
+
+          sendPushNotifications({
+            pushTokens: tokens,
+            message: {
+              to: '',
+              title: '',
+              body: 'test',
+              sound: 'default',
+              data: { withSome: 'data' },
+              richContent: {
+                image:
+                  'https://example.com/statics/some-image-here-if-you-want.jpg',
+              },
+              //subtitle
+            },
           });
         } catch (err) {
           console.error('chat:send error:', err);

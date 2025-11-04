@@ -9,6 +9,7 @@ export const REDIS_TTL = {
   USER_ACTIVE_GROUP_EXP: 60 * 60 * 24 * 30, //30days
   USER_GOOGLE_ACCESS_TOKEN: 60 * 60 * 1, //1hour
   CHAT_MEMBERS_EXP: 60 * 60 * 1, //1hour
+  USER_NOTIFICATION_TOKENS_EXP: 60 * 60, //1hour
 };
 
 export const COOKIE_TTL = {

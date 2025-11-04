@@ -14,6 +14,10 @@ export const deleteNotificationSchema = Joi.object({
   notification_id: notificationSchemas.notification_id,
 });
 
+export const postNotificationTokenSchema = Joi.object({
+  device_id: deviceSchemas.device_id,
+});
+
 export const putNotificationTokenSchema = Joi.object({
   token: deviceSchemas.notification_token,
   device_id: deviceSchemas.device_id,

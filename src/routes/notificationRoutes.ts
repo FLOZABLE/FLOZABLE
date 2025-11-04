@@ -3,12 +3,14 @@ import { Router } from 'express';
 import {
   deleteNotification,
   getNotificationsAll,
+  postNotificationToken,
   putNotificationToken,
 } from '../controllers/notificationController';
 import { authMiddleware } from '../middlewares/authMiddleware';
 import { validate } from '../middlewares/validationMiddleWare';
 import {
   deleteNotificationSchema,
+  postNotificationTokenSchema,
   putNotificationTokenSchema,
 } from '../schemas/notificationSchemas';
 
@@ -21,6 +23,13 @@ notificationRouter.delete(
   authMiddleware,
   validate(deleteNotificationSchema, 'params'),
   deleteNotification,
+);
+
+notificationRouter.post(
+  '/token',
+  authMiddleware,
+  validate(postNotificationTokenSchema, 'body'),
+  postNotificationToken,
 );
 
 notificationRouter.put(

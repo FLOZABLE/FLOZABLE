@@ -284,6 +284,54 @@ export const filterCachedUserGroups = async (
   await redisClient.srem(cacheKey, groupId);
 };
 
+interface GetCachedUserNotificationTokensParams {
+  userId: string;
+}
+
+export const getCachedUserNotificationTokens = async ({
+  userId,
+}: GetCachedUserNotificationTokensParams): Promise<string[]> => {
+  const cacheKey = `user:${userId}:notification_tokens`;
+
+  try {
+    const notificationTokens = await redisClient.smembers(cacheKey);
+
+    if (notificationTokens.length) {
+      return notificationTokens.filter((key) => key !== 'cached');
+    }
+
+    const devices = await prisma.devices.findMany({
+      where: { user_id: userId, notification_token: { not: null } },
+      select: { notification_token: true },
+    });
+
+    const tokensList = devices
+      .map((device) => device.notification_token)
+      .filter((token) => token !== null);
+
+    await cacheUserNotificationTokens(userId, tokensList);
+
+    return tokensList;
+  } catch (err) {
+    console.log(err);
+    return [];
+  }
+};
+
+export const cacheUserNotificationTokens = async (
+  userId: string,
+  tokens: string[],
+): Promise<void> => {
+  const cacheKey = `user:${userId}:notification_tokens`;
+
+  try {
+    await redisClient.sadd(cacheKey, 'cached', ...tokens);
+    await redisClient.expire(cacheKey, REDIS_TTL.USER_NOTIFICATION_TOKENS_EXP);
+  } catch (err) {
+    console.error(`Failed to cache tokens: ${userId}`, err);
+  }
+};
+
 interface CacheUserStatusParams {
   userId: string;
   subjectId?: string;
