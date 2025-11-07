@@ -12,7 +12,7 @@ import {
   getCachedChatroomMembers,
   getCachedUserFriends,
   getCachedUserGroups,
-  getCachedUserNotificationTokens,
+  getCachedUsersNotificationTokens,
   isChatroomMember,
   setUserChatroomStatus,
   updateChatroomUnreadStatus,
@@ -189,17 +189,19 @@ export const registerMainIoEvents = () => {
             allMemberIds: members,
           });
 
-          const tokens = await getCachedUserNotificationTokens({
-            userId: userId,
-          });
+          const userTokens = await getCachedUsersNotificationTokens(members);
 
-          console.log('tokens', tokens);
+          console.log(
+            'tokens',
+            userTokens,
+            userTokens.flatMap((token) => token.tokens),
+          );
 
           sendPushNotifications({
-            pushTokens: tokens,
+            pushTokens: userTokens.flatMap((userToken) => userToken.tokens),
             message: {
               to: '',
-              title: '',
+              title: `New Message`,
               body: 'test',
               sound: 'default',
               data: { withSome: 'data' },
