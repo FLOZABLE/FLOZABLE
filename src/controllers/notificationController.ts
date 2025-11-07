@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 
 import prisma from '../libs/prisma';
+import { delCachedUserNotificationTokens } from '../services/cacheService';
 import {
   NotificationIdParams,
   PostNotificationTokenBody,
@@ -170,6 +171,8 @@ export const putNotificationToken = async (
         notification_token: token,
       },
     });
+
+    await delCachedUserNotificationTokens(userId);
 
     res.send({ success: true, status: 200 });
   } catch (error) {
