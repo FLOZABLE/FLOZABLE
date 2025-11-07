@@ -294,12 +294,14 @@ export const getCachedUserNotificationTokens = async ({
   const cacheKey = `user:${userId}:notification_tokens`;
 
   try {
+    // 1. Check Redis (SMMEMBERS)
     const notificationTokens = await redisClient.smembers(cacheKey);
 
     if (notificationTokens.length) {
       return notificationTokens.filter((key) => key !== 'cached');
     }
 
+    // 2. Fallback to Database (Prisma)
     const devices = await prisma.devices.findMany({
       where: { user_id: userId, notification_token: { not: null } },
       select: { notification_token: true },
@@ -307,29 +309,156 @@ export const getCachedUserNotificationTokens = async ({
 
     const tokensList = devices
       .map((device) => device.notification_token)
-      .filter((token) => token !== null);
+      .filter((token): token is string => token !== null);
 
+    // 3. Cache the result (Assuming this function exists)
     await cacheUserNotificationTokens(userId, tokensList);
 
     return tokensList;
   } catch (err) {
-    console.log(err);
+    console.error(`Error fetching tokens for user ${userId}:`, err);
     return [];
   }
 };
 
-export const cacheUserNotificationTokens = async (
+/**
+ * Caches notification tokens for a specific user.
+ * (Placeholder - you'll need to define this function)
+ * Uses SADD for the tokens and a 'cached' member to mark the key as present.
+ */
+const cacheUserNotificationTokens = async (
   userId: string,
   tokens: string[],
 ): Promise<void> => {
   const cacheKey = `user:${userId}:notification_tokens`;
-
-  try {
-    await redisClient.sadd(cacheKey, 'cached', ...tokens);
-    await redisClient.expire(cacheKey, REDIS_TTL.USER_NOTIFICATION_TOKENS_EXP);
-  } catch (err) {
-    console.error(`Failed to cache tokens: ${userId}`, err);
+  const members = [...tokens, 'cached'];
+  if (members.length > 0) {
+    // Set the set with tokens and the 'cached' marker
+    // You might also want to set an expiration (EXPIRE) here
+    await redisClient.sadd(cacheKey, members);
   }
+  // Alternatively, if tokens is empty, you could just set the 'cached' marker:
+  // else { await redisClient.sadd(cacheKey, 'cached'); }
+};
+
+/**
+ * Fetches notification tokens for multiple users in a single Redis round-trip.
+ * Falls back to the database and re-caches for any users not found in Redis.
+ */
+export const getCachedUsersNotificationTokens = async (
+  userIds: string[],
+): Promise<{ userId: string; tokens: string[] }[]> => {
+  if (userIds.length === 0) {
+    return [];
+  }
+
+  // --- Step 1: Bulk Check Redis using Pipeline (SMMEMBERS) ---
+  const pipeline = redisClient.pipeline();
+  userIds.forEach((userId) => {
+    // SMMEMBERS is the correct Redis command for retrieving all members of a set
+    pipeline.smembers(`user:${userId}:notification_tokens`);
+  });
+
+  const results: [error: Error | null, result: unknown][] | null =
+    await pipeline.exec();
+
+  if (!results) {
+    console.error('Redis pipeline for user notification tokens failed.');
+    // Fail-safe: return empty array for all users
+    return userIds.map((userId) => ({ userId, tokens: [] }));
+  }
+
+  const uncachedUserIds: string[] = [];
+  const initialResults = userIds.map((userId, index) => {
+    const [error, rawResult] = results[index];
+
+    if (error) {
+      console.error(`Error in SMEMBERS pipeline for user ${userId}:`, error);
+      uncachedUserIds.push(userId); // Error, treat as uncached
+      return { userId, tokens: null }; // Use null to mark as 'needs DB check'
+    }
+
+    const tokens: string[] | null = Array.isArray(rawResult)
+      ? (rawResult as string[])
+      : null;
+
+    if (!tokens || !tokens.includes('cached')) {
+      // Not in cache or error on fetch -> needs DB check
+      uncachedUserIds.push(userId);
+      return { userId, tokens: null };
+    }
+
+    // Found in cache, filter out the 'cached' marker
+    return {
+      userId,
+      tokens: tokens.filter((key) => key !== 'cached'),
+    };
+  });
+
+  // --- Step 2: Database Fallback for uncached users (if any) ---
+  if (uncachedUserIds.length === 0) {
+    // All users were found in the cache
+    // The filter(Boolean) is to remove the temporary 'null' markers
+    return initialResults.filter(
+      (result): result is { userId: string; tokens: string[] } =>
+        result.tokens !== null,
+    );
+  }
+
+  // Fetch from the database in a single query for all uncached users
+  const devices = await prisma.devices.findMany({
+    where: {
+      user_id: { in: uncachedUserIds },
+      notification_token: { not: null },
+    },
+    select: { user_id: true, notification_token: true },
+  });
+
+  // Organize DB results by user_id for quick lookup
+  const dbTokensByUser = devices.reduce(
+    (acc, device) => {
+      if (device.notification_token) {
+        acc[device.user_id] = acc[device.user_id] || [];
+        acc[device.user_id].push(device.notification_token);
+      }
+      return acc;
+    },
+    {} as Record<string, string[]>,
+  );
+
+  // --- Step 3: Integrate DB results and Bulk Cache them ---
+  const cachePipeline = redisClient.pipeline();
+  const finalResults = initialResults.map((result) => {
+    if (result.tokens !== null) {
+      return result as { userId: string; tokens: string[] }; // Already cached
+    }
+
+    // Uncached user: pull from DB results
+    const tokens = dbTokensByUser[result.userId] || [];
+
+    // Add to caching pipeline
+    const cacheKey = `user:${result.userId}:notification_tokens`;
+    const members = [...tokens, 'cached'];
+
+    // Using SADD for the tokens and a 'cached' member to mark the key as present
+    if (members.length > 0) {
+      cachePipeline.sadd(cacheKey, members);
+      // If you need an expiration (TTL), you'd add:
+      // cachePipeline.expire(cacheKey, 60 * 60 * 24); // e.g., 24 hours
+    }
+
+    return { userId: result.userId, tokens };
+  });
+
+  // Execute the bulk caching
+  await cachePipeline.exec();
+
+  return finalResults;
+};
+
+export const delCachedUserNotificationTokens = async (userId: string) => {
+  const cacheKey = `user:${userId}:notification_tokens`;
+  await redisClient.del(cacheKey);
 };
 
 interface CacheUserStatusParams {
