@@ -56,14 +56,18 @@ export const handleStudyStart = async (userId: string, subjectId?: string) => {
       subject: { ...subject, start_time: now },
     });
 
-    cacheUserStatus({
+    await cacheUserStatus({
       userId,
       subjectId,
       name: subject.name,
       startTime: now,
     });
+
+    return { ...subject, start_time: now };
   } catch (err) {
     console.log(err);
+
+    return null;
   }
 };
 
