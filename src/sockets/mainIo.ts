@@ -10,8 +10,10 @@ import {
   delCachedUserActiveGroup,
   delCachedUserStatus,
   getCachedChatroomMembers,
+  getCachedUser,
   getCachedUserFriends,
   getCachedUserGroups,
+  getCachedUserNotificationTokens,
   getCachedUsersNotificationTokens,
   isChatroomMember,
   setUserChatroomStatus,
@@ -150,7 +152,37 @@ export const registerMainIoEvents = () => {
 
       socket.on('study:start', async (subject_id: string) => {
         console.log('start', userId, subject_id);
-        handleStudyStart(userId, subject_id);
+        const subject = await handleStudyStart(userId, subject_id);
+
+        const notificationTokens = await getCachedUserNotificationTokens({
+          userId,
+        });
+
+        console.log('start', notificationTokens);
+
+        sendPushNotifications({
+          pushTokens: notificationTokens,
+          message: {
+            to: '',
+            data: {
+              action: 'STUDY_START',
+              subject,
+            },
+            _contentAvailable: true,
+
+            // --- iOS TRIGGER ---
+            apns: {
+              payload: {
+                aps: {
+                  'content-available': 1, // <<< THIS IS THE iOS WAKE-UP FLAG
+                },
+              },
+            },
+
+            // --- Android Trigger ---
+            priority: 'high',
+          },
+        });
       });
 
       socket.on('study:stop', async () => {
@@ -160,6 +192,7 @@ export const registerMainIoEvents = () => {
       socket.on('chat:send', async (roomId: string, message: string) => {
         try {
           if (!roomId || !message || message.length > 500) return;
+          const userInfo = await getCachedUser({ userId });
 
           const members = await getCachedChatroomMembers(roomId);
           if (!members.includes(userId)) return;
@@ -189,7 +222,9 @@ export const registerMainIoEvents = () => {
             allMemberIds: members,
           });
 
-          const userTokens = await getCachedUsersNotificationTokens(members);
+          const userTokens = await getCachedUsersNotificationTokens(
+            members.filter((member) => member !== userId),
+          );
 
           console.log(
             'tokens',
@@ -197,19 +232,34 @@ export const registerMainIoEvents = () => {
             userTokens.flatMap((token) => token.tokens),
           );
 
+          const threadId = `chatGroup_${roomId}`;
+
           sendPushNotifications({
             pushTokens: userTokens.flatMap((userToken) => userToken.tokens),
             message: {
               to: '',
-              title: `New Message`,
-              body: 'test',
+              title: `${userInfo?.name} sent a message`,
+              body: message,
               sound: 'default',
-              data: { withSome: 'data' },
+              data: {
+                chatroom_id: roomId,
+                thread_id: threadId, // Also useful to keep in the data payload for app logic
+              },
               richContent: {
                 image:
-                  'https://example.com/statics/some-image-here-if-you-want.jpg',
+                  'https://static.flozable.com/img/profile-images/1u1URcHXk2.jpeg',
               },
-              //subtitle
+              categoryId: `chatActionCategory_${roomId}`,
+
+              apns: {
+                payload: {
+                  aps: {
+                    // This is the native iOS key used to group notifications.
+                    // All notifications with the same 'thread-id' will be grouped.
+                    'thread-id': threadId,
+                  },
+                },
+              },
             },
           });
         } catch (err) {
