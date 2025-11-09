@@ -87,9 +87,13 @@ let expo = new Expo({
   useFcmV1: true,
 });
 
+interface ExpoPushMessageApn extends ExpoPushMessage {
+  apns?: any;
+}
+
 interface SendPushNotificationsParams {
   pushTokens: ExpoPushToken[];
-  message: ExpoPushMessage;
+  message: ExpoPushMessageApn;
 }
 
 export async function sendPushNotifications({
