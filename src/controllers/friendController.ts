@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from 'express';
 import { DateTime } from 'luxon';
 
 import prisma from '../libs/prisma';
-import { nowSec } from '../libs/utils';
+import { nowSec, randomPick } from '../libs/utils';
 import { groupSelect } from '../queries/groupQueries';
 import {
   filterCachedUserFriends,
@@ -147,6 +147,42 @@ export const getFriendSearch = async (
         timezone: true,
       },
       take: 10,
+    });
+    res.send({ success: true, data: { users } });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getFriendRecommended = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const userId = req.user_id!;
+
+    const count = 5;
+
+    const usersCount = await prisma.users.count();
+    const skip = Math.max(0, Math.floor(Math.random() * usersCount) - count);
+    const orderBy = randomPick(['user_id', 'name', 'email']);
+    const orderDir = randomPick(['asc', 'desc']);
+
+    const users = await prisma.users.findMany({
+      where: {
+        user_id: {
+          not: userId,
+        },
+      },
+      select: {
+        user_id: true,
+        name: true,
+        timezone: true,
+      },
+      take: count,
+      skip: skip,
+      orderBy: { [orderBy]: orderDir },
     });
     res.send({ success: true, data: { users } });
   } catch (error) {
