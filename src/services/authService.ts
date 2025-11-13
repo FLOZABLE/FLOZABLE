@@ -1,11 +1,14 @@
 import crypto from 'crypto';
-import { Prisma } from '../generated/prisma';
+import { readFileSync } from 'fs';
+import path from 'path';
+import appleSignin from 'apple-signin-auth';
 import { Response } from 'express';
 import { google } from 'googleapis';
 import { HttpError } from 'http-errors';
 import { nanoid } from 'nanoid';
 
 import config from '../config/config';
+import { Prisma } from '../generated/prisma';
 import { COOKIE_TTL } from '../libs/constants';
 import { AppErrorFactory } from '../libs/errors';
 import prisma from '../libs/prisma';
@@ -177,3 +180,22 @@ export function setSessionCookie(res: Response, token: string) {
     maxAge: COOKIE_TTL.LOGIN_TOKEN_EXP,
   });
 }
+
+const filePath = path.resolve(
+  __dirname,
+  '../../credentials/AuthKey_X6AAH79R9J.p8',
+);
+const privateKey = readFileSync(filePath, 'utf8');
+
+const appleClientSecret = appleSignin.getClientSecret({
+  clientID: config.appleClientId, // Apple Client ID
+  teamID: config.appleTeamId, // Apple Developer Team ID.
+  privateKey: privateKey, // private key associated with your client ID. -- Or provide a `privateKeyPath` property instead.
+  keyIdentifier: config.appleKeyId, // identifier of the private key.
+});
+
+export const appleAuthOptions = {
+  clientID: config.appleClientId, // Apple Client ID
+  redirectUri: config.appleRedirectUri, // use the same value which you passed to authorisation URL.
+  clientSecret: appleClientSecret,
+};

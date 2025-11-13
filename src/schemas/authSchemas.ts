@@ -1,6 +1,7 @@
 import Joi from 'joi';
 
 import { accountSchemas } from './accountSchemas';
+import { appleSchemas } from './appleSchemas';
 import { deviceSchemas } from './deviceSchemas';
 import { googleSchemas } from './googleSchemas';
 import { otherSchemas } from './otherSchemas';
@@ -52,4 +53,14 @@ export const postAuthGoogleAppSchema = Joi.object({
   brand: deviceSchemas.brand,
   device_name: deviceSchemas.name,
   device_id: deviceSchemas.device_id,
+  timezone: otherSchemas.timezone,
+});
+
+export const postAuthAppleSchema = Joi.object({
+  code: appleSchemas.code,
+  brand: deviceSchemas.brand,
+  device_name: deviceSchemas.name,
+  device_id: deviceSchemas.device_id,
+  timezone: otherSchemas.timezone,
+  name: appleSchemas.name,
 });
