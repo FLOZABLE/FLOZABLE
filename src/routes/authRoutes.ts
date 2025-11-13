@@ -4,6 +4,7 @@ import {
   getAuthGoogleCallback,
   getAuthToken,
   postAuthAppGoogle,
+  postAuthApple,
   postAuthLogin,
   postAuthLoginApp,
   postAuthLogout,
@@ -15,6 +16,7 @@ import { authMiddleware } from '../middlewares/authMiddleware';
 import { validate } from '../middlewares/validationMiddleWare';
 import {
   getAuthGoogleCallbackSchema,
+  postAuthAppleSchema,
   postAuthGoogleAppSchema,
   postAuthLoginAppSchema,
   postAuthLoginSchema,
@@ -65,6 +67,8 @@ authRouter.post(
   validate(postAuthGoogleAppSchema, 'body'),
   postAuthAppGoogle,
 );
+
+authRouter.post('/apple', validate(postAuthAppleSchema, 'body'), postAuthApple);
 
 authRouter.get('/token', authMiddleware, getAuthToken);
 

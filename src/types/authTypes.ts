@@ -36,3 +36,9 @@ export interface PostAuthAppGoogleBody extends PostAuthLoginAppBody {
   code: string;
   timezone: string;
 }
+
+export interface PostAuthAppleBody extends PostAuthLoginAppBody {
+  code: string;
+  timezone: string;
+  name: string | null | undefined;
+}

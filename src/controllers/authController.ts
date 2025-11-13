@@ -1,3 +1,4 @@
+import appleSignin from 'apple-signin-auth';
 import { NextFunction, Request, Response } from 'express';
 import { google } from 'googleapis';
 import { nanoid } from 'nanoid';
@@ -7,6 +8,7 @@ import { AppErrorFactory } from '../libs/errors';
 import prisma from '../libs/prisma';
 import { nowSec } from '../libs/utils';
 import {
+  appleAuthOptions,
   createUser,
   googleOauth2client,
   loginUser,
@@ -22,6 +24,7 @@ import { createSubject } from '../services/subjectService';
 import {
   GetAuthGoogleCallbackQuery,
   PostAuthAppGoogleBody,
+  PostAuthAppleBody,
   PostAuthLoginAppBody,
   PostAuthLoginBody,
   PostAuthTokenVerifyBody,
@@ -299,6 +302,116 @@ export const postAuthAppGoogle = async (
       response.tokens.access_token,
       response.tokens.expiry_date,
     );
+
+    // Remove any previous device records for this device ID to prevent duplicates
+    await prisma.devices.deleteMany({
+      where: {
+        device_id,
+      },
+    });
+
+    // Create a new device record
+    const created_at = nowSec();
+    await prisma.devices.create({
+      data: {
+        device_id,
+        user_id: userId,
+        brand,
+        name: device_name,
+        token,
+        created_at,
+      },
+    });
+
+    setSessionCookie(res, token);
+
+    res.send({
+      success: true,
+      data: {
+        user_id: userId,
+        token,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const postAuthApple = async (
+  req: Request<{}, {}, PostAuthAppleBody>,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const { code, timezone, device_id, device_name, brand } = req.body;
+
+    const tokenResponse = await appleSignin.getAuthorizationToken(
+      code,
+      appleAuthOptions,
+    );
+
+    const idToken = tokenResponse.id_token;
+
+    // Use apple-signin to decode and verify the token's signature
+    const decodedToken = await appleSignin.verifyIdToken(idToken, {
+      clientID: 'com.company.app',
+      // The verification process automatically checks the issuer, audience, and expiration
+    });
+
+    // The decodedToken (the JWT payload) contains the claims:
+    const email = decodedToken.email; // The user's email
+
+    if (!email) {
+      res.status(400).json({
+        success: false,
+        message: 'Failed to retrieve email from Apple account.',
+        error: { reason: 'Missing email in Apple user info' },
+      });
+      return;
+    }
+
+    let userId: string;
+
+    // Check if user already exists
+    const existingUser = await prisma.users.findFirst({
+      where: { email },
+      select: { user_id: true },
+    });
+
+    if (existingUser?.user_id) {
+      // Case 1: Existing user
+      userId = existingUser.user_id;
+    } else {
+      // Case 2: New user
+      const password = nanoid(10);
+      const name = req.body.name ? req.body.name : `user=${nanoid(7)}`;
+      const newUserResponse = await createUser({
+        name,
+        email,
+        timezone,
+        password,
+      });
+      const newUser = newUserResponse.data?.user;
+
+      if (!newUserResponse.success || !newUser) {
+        res.status(400).json({
+          success: false,
+          message: 'Failed to create new user account.',
+        });
+        return;
+      }
+      userId = newUser.user_id;
+
+      // Create a default subject for the new user
+      await createSubject({
+        name: 'others',
+        color: '#000000',
+        user: { connect: { user_id: userId } },
+      });
+    }
+
+    // Common logic for both new and existing users
+    const token = await createSession(userId);
 
     // Remove any previous device records for this device ID to prevent duplicates
     await prisma.devices.deleteMany({
