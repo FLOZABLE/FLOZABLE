@@ -6,7 +6,6 @@ import {
   getGroupMembers,
   getGroups,
   getMyGroups,
-  getRecommendedGroups,
   postGroupJoin,
   postGroupLeave,
   postGroupLike,
@@ -29,14 +28,6 @@ const groupRouter = Router();
 groupRouter.get('/search', validate(getGroupsSchema, 'query'), getGroups);
 
 groupRouter.get('/mine', authMiddleware, getMyGroups);
-
-groupRouter.get('/recommended', authMiddleware, getRecommendedGroups);
-
-groupRouter.get(
-  '/:group_id',
-  validate(groupIdParamsSchema, 'params'),
-  getGroup,
-);
 
 groupRouter.get(
   '/:group_id/members',
@@ -73,6 +64,12 @@ groupRouter.post(
   authMiddleware,
   validate(groupIdParamsSchema, 'params'),
   postGroupLike,
+);
+
+groupRouter.get(
+  '/:group_id',
+  validate(groupIdParamsSchema, 'params'),
+  getGroup,
 );
 
 groupRouter.put(
