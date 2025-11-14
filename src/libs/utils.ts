@@ -63,8 +63,3 @@ export function randomIntInRange(min: number, max: number) {
   const randomVal = Math.floor(Math.random() * (max - min + 1)) + min;
   return randomVal;
 }
-
-export const randomPick = (values: string[]) => {
-  const index = Math.floor(Math.random() * values.length);
-  return values[index];
-};

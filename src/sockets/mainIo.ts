@@ -187,35 +187,6 @@ export const registerMainIoEvents = () => {
 
       socket.on('study:stop', async () => {
         handleStudyStop(userId);
-
-        const notificationTokens = await getCachedUserNotificationTokens({
-          userId,
-        });
-
-        console.log('stop', notificationTokens);
-
-        sendPushNotifications({
-          pushTokens: notificationTokens,
-          message: {
-            to: '',
-            data: {
-              action: 'STUDY_STOP',
-            },
-            _contentAvailable: true,
-
-            // --- iOS TRIGGER ---
-            apns: {
-              payload: {
-                aps: {
-                  'content-available': 1, // <<< THIS IS THE iOS WAKE-UP FLAG
-                },
-              },
-            },
-
-            // --- Android Trigger ---
-            priority: 'high',
-          },
-        });
       });
 
       socket.on('chat:send', async (roomId: string, message: string) => {
