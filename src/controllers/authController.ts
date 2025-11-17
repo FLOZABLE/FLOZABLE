@@ -354,7 +354,7 @@ export const postAuthApple = async (
 
     // Use apple-signin to decode and verify the token's signature
     const decodedToken = await appleSignin.verifyIdToken(idToken, {
-      clientID: 'com.company.app',
+      clientID: config.appleClientId,
       // The verification process automatically checks the issuer, audience, and expiration
     });
 
