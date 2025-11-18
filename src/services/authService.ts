@@ -187,15 +187,17 @@ const filePath = path.resolve(
 );
 const privateKey = readFileSync(filePath, 'utf8');
 
-const appleClientSecret = appleSignin.getClientSecret({
-  clientID: config.appleClientId, // Apple Client ID
-  teamID: config.appleTeamId, // Apple Developer Team ID.
-  privateKey: privateKey, // private key associated with your client ID. -- Or provide a `privateKeyPath` property instead.
-  keyIdentifier: config.appleKeyId, // identifier of the private key.
-});
+export const getAppleAuthOptions = () => {
+  const appleClientSecret = appleSignin.getClientSecret({
+    clientID: config.appleClientId, // Apple Client ID
+    teamID: config.appleTeamId, // Apple Developer Team ID.
+    privateKey: privateKey, // private key associated with your client ID. -- Or provide a `privateKeyPath` property instead.
+    keyIdentifier: config.appleKeyId, // identifier of the private key.
+  });
 
-export const appleAuthOptions = {
-  clientID: config.appleClientId, // Apple Client ID
-  redirectUri: config.appleRedirectUri, // use the same value which you passed to authorisation URL.
-  clientSecret: appleClientSecret,
+  return {
+    clientID: config.appleClientId, // Apple Client ID
+    redirectUri: config.appleRedirectUri, // use the same value which you passed to authorisation URL.
+    clientSecret: appleClientSecret,
+  };
 };
