@@ -8,7 +8,6 @@ import { AppErrorFactory } from '../libs/errors';
 import prisma from '../libs/prisma';
 import { nowSec } from '../libs/utils';
 import {
-  appleAuthOptions,
   createUser,
   googleOauth2client,
   loginUser,
@@ -31,6 +30,7 @@ import {
   PostSignupAppBody,
   PostSignupBody,
 } from '../types/authTypes';
+import { getAppleAuthOptions } from './../services/authService';
 
 export const postAuthSignup = async (
   req: Request<{}, {}, PostSignupBody>,
@@ -344,6 +344,8 @@ export const postAuthApple = async (
 ) => {
   try {
     const { code, timezone, device_id, device_name, brand } = req.body;
+
+    const appleAuthOptions = getAppleAuthOptions();
 
     const tokenResponse = await appleSignin.getAuthorizationToken(
       code,
