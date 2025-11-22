@@ -5,7 +5,7 @@ import { nanoid } from 'nanoid';
 import { Prisma } from '../generated/prisma';
 import { AppErrorFactory } from '../libs/errors';
 import prisma from '../libs/prisma';
-import { bcryptHash, bcryptVerify, nowSec } from '../libs/utils';
+import { bcryptHash, bcryptVerify, nowSec, randomPick } from '../libs/utils';
 import { groupSelect } from '../queries/groupQueries';
 import {
   delCachedChatroomMembers,
@@ -285,6 +285,40 @@ export const getGroupLeaderboard = async (
     });
 
     res.send({ data: { leaderboard: rankings } });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getRecommendedGroups = async (
+  _req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const count = 5;
+
+    const groupsCount = await prisma.groups.count();
+    const skip = Math.max(0, Math.floor(Math.random() * groupsCount) - count);
+    const orderBy = randomPick(['group_id', 'name', 'description']);
+    const orderDir = randomPick(['asc', 'desc']);
+
+    const rawGroups = await prisma.groups.findMany({
+      where: {
+        visibility: 1,
+      },
+      select: groupSelect,
+      take: count,
+      skip: skip,
+      orderBy: { [orderBy]: orderDir },
+    });
+
+    const groups = formatGroups(rawGroups);
+
+    res.send({
+      success: true,
+      data: { groups },
+    });
   } catch (error) {
     next(error);
   }

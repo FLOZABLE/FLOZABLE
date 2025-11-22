@@ -4,6 +4,7 @@ import {
   deleteFriend,
   getFriendAll,
   getFriendAllStatus,
+  getFriendRecommended,
   getFriendSearch,
   postFriendRequest,
   postFriendRequestReply,
@@ -34,6 +35,8 @@ friendRouter.get(
   validate(getFriendSearchSchema, 'query'),
   getFriendSearch,
 );
+
+friendRouter.get('/recommended', authMiddleware, getFriendRecommended);
 
 friendRouter.delete(
   '/:friend_id',
