@@ -30,6 +30,7 @@ export interface PostAuthTokenVerifyBody {
 export interface GetAuthGoogleCallbackQuery {
   code: string;
   state: string;
+  error: string;
 }
 
 export interface PostAuthAppGoogleBody extends PostAuthLoginAppBody {

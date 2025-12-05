@@ -44,9 +44,12 @@ export const postAuthTokenVerifySchema = Joi.object({
 });
 
 export const getAuthGoogleCallbackSchema = Joi.object({
-  code: googleSchemas.code,
+  code: googleSchemas.code.optional(),
   state: googleSchemas.state,
-}).unknown(true);
+  error: Joi.string(),
+})
+  .oxor('code', 'error')
+  .unknown(true);
 
 export const postAuthGoogleAppSchema = Joi.object({
   code: googleSchemas.code,
