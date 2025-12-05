@@ -473,7 +473,13 @@ export const getAuthGoogleCallback = async (
   next: NextFunction,
 ) => {
   try {
-    const { code, state } = req.query;
+    const { code, state, error } = req.query;
+    console.log(error);
+    if (error) {
+      res.redirect(config.nextServer);
+      return;
+    }
+
     const decodedState = JSON.parse(decodeURIComponent(state));
     const timezone = decodedState.timezone;
 
