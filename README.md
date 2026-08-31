@@ -10,7 +10,7 @@
 
 ## About Flozable v1
 
-Flozable v1 was a full-stack productivity platform focused on studying, planning, accountability, and social productivity.
+Flozable v1 was a full-stack productivity platform founded by Jason Lee and developed with Cameron Jiang.
 
 The original platform included features such as:
 
@@ -91,7 +91,7 @@ src/
 
 ## What I Worked On
 
-As the founder and primary developer of Flozable, I worked across the product and infrastructure, including:
+Flozable was founded by Jason Lee and developed with Cameron Jiang, who contributed to the programming and implementation of the original product.
 
 - Designing and implementing backend APIs
 - Building caching and session workflows with Redis
@@ -171,4 +171,7 @@ Active development has moved to the relaunched Flozable architecture.
 
 ---
 
-Built by [Jason Lee](https://github.com/dIwnsgml).
+## Contributors
+
+- [Jason Lee](https://github.com/dIwnsgml) — Founder & Full-Stack Developer
+- [Cameron Jiang](https://github.com/HackingGo306) — Developer
