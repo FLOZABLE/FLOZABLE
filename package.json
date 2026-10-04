@@ -60,7 +60,7 @@
     "cors": "^2.8.5",
     "cross-env": "^7.0.3",
     "expo-server-sdk": "^4.0.0",
-    "express-rate-limit": "^8.0.1",
+    "express-rate-limit": "^8.7.0",
     "gaxios": "^7.1.0",
     "googleapis": "^150.0.1",
     "helmet": "^8.1.0",
